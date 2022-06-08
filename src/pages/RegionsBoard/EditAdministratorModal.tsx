@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { editAdministrator } from "../../api/governingBodiesApi";
 import { inputOnlyWhiteSpaces } from "../../components/Notifications/Messages";
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
+import notificationLogic from "../../components/Notifications/Notification";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 
 interface Props {
   visibleModal: boolean;
@@ -17,7 +19,6 @@ const EditAdministratorModal = ({
   admin,
 }: Props) => {
   const [form] = Form.useForm();
-  const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const disabledEndDate = (current: any) => {
@@ -32,6 +33,16 @@ const EditAdministratorModal = ({
     setVisibleModal(false);
   };
 
+  const createNotification = async (userId: Array<string>, message: string) => {
+    await NotificationBoxApi.createNotifications(
+      userId,
+      `${message}: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/regionsBoard/administrations`,
+      `Переглянути`
+    );
+  };
+
   const handleSubmit = async (values: any) => {
     setLoading(true);
     const newAdmin = admin;
@@ -39,6 +50,11 @@ const EditAdministratorModal = ({
     newAdmin.endDate = values.endDate;
     newAdmin.governingBodyAdminRole = values.governingBodyAdminRole;
     await editAdministrator(newAdmin.id, newAdmin);
+    notificationLogic("success", "Адміністратор успішно відредагований");
+    await createNotification(
+      [newAdmin.userId],
+      `Вам була присвоєна нова роль: '${newAdmin.governingBodyAdminRole}`
+    );
     setLoading(false);
     setVisibleModal(false);
   };

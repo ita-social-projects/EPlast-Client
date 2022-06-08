@@ -22,6 +22,9 @@ import extendedTitleTooltip, {
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import userApi from "../../api/UserApi";
 import EditAdministratorModal from "./EditAdministratorModal";
+import { Roles } from "../../models/Roles/Roles";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
+import notificationLogic from "../../components/Notifications/Notification";
 
 moment.locale("uk-ua");
 
@@ -38,6 +41,7 @@ const RegionBoardMainAdministration = () => {
   const [selectedAdmin, setSelectedAdmin] = useState<GoverningBodyAdmin>(
     new GoverningBodyAdmin()
   );
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const setPhotos = async (admins: GoverningBodyAdmin[]) => {
     for (let i of admins) {
@@ -58,8 +62,26 @@ const RegionBoardMainAdministration = () => {
     }
   };
 
+  const createNotification = async (userId: Array<string>, message: string) => {
+    await NotificationBoxApi.createNotifications(
+      userId,
+      `${message}: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications
+    );
+  };
+
   const removeMember = async (admin: GoverningBodyAdmin) => {
     await removeMainAdministrator(admin.userId);
+    notificationLogic("success", "Адміністратора успішно видалено");
+
+    await createNotification(
+      [admin.userId],
+      `У Вас більше немає адміністративної ролі: '${
+        admin.governingBodyAdminRole
+          ? admin.governingBodyAdminRole
+          : admin.adminType.adminTypeName
+      }' `
+    );
     fetchData();
   };
 
@@ -84,6 +106,8 @@ const RegionBoardMainAdministration = () => {
 
   useEffect(() => {
     fetchData();
+    const userRoles = userApi.getActiveUserRoles();
+    setActiveUserRoles(userRoles);
   }, []);
 
   return (
@@ -100,15 +124,20 @@ const RegionBoardMainAdministration = () => {
                 className="detailsCard"
                 title={extendedTitleTooltip(
                   adminTypeNameMaxLength,
-                  admin.governingBodyAdminRole ? 
-                  `${admin.governingBodyAdminRole}` :
-                  `${admin.adminType.adminTypeName}`
+                  admin.governingBodyAdminRole
+                    ? `${admin.governingBodyAdminRole}`
+                    : `${admin.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={[
-                  <SettingOutlined onClick={() => showModal(admin)} />,
-                  <CloseOutlined onClick={() => seeDeleteModal(admin)} />,
-                ]}
+                actions={
+                  activeUserRoles.includes(Roles.Admin) ||
+                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
+                    ? [
+                        <SettingOutlined onClick={() => showModal(admin)} />,
+                        <CloseOutlined onClick={() => seeDeleteModal(admin)} />,
+                      ]
+                    : undefined
+                }
               >
                 <div className="cityMember">
                   <div
