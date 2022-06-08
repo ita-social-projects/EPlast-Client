@@ -117,10 +117,9 @@ const StatisticsCities = () => {
   ];
 
   const totalColumn = {
-    title: "Усього",
+    title: "Загалом",
     dataIndex: "total",
     key: "total",
-    fixed: "right",
     sorter: { compare: (a: any, b: any) => a.total - b.total },
     width: 100,
   };
@@ -287,7 +286,7 @@ const StatisticsCities = () => {
     // reading statisticsItems indicators of the very first element
     // because they are the same for all the elements
     let statistics =
-      entryToSetIndicators.yearStatistics[0].statisticsItems || [];
+      entryToSetIndicators.yearStatistics[0].statisticsItems ?? [];
 
     // creating and seting columns for table
     let temp = [

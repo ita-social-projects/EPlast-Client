@@ -28,7 +28,7 @@ import AddBiographyModal from "./UserBiography/AddBiographyModal";
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import Paragraph from "antd/lib/typography/Paragraph";
 import AddAchievementsModal from "./UserAchievements/AddAchievementsModal";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import ListOfAchievementsModal from "./UserAchievements/ListOfAchievementsModal";
 import AddExtractFromUPUModal from "./UserExtractFromUPU/AddExtractFromUPUModal";
@@ -76,7 +76,7 @@ export const Blanks = () => {
   >();
 
   const fetchData = async () => {
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     setUserToken(jwt(token));
     setCanEdit(activeUserRoles.includes(Roles.Admin));
   };

@@ -1,19 +1,19 @@
 import { showUserRenewalModal } from "../pages/UserRenewal/UserRenewalModals";
 import notificationLogic from "../components/Notifications/Notification";
 import FacebookData from "../pages/SignIn/FacebookDataInterface";
-import AuthStore from "../stores/AuthStore";
+import AuthLocalStorage from "../AuthLocalStorage";
 import Api from "./api";
 
 export default class AuthorizeApi {
   static isSignedIn(): boolean {
-    return !!AuthStore.getToken();
+    return !!AuthLocalStorage.getToken();
   }
 
   login = async (data: any) => {
     const response = await Api.post("Login/signin", data)
       .then((response) => {
         if (response.data.token !== null) {
-          AuthStore.setToken(response.data.token);
+          AuthLocalStorage.setToken(response.data.token);
         }
       })
       .catch((error) => {
@@ -79,7 +79,7 @@ export default class AuthorizeApi {
   };
 
   logout = async () => {
-    AuthStore.removeToken();
+    AuthLocalStorage.removeToken();
   };
 
   sendQuestionAdmin = async (data: any) => {
@@ -112,7 +112,7 @@ export default class AuthorizeApi {
     const response = await Api.post(`Login/signin/google/?googleToken=${token}`)
       .then((response) => {
         if (response.data.token !== null) {
-          AuthStore.setToken(response.data.token);
+          AuthLocalStorage.setToken(response.data.token);
         }
       })
       .catch((error) => {
@@ -137,7 +137,7 @@ export default class AuthorizeApi {
     )
       .then((respon) => {
         if (respon.data.token !== null) {
-          AuthStore.setToken(respon.data.token);
+          AuthLocalStorage.setToken(respon.data.token);
         }
       })
       .catch((error) => {

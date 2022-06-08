@@ -13,7 +13,7 @@ import LogoText from "../../assets/images/logo_PLAST.svg";
 import classes from "./Header.module.css";
 import AuthorizeApi from "../../api/authorizeApi";
 import jwt from "jwt-decode";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import userApi from "../../api/UserApi";
 import NotificationBox from "../NotificationBox/NotificationBox";
 import NotificationBoxApi, {
@@ -31,7 +31,7 @@ const HeaderContainer = () => {
   const [imageBase64, setImageBase64] = useState<string>();
   const [name, setName] = useState<string>();
   const [id, setId] = useState<string>("");
-  const token = AuthStore.getToken() as string;
+  const token = AuthLocalStorage.getToken() as string;
   const signedIn = AuthorizeApi.isSignedIn();
   const userState = useRef(signedIn);
   const [notificationTypes, setNotificationTypes] = useState<
@@ -212,7 +212,10 @@ const HeaderContainer = () => {
               count={notifications.filter((n) => n.checked === false).length}
             ></Badge>
             <Menu.Item className={classes.headerItem} key="4">
-              <Dropdown overlay={primaryMenu}>
+              <Dropdown
+                overlayStyle={{ position: "fixed" }}
+                overlay={primaryMenu}
+              >
                 <NavLink
                   to={`/userpage/main/${id}`}
                   className={classes.userMenu}
