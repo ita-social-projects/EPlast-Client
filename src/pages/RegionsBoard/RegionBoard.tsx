@@ -36,6 +36,7 @@ import decisionsApi, {
   GoverningBody,
 } from "../../api/decisionsApi";
 import {
+  addMainAdmin,
   getGoverningBodiesList,
   getGoverningBodyAdminsByPage,
   getGoverningBodyLogo,
@@ -45,6 +46,13 @@ import notificationLogic from "../../components/Notifications/Notification";
 import AuthLocalStorage from "../../AuthLocalStorage";
 import userApi from "../../api/UserApi";
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
+import AddRegionBoardMainAdminModal from "./AddMainAdministratorModal/AddRegionBoardMainAdminModal";
+import GoverningBodyUser from "../../models/GoverningBody/GoverningBodyUser";
+import AdminType from "../../models/Admin/AdminType";
+import {
+  dataCantBeFetched,
+  failEditAction,
+} from "../../components/Notifications/Messages";
 
 const RegionBoard = () => {
   const history = useHistory();
@@ -112,6 +120,10 @@ const RegionBoard = () => {
     {}
   );
 
+  const [visibleAddMainAdminModal, setVisibleAddMainAdminModal] = useState(
+    false
+  );
+
   const getRegion = async () => {
     setLoading(true);
     try {
@@ -160,7 +172,6 @@ const RegionBoard = () => {
     }
     setPhotosLoading(false);
   };
-
 
   const onAdd = (newDocument: CityDocument) => {
     if (documents.length < 6) {
@@ -218,6 +229,24 @@ const RegionBoard = () => {
       .catch(() => {
         notificationLogic("error", "Рішення не існує");
       });
+  };
+
+  const handleAddGoverningBodyAdmin = async (values: any) => {
+    const newAdmin: GoverningBodyAdmin = {
+      id: 0,
+      userId: JSON.parse(values.user.toString()).id,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      governingBodyAdminRole: values.governingBodyAdminRole,
+      user: new GoverningBodyUser(),
+      adminType: new AdminType(),
+      governingBodyId: 0,
+    };
+    await addMainAdmin(newAdmin).catch(() => {
+      notificationLogic("error", failEditAction("роль користувача."));
+    });
+    getGoverningBodiesAdmins();
+    setVisibleAddMainAdminModal(false);
   };
 
   const openPDF = async (item: any) => {
@@ -359,9 +388,7 @@ const RegionBoard = () => {
           <Card hoverable className="cityCard">
             <Title level={4}>
               Адміністрація Крайового Проводу{" "}
-              <a
-                onClick={() => history.push(`/regionsBoard/administrations`)}
-              >
+              <a onClick={() => history.push(`/regionsBoard/administrations`)}>
                 {adminsCount !== 0 ? (
                   <Badge
                     count={adminsCount}
@@ -400,6 +427,13 @@ const RegionBoard = () => {
               )}
             </Row>
             <div className="cityMoreButton">
+              {userAccesses["AddGoverningBodyAdmin"] && (
+                <PlusSquareFilled
+                  type="primary"
+                  className="addReportIcon"
+                  onClick={() => setVisibleAddMainAdminModal(true)}
+                />
+              )}
               <Button
                 type="primary"
                 className="cityInfoButton"
@@ -629,6 +663,11 @@ const RegionBoard = () => {
         region={region}
         setVisibleDrawer={setVisibleDrawer}
         visibleDrawer={visibleDrawer}
+      />
+      <AddRegionBoardMainAdminModal
+        visibleModal={visibleAddMainAdminModal}
+        setVisibleModal={setVisibleAddMainAdminModal}
+        handleAddGoverningBodyAdmin={handleAddGoverningBodyAdmin}
       />
     </Layout.Content>
   );

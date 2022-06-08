@@ -10,7 +10,7 @@ export default class GoverningBodyAdmin {
   startDate?: string;
   endDate?: string;
   workEmail?: string;
-  governingBodyAdminRole?: string
+  governingBodyAdminRole?: string;
 
   constructor() {
     this.id = 0;
