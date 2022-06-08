@@ -22,6 +22,7 @@ import extendedTitleTooltip, {
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import userApi from "../../api/UserApi";
 import EditAdministratorModal from "./EditAdministratorModal";
+import { Roles } from "../../models/Roles/Roles";
 
 moment.locale("uk-ua");
 
@@ -38,6 +39,7 @@ const RegionBoardMainAdministration = () => {
   const [selectedAdmin, setSelectedAdmin] = useState<GoverningBodyAdmin>(
     new GoverningBodyAdmin()
   );
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
 
   const setPhotos = async (admins: GoverningBodyAdmin[]) => {
     for (let i of admins) {
@@ -84,6 +86,8 @@ const RegionBoardMainAdministration = () => {
 
   useEffect(() => {
     fetchData();
+    const userRoles = userApi.getActiveUserRoles();
+    setActiveUserRoles(userRoles);
   }, []);
 
   return (
@@ -100,15 +104,20 @@ const RegionBoardMainAdministration = () => {
                 className="detailsCard"
                 title={extendedTitleTooltip(
                   adminTypeNameMaxLength,
-                  admin.governingBodyAdminRole ? 
-                  `${admin.governingBodyAdminRole}` :
-                  `${admin.adminType.adminTypeName}`
+                  admin.governingBodyAdminRole
+                    ? `${admin.governingBodyAdminRole}`
+                    : `${admin.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={[
-                  <SettingOutlined onClick={() => showModal(admin)} />,
-                  <CloseOutlined onClick={() => seeDeleteModal(admin)} />,
-                ]}
+                actions={
+                  activeUserRoles.includes(Roles.Admin) ||
+                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
+                    ? [
+                        <SettingOutlined onClick={() => showModal(admin)} />,
+                        <CloseOutlined onClick={() => seeDeleteModal(admin)} />,
+                      ]
+                    : undefined
+                }
               >
                 <div className="cityMember">
                   <div
