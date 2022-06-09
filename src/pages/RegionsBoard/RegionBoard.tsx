@@ -22,6 +22,7 @@ import jwt from "jwt-decode";
 import { GetRegionsBoard } from "../../api/regionsApi";
 import { getUserAccess } from "../../api/regionsBoardApi";
 import "../Regions/Region.less";
+import "./RegionBoard.less";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import Title from "antd/lib/typography/Title";
 import Paragraph from "antd/lib/typography/Paragraph";
@@ -276,23 +277,27 @@ const RegionBoard = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <Layout.Content className="cityProfile">
+    <Layout.Content className="regionBoardProfile">
       <Row style={{ justifyContent: "center" }} gutter={[0, 48]}>
-        <Col xl={15} sm={24} xs={24}>
-          <Card hoverable className="cityCard">
+        <Col xl={14} sm={24} xs={24}>
+          <Card hoverable className="regionBoardCard">
             <div>
               <Crumb first="/" second_name="Крайовий Провід Пласту" />
             </div>
             <Title level={2}>{region.regionName}</Title>
-            <Row className="cityPhotos" gutter={[0, 12]}>
+            <Row className="regionBoardPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {photoStatus ? (
-                  <img src={region.logo} alt="Region" className="cityLogo" />
+                  <img
+                    src={region.logo}
+                    alt="Region"
+                    className="regionBoardLogo"
+                  />
                 ) : (
                   <img
                     src={CityDefaultLogo}
                     alt="Region"
-                    className="cityLogo"
+                    className="regionBoardLogo"
                   />
                 )}
               </Col>
@@ -305,7 +310,7 @@ const RegionBoard = () => {
                 />
               </Col>
             </Row>
-            <Row className="cityInfo">
+            <Row className="regionBoardInfo">
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {region.link || region.email || region.phoneNumber ? (
                   <div>
@@ -341,11 +346,15 @@ const RegionBoard = () => {
                 )}
               </Col>
             </Row>
-            <Row className="cityButtons" justify="center" gutter={[12, 0]}>
+            <Row
+              className="regionBoardButtons"
+              justify="center"
+              gutter={[12, 0]}
+            >
               <Col>
                 <Button
                   type="primary"
-                  className="cityInfoButton"
+                  className="regionBoardInfoButton"
                   onClick={() => setVisibleDrawer(true)}
                 >
                   Деталі
@@ -366,13 +375,13 @@ const RegionBoard = () => {
                     }}
                   >
                     <Row
-                      className="cityIcons"
+                      className="regionBoardIcons"
                       justify={userAccesses["EditRB"] ? "center" : "start"}
                     >
                       <Col>
                         <Tooltip title="Редагувати Крайовий Провід Пласту">
                           <EditOutlined
-                            className="cityInfoIcon"
+                            className="regionBoardInfoIcon"
                             onClick={() => history.push(`/regionsBoard/edit`)}
                           />
                         </Tooltip>
@@ -384,8 +393,8 @@ const RegionBoard = () => {
             </Row>
           </Card>
         </Col>
-        <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
-          <Card hoverable className="cityCard">
+        <Col xl={{ span: 8, offset: 1 }} md={11} sm={24} xs={24}>
+          <Card hoverable className="regionBoardCard">
             <Title level={4}>
               Адміністрація Крайового Проводу{" "}
               <a onClick={() => history.push(`/regionsBoard/administrations`)}>
@@ -398,13 +407,20 @@ const RegionBoard = () => {
               </a>
             </Title>
             <Row
-              className={adminsCount >= 4 ? "cityItems1" : "cityItems"}
+              className={
+                adminsCount >= 4 ? "regionBoardItems1" : "regionBoardItems"
+              }
               justify="center"
               gutter={[0, 16]}
             >
               {adminsCount !== 0 ? (
                 admins.map((admin: GoverningBodyAdmin) => (
-                  <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
+                  <Col
+                    className="regionBoardMemberItem"
+                    key={admin.id}
+                    xs={12}
+                    sm={8}
+                  >
                     <div
                       onClick={() =>
                         userAccesses["EditRB"]
@@ -426,7 +442,7 @@ const RegionBoard = () => {
                 <Paragraph>Ще немає членів станиці</Paragraph>
               )}
             </Row>
-            <div className="cityMoreButton">
+            <div className="regionBoardMoreButton">
               {userAccesses["AddGoverningBodyAdmin"] && (
                 <PlusSquareFilled
                   type="primary"
@@ -436,7 +452,7 @@ const RegionBoard = () => {
               )}
               <Button
                 type="primary"
-                className="cityInfoButton"
+                className="regionBoardInfoButton"
                 onClick={() => history.push(`/regionsBoard/administrations`)}
               >
                 Більше
@@ -450,7 +466,7 @@ const RegionBoard = () => {
           sm={24}
           xs={24}
         >
-          <Card hoverable className="cityCard">
+          <Card hoverable className="regionBoardCard">
             <Title level={4}>
               Керівні органи{" "}
               <a onClick={() => history.push(`/regionsBoard/governingBodies`)}>
@@ -462,11 +478,11 @@ const RegionBoard = () => {
                 ) : null}
               </a>
             </Title>
-            <Row className="cityItems" justify="center" gutter={[0, 16]}>
+            <Row className="regionBoardItems" justify="center" gutter={[0, 16]}>
               {governingBodies.length !== 0 ? (
                 governingBodies.map((governingBody) => (
                   <Col
-                    className="cityMemberItem"
+                    className="regionBoardMemberItem"
                     key={governingBody.id}
                     xs={12}
                     sm={8}
@@ -498,7 +514,7 @@ const RegionBoard = () => {
                 <Paragraph>Ще немає керівних органів</Paragraph>
               )}
             </Row>
-            <div className="cityMoreButton">
+            <div className="regionBoardMoreButton">
               {userAccesses["CreateGB"] ? (
                 <PlusSquareFilled
                   type="primary"
@@ -508,7 +524,7 @@ const RegionBoard = () => {
               ) : null}
               <Button
                 type="primary"
-                className="cityInfoButton"
+                className="regionBoardInfoButton"
                 onClick={() => history.push(`/regionsBoard/governingBodies`)}
               >
                 Більше
@@ -518,7 +534,7 @@ const RegionBoard = () => {
         </Col>
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
-          <Card hoverable className="cityCard">
+          <Card hoverable className="regionBoardCard">
             <Title level={4}>
               Рішення{" "}
               <a onClick={() => history.push(`/decisions`)}>
@@ -532,11 +548,15 @@ const RegionBoard = () => {
             </Title>
             {userAccesses["ViewDecisions"] ? (
               <>
-                <Row className="cityItems" justify="center" gutter={[0, 16]}>
+                <Row
+                  className="regionBoardItems"
+                  justify="center"
+                  gutter={[0, 16]}
+                >
                   {decisions.length !== 0 ? (
                     decisions.map((decision) => (
                       <Col
-                        className="cityDocumentItem"
+                        className="regionBoardDocumentItem"
                         xs={12}
                         sm={8}
                         key={decision.id}
@@ -558,7 +578,7 @@ const RegionBoard = () => {
                 <LockOutlined style={{ fontSize: "150px" }} />
               </>
             )}
-            <div className="cityMoreButton">
+            <div className="regionBoardMoreButton">
               {userAccesses["AddDecision"] ? (
                 <PlusSquareFilled
                   type="primary"
@@ -569,7 +589,7 @@ const RegionBoard = () => {
               {userAccesses["ViewDecisions"] ? (
                 <Button
                   type="primary"
-                  className="cityInfoButton"
+                  className="regionBoardInfoButton"
                   onClick={() => history.push(`/decisions`)}
                   disabled={!userAccesses["ViewDecisions"]}
                 >
@@ -586,7 +606,7 @@ const RegionBoard = () => {
           sm={24}
           xs={24}
         >
-          <Card hoverable className="cityCard">
+          <Card hoverable className="regionBoardCard">
             <Title level={4}>
               Документообіг{" "}
               <a
@@ -604,11 +624,11 @@ const RegionBoard = () => {
                 ) : null}
               </a>
             </Title>
-            <Row className="cityItems" justify="center" gutter={[0, 16]}>
+            <Row className="regionBoardItems" justify="center" gutter={[0, 16]}>
               {documents.length !== 0 ? (
                 documents.map((document) => (
                   <Col
-                    className="cityDocumentItem"
+                    className="regionBoardDocumentItem"
                     xs={12}
                     sm={8}
                     key={document.id}
@@ -624,10 +644,10 @@ const RegionBoard = () => {
               )}
             </Row>
             {userAccesses["ViewDocument"] ? (
-              <div className="cityMoreButton">
+              <div className="regionBoardMoreButton">
                 <Button
                   type="primary"
-                  className="cityInfoButton"
+                  className="regionBoardInfoButton"
                   onClick={() =>
                     history.push(`/regionsBoard/documents/${region.id}`)
                   }
