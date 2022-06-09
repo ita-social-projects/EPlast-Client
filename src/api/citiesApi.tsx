@@ -1,3 +1,5 @@
+import { HttpResponse } from "@microsoft/signalr";
+import { ActiveCity } from "../pages/AnnualReport/Interfaces/City";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -21,6 +23,13 @@ export const getCityById = async (id: number) => {
   });
 };
 
+export interface ActiveCityDataResponse {
+  page: number
+  pageSize: number
+  cities: ActiveCity[]
+  total: number
+}
+
 export const getActiveCitiesByPage = async (
   page: number,
   pageSize: number,
@@ -39,7 +48,7 @@ export const getNotActiveCitiesByPage = async (
   name: string | null = null
 ) => {
   return await api
-    .get(`Cities/Profiles/NotActive/${page}`, { page, pageSize, name })
+    .get(`Cities/Profiles/NotActive/${page}`, { pageSize, name })
     .catch((error) => {
       throw new Error(error);
     });
@@ -237,10 +246,11 @@ export const getUsersAdministrations = async (UserId: string) => {
 };
 
 export const getCities = async () => {
-  return await api.get(`Cities/Cities`).catch((error) => {
+  return await api.get(`CitiesFCities`).catch((error) => {
     throw new Error(error);
   });
 };
+
 export default {
   getCities,
   getUsersAdministrations,

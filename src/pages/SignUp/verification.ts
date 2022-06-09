@@ -58,3 +58,59 @@ export const checkPassword = (role: object, value: string, callback: any) => {
   }
   return callback();
 };
+
+export const checkAddress = (
+  role: object,
+  value: string,
+  callback: any
+) => {
+  const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ0-9 ']{1,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ0-9 ']{1,50})*$/;
+  if ((value.length !== 0 && reg.test(value) === false) || value.trim().length === 0) {
+    return callback(
+      shouldContain("тільки літери та бути коротшим за 50 символів")
+    );
+  }
+  return callback();
+};
+
+export const checkFacebookLink = (
+  role: object,
+  value: string,
+  callback: any
+) => {
+  const regNew = /^(https?\:)?(\/\/)(www[\.])?(facebook.com\/)?(?:profile.php\?id=)?([0-9]{1,25})[\/]?$/;
+  if (value.length !== 0 && regNew.test(value) === false) {
+    return callback(
+      shouldContain("посилання на особисту сторінку facebook")
+    );
+  }
+  return callback();
+};
+
+export const checkTwitterLink = (
+  role: object,
+  value: string,
+  callback: any
+) => {
+  const reg: RegExp = /^(https?\:)?(\/\/)(www[\.])?(twitter.com\/)([a-zA-Z0-9_]{1,25})[\/]?$/;
+  if ((value.length !== 0 && reg.test(value) === false)) {
+    return callback(
+      shouldContain("посилання на особисту сторінку twitter")
+    );
+  }
+  return callback();
+};
+
+export const checkInstagramLink = (
+  role: object,
+  value: string,
+  callback: any
+) => {
+  const reg = /^(https?\:)?(\/\/)(www[\.])?(instagram.com\/)([a-zA-Z0-9_]{1,25})[\/]?$/;
+  if ((value.length !== 0 && reg.test(value) === false)) {
+    return callback(
+      shouldContain("посилання на особисту сторінку instagram")
+    );
+  }
+  return callback();
+};
