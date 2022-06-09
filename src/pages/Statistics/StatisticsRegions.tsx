@@ -107,10 +107,9 @@ const StatisticsCities = () => {
   ];
 
   const totalColumn = {
-    title: "Усього",
+    title: "Загалом",
     dataIndex: "total",
     key: "total",
-    fixed: "right",
     sorter: { compare: (a: any, b: any) => a.total - b.total },
     width: 100,
   };
@@ -219,7 +218,7 @@ const StatisticsCities = () => {
       for (let i = 2000; i <= endDate; i++) {
         arrayOfYears.push({ lable: i.toString(), value: i });
       }
-      setYears(arrayOfYears);
+      setYears(arrayOfYears.reverse());
     } catch (error) {
       showError(error.message);
     }
