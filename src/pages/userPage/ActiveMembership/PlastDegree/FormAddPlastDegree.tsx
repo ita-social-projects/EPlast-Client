@@ -49,11 +49,9 @@ const FormAddPlastDegree = ({
   const { UpdateData } = useContext(PersonalDataContext);
 
   const handleFinish = async (info: any) => {
-    console.log(info);
-    const plastDegreeId = filtredDegrees.find(
-      (item) => item.name === "Пластприят"
-    )?.id;
-    info.plastDegree = plastDegreeId ? plastDegreeId : info.plastDegree;
+    info.plastDegree = filtredDegrees.find((item) => item.name === "Пластприят")?.id ?? info.plastDegree;
+    const degreeName = filtredDegrees.find((item) => item.id === info.plastDegree)?.name;
+
     const userPlastDegreePost: UserPlastDegreePost = {
       plastDegreeId: info.plastDegree,
       dateStart: info.datepickerStart._d,
@@ -64,7 +62,6 @@ const FormAddPlastDegree = ({
     visiableCities.current = false;
 
     const cityDefault = cities.find((x) => x.name == info.userCity)?.id;
-    console.log(cityDefault);
 
     const newCityFollower: CityMember = (
       await addFollowerWithId(cityDefault as number, userId)
@@ -79,7 +76,7 @@ const FormAddPlastDegree = ({
     }
     await NotificationBoxApi.createNotifications(
       [userId],
-      `Вам було надано новий ступінь в `,
+      `Вам було надано ступінь ${degreeName} в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/userpage/activeMembership/${userId}`,
       `Дійсному членстві`

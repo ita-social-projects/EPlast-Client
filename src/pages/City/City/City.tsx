@@ -114,7 +114,7 @@ const City = () => {
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [activeUserID, setActiveUserID] = useState<string>();
-  const [selectUserID, setSelectUserID] = useState<string>();
+  const [selectedFollowerUID, setSelectedFollowerUID] = useState<string>();
   const [visibleAddModalDegree, setVisibleAddModalDegree] = useState<boolean>(
     false
   );
@@ -127,43 +127,6 @@ const City = () => {
   const followersToShow = 5;
   const followersToShowOnAdd = 6;
   const classes = require("./Modal.module.css");
-
-  const changeApproveStatus = async (memberId: number) => {
-    if (!isLoadingPlus) {
-      notificationLogic("warning", failApproveAction());
-      return;
-    }
-    setIsLoadingMemberId(memberId);
-    setIsLoadingPlus(false);
-    const member = await toggleMemberStatus(memberId);
-    moment.locale("uk-ua");
-
-    await createNotification(
-      member.data.userId,
-      "Вітаємо, вас зараховано до членів станиці",
-      true
-    );
-
-    if (member.data.wasInRegisteredUserRole) {
-      await createNotification(
-        member.data.userId,
-        "Тобі надано нову роль: 'Прихильник' в станиці",
-        true
-      );
-    }
-
-    member.data.user.imagePath = (
-      await userApi.getImage(member.data.user.imagePath)
-    ).data;
-    const response = await getCityById(+id);
-    setMembersCount(response.data.memberCount);
-    setFollowersCount(response.data.followerCount);
-    if (members.length < 9) {
-      setMembers([...members, member.data]);
-    }
-    setFollowers(followers.filter((f) => f.id !== memberId));
-    setIsLoadingPlus(true);
-  };
 
   const removeMember = async (followerID: number) => {
     await removeFollower(followerID);
@@ -204,6 +167,14 @@ const City = () => {
       setFollowers([...followers, follower.data]);
     }
     setCanJoin(false);
+
+    if (follower.data.wasInRegisteredUserRole) {
+      await createNotification(
+        follower.data.userId,
+        "Тобі надано нову роль: 'Прихильник' в станиці",
+        true
+      );
+    }
   };
 
   const ArchiveCity = async () => {
@@ -627,9 +598,24 @@ const City = () => {
   };
 
   const handleAddDegree = async () => {
-    await activeMembershipApi.getUserPlastDegree(id).then((response) => {
-      setUserPlastDegree(response);
-    });
+    const memberId = followers.find((item) => item.userId === selectedFollowerUID)?.id;
+    setIsLoadingMemberId(memberId ?? NaN);
+
+    setFollowers(followers.filter((f) => f.id !== memberId));
+ 
+    if (members.length < 9) {
+      const member = await toggleMemberStatus(memberId ?? NaN);
+
+      member.data.user.imagePath = (
+        await userApi.getImage(member.data.user.imagePath)
+      ).data;
+
+      setMembers([...members, member.data]);
+    }
+
+    const response = await getCityById(+id);
+    setMembersCount(response.data.memberCount);
+    setFollowersCount(response.data.followerCount);
   };
 
   useEffect(() => {
@@ -1147,7 +1133,7 @@ const City = () => {
                             <PlusOutlined
                               className="approveIcon"
                               onClick={() => {
-                                setSelectUserID(followers.userId);
+                                setSelectedFollowerUID(followers.userId);
                                 setVisibleAddModalDegree(true);
                               }}
                             />
@@ -1226,7 +1212,7 @@ const City = () => {
         <ModalAddPlastDegree
           visibleModal={visibleAddModalDegree}
           setVisibleModal={setVisibleAddModalDegree}
-          userId={selectUserID as string}
+          userId={selectedFollowerUID as string}
           handleAddDegree={handleAddDegree}
         ></ModalAddPlastDegree>
       ) : null}
