@@ -15,11 +15,3 @@ export const getDocs = async (regionId: number) => {
       throw error;
     });
 };
-
-export const getUsersForGoverningBodyAdminForm = async () => {
-  return await api
-    .get(`GoverningBodies/getUsersForGoverningBodyAdminForm`)
-    .catch((error) => {
-      throw new Error(error);
-    });
-};

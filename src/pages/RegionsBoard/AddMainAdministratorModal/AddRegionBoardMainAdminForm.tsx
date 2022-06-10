@@ -3,7 +3,10 @@ import React, { useEffect } from "react";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
 import AdminType from "../../../models/Admin/AdminType";
 import { useState } from "react";
-import { addMainAdmin } from "../../../api/governingBodiesApi";
+import {
+  addMainAdmin,
+  checkRoleNameExists,
+} from "../../../api/governingBodiesApi";
 import {
   dataCantBeFetched,
   emptyInput,
@@ -14,7 +17,7 @@ import User from "../../../models/UserTable/User";
 import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 import { getUsersForGoverningBodies } from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { getUsersForGoverningBodyAdminForm } from "../../../api/regionsBoardApi";
+import { getUsersForGoverningBodyAdminForm } from "../../../api/governingBodiesApi";
 
 type Props = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -45,8 +48,24 @@ const AddRegionBoardMainAdminForm = ({
     setVisibleModal(false);
   };
 
+  const checkRoleName = async () => {
+    const roleValue = form.getFieldValue("governingBodyAdminRole");
+    if (roleValue.trim().length !== 0) {
+      checkRoleNameExists(roleValue).then((response) => {
+        if (response.data) {
+          form.setFields([
+            {
+              name: "governingBodyAdminRole",
+              errors: ["Така роль адміністратора вже існує!"],
+            },
+          ]);
+        }
+      });
+    }
+  };
+
   const fetchData = async () => {
-    await getUsersForGoverningBodyAdminForm()
+    getUsersForGoverningBodyAdminForm()
       .then((response) => {
         setMembers(response.data);
       })
@@ -81,7 +100,7 @@ const AddRegionBoardMainAdminForm = ({
           },
         ]}
       >
-        <Select showSearch>
+        <Select showSearch loading={loadingUsersStatus}>
           {members.map((o) => (
             <Select.Option
               disabled={o.isInLowerRole || o.isInDeputyRole}
@@ -96,7 +115,7 @@ const AddRegionBoardMainAdminForm = ({
       <Form.Item
         className="adminTypeFormItem"
         name="governingBodyAdminRole"
-        label="Змінити роль адміністратора"
+        label="Роль адміністратора"
         labelCol={{ span: 24 }}
         rules={[
           {
@@ -105,7 +124,7 @@ const AddRegionBoardMainAdminForm = ({
           },
         ]}
       >
-        <Input />
+        <Input onChange={checkRoleName} />
       </Form.Item>
       <Row>
         <Col>

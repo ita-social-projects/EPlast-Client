@@ -261,7 +261,6 @@ export const getAllUserId = async () => {
   });
 };
 
-
 export const getGoverningBodiesAdmins = async () => {
   return await api.get("GoverningBodies/GoverningBodyAdmins").catch((error) => {
     throw new Error(error);
@@ -270,7 +269,7 @@ export const getGoverningBodiesAdmins = async () => {
 
 export const getGoverningBodyAdminsByPage = async (
   pageNumber: number,
-  pageSize: number,
+  pageSize: number
 ) => {
   return await api
     .get(`GoverningBodies/GoverningBodyAdminsByPage/${pageNumber}`, {
@@ -281,7 +280,6 @@ export const getGoverningBodyAdminsByPage = async (
       throw new Error(error);
     });
 };
-
 
 export const getGoverningBodyAdminsForTable = async (
   userId: string,
@@ -297,4 +295,12 @@ export const getGoverningBodyAdminsForTable = async (
       pageSize: pageSize,
     })
   ).data;
+};
+
+export const getUsersForGoverningBodyAdminForm = async () => {
+  return await api.get(`GoverningBodies/getUsersForGoverningBodyAdminForm`);
+};
+
+export const checkRoleNameExists = async (roleName: string) => {
+  return await api.get(`GoverningBodies/CheckRoleNameExists/${roleName}`);
 };

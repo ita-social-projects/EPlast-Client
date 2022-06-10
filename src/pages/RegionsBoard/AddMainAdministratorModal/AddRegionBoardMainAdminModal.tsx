@@ -17,7 +17,7 @@ const AddRegionBoardMainAdminModal = ({
 
   return (
     <Modal
-      title="Додати діловода"
+      title="Додати крайового адміністратора"
       visible={visibleModal}
       onCancel={handleCancel}
       footer={null}

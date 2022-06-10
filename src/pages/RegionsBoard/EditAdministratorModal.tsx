@@ -1,7 +1,10 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
 import moment from "moment";
 import React, { useState } from "react";
-import { editAdministrator } from "../../api/governingBodiesApi";
+import {
+  checkRoleNameExists,
+  editAdministrator,
+} from "../../api/governingBodiesApi";
 import { inputOnlyWhiteSpaces } from "../../components/Notifications/Messages";
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import notificationLogic from "../../components/Notifications/Notification";
@@ -43,6 +46,22 @@ const EditAdministratorModal = ({
     );
   };
 
+  const checkRoleName = async () => {
+    const roleValue = form.getFieldValue("governingBodyAdminRole");
+    if (roleValue.trim().length !== 0) {
+      checkRoleNameExists(roleValue).then((response) => {
+        if (response.data) {
+          form.setFields([
+            {
+              name: "governingBodyAdminRole",
+              errors: ["Така роль адміністратора вже існує!"],
+            },
+          ]);
+        }
+      });
+    }
+  };
+
   const handleSubmit = async (values: any) => {
     setLoading(true);
     const newAdmin = admin;
@@ -82,7 +101,7 @@ const EditAdministratorModal = ({
             },
           ]}
         >
-          <Input />
+          <Input onChange={checkRoleName} />
         </Form.Item>
         <Row>
           <Col>

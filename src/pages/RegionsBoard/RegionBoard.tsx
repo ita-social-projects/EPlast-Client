@@ -54,6 +54,7 @@ import {
   dataCantBeFetched,
   failEditAction,
 } from "../../components/Notifications/Messages";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 
 const RegionBoard = () => {
   const history = useHistory();
@@ -232,6 +233,16 @@ const RegionBoard = () => {
       });
   };
 
+  const createNotification = async (userId: Array<string>, message: string) => {
+    await NotificationBoxApi.createNotifications(
+      userId,
+      `${message}: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/regionsBoard/administrations`,
+      `Переглянути`
+    );
+  };
+
   const handleAddGoverningBodyAdmin = async (values: any) => {
     const newAdmin: GoverningBodyAdmin = {
       id: 0,
@@ -243,9 +254,25 @@ const RegionBoard = () => {
       adminType: new AdminType(),
       governingBodyId: 0,
     };
-    await addMainAdmin(newAdmin).catch(() => {
-      notificationLogic("error", failEditAction("роль користувача."));
+
+    await addMainAdmin(newAdmin)
+      .then(async () => {
+        notificationLogic("success", "Роль крайового користувача додано");
+      })
+      .catch(() => {
+        notificationLogic("error", failEditAction("роль користувача."));
+      });
+
+    await createNotification(
+      [newAdmin.userId],
+      `Вам була присвоєна нова роль: '${newAdmin.governingBodyAdminRole}`
+    ).catch(() => {
+      notificationLogic(
+        "error",
+        "Помилка при відправленні повідомлення користувачу"
+      );
     });
+
     getGoverningBodiesAdmins();
     setVisibleAddMainAdminModal(false);
   };
