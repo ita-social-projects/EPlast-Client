@@ -118,9 +118,6 @@ const City = () => {
   const [visibleAddModalDegree, setVisibleAddModalDegree] = useState<boolean>(
     false
   );
-  const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>(
-    {} as UserPlastDegree
-  );
   const documentsToShow = 6;
   const adminsToShow = 6;
   const membersToShow = 9;

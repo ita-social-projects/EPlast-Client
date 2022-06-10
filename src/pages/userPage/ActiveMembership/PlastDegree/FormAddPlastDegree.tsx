@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Form, Select, Button, DatePicker } from "antd";
 import activeMembershipApi, {
   PlastDegree,
+  UserPlastDegree,
   UserPlastDegreePost,
 } from "../../../../api/activeMembershipApi";
 import classes from "./FormAddPlastDegree.module.css";
@@ -20,26 +21,20 @@ import {
 import CityMember from "../../../../models/City/CityMember";
 import { PersonalDataContext } from "../../personalData/PersonalData";
 import UserApi from "../../../../api/UserApi";
+import { RangePickerProps } from "antd/lib/date-picker";
+import moment from "moment";
 
 type FormAddPlastDegreeProps = {
-  availablePlastDegree: Array<PlastDegree>;
+  plastDegrees: Array<PlastDegree>;
+  currentUserDegree?: UserPlastDegree;
   setVisibleModal: (visibleModal: boolean) => void;
   handleAddDegree: () => void;
   resetAvailablePlastDegree: () => Promise<void>;
   userId: string;
-  isCityAdmin?: boolean;
   cancel: boolean;
 };
 
-const FormAddPlastDegree = ({
-  setVisibleModal,
-  userId,
-  availablePlastDegree,
-  handleAddDegree,
-  isCityAdmin,
-  resetAvailablePlastDegree,
-  cancel,
-}: FormAddPlastDegreeProps) => {
+const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   const [form] = Form.useForm();
   const visiableDegree = useRef<boolean>(false);
   const visiableCities = useRef<boolean>(false);
@@ -55,30 +50,30 @@ const FormAddPlastDegree = ({
     const userPlastDegreePost: UserPlastDegreePost = {
       plastDegreeId: info.plastDegree,
       dateStart: info.datepickerStart._d,
-      userId: userId,
+      userId: props.userId,
     };
-    setVisibleModal(false);
+    props.setVisibleModal(false);
     visiableDegree.current = false;
     visiableCities.current = false;
 
     const cityDefault = cities.find((x) => x.name == info.userCity)?.id;
 
     const newCityFollower: CityMember = (
-      await addFollowerWithId(cityDefault as number, userId)
+      await addFollowerWithId(cityDefault as number, props.userId)
     ).data;
     await toggleMemberStatus(newCityFollower.id);
     await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
-    handleAddDegree();
+    props.handleAddDegree();
     form.resetFields();
-    resetAvailablePlastDegree();
+    props.resetAvailablePlastDegree();
     if (UpdateData) {
       await UpdateData();
     }
     await NotificationBoxApi.createNotifications(
-      [userId],
+      [props.userId],
       `Вам було надано ступінь ${degreeName} в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/userpage/activeMembership/${userId}`,
+      `/userpage/activeMembership/${props.userId}`,
       `Дійсному членстві`
     );
     notificationLogic("success", successfulAddDegree());
@@ -89,19 +84,19 @@ const FormAddPlastDegree = ({
       visiableCities.current = true;
       visiableDegree.current = false;
       setFiltredDegrees(
-        availablePlastDegree.filter((item) => item.name === "Пластприят")
+        props.plastDegrees.filter((item) => item.name === "Пластприят")
       );
     } else if (value === "Улад Старшого Пластунства") {
       visiableDegree.current = true;
       visiableCities.current = true;
       setFiltredDegrees(
-        availablePlastDegree.filter((item) => item.name.includes("Старш"))
+        props.plastDegrees.filter((item) => item.name.includes("Старш"))
       );
     } else {
       visiableDegree.current = true;
       visiableCities.current = true;
       setFiltredDegrees(
-        availablePlastDegree.filter((item) => item.name.includes("сеніор"))
+        props.plastDegrees.filter((item) => item.name.includes("сеніор"))
       );
     }
   };
@@ -109,7 +104,7 @@ const FormAddPlastDegree = ({
   const fetchData = async () => {
     const response = await getCities();
     setCities(response.data);
-    const userInfo = await UserApi.getById(userId);
+    const userInfo = await UserApi.getById(props.userId);
     if (userInfo.data.user.city) {
       setDisabled(true);
     }
@@ -120,15 +115,61 @@ const FormAddPlastDegree = ({
 
   useEffect(() => {
     fetchData();
-    if (cancel) {
+    if (props.cancel) {
       form.resetFields();
       visiableDegree.current = false;
       visiableCities.current = false;
     }
-  }, [cancel]);
+  }, [props.cancel]);
+
+  const sortDegrees = (filter: string) => {
+    switch (filter) {
+      case "Улад Пластового Сеніорату":
+        return props.plastDegrees.filter((item) => item.name.includes("сеніор"));
+      case "Улад Старшого Пластунства":
+        return props.plastDegrees.find((item) => item.name.includes("Старш"));
+      default:
+        return;
+    }
+  }
+
+  const getDegreeCategory = (degree: string | undefined) => {
+    if (!degree) return "";
+
+    if (degree.includes("сеніор")) {
+      return "Улад Пластового Сеніорату";
+    }
+    else if (degree.includes("Старш")) {
+      return "Улад Старшого Пластунства";
+    }
+    else if (degree === "Пластприят") {
+      return degree;
+    }
+    else return "";
+  }
+
+  const isDegreeAvailable = (degree: string) => {
+    return !(props.currentUserDegree?.plastDegree.name === degree);
+  }
+
+  const disabledDate: RangePickerProps['disabledDate'] = current => {
+    let previousDegreeStart: moment.Moment = moment(props.currentUserDegree?.dateStart);
+    let bool: boolean = current && previousDegreeStart > current && current > moment(moment.now());
+    return !bool;
+  };
 
   return (
-    <Form name="basic" onFinish={handleFinish} form={form}>
+    <Form
+      name="basic"
+      onFinish={handleFinish}
+      form={form}
+      initialValues={ // this doesn't work yet (wip)
+        {
+          ["plastUlad"]: getDegreeCategory(props.currentUserDegree?.plastDegree.name),
+          ["plastDegree"]: props.currentUserDegree?.plastDegree.name
+        }
+      }
+    >
       <Form.Item
         name="plastUlad"
         rules={[{ required: true, message: emptyInput() }]}
@@ -137,17 +178,20 @@ const FormAddPlastDegree = ({
           onChange={(value) => handleOnChange(value)}
           placeholder="Оберіть Улад"
         >
-          {availablePlastDegree.find((item) => item.name === "Пластприят") && (
-            <Select.Option value="Пластприят">Пластприят</Select.Option>
+          {(
+            <Select.Option
+              value="Пластприят"
+              disabled={!isDegreeAvailable("Пластприят")}
+            >
+              Пластприят
+            </Select.Option>
           )}
-          {availablePlastDegree.find((item) => item.name.includes("Старш")) && (
+          {sortDegrees("Улад Старшого Пластунства") && (
             <Select.Option value="Улад Старшого Пластунства">
               Улад Старшого Пластунства
             </Select.Option>
           )}
-          {availablePlastDegree.filter((item) =>
-            item.name.includes("сеніор")
-          ) && (
+          {sortDegrees("Улад Пластового Сеніорату") && (
             <Select.Option value="Улад Пластового Сеніорату">
               Улад Пластового Сеніорату
             </Select.Option>
@@ -159,10 +203,13 @@ const FormAddPlastDegree = ({
           name="plastDegree"
           rules={[{ required: visiableDegree.current, message: emptyInput() }]}
         >
-          <Select placeholder="Оберіть ступінь">
+          <Select
+            placeholder="Оберіть ступінь"
+            //value={props.currentUserDegree?.plastDegree.name}
+          >
             {filtredDegrees.map((apd) => {
               return (
-                <Select.Option key={apd.id} value={apd.id}>
+                <Select.Option key={apd.id} value={apd.id} disabled={!isDegreeAvailable(apd.name)}>
                   {apd.name}
                 </Select.Option>
               );
@@ -195,6 +242,7 @@ const FormAddPlastDegree = ({
           format="DD.MM.YYYY"
           className={classes.selectField}
           placeholder="Дата надання ступеню"
+          disabledDate={disabledDate}
         />
       </Form.Item>
       <Form.Item>

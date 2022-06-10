@@ -13,20 +13,14 @@ type ModalAddPlastDegreeProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   handleAddDegree: () => void;
 };
-const ModalAddPlastDegree = ({
-  visibleModal,
-  setVisibleModal,
-  isCityAdmin,
-  userId,
-  handleAddDegree,
-}: ModalAddPlastDegreeProps) => {
-  const [availablePlastDegree, setAvailablePlastDegree] = useState<
-    Array<PlastDegree>
-  >([]);
+
+const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
+  const [plastDegrees, setPlastDegrees] = useState<Array<PlastDegree>>([]);
+  const [currentUserDegree, setCurrentUserDegree] = useState<UserPlastDegree>();
   const [cancel, setCancel] = useState<boolean>(false);
 
   const handleCancel = () => {
-    setVisibleModal(false);
+    props.setVisibleModal(false);
     setCancel(true);
   };
 
@@ -43,29 +37,30 @@ const ModalAddPlastDegree = ({
     });
     return aupd;
   };
+
   const fetchData = async () => {
-    await activeMembershipApi.getAllPlastDegrees().then(async (response) => {
-      await activeMembershipApi.getUserPlastDegree(userId).then((res) => {
-        setAvailablePlastDegree(getAvailablePlastDegree(response, res));
-      });
-    });
+    console.log(props.userId);
+    await activeMembershipApi.getAllPlastDegrees().then((response) => {setPlastDegrees(response)});
+    await activeMembershipApi.getUserPlastDegree(props.userId).then((response) => setCurrentUserDegree(response));
   };
+
   useEffect(() => {
-    fetchData();
-  }, [userId]);
+    if (props.visibleModal) fetchData();
+  }, [props.visibleModal]);
+
   return (
     <Modal
-      visible={visibleModal}
+      visible={props.visibleModal}
       onCancel={handleCancel}
       title="Прийняття пластуна до"
       footer={null}
     >
       <FormAddPlastDegree
-        handleAddDegree={handleAddDegree}
-        userId={userId}
-        isCityAdmin={isCityAdmin!}
-        setVisibleModal={setVisibleModal}
-        availablePlastDegree={availablePlastDegree}
+        handleAddDegree={props.handleAddDegree}
+        userId={props.userId}
+        setVisibleModal={props.setVisibleModal}
+        plastDegrees={plastDegrees}
+        currentUserDegree={currentUserDegree}
         resetAvailablePlastDegree={fetchData}
         cancel={cancel}
       />
