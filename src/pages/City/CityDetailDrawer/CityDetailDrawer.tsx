@@ -103,37 +103,16 @@ const CityDetailDrawer = (props: Props) => {
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
-              name="street"
-              label="Вулиця"
+              name="adress"
+              label="Адреса"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.street?.length > 0 ? props.city.street : "---"
+                props.city.adress?.length > 0 ? props.city.adress : "---"
               }
             >
               <Input
                 value={
-                  props.city.street?.length > 0 ? props.city.street : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="houseNumber"
-              label="Номер будинку"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.city.houseNumber?.length > 0
-                  ? props.city.houseNumber
-                  : "---"
-              }
-            >
-              <Input
-                value={
-                  props.city.houseNumber?.length > 0
-                    ? props.city.houseNumber
-                    : "---"
+                  props.city.adress?.length > 0 ? props.city.adress : "---"
                 }
                 disabled
               />
@@ -143,38 +122,17 @@ const CityDetailDrawer = (props: Props) => {
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
-              name="officeNumber"
-              label="Номер офісу/квартири"
+              name="level"
+              label="Рівень"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.officeNumber?.length > 0
-                  ? props.city.officeNumber
-                  : "---"
+                props.city.level > 0 ? props.city.level : "---"
               }
             >
               <Input
                 value={
-                  props.city.officeNumber?.length > 0
-                    ? props.city.officeNumber
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="postIndex"
-              label="Поштовий індекс"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.city.postIndex?.length > 0 ? props.city.postIndex : "---"
-              }
-            >
-              <Input
-                value={
-                  props.city.postIndex?.length > 0
-                    ? props.city.postIndex
+                  props.city.level > 0
+                    ? props.city.level
                     : "---"
                 }
                 disabled
