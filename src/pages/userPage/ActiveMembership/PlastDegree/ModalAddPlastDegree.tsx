@@ -5,6 +5,7 @@ import activeMembershipApi, {
   UserPlastDegree,
 } from "../../../../api/activeMembershipApi";
 import FormAddPlastDegree from "./FormAddPlastDegree";
+import { LoadingOutlined } from "@ant-design/icons";
 
 type ModalAddPlastDegreeProps = {
   userId: string;
@@ -18,30 +19,18 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
   const [plastDegrees, setPlastDegrees] = useState<Array<PlastDegree>>([]);
   const [currentUserDegree, setCurrentUserDegree] = useState<UserPlastDegree>();
   const [cancel, setCancel] = useState<boolean>(false);
+  const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
 
   const handleCancel = () => {
     props.setVisibleModal(false);
+    setIsUserDataLoaded(false);
     setCancel(true);
   };
 
-  const getAvailablePlastDegree = (
-    allDegrees: Array<PlastDegree>,
-    userPlastDegree: UserPlastDegree
-  ): Array<PlastDegree> => {
-    setCancel(false);
-    const aupd: Array<PlastDegree> = [];
-    allDegrees.forEach((d) => {
-      if (userPlastDegree?.plastDegree?.id !== d.id) {
-        aupd.push(d);
-      }
-    });
-    return aupd;
-  };
-
   const fetchData = async () => {
-    console.log(props.userId);
     await activeMembershipApi.getAllPlastDegrees().then((response) => {setPlastDegrees(response)});
     await activeMembershipApi.getUserPlastDegree(props.userId).then((response) => setCurrentUserDegree(response));
+    setIsUserDataLoaded(true);
   };
 
   useEffect(() => {
@@ -52,10 +41,10 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
     <Modal
       visible={props.visibleModal}
       onCancel={handleCancel}
-      title="Прийняття пластуна до"
+      title="Редагування ступіню"
       footer={null}
     >
-      <FormAddPlastDegree
+      {isUserDataLoaded ? <FormAddPlastDegree
         handleAddDegree={props.handleAddDegree}
         userId={props.userId}
         setVisibleModal={props.setVisibleModal}
@@ -63,7 +52,8 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
         currentUserDegree={currentUserDegree}
         resetAvailablePlastDegree={fetchData}
         cancel={cancel}
-      />
+        isModalVisible={props.visibleModal}
+      /> : <LoadingOutlined style={{fontSize: 24}}/> }
     </Modal>
   );
 };
