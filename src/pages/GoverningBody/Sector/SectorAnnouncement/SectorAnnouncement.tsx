@@ -48,6 +48,7 @@ import PicturesWall, {
   AnnouncementGallery,
 } from "../../Announcement/PicturesWallModal";
 import { pinAnnouncement } from "../../../../api/announcementsApi";
+import DeleteConfirm from "./DeleteConfirm";
 
 const classes = require("../../Announcement/Announcement.module.css");
 
@@ -214,9 +215,13 @@ const Announcements = () => {
     notificationLogic("success", "Оголошення опубліковано");
   };
 
-  const handleDelete = (id: number) => {
-    const filteredData = data.filter((d) => d.id !== id);
+  const onDelete = (announcementId: number) => {
+    const filteredData = data.filter((d) => d.id !== announcementId);
     setData([...filteredData]);
+  }
+
+  const handleDelete = (announcementId: number) => {
+    DeleteConfirm(announcementId, onDelete);
   };
 
   const handlePin = async (item: Announcement) => {
