@@ -25,7 +25,7 @@ import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../components/Tooltip";
 
-const AdminAndOkruga = ["Admin", "Голова Округи"];
+const AdminAndOkruga = ["Admin", "Крайовий Адмін", "Голова Округи"];
 const RegionFollowers = () => {
   const { id } = useParams();
   const history = useHistory();

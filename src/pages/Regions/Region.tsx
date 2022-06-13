@@ -838,7 +838,7 @@ const Region = () => {
                           />
                         </Tooltip>
                       </Col>
-                      {activeUserRoles.includes(Roles.Admin) ? (
+                        {(activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.GoverningBodyAdmin)) ? (
                         isActiveRegion ? (
                           <Col offset={1}>
                             <Tooltip title="Заархівувати округу">
