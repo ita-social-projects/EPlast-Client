@@ -21,7 +21,6 @@ import {
 import CityMember from "../../../../models/City/CityMember";
 import { PersonalDataContext } from "../../personalData/PersonalData";
 import UserApi from "../../../../api/UserApi";
-import { RangePickerProps } from "antd/lib/date-picker";
 import moment from "moment";
 
 type FormAddPlastDegreeProps = {
@@ -101,6 +100,11 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     }
   };
 
+  const disabledDate = (current: any) => {
+    let previousDegreeStart = moment(props.currentUserDegree?.dateStart);
+    return current && current > moment() || (current.isBefore(previousDegreeStart) || undefined);
+  };
+
   const fetchData = async () => {
     const response = await getCities();
     setCities(response.data);
@@ -151,12 +155,6 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   const isDegreeAvailable = (degree: string) => {
     return !(props.currentUserDegree?.plastDegree.name === degree);
   }
-
-  const disabledDate: RangePickerProps['disabledDate'] = current => {
-    let previousDegreeStart: moment.Moment = moment(props.currentUserDegree?.dateStart);
-    let bool: boolean = current && previousDegreeStart > current && current > moment(moment.now());
-    return !bool;
-  };
 
   return (
     <Form
@@ -241,8 +239,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         <DatePicker
           format="DD.MM.YYYY"
           className={classes.selectField}
-          placeholder="Дата надання ступеню"
           disabledDate={disabledDate}
+          placeholder="Дата надання ступеню"
         />
       </Form.Item>
       <Form.Item>
