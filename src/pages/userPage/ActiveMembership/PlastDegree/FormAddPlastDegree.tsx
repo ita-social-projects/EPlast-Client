@@ -114,6 +114,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     }
     form.setFieldsValue({
       userCity: userInfo.data.user.city,
+      plastUlad: getDegreeCategory(props.currentUserDegree?.plastDegree.name),
+      plastDegree: props.currentUserDegree?.plastDegree.name
     });
   };
 
@@ -161,12 +163,6 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       name="basic"
       onFinish={handleFinish}
       form={form}
-      initialValues={ // this doesn't work yet (wip)
-        {
-          ["plastUlad"]: getDegreeCategory(props.currentUserDegree?.plastDegree.name),
-          ["plastDegree"]: props.currentUserDegree?.plastDegree.name
-        }
-      }
     >
       <Form.Item
         name="plastUlad"
