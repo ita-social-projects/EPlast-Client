@@ -41,7 +41,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
     <Modal
       visible={props.visibleModal}
       onCancel={handleCancel}
-      title="Редагування ступіню"
+      title="Прийняти пластуна до"
       footer={null}
     >
       {isUserDataLoaded ? <FormAddPlastDegree

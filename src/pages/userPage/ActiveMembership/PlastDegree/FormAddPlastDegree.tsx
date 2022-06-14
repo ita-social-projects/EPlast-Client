@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Form, Select, Button, DatePicker } from "antd";
+import { Form, Select, Button, DatePicker, Spin } from "antd";
 import activeMembershipApi, {
   PlastDegree,
   UserPlastDegree,
@@ -22,6 +22,7 @@ import CityMember from "../../../../models/City/CityMember";
 import { PersonalDataContext } from "../../personalData/PersonalData";
 import UserApi from "../../../../api/UserApi";
 import moment from "moment";
+import { LoadingOutlined } from "@ant-design/icons";
 
 type FormAddPlastDegreeProps = {
   plastDegrees: Array<PlastDegree>;
@@ -36,11 +37,16 @@ type FormAddPlastDegreeProps = {
 
 const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   const [form] = Form.useForm();
+
   const [isDegreeSelectVisible, setDegreeSelectVisible] = useState(false);
   const [isCitySelectVisible, setCitySelectVisible] = useState(true);
+
   const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
   const [cities, setCities] = useState<CityProfile[]>([]);
+
   const [disabled, setDisabled] = useState<boolean>(false);
+
+  const [isFormReady, setFormReady] = useState(false);
   const { UpdateData } = useContext(PersonalDataContext);
 
   const handleFinish = async (info: any) => {
@@ -114,10 +120,15 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     form.setFieldsValue({
       userCity: userInfo.data.user.city,
       plastUlad: props.currentUserDegree ? getDegreeCategory(props.currentUserDegree.plastDegree.name) : undefined,
-      plastDegree: props.currentUserDegree ? props.currentUserDegree.plastDegree.name : undefined,
       datepickerStart: props.currentUserDegree ? moment(props.currentUserDegree.dateStart) : undefined
     });
-    if (sortDegrees(form.getFieldValue("plastUlad"))) setDegreeSelectVisible(true);
+    if (sortDegrees(form.getFieldValue("plastUlad"))) {
+      form.setFieldsValue({
+        plastDegree: props.currentUserDegree ? props.currentUserDegree.plastDegree.name : undefined,
+      })
+      setDegreeSelectVisible(true);
+    }
+    setFormReady(true);
   };
 
   useEffect(() => {
@@ -127,6 +138,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     else {
       form.resetFields();
       setDegreeSelectVisible(false);
+      setFormReady(false);
     }
   }, [props.isModalVisible]);
 
@@ -162,11 +174,13 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   }
 
   return (
+    isFormReady ?
     <Form
       name="basic"
       onFinish={handleFinish}
       form={form}
     >
+      
       <Form.Item
         name="plastUlad"
         rules={[{ required: true, message: emptyInput() }]}
@@ -247,6 +261,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         </Button>
       </Form.Item>
     </Form>
+    : <LoadingOutlined style={{fontSize: 24}}/>
   );
 };
 export default FormAddPlastDegree;
