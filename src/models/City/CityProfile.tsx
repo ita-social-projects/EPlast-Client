@@ -9,7 +9,7 @@ export default class CityProfile {
   phoneNumber: string;
   email: string;
   region: string;
-  adress: string;
+  address: string;
   level: number;
   head: CityAdmin;
   headDeputy: CityAdmin;
@@ -23,7 +23,7 @@ export default class CityProfile {
     this.phoneNumber = "";
     this.email = "";
     this.region = "";
-    this.adress = "";
+    this.address = "";
     this.level = 1;
     this.head = new CityAdmin();
     this.headDeputy = new CityAdmin();

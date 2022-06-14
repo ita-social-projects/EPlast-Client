@@ -107,12 +107,12 @@ const CityDetailDrawer = (props: Props) => {
               label="Адреса"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.adress?.length > 0 ? props.city.adress : "---"
+                props.city.address?.length > 0 ? props.city.address : "---"
               }
             >
               <Input
                 value={
-                  props.city.adress?.length > 0 ? props.city.adress : "---"
+                  props.city.address?.length > 0 ? props.city.address : "---"
                 }
                 disabled
               />

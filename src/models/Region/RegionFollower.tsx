@@ -6,7 +6,7 @@ export default class RegionFollower {
   cityDescription: string;
   logo: string | undefined;
   regionId: string;
-  adress: string;
+  address: string;
   level: number;
   cityURL: string;
   email: string;
@@ -20,7 +20,7 @@ export default class RegionFollower {
     this.cityDescription = "";
     this.logo = "";
     this.regionId = "";
-    this.adress = "";
+    this.address = "";
     this.level = 1;
     this.cityURL = "";
     this.email = "";

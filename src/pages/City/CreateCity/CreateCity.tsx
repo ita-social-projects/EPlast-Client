@@ -184,7 +184,7 @@ const CreateCity = () => {
         logo:
           regionFollower.logo?.length === 0 ? undefined : regionFollower.logo,
         regionId: values.region,
-        adress: values.adress,
+        address: values.address,
         level: values.level,
         cityURL: values.cityURL,
         email: values.email,
@@ -208,7 +208,7 @@ const CreateCity = () => {
         phoneNumber: values.phoneNumber,
         level: values.level,
         region: values.region,
-        adress: values.adress,
+        address: values.address,
         isActive: city.isActive,
       };
       if (!city.id) {
@@ -249,7 +249,7 @@ const CreateCity = () => {
       phoneNumber: newRegionFollower.phoneNumber,
       level: newRegionFollower.level,
       region: appealRegion.regionName,
-      adress: newRegionFollower.adress,
+      address: newRegionFollower.address,
       isActive: city.isActive,
     };
 
@@ -257,6 +257,7 @@ const CreateCity = () => {
   };
 
   const CreateCity = async (newCity: CityProfile, regionFollowerId: number) => {
+
     const responsePromise = createCity(JSON.stringify(newCity));
     const response = await responsePromise;
     city.id = response.data;
@@ -605,16 +606,16 @@ const CreateCity = () => {
             </Col>
             <Col md={11} xs={24}>
               <Form.Item
-                name="adress"
+                name="address"
                 label="Адреса"
                 labelCol={{ span: 24 }}
                 initialValue={
-                  isFollowerPath ? regionFollower.adress : city.adress
+                  isFollowerPath ? regionFollower.address : city.address
                 }
                 rules={descriptionValidation.Street}
               >
                 <Input
-                  value={isFollowerPath ? regionFollower.adress : city.adress}
+                  value={isFollowerPath ? regionFollower.address : city.address}
                   maxLength={51}
                 />
               </Form.Item>
