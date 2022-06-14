@@ -44,6 +44,9 @@ const getPrecautions = async () => {
 const getPrecautionOfGivenUser = async (id: string) => {
   return await api.get(`Precaution/User/Precautions/${id}`, id);
 };
+const getUserAccess = async (id: string) => {
+  return await api.get(`UserAccess/GetUserPrecautionsAccess/${id}`, id);
+};
 const deletePrecaution = async (id: number) => {
   return await api.remove(`Precaution/Delete/${id}`, id);
 };
@@ -84,6 +87,11 @@ const getUserActivePrecautionEndDate = async (userId: string, type: string) => {
     type,
   });
 };
+
+const getUsersForPrecaution = async () => {
+  return await api.get(`Precaution/getUsersForPrecaution`);
+};
+
 export default {
   getUserActivePrecautionEndDate,
   checkUserPrecautionsType,
@@ -93,6 +101,8 @@ export default {
   getPrecautionById,
   getPrecautions,
   getPrecautionOfGivenUser,
+  getUserAccess,
+  getUsersForPrecaution,
   deletePrecaution,
   deleteUserPrecaution,
   addPrecaution,

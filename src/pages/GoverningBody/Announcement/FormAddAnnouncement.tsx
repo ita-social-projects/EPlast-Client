@@ -1,26 +1,29 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable eqeqeq */
+/* eslint-disable prefer-destructuring */
 import React, { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Upload, Select } from "antd";
-import formclasses from "./Form.module.css";
-import {
-  emptyInput,
-  maxLength,
-} from "../../../components/Notifications/Messages";
+import { Form, Button, Row, Col, Upload, Select, Checkbox, Modal } from "antd";
 import ReactQuill from "react-quill";
-import { UploadFile } from "antd/lib/upload/interface";
+import { RcFile, UploadFile } from "antd/lib/upload/interface";
+import { PlusOutlined } from "@ant-design/icons";
+import formclasses from "./Form.module.css";
+import { emptyInput, possibleFileExtensions } from "../../../components/Notifications/Messages";
 import { getGoverningBodiesList } from "../../../api/governingBodiesApi";
 import { GoverningBody } from "../../../api/decisionsApi";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import { getSectorsListByGoverningBodyId } from "../../../api/governingBodySectorsApi";
 import ButtonCollapse from "../../../components/ButtonCollapse/ButtonCollapse";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import notificationLogic from "../../../components/Notifications/Notification";
 
 type FormAddAnnouncementProps = {
-  governingBodyId: number;
+  governingBodyId?: number;
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: (
     title: string,
     text: string,
     images: string[],
+    isPined: boolean,
     gvbId: number,
     sectorId: number
   ) => void;
@@ -31,7 +34,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 ) => {
   const { setVisibleModal, onAdd, governingBodyId } = props;
   const [form] = Form.useForm();
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [gvbLoading, setGvbLoading] = useState<boolean>(false);
@@ -40,9 +42,17 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [selectSectorId, setSelectSectorId] = useState<any>();
   const [selectGoverningBodyId, setSelectGoverningBodyId] = useState<number>();
+  const [isPined, setIsPined] = useState<boolean>(false);
+
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
 
   const handleCancel = () => {
     form.resetFields();
+    setFileList([]);
+    setPhotos([]);
+    setIsPined(false);
     setVisibleModal(false);
   };
 
@@ -50,49 +60,69 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setVisibleModal(false);
   };
 
+  const getBase64 = (img: Blob, callback: Function): any => {
+    const reader = new FileReader();
+    reader.readAsDataURL(img);
+    reader.addEventListener("load", () => callback(reader.result));
+  };
+
   const handleSubmit = (values: any) => {
-    setSubmitLoading(true);
     setVisibleModal(false);
-    form.resetFields();
     onAdd(
       values.title,
       values.text,
       photos,
+      isPined,
       selectGoverningBodyId,
       selectSectorId
     );
-    setSubmitLoading(false);
+    setFileList([]);
+    setPhotos([]);
+    setIsPined(false);
   };
 
-  const getBase64 = (img: Blob, callback: Function) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => callback(reader.result));
-    reader.readAsDataURL(img);
+  const handlePreview = async (file: UploadFile) => {
+    getBase64(file.originFileObj as RcFile, (base64: string) => {
+      setPreviewImage(base64);
+    });
+    setPreviewVisible(true);
+    setPreviewTitle(
+      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+    );
+  };
+
+  const checkFile = (fileName: string) => {
+    const extension = fileName.split(".").reverse()[0].toLowerCase();
+    const isCorrectExtension =
+      extension.indexOf("jpeg") !== -1 ||
+      extension.indexOf("jpg") !== -1 ||
+      extension.indexOf("png") !== -1;
+    if (!isCorrectExtension) {
+      notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
+    }
+    return isCorrectExtension;
   };
 
   const handleUpload = (images: any) => {
+    if (!checkFile(images.file.name)){
+      return;
+    }
     setFileList(images.fileList);
-    if (images.fileList.length === 0) return;
-    getBase64(images.file, (base64: string) => {
+    if (images.fileList.length < fileList.length) {
+      const filteredPhotos: string[] = [];
+      images.fileList.forEach((item: any) => {
+        getBase64(item.originFileObj as RcFile, (base64: string) => {
+          filteredPhotos.push(base64);
+        });
+      });
+      setPhotos(filteredPhotos);
+      return;
+    }
+    setFileList(images.fileList);
+
+    getBase64(images.file as RcFile, (base64: string) => {
       setPhotos([...photos, base64]);
     });
-  };
-
-  const fetchData = async () => {
-    setGvbLoading(true);
-    try {
-      const response = await getGoverningBodiesList();
-      setGoverningBodies(response);
-      form.setFieldsValue({
-        governingBody: response.find(
-          (x: GoverningBody) => x.id === governingBodyId
-        )?.governingBodyName,
-      });
-      setSelectGoverningBodyId(governingBodyId);
-      governingBodyChange(governingBodyId);
-    } finally {
-      setGvbLoading(false);
-    }
   };
 
   const governingBodyChange = async (id: number) => {
@@ -100,11 +130,31 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSectors(response);
   };
 
+  const fetchData = async () => {
+    setGvbLoading(true);
+    try {
+      const response = await getGoverningBodiesList();
+      setGoverningBodies(response);
+
+      if (governingBodyId) {
+        form.setFieldsValue({
+          governingBody: response.find(
+            (x: GoverningBody) => x.id == governingBodyId
+          )?.governingBodyName,
+        });
+        setSelectGoverningBodyId(governingBodyId);
+        governingBodyChange(governingBodyId);
+      }
+    } finally {
+      setGvbLoading(false);
+    }
+  };
+
   const onGvbSelect = async (value: any) => {
     setSectorsLoading(true);
     try {
       form.setFieldsValue({ sector: undefined });
-      const id: number = JSON.parse(value.toString()).id;
+      const { id } = JSON.parse(value.toString());
       setSelectGoverningBodyId(id);
       governingBodyChange(id);
     } finally {
@@ -114,7 +164,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 
   const onSectorSelect = async (value: any) => {
     try {
-      const id: number = JSON.parse(value.toString()).id;
+      const { id } = JSON.parse(value.toString());
       setSelectSectorId(id);
     } catch {
       setSelectSectorId(null);
@@ -127,6 +177,13 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
       form.resetFields();
     }
   }, [props]);
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
 
   return (
     <>
@@ -200,7 +257,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
           <Col md={24} xs={24}>
             <Form.Item
               className={formclasses.formField}
-              initialValue={""}
+              initialValue=""
               label="Тема оголошення"
               labelCol={{ span: 24 }}
               name="title"
@@ -214,7 +271,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
           <Col md={24} xs={24}>
             <Form.Item
               className={formclasses.formField}
-              initialValue={""}
+              initialValue=""
               label="Текст оголошення"
               labelCol={{ span: 24 }}
               name="text"
@@ -230,10 +287,26 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
             accept=".jpeg,.jpg,.png"
             fileList={fileList}
             onChange={handleUpload}
+            onPreview={handlePreview}
             beforeUpload={() => false}
           >
-            {"Upload"}
+            {fileList.length >= 5 ? null : uploadButton}
           </Upload>
+          <Modal
+            visible={previewVisible}
+            title={previewTitle}
+            footer={null}
+            onCancel={() => setPreviewVisible(false)}
+          >
+            <img alt="example" style={{ width: "100%" }} src={previewImage} />
+          </Modal>
+        </Row>
+        <Row>
+          <Form.Item name="remember" valuePropName="checked">
+            <Checkbox onChange={(e) => setIsPined(e.target.checked)}>
+              Закріпити оголошення
+            </Checkbox>
+          </Form.Item>
         </Row>
         <Row justify="start" gutter={[12, 0]}>
           <Col md={24} xs={24}>

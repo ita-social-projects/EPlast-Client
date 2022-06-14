@@ -33,7 +33,7 @@ import classes from "./UserTable.module.css";
 import citiesApi from "../../api/citiesApi";
 import userApi from "../../api/UserApi";
 import User from "../Distinction/Interfaces/User";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
 
@@ -63,6 +63,7 @@ const UsersTable = () => {
   const [dynamicDegrees, setDynamicDegrees] = useState<any[]>([]);
   const [form] = Form.useForm();
   const [canView, setCanView] = useState<boolean>(false);
+  const [tabList, setTabList] = useState<any[]>([]);
   const [, forceUpdate] = useState({});
   const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
   const [isInactive, setIsInactive] = useState(false);
@@ -188,7 +189,7 @@ const UsersTable = () => {
         FilterRoles: filter,
         SearchData: searchData,
       });
-      let jwt = AuthStore.getToken() as string;
+      let jwt = AuthLocalStorage.getToken() as string;
       let user = jwt_decode(jwt) as any;
       setCurrentUser(
         (await userApi.getUserProfileById(user.nameid, user.nameid)).data.user
@@ -196,6 +197,7 @@ const UsersTable = () => {
       let roles = userApi.getActiveUserRoles();
       setCanView(
         roles.includes(Roles.Admin) ||
+          roles.includes(Roles.GoverningBodyAdmin) ||
           roles.includes(Roles.GoverningBodyHead) ||
           roles.includes(Roles.OkrugaHead) ||
           roles.includes(Roles.OkrugaHeadDeputy) ||
@@ -206,6 +208,27 @@ const UsersTable = () => {
           roles.includes(Roles.PlastMember) ||
           roles.includes(Roles.Supporter)
       );
+      let listOfTabs = [
+        {
+          key: "confirmed",
+          tab: "Всі користувачі",
+        },
+      ];
+      if (
+        roles.includes(Roles.Admin) ||
+        roles.includes(Roles.GoverningBodyAdmin)
+      )
+        listOfTabs.push(
+          {
+            key: "interested",
+            tab: "Зацікавлені",
+          },
+          {
+            key: "unconfirmed",
+            tab: "Непідтверджені",
+          }
+        );
+      setTabList(listOfTabs);
       setUsers(response.data.users);
       setTotal(response.data.total);
     } catch (error) {
@@ -390,21 +413,6 @@ const UsersTable = () => {
       }
     }
   };
-
-  const tabList = [
-    {
-      key: "confirmed",
-      tab: "Всі користувачі",
-    },
-    {
-      key: "interested",
-      tab: "Зацікавлені",
-    },
-    {
-      key: "unconfirmed",
-      tab: "Непідтверджені",
-    },
-  ];
 
   const onTabChange = async (key: string) => {
     setPage(1);

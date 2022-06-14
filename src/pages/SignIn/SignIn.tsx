@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import AuthorizeApi from "../../api/authorizeApi";
 import { useHistory } from "react-router-dom";
 import jwt from "jwt-decode";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import GoogleLoginWrapper from "../SignIn/GoogleLoginWrapper";
 import FacebookLoginWrapper from "../SignIn/FacebookLoginWrapper";
 import FacebookData from "../SignIn/FacebookDataInterface";
@@ -44,7 +44,7 @@ export default function () {
 
   const handleSubmit = async (values: any) => {
     await authService.login(values);
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     user = jwt(token);
     history.push(`/userpage/main/${user.nameid}`);
     window.location.reload();
@@ -52,7 +52,7 @@ export default function () {
 
   const handleGoogleResponse = async (response: any) => {
     await authService.sendToken(response.tokenId);
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     user = jwt(token);
     history.push(`/userpage/main/${user.nameid}`);
     window.location.reload();
@@ -60,7 +60,7 @@ export default function () {
 
   const handleFacebookResponse = async (response: FacebookData) => {
     await authService.sendFacebookInfo(response);
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     user = jwt(token);
     history.push(`/userpage/main/${user.nameid}`);
     window.location.reload();

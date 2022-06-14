@@ -14,6 +14,8 @@ import {
 } from "antd";
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
+import jwt_decode from "jwt-decode";
+import { StickyContainer } from "react-sticky";
 import styles from "./EditUserPage.module.css";
 import { Data, Nationality, Religion, Degree, Gender } from "./Interface";
 import avatar from "../../../assets/images/default_user_image.png";
@@ -21,7 +23,7 @@ import userApi from "../../../api/UserApi";
 import ReactInputMask from "react-input-mask";
 import moment, { Moment } from "moment";
 import jwt from "jwt-decode";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import { useParams } from "react-router-dom";
 import notificationLogic from "../../../components/Notifications/Notification";
 import { useHistory } from "react-router-dom";
@@ -39,12 +41,10 @@ import {
   emptyInput,
   minLength,
 } from "../../../components/Notifications/Messages";
-import "../EditUserPage/EditUserPage.less";
+import "./EditUserPage.less";
 import { UpuDegree } from "../Interface/Interface";
-import jwt_decode from "jwt-decode";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "../personalData/PersonalData";
-import { StickyContainer } from "react-sticky";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
@@ -77,7 +77,7 @@ export default function () {
   const { UpdateData } = useContext(PersonalDataContext);
 
   const fetchData = async () => {
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     const user: any = jwt(token);
     let decodedJwt = jwt_decode(token) as any;
     let id = user.nameid;
@@ -85,7 +85,10 @@ export default function () {
       user.nameid != userId ||
       (decodedJwt[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] as string[]).includes(Roles.Admin)
+      ] as string[]).includes(Roles.Admin) ||
+      (decodedJwt[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] as string[]).includes(Roles.GoverningBodyAdmin)
     )
       id = userId;
     await userApi

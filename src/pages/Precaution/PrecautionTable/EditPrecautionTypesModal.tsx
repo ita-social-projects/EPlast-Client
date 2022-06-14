@@ -1,5 +1,5 @@
 import React from "react";
-import { Drawer, Modal } from "antd";
+import { Drawer } from "antd";
 import FormEditPrecautionTypes from "./FormEditPrecautionTypes";
 import PrecautionStore from "./PrecautionStore";
 import { createHook } from "react-sweet-state";
@@ -8,7 +8,7 @@ const EditPrecautionTypesModal = () => {
   const useStore = createHook(PrecautionStore);
   const [state, actions] = useStore();
   
-  const handleCancel = () => actions.setVisibleModal(false);
+  const handleCancel = () => actions.setVisibleAddModal(false);
 
   return (
     <Drawer

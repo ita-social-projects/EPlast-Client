@@ -6,7 +6,7 @@ import { createHook } from "react-sweet-state";
 
 const AddPrecautionModal = () => {
   const handleCancel = () => {
-    actions.setVisibleModal(false);
+    actions.setVisibleAddModal(false);
   };
   const useStore = createHook(PrecautionStore);
   const [state, actions] = useStore();

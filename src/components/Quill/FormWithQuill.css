@@ -1,0 +1,8 @@
+.ql-picker-label .ql-stroke:nth-child(2){
+        display: none;
+}
+
+.ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg {
+    margin-top: -12px;
+    right: 12px;
+}

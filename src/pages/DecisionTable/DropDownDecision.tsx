@@ -5,7 +5,7 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import classes from "./Table.module.css";
 import EditDecisionModal from "./EditDecisionModal";
@@ -77,14 +77,16 @@ const DropDown = (props: Props) => {
     fileName: null,
   });
   const fetchUser = async () => {
-    let jwt = AuthStore.getToken() as string;
+    let jwt = AuthLocalStorage.getToken() as string;
     let decodedJwt = jwt_decode(jwt) as any;
     setUserId(decodedJwt.nameid);
     let roles = decodedJwt[
       "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     ] as string[];
     setUser(roles);
-    setCanEdit(roles.includes(Roles.Admin));
+    setCanEdit(
+      roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin)
+    );
     setRegionAdm(roles.includes(Roles.OkrugaHead));
     setRegionAdmDeputy(roles.includes(Roles.OkrugaHeadDeputy));
     setCityAdm(roles.includes(Roles.CityHead));

@@ -42,13 +42,13 @@ const FormEditPrecautionTypes = () => {
               <Tooltip title="Редагувати перестороги">
                 <EditOutlined
                   className={classes.editIcon}
-                  onClick={() => actions.editShowEdit(item.id)}
+                  onClick={() => actions.editModalShowEdit(item.id)}
                 />
               </Tooltip>,
               <Tooltip title="Видалити пересторогу">
                 <DeleteOutlined
                   className={classes.deleteIcon}
-                  onClick={() => DeleteTypeConfirm(item.id, actions.editHandleDelete)}
+                  onClick={() => DeleteTypeConfirm(item.id, actions.editModalHandleDelete)}
                 />
               </Tooltip>,
             ]}
@@ -72,14 +72,14 @@ const FormEditPrecautionTypes = () => {
               value={state.editTitle}
               onChange={(event) => {
                 if (event.target.value.length < 250) {
-                  actions.editSetTitle(event.target.value)                  
-                  actions.editSetVisRule(false);
-                } else actions.editSetVisRule(true);
+                  actions.editModalSetTitle(event.target.value)                  
+                  actions.editModalSetVisRule(false);
+                } else actions.editModalSetVisRule(true);
               }}
               placeholder="Додати пересторогу"
               maxLength={250}
-              onPressEnter={actions.editHandleAdd}
-              enterButton={<CheckOutlined onClick={actions.editHandleAdd} />}
+              onPressEnter={actions.editModalHandleAdd}
+              enterButton={<CheckOutlined onClick={actions.editModalHandleAdd} />}
             />
           </Item>
           {state.editVisRule ? (
@@ -111,9 +111,9 @@ const FormEditPrecautionTypes = () => {
               })
             }
             maxLength={250}
-            onPressEnter={actions.editHandleEdit}
+            onPressEnter={actions.editModalHandleEdit}
             enterButton={<SaveOutlined />}
-            onSearch={actions.editHandleEdit}
+            onSearch={actions.editModalHandleEdit}
           />
         </Item>
       ) : (

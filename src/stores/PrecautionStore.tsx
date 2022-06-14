@@ -1,17 +1,33 @@
 import { createStore, Action} from 'react-sweet-state';
-import UserPrecautionTableInfo from '../Interfaces/UserPrecauctionTableInfo';
 import notificationLogic from "../../../components/Notifications/Notification";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { failCreateAction, successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../../../components/Notifications/Messages';
+import { dataCantBeFetched, failCreateAction, successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../../../components/Notifications/Messages';
 import PrecautionTableSettings from '../../../models/Precaution/PrecautionTableSettings';
 import precautionApi from "../../../api/precautionApi";
 import Precaution from '../Interfaces/Precaution';
 import UserPrecaution from '../Interfaces/UserPrecaution';
-import adminApi from '../../../api/adminApi';
-import { Roles } from "../../../models/Roles/Roles";
+import SuggestedUser from '../Interfaces/SuggestedUser';
+import UserPrecautionsTableInfo from '../Interfaces/UserPrecauctionsTableInfo';
+import jwt from "jwt-decode";
+import UserPrecautionTableItem from '../Interfaces/UserPrecautionTableItem';
+import AuthLocalStorage from '../../../AuthLocalStorage';
+
+let user: any;
+let curToken = AuthLocalStorage.getToken() as string;
+let roles: string[] = [""];
+user = curToken !== null ? (jwt(curToken) as string) : "";
+roles =
+  curToken !== null
+    ? (user[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] as string[])
+    : [""];
 
 type State = {
+  EmptyUserPrecautionTableItem: UserPrecautionTableItem,
+
   loading: boolean,
+  loadingPrecautionStatus: boolean,
   showDropdown: boolean,
   visibleModal: boolean,
   editVisibleModal: boolean,
@@ -25,11 +41,12 @@ type State = {
   page: number,
   total: number,
 
-  precautions: UserPrecautionTableInfo[],
+  tableData: UserPrecautionsTableInfo,
 
   addDistData: Precaution[],
   loadingUserStatus: boolean,
-  userData: any[]
+  userData: SuggestedUser[],
+  userAccess: { [key: string]: boolean },
 
   editDistData: Precaution[],
   editTitle: string,
@@ -42,7 +59,23 @@ type State = {
 type Actions = typeof actions;
 
 const initialState = { 
+  EmptyUserPrecautionTableItem:{
+    id: 0,
+    number: 0,
+    precautionId: 0,
+    precautionName: "",
+    userId: "",
+    userName: "",
+    reporter: "",
+    reason: "",
+    status: "",
+    date: new Date(),
+    endDate: new Date(),
+    isActive: false,
+  },
+
   loading: false,  
+  loadingPrecautionStatus: false,
   showDropdown: false,
   visibleModal:false,
   editVisibleModal:false,
@@ -56,39 +89,28 @@ const initialState = {
   page:1,
   total: 0,
 
-  precautions: [{
-    count: 0,
-    total: 0,
-    id: 0,
-    number: 0,
-    precautionName: "",
-    userId: "",
-    userName: "",
-    reporter: "",
-    reason: "",
-    status: "",
-    date: new Date(),
-    endDate: new Date(),
-    isActive: false,
-  }],
+  tableData: {
+    totalItems: 0,
+    userPrecautions: [{
+      id: 0,
+      number: 0,
+      precautionId: 0,
+      precautionName: "",
+      userId: "",
+      userName: "",
+      reporter: "",
+      reason: "",
+      status: "",
+      date: new Date(),
+      endDate: new Date(),
+      isActive: false,
+    }],
+  },
 
   addDistData: Array<Precaution>(),
   loadingUserStatus: false,
-  userData: [
-    {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
-  ],
+  userData: Array<SuggestedUser>(),
+  userAccess: {},
 
   editDistData:[{
     name: "",
@@ -105,9 +127,9 @@ const initialState = {
 };
 
 const actions = {
-  handleFetchData:
+  handleGetPrecautionTable:
    (): Action<State> => 
-   async ({setState, getState}) => {    
+   async ({setState, getState, dispatch}) => {     
     const NewTableSettings: PrecautionTableSettings = {
       sortByOrder: getState().sortByOrder,
       statusFilter: getState().statusSorter,
@@ -122,18 +144,33 @@ const actions = {
       loading: true
     });
 
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(
+    await dispatch(actions.getUserAccesses());
+
+    const result: UserPrecautionsTableInfo = await precautionApi.getAllUsersPrecautions(
       NewTableSettings
     );
 
     setState({
-      precautions: res,
+      tableData: result,
       loading: false,
-      total: res[0]?.total
+      total: result?.totalItems
+    });
+  },
+  
+  getUserAccesses:
+   (): Action<State> => 
+   async ({setState}) => {    
+    let newUser: any = jwt(curToken);
+    let result: any;
+    await precautionApi.getUserAccess(newUser.nameid).then((response) => {
+      result = response;
+      setState({
+        userAccess: response.data
+      })      
     });
   },
 
-  setVisibleModal:
+  setVisibleAddModal:
     (visible: boolean): Action<State> =>
       ({setState}) => {
         setState({
@@ -149,7 +186,7 @@ const actions = {
         })      
     },
   
-  editHandleDelete:
+  editModalHandleDelete:
    (id: number): Action<State> =>
    ({setState, getState}) => {
       const filteredData = getState().editDistData.filter((d: { id: number }) => d.id !== id);
@@ -160,7 +197,7 @@ const actions = {
       notificationLogic("success", "Тип перестороги успішно видалено!");
     },
 
-  editHandleAdd:
+  editModalHandleAdd:
    ():Action<State> =>
    async ({setState, getState}) => {
       const newPrecaution: Precaution = {
@@ -180,7 +217,7 @@ const actions = {
       }
     },
 
-  editSetTitle:
+  editModalSetTitle:
    (newTitle: any):Action<State> =>
     async ({setState}) => {
       setState({
@@ -188,7 +225,7 @@ const actions = {
       })
     },  
   
-  editSetVisRule:
+  editModalSetVisRule:
     (newVisRule: boolean):Action<State> =>
      async ({setState}) => {
        setState({
@@ -196,7 +233,7 @@ const actions = {
        })
      }, 
 
-  editShowEdit:
+  editModalShowEdit:
    (id: number):Action<State> =>
     async ({setState, getState}) => {
       const Precaution = (await precautionApi.getPrecautionById(id)).data;
@@ -218,13 +255,13 @@ const actions = {
       }
     },
   
-  editHandleEdit:
+  editModalHandleEdit:
    ():Action<State> =>
-    async ({setState, getState}) => {
+    async ({setState, getState, dispatch}) => {
       if (getState().editCurDist.name.length !== 0) {
         await precautionApi.editPrecaution(getState().editCurDist);
         notificationLogic("success", "Тип перестороги успішно змінено!");
-        actions.editFetchData();
+        dispatch(actions.editFetchData());
         setState({
           editCurDist: {
             name: "",
@@ -249,7 +286,7 @@ const actions = {
     setState({
       visibleModal: false
     });
-    dispatch(actions.handleFetchData());
+    dispatch(actions.handleGetPrecautionTable());
     notificationLogic("success", successfulCreateAction("Догану"));
   },
 
@@ -258,6 +295,14 @@ const actions = {
    ({ setState }) => {    
     setState({
       showDropdown: false
+    });
+  },
+
+  setShowDropdown:
+  (status: boolean): Action<State> => 
+   ({ setState }) => {    
+    setState({
+      showDropdown: status
     });
   },
 
@@ -308,12 +353,16 @@ const actions = {
   handleDeletePrecautionTable:
     (id: number): Action<State> =>      
     ({ setState, getState, dispatch}) => {
-      const filteredData = getState().precautions.filter((d: { id: number }) => d.id !== id);
+      const filteredData = getState().tableData.userPrecautions.filter((d: { id: number }) => d.id !== id);
+      const newTablePrecautions: UserPrecautionsTableInfo = {
+        totalItems: getState().tableData.totalItems - 1,
+        userPrecautions: [...filteredData]
+      }
       setState({
-        precautions: [...filteredData] 
+        tableData: newTablePrecautions
       });
 
-      if (getState().page != 1 && getState().precautions.length == 1) {
+      if (getState().page != 1 && getState().tableData.userPrecautions.length == 1) {
         setState({
           page: getState().page - 1 ,
           total: getState().total -1
@@ -321,7 +370,7 @@ const actions = {
       }
       
       notificationLogic("success", successfulDeleteAction("Пересторогу"));  
-      dispatch(CreateDeleteNotification(id)); 
+      dispatch(actions.CreateDeleteNotification(id)); 
     },
 
   showModalEditTypes:
@@ -345,7 +394,7 @@ const actions = {
       user: any,
       userId: string): Action<State> =>      
     ({ setState, getState, dispatch}) => {
-      const editedData = getState().precautions.filter((d) => {
+      const editedData = getState().tableData.userPrecautions.filter((d) => {
         if (d.id === id) {
           d.precautionName = precaution.name;
           d.date = date;
@@ -360,8 +409,12 @@ const actions = {
         }
         return d;
       });
+      const editedTablePrecautions: UserPrecautionsTableInfo = {
+        totalItems: getState().tableData.totalItems,
+        userPrecautions: [...editedData]
+      }
       setState({
-        precautions: [...editedData] 
+        tableData: editedTablePrecautions
       });
       notificationLogic("success", successfulUpdateAction("Пересторогу"));
       dispatch(CreateEditNotification(userId, precaution.name));
@@ -392,18 +445,19 @@ const actions = {
 
     FormAddPrecaution:
     (newPrecaution: UserPrecaution, form: any):Action<State> =>
-    async () => {
-      console.log("add")
+    async ({dispatch, setState}) => {
       await precautionApi.addUserPrecaution(newPrecaution);
-      actions.setVisibleModal(false);
+      setState({
+        visibleModal: false
+      });
       form.resetFields();
-      actions.handleAdd();
+      dispatch(actions.handleAdd());
       await createNotifications(newPrecaution);
     },
 
-    handleSubmit:
+    addModalHandleSubmit:
     (values: any, form:any): Action<State> => 
-    async () => {
+    async ({dispatch}) => {
       const newPrecaution: UserPrecaution = {
         id: 0,
         precautionId: JSON.parse(values.Precaution).id,
@@ -418,7 +472,6 @@ const actions = {
         reason: values.reason,
         number: values.number,
       };
-      console.log("Submit")
       
       await precautionApi
         .checkUserPrecautionsType(
@@ -429,63 +482,83 @@ const actions = {
           if (response.data) {
             activePrecautionNofication(newPrecaution);
           } else {
-            console.log("aadd")
-            actions.FormAddPrecaution(newPrecaution, form);
+            dispatch(actions.FormAddPrecaution(newPrecaution, form));
           }
         });
     },
 
-    handleCancel:
+    addModalhandleCancel:
     (form:any):Action<State> =>
-    () => {
+    ({dispatch}) => {
       form.resetFields();
-      actions.setVisibleModal(false);
+      dispatch(actions.setVisibleAddModal(false));
     },
 
     fetchDataFormAddPrecaution:
      (): Action<State> =>
      async ({setState}) => {
-      await precautionApi.getPrecautions().then((response) => {
-        setState({
-          addDistData: response.data
-        })
-      });
-      setState({
-        loadingUserStatus: true
+       setState({
+         loadingPrecautionStatus: true
       })
-      await adminApi
-        .getUsersByAnyRole(
-          [
-            [
-              Roles.CityHead,
-              Roles.CityHeadDeputy,
-              Roles.CitySecretary,
-              Roles.EventAdministrator,
-              Roles.GoverningBodyHead,
-              Roles.GoverningBodySecretary,
-              Roles.GoverningBodySectorHead,
-              Roles.GoverningBodySectorSecretary,
-              Roles.KurinHead,
-              Roles.KurinHeadDeputy,
-              Roles.KurinSecretary,
-              Roles.OkrugaHead,
-              Roles.OkrugaHeadDeputy,
-              Roles.OkrugaSecretary,
-              Roles.PlastHead,
-              Roles.PlastMember,
-              Roles.RegionBoardHead,
-              Roles.RegisteredUser,
-              Roles.Supporter,
-            ],
-          ],
-          true
-        )
+      await precautionApi
+        .getPrecautions()
+        .then((response) => {
+          setState({
+            addDistData: response.data,
+            loadingPrecautionStatus: false
+          })          
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("пересторог. Спробуйте пізніше")
+          );
+        });
+
+        setState({
+          loadingUserStatus: true
+        })
+      await precautionApi
+        .getUsersForPrecaution()
         .then((response) => {
           setState({
             userData: response.data,
             loadingUserStatus: false
           })
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("користувачів. Спробуйте пізніше")
+          );
         });
+    },
+
+    CreateDeleteNotification:
+    (id: number): Action<State> =>
+    ({getState}) =>  {
+      const userPrecaution = getState().tableData.userPrecautions.find(
+        (d: { id: number }) => d.id === id
+      );
+      if (userPrecaution) {
+        NotificationBoxApi.createNotifications(
+          [userPrecaution.userId],
+          `Вашу пересторогу: '${userPrecaution.precautionName}' було видалено.`,
+          NotificationBoxApi.NotificationTypes.UserNotifications
+        );
+        NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId).then(
+          (res) => {
+            res.cityRegionAdmins.length !== 0 &&
+              res.cityRegionAdmins.forEach(async (cra) => {
+                await NotificationBoxApi.createNotifications(
+                  [cra.cityAdminId, cra.regionAdminId],
+                  `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' було знято пересторогу: '${userPrecaution.precautionName}'. `,
+                  NotificationBoxApi.NotificationTypes.UserNotifications
+                );
+              });
+          }
+        );
+      }
     },
 };
 
@@ -503,31 +576,6 @@ const activePrecautionNofication = async (newPrecaution: UserPrecaution) => {
         )
       );
     });
-};
-
-const CreateDeleteNotification = 
-  (id: number): Action<State> => 
-  ({ getState }) => {
-    const userPrecaution = getState().precautions.find((d: { id: number }) => d.id === id);
-  if (userPrecaution) {
-    NotificationBoxApi.createNotifications(
-      [userPrecaution.userId],
-      `Вашу пересторогу: '${userPrecaution.precautionName}' було видалено.`,
-      NotificationBoxApi.NotificationTypes.UserNotifications
-    );
-    NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId).then(
-      (res) => {
-        res.cityRegionAdmins.length !== 0 &&
-          res.cityRegionAdmins.forEach(async (cra) => {
-            await NotificationBoxApi.createNotifications(
-              [cra.cityAdminId, cra.regionAdminId],
-              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' було знято пересторогу: '${userPrecaution.precautionName}'. `,
-              NotificationBoxApi.NotificationTypes.UserNotifications
-            );
-          });
-        }
-    );
-  }
 };
 
 const createNotifications = async (userPrecaution: UserPrecaution) => {
@@ -563,7 +611,7 @@ const CreateEditNotification =
       [userId],
       `Вашу пересторогу: '${name}' було змінено. `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/precautions`,
+      `/state.tableData`,
       `Переглянути`
     );
     NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
@@ -573,7 +621,7 @@ const CreateEditNotification =
             [cra.cityAdminId, cra.regionAdminId],
             `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
             NotificationBoxApi.NotificationTypes.UserNotifications,
-            `/precautions`,
+            `/state.tableData`,
             `Переглянути`
           );
         });
@@ -582,5 +630,4 @@ const CreateEditNotification =
 };
 
 const Store = createStore<State, Actions>({initialState, actions});
-
 export default Store;

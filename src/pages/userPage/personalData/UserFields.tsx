@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { Alert, Button, Form, Input, Skeleton, Tooltip } from "antd";
 import moment from "moment";
 import { useParams, useHistory } from "react-router-dom";
+import { StickyContainer } from "react-sticky";
 import Facebook from "../../../assets/images/facebookGreen.svg";
 import Twitter from "../../../assets/images/birdGreen.svg";
 import Instagram from "../../../assets/images/instagramGreen.svg";
-import { StickyContainer } from "react-sticky";
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "./PersonalData";
@@ -449,7 +449,8 @@ export default function () {
               hidden={
                 !(
                   activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin)
+                  activeUserRoles.includes(Roles.Admin) ||
+                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
                 )
               }
               onClick={() => history.push(`/userpage/edit/${userId}`)}
@@ -461,7 +462,8 @@ export default function () {
               hidden={
                 !(
                   activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin)
+                  activeUserRoles.includes(Roles.Admin) ||
+                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
                 )
               }
               onClick={() => history.push(`/cities/page/1`)}
@@ -473,7 +475,8 @@ export default function () {
               hidden={
                 !(
                   activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin)
+                  activeUserRoles.includes(Roles.Admin) ||
+                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
                 ) || activeUserRoles.includes(Roles.RegisteredUser)
               }
               onClick={() => history.push(`/clubs/page/1`)}

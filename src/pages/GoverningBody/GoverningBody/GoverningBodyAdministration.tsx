@@ -22,7 +22,7 @@ import "moment/locale/uk";
 import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../../components/Tooltip";
@@ -49,7 +49,7 @@ const GoverningBodyAdministration = () => {
   const [updated, setUpdated] = useState<boolean>(false);
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserAccess(user.nameid).then((response) => {
       setUserAccesses(response.data);
     });

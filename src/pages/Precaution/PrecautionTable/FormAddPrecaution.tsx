@@ -5,7 +5,7 @@ import formclasses from "./Form.module.css";
 import { createHook } from "react-sweet-state";
 import {
   emptyInput,
-  maxNumber
+  maxNumber,
 } from "../../../components/Notifications/Messages";
 import moment from "moment";
 import {
@@ -18,7 +18,6 @@ const FormAddPrecaution = () => {
   const useStore = createHook(PrecautionStore);
   const [state, actions] = useStore();
   const [form] = Form.useForm();
-
   const dateFormat = "DD.MM.YYYY";
 
   const disabledStartDate = (current: any) => {
@@ -38,7 +37,7 @@ const FormAddPrecaution = () => {
   return (
     <Form
       name="basic"
-      onFinish={(values: any ) => actions.handleSubmit(values, form)}
+      onFinish={(values: any ) => actions.addModalHandleSubmit(values, form)}
       form={form}
       id="area"
       style={{ position: "relative" }}
@@ -109,11 +108,12 @@ const FormAddPrecaution = () => {
             <Select
               className={formclasses.selectField}
               showSearch
+              loading={state.loadingPrecautionStatus}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              {state.addDistData?.map((o) => (
-                <Select.Option key={o.id} value={JSON.stringify(o)}>
-                  {o.name}
+              {state.addDistData?.map((user) => (
+                <Select.Option key={user.id} value={JSON.stringify(user)}>
+                  {user.name}
                 </Select.Option>
               ))}
             </Select>
@@ -140,14 +140,14 @@ const FormAddPrecaution = () => {
               loading={state.loadingUserStatus}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              {state.userData?.map((o) => (
+              {state.userData?.map((user) => (
                 <Select.Option
-                  key={o.id}
-                  value={JSON.stringify(o)}
-                  style={backgroundColor(o)}
-                  disabled={o.isInLowerRole}
+                  key={user.id}
+                  value={JSON.stringify(user)}
+                  style={backgroundColor(user)}
+                  disabled={!user.isAvailable}
                 >
-                  {o.firstName + " " + o.lastName + " (" + o.email + ")"}
+                  {`${user.firstName} ${user.lastName} (${user.email})`}
                 </Select.Option>
               ))}
             </Select>
@@ -256,7 +256,7 @@ const FormAddPrecaution = () => {
             <div className={formclasses.cardButton}>
               <Button
                 key="back"
-                onClick={() => actions.handleCancel(form)}
+                onClick={() => actions.addModalhandleCancel(form)}
                 className={formclasses.buttons}
               >
                 Відмінити

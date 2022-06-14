@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
-import classes from "../../Regions/Form.module.css";
-import { Form, DatePicker, AutoComplete, Select, Button } from "antd";
-import { getClubUsers, getUserClubAccess } from "../../../api/clubsApi";
+import { Form, DatePicker, AutoComplete, Select, Button, Row } from "antd";
 import moment from "moment";
-import {
-  emptyInput,
-  inputOnlyWhiteSpaces,
-} from "../../../components/Notifications/Messages";
-import AuthStore from "../../../stores/AuthStore";
 import jwt from "jwt-decode";
+import { useParams } from "react-router-dom";
+import classes from "../../Regions/Form.module.css";
+import { getClubUsers, getUserClubAccess } from "../../../api/clubsApi";
+import { emptyInput } from "../../../components/Notifications/Messages";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import AdminType from "../../../models/Admin/AdminType";
 import ClubAdmin from "../../../models/Club/ClubAdmin";
 import "./AddClubsSecretaryForm.less";
 import { Roles } from "../../../models/Roles/Roles";
-import { useParams } from "react-router-dom";
 import ClubUser from "../../../models/Club/ClubUser";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
@@ -39,7 +36,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const getUserAccessesForClubs = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserClubAccess(+id, user.nameid).then((response) => {
       setUserClubAccesses(response.data);
     });
@@ -100,10 +97,12 @@ const AddClubsNewSecretaryForm = (props: any) => {
         setLoading(true);
       }}
       form={form}
-      className="formAddSecretaryModal"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      labelAlign="left"
     >
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         style={{ display: props.admin === undefined ? "flex" : "none" }}
         label="Користувач"
         name="userId"
@@ -114,7 +113,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
           },
         ]}
       >
-        <Select showSearch className={classes.inputField}>
+        <Select showSearch>
           {members?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
               {o.firstName + " " + o.lastName}
@@ -124,7 +123,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Тип адміністрування"
         initialValue={
           props.admin === undefined ? "" : props.admin.adminType.adminTypeName
@@ -133,7 +132,6 @@ const AddClubsNewSecretaryForm = (props: any) => {
         rules={descriptionValidation.AdminType}
       >
         <AutoComplete
-          className={classes.inputField}
           options={[
             {
               value: Roles.KurinHead,
@@ -152,7 +150,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Дата початку"
         name="startDate"
         initialValue={
@@ -162,7 +160,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={classes.datePicker}
           disabledDate={disabledStartDate}
           onChange={(e) => setStartDate(e)}
           format="DD.MM.YYYY"
@@ -170,7 +168,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
       </Form.Item>
 
       <Form.Item
-        className={classes.formField}
+        className={classes.formSelectAlignCenter}
         label="Дата кінця"
         name="endDate"
         initialValue={
@@ -182,17 +180,17 @@ const AddClubsNewSecretaryForm = (props: any) => {
         }
       >
         <DatePicker
-          className={classes.inputField}
+          className={classes.datePicker}
           disabledDate={disabledEndDate}
           format="DD.MM.YYYY"
         />
       </Form.Item>
 
-      <Form.Item style={{ textAlign: "right" }}>
+      <Row className={classes.submitRow}>
         <Button type="primary" htmlType="submit" loading={loading}>
           Опублікувати
         </Button>
-      </Form.Item>
+      </Row>
     </Form>
   );
 };

@@ -2,13 +2,13 @@ import React from "react";
 import { Modal, Drawer } from "antd";
 import FormAddDocument from "./FormAddDocument";
 
-interface Props {
+interface AddDocumentsModalProps {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
   onAdd: () => void;
 }
 
-const AddDocumentsModal = ({ visibleModal, setVisibleModal, onAdd }: Props) => {
+const AddDocumentsModal: React.FC<AddDocumentsModalProps> = ({ visibleModal, setVisibleModal, onAdd }) => {
   const handleCancel = () => setVisibleModal(false);
 
   return (

@@ -4,40 +4,31 @@ import Search from "antd/lib/input/Search";
 import columns from "./columns";
 import DropDownPrecautionTable from "./DropDownPrecautionTable";
 import ClickAwayListener from "react-click-away-listener";
-import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
 import PrecautionStore from "../PrecautionTable/PrecautionStore";
-import { Roles } from "../../../models/Roles/Roles";
 import "./Filter.less";
 import { createHook } from "react-sweet-state";
 import AddPrecautionModal from "./AddPrecautionModal";
 import EditPrecautionTypesModal from "./EditPrecautionTypesModal";
+import UserPrecautionTableItem from "../Interfaces/UserPrecautionTableItem";
+
 const { Content } = Layout;
 
 const PrecautionTable = () => {
   const classes = require("./Table.module.css");
-  let user: any;
-  let curToken = AuthStore.getToken() as string;
-  let roles: string[] = [""];
-  user = curToken !== null ? (jwt(curToken) as string) : "";
-  roles =
-    curToken !== null
-      ? (user[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] as string[])
-      : [""];
-  const [recordObj, setRecordObj] = useState<any>(0);
+  
+  const useStore = createHook(PrecautionStore);
+  const [state, actions] = useStore();
+
+  const [recordObj, setRecordObj] = useState<UserPrecautionTableItem>(
+    state.EmptyUserPrecautionTableItem
+  );
   const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
   const [userId, setUserId] = useState<any>(0);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-  const [canEdit] = useState(roles.includes(Roles.Admin));
 
-  const useStore = createHook(PrecautionStore);
-  const [state, actions] = useStore();
-    
   useEffect(() => {
-    actions.handleFetchData();
+    actions.handleGetPrecautionTable();
   }, [
     state.sortByOrder,
     state.statusSorter,
@@ -59,7 +50,7 @@ const PrecautionTable = () => {
         <>
           <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
             <Col>
-              {canEdit === true ? (
+              {state.userAccess["AddPrecaution"] === true ? (
                 <>
                   <Button type="primary" onClick={actions.showModalPrecautionTable}>
                     Додати пересторогу
@@ -81,7 +72,7 @@ const PrecautionTable = () => {
             <div>
               <Table
                 className={classes.table}
-                dataSource={state.precautions}
+                dataSource={state.tableData.userPrecautions}
                 columns={columns}
                 scroll={{ x: 1300 }}
                 onRow={(record) => {
@@ -91,8 +82,8 @@ const PrecautionTable = () => {
                     },
                     onContextMenu: (event) => {
                       event.preventDefault();
-                      state.showDropdown = true;
-                      setRecordObj(record.id);
+                      actions.setShowDropdown(true);
+                      setRecordObj(record);
                       setIsRecordActive(record.isActive);
                       setUserId(record.userId);
                       setX(event.pageX);
@@ -116,19 +107,18 @@ const PrecautionTable = () => {
             </div>
           }
           <ClickAwayListener onClickAway={actions.handleClickAway}>
-            <DropDownPrecautionTable
+            <DropDownPrecautionTable            
               showDropdown={state.showDropdown}
-              record={recordObj}
+              recordId={recordObj.id}
               userId={userId}
-              isRecordActive={isRecordActive}
               pageX={x}
-              pageY={y}
-              canEdit={canEdit}
+              pageY={y}              
               onDelete={actions.handleDeletePrecautionTable}
               onEdit={actions.handleEditPrecautionTable}
+              userAccess={state.userAccess}
+              isActive={recordObj.isActive}
             />
-          </ClickAwayListener>
-          
+          </ClickAwayListener>        
           <AddPrecautionModal/>
           <EditPrecautionTypesModal/>                    
         </>

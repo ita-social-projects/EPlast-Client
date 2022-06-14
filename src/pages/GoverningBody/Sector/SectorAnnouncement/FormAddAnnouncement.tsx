@@ -1,12 +1,11 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable prefer-destructuring */
 import React, { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Upload, Select } from "antd";
-import formclasses from "./Form.module.css";
-import {
-  emptyInput,
-  maxLength,
-} from "../../../../components/Notifications/Messages";
+import { Form, Button, Upload, Select, Checkbox } from "antd";
 import ReactQuill from "react-quill";
 import { UploadFile } from "antd/lib/upload/interface";
+import formclasses from "./Form.module.css";
+import { emptyInput } from "../../../../components/Notifications/Messages";
 import { GoverningBody } from "../../../../api/decisionsApi";
 import SectorProfile from "../../../../models/GoverningBody/Sector/SectorProfile";
 import { getGoverningBodiesList } from "../../../../api/governingBodiesApi";
@@ -22,6 +21,7 @@ type FormAddAnnouncementProps = {
     title: string,
     text: string,
     images: string[],
+    isPined: boolean,
     gvbId: number,
     sectorId: number
   ) => void;
@@ -32,7 +32,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 ) => {
   const { setVisibleModal, onAdd, sectorId, governingBodyId } = props;
   const [form] = Form.useForm();
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [gvbLoading, setGvbLoading] = useState<boolean>(false);
@@ -41,9 +40,12 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
   const [selectSectorId, setSelectSectorId] = useState<any>();
   const [selectGoverningBodyId, setSelectGoverningBodyId] = useState<number>();
+  const [isPined, setIsPined] = useState<boolean>(false);
 
   const handleCancel = () => {
     form.resetFields();
+    setIsPined(false);
+    setFileList([]);
     setVisibleModal(false);
   };
 
@@ -52,17 +54,15 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   };
 
   const handleSubmit = (values: any) => {
-    setSubmitLoading(true);
     setVisibleModal(false);
-    form.resetFields();
     onAdd(
       values.title,
       values.text,
       photos,
+      isPined,
       selectGoverningBodyId,
       selectSectorId
     );
-    setSubmitLoading(false);
   };
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -112,7 +112,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
     setSectorsLoading(true);
     try {
       form.setFieldsValue({ selectSector: undefined });
-      const id: number = JSON.parse(value.toString()).id;
+      const { id } = JSON.parse(value.toString());
       setSelectGoverningBodyId(id);
       governingBodyChange(id);
     } finally {
@@ -122,7 +122,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
 
   const onSectorSelect = async (value: any) => {
     try {
-      const id: number = JSON.parse(value.toString()).id;
+      const { id } = JSON.parse(value.toString());
       setSelectSectorId(id);
     } catch {
       setSelectSectorId(null);
@@ -146,123 +146,106 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
         id="area"
         style={{ position: "relative" }}
       >
-        <Row justify="start" gutter={[12, 0]}>
-          <Col md={24} xs={24}>
-            <Form.Item
-              className={formclasses.formField}
-              label="Орган"
-              labelCol={{ span: 24 }}
-              name="selectGoverningBody"
-              rules={[
-                {
-                  required: true,
-                  message: emptyInput(),
-                },
-              ]}
-            >
-              <Select
-                showSearch
-                loading={gvbLoading}
-                onChange={(value) => onGvbSelect(value)}
-              >
-                {governingBodies?.map((o) => (
-                  <Select.Option key={o.id} value={JSON.stringify(o)}>
-                    {o.governingBodyName}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row justify="start" gutter={[12, 0]}>
-          <Col md={24} xs={24}>
-            <Form.Item
-              className={formclasses.formField}
-              label="Напрям"
-              labelCol={{ span: 24 }}
-              name="selectSector"
-              rules={[
-                {
-                  message: emptyInput(),
-                },
-              ]}
-            >
-              <Select
-                showSearch
-                allowClear
-                loading={sectorsLoading}
-                onChange={(value) => onSectorSelect(value)}
-              >
-                {sectors?.map((o) => (
-                  <Select.Option key={o.id} value={JSON.stringify(o)}>
-                    {o.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row justify="start" gutter={[12, 0]}>
-          <Col md={24} xs={24}>
-            <Form.Item
-              className={formclasses.formField}
-              initialValue={""}
-              label="Тема оголошення"
-              labelCol={{ span: 24 }}
-              name="title"
-              rules={descriptionValidation.Announcements}
-            >
-              <ReactQuill theme="snow" placeholder="Введіть текст..." />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row justify="start" gutter={[12, 0]}>
-          <Col md={24} xs={24}>
-            <Form.Item
-              className={formclasses.formField}
-              initialValue={""}
-              label="Текст оголошення"
-              labelCol={{ span: 24 }}
-              name="text"
-              rules={descriptionValidation.Announcements}
-            >
-              <ReactQuill theme="snow" placeholder="Введіть текст..." />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Upload
-            listType="picture-card"
-            accept=".jpeg,.jpg,.png"
-            fileList={fileList}
-            onChange={handleUpload}
-            beforeUpload={() => false}
+        <Form.Item
+          className={formclasses.formField}
+          label="Орган"
+          labelCol={{ span: 24 }}
+          name="selectGoverningBody"
+          rules={[
+            {
+              required: true,
+              message: emptyInput(),
+            },
+          ]}
+        >
+          <Select
+            showSearch
+            loading={gvbLoading}
+            onChange={(value) => onGvbSelect(value)}
           >
-            {"Upload"}
-          </Upload>
-        </Row>
-        <Row justify="start" gutter={[12, 0]}>
-          <Col md={24} xs={24}>
-            <Form.Item>
-              <div className={formclasses.cardButton}>
-                <Button
-                  key="back"
-                  onClick={handleCancel}
-                  className={formclasses.buttons}
-                >
-                  Відмінити
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className={formclasses.buttons}
-                >
-                  Опублікувати
-                </Button>
-              </div>
-            </Form.Item>
-          </Col>
-        </Row>
+            {governingBodies?.map((o) => (
+              <Select.Option key={o.id} value={JSON.stringify(o)}>
+                {o.governingBodyName}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          className={formclasses.formField}
+          label="Напрям"
+          labelCol={{ span: 24 }}
+          name="selectSector"
+          rules={[
+            {
+              message: emptyInput(),
+            },
+          ]}
+        >
+          <Select
+            showSearch
+            allowClear
+            loading={sectorsLoading}
+            onChange={(value) => onSectorSelect(value)}
+          >
+            {sectors?.map((o) => (
+              <Select.Option key={o.id} value={JSON.stringify(o)}>
+                {o.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          className={formclasses.formField}
+          initialValue=""
+          label="Тема оголошення"
+          labelCol={{ span: 24 }}
+          name="title"
+          rules={descriptionValidation.Announcements}
+        >
+          <ReactQuill theme="snow" placeholder="Введіть текст..." />
+        </Form.Item>
+        <Form.Item
+          className={formclasses.formField}
+          initialValue=""
+          label="Текст оголошення"
+          labelCol={{ span: 24 }}
+          name="text"
+          rules={descriptionValidation.Announcements}
+        >
+          <ReactQuill theme="snow" placeholder="Введіть текст..." />
+        </Form.Item>
+        <Upload
+          listType="picture-card"
+          accept=".jpeg,.jpg,.png"
+          fileList={fileList}
+          onChange={handleUpload}
+          beforeUpload={() => false}
+        >
+          Upload
+        </Upload>
+        <Form.Item name="remember" valuePropName="checked">
+          <Checkbox onChange={(e) => setIsPined(e.target.checked)}>
+            Закріпити оголошення
+          </Checkbox>
+        </Form.Item>
+        <Form.Item>
+          <div className={formclasses.cardButton}>
+            <Button
+              key="back"
+              onClick={handleCancel}
+              className={formclasses.buttons}
+            >
+              Відмінити
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className={formclasses.buttons}
+            >
+              Опублікувати
+            </Button>
+          </div>
+        </Form.Item>
       </Form>
     </>
   );

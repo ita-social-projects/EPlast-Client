@@ -5,7 +5,7 @@ import "./Approvers.less";
 import AddUser from "../../../assets/images/user_add.png";
 import { ApproversData } from "../Interface/Interface";
 import jwt from "jwt-decode";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import userApi from "../../../api/UserApi";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -49,7 +49,7 @@ const Assignments = () => {
 
   const fetchData = async () => {
     setLoadingApprovers(false);
-    const token = AuthStore.getToken() as string;
+    const token = AuthLocalStorage.getToken() as string;
     const user: any = jwt(token);
     await userApi
       .getApprovers(userId, user.nameid)

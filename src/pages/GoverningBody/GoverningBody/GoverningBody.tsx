@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
@@ -11,9 +12,7 @@ import {
   Tooltip,
   Badge,
   Avatar,
-  Drawer,
   List,
-  Carousel,
 } from "antd";
 import {
   EditOutlined,
@@ -22,9 +21,12 @@ import {
   ExclamationCircleOutlined,
   FileTextOutlined,
   LockOutlined,
-  LeftOutlined,
-  RightOutlined,
 } from "@ant-design/icons";
+import Title from "antd/lib/typography/Title";
+import jwt from "jwt-decode";
+import Paragraph from "antd/lib/typography/Paragraph";
+import moment from "moment";
+import { Markup } from "interweave";
 import {
   getAnnouncementsById,
   getGoverningBodyById,
@@ -32,14 +34,12 @@ import {
   getUserAccess,
   removeGoverningBody,
   addAnnouncement,
-  getAnnouncementsByPage,
 } from "../../../api/governingBodiesApi";
 import "./GoverningBody.less";
 import CityDefaultLogo from "../../../assets/images/default_city_image.jpg";
 import UserDefaultLogo from "../../../assets/images/no-avatar.png";
 import GoverningBodyProfile from "../../../models/GoverningBody/GoverningBodyProfile";
 import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
-import Title from "antd/lib/typography/Title";
 import Spinner from "../../Spinner/Spinner";
 import GoverningBodyDetailDrawer from "../GoverningBodyDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
@@ -47,18 +47,14 @@ import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddGoverningBodiesSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
-import AuthStore from "../../../stores/AuthStore";
-import jwt from "jwt-decode";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
-import Paragraph from "antd/lib/typography/Paragraph";
 import userApi from "../../../api/UserApi";
-import moment from "moment";
 import GoverningBodyDocument from "../../../models/GoverningBody/GoverningBodyDocument";
 import GoverningBodyAnnouncement from "../../../models/GoverningBody/GoverningBodyAnnouncement";
 import AddDocumentModal from "../AddDocumentModal/AddDocumentModal";
 import {
   addSectorAnnouncement,
-  getSectorAnnouncementsById,
   getSectorLogo,
 } from "../../../api/governingBodySectorsApi";
 import AddAnnouncementModal from "../Announcement/AddAnnouncementModal";
@@ -66,11 +62,10 @@ import { getUsersByAllRoles } from "../../../api/adminApi";
 import { Roles } from "../../../models/Roles/Roles";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { Markup } from "interweave";
-import InfiniteScroll from "react-infinite-scroll-component";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
+
 const classes = require("../Announcement/Announcement.module.css");
 
 const GoverningBody = () => {
@@ -113,9 +108,6 @@ const GoverningBody = () => {
   const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
 
   const [announcementsCount, setAnnouncementsCount] = useState<number>(0);
-  const [listLoading, setListLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
 
   const deleteGoverningBody = async () => {
     await removeGoverningBody(governingBody.id);
@@ -172,50 +164,34 @@ const GoverningBody = () => {
     return result;
   };
 
-  const newAnnouncementNotification = async () => {
-    let usersId = ((await getUsers()).data as ShortUserInfo[]).map((x) => x.id);
-    await NotificationBoxApi.createNotifications(
-      usersId,
-      "Додане нове оголошення.",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/announcements/page/1`,
-      `Переглянути`
-    );
-  };
-
-  const onAnnouncementAdd = async (
-    title: string,
-    text: string,
-    images: string[],
-    gvbId: number,
-    sectorId: number
+  const newAnnouncementNotification = async (
+    governigBodyId: number,
+    sectorId?: number
   ) => {
-    setVisibleAddModal(false);
-    setLoading(true);
-    newAnnouncementNotification();
-    let newAnnouncement: GoverningBodyAnnouncement;
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (x) => x.id
+    );
     if (sectorId) {
-      await addSectorAnnouncement(title, text, images, +sectorId);
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/sector/announcements/${governigBodyId}/${sectorId}/1`,
+        `Переглянути`
+      );
     } else {
-      if (+id === gvbId) {
-        const announcementId = (
-          await addAnnouncement(title, text, images, +gvbId)
-        ).data;
-        newAnnouncement = (await getAnnouncementsById(announcementId)).data;
-        setAnnouncements((old: GoverningBodyAnnouncement[]) => [
-          newAnnouncement,
-          ...old,
-        ]);
-      } else {
-        await addAnnouncement(title, text, images, +gvbId);
-      }
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/governingBodies/announcements/${governigBodyId}/1`,
+        `Переглянути`
+      );
     }
-    setLoading(false);
-    notificationLogic("success", "Оголошення опубліковано");
   };
 
   const showFullAnnouncement = async (annId: number) => {
-    let pics: AnnouncementGallery[] = [];
+    const pics: AnnouncementGallery[] = [];
     await getAnnouncementsById(annId).then((response) => {
       response.data.images.map((image: any) => {
         pics.push({
@@ -227,7 +203,7 @@ const GoverningBody = () => {
         title: (
           <div className={classes.announcementDate}>
             {response.data.user.firstName} {response.data.user.lastName}
-            <div>{response.data.date.toString().substring(0, 10)}</div>
+            <div>{moment(response.data.date).format("DD.MM.YYYY")}</div>
           </div>
         ),
         content: (
@@ -260,7 +236,7 @@ const GoverningBody = () => {
   }
 
   const getUserAccesses = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     let result: any;
     await getUserAccess(user.nameid).then((response) => {
       result = response;
@@ -273,7 +249,7 @@ const GoverningBody = () => {
     setLoading(true);
     try {
       const response = await getGoverningBodyById(+id);
-      const governingBodyViewModel = response.data.governingBodyViewModel;
+      const governingBodyViewModel = response.governingBodyViewModel;
       const admins = [
         governingBodyViewModel.head,
         ...governingBodyViewModel.administration,
@@ -289,38 +265,62 @@ const GoverningBody = () => {
       );
 
       await getUserAccesses();
-      setAnnouncementsCount(response.data.announcementsCount);
+      setAnnouncementsCount(response.announcementsCount);
       setGoverningBody(governingBodyViewModel);
       setGoverningBodyHead(governingBodyViewModel.head);
       setAdmins(admins);
 
       setDocuments(governingBodyViewModel.documents);
-      setDocumentsCount(response.data.documentsCount);
+      setDocumentsCount(response.documentsCount);
       setSectors(governingBodyViewModel.sectors);
-      loadMoreData();
+      setAnnouncements(governingBodyViewModel.announcements);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAdminAdd = () => {
-    setVisible(false);
+  const onAnnouncementAdd = async (
+    title: string,
+    text: string,
+    images: string[],
+    isPined: boolean,
+    gvbId: number,
+    sectorId: number
+  ) => {
+    setVisibleAddModal(false);
+    setLoading(true);
+    let newAnnouncement: GoverningBodyAnnouncement;
+    if (sectorId) {
+      await addSectorAnnouncement(
+        title,
+        text,
+        images,
+        isPined,
+        +gvbId,
+        +sectorId
+      );
+      newAnnouncementNotification(gvbId, sectorId);
+    } else if (+id === gvbId) {
+      const announcementId = (
+        await addAnnouncement(title, text, images, isPined, +gvbId)
+      ).data;
+      newAnnouncement = (await getAnnouncementsById(announcementId)).data;
+      setAnnouncements((old: GoverningBodyAnnouncement[]) => [
+        newAnnouncement,
+        ...old,
+      ]);
+      getGoverningBody();
+      newAnnouncementNotification(gvbId);
+    } else {
+      await addAnnouncement(title, text, images, isPined, +gvbId);
+      newAnnouncementNotification(gvbId);
+    }
+    setLoading(false);
+    notificationLogic("success", "Оголошення опубліковано");
   };
 
-  const loadMoreData = async () => {
-    if (listLoading) {
-      return;
-    }
-    try {
-      setListLoading(true);
-      const response = await getAnnouncementsByPage(page, pageSize, +id);
-      for (let i = 0; i < response.data.item2; ++i) {
-        setAnnouncements((old) => [...old, response.data.item1[i]]);
-      }
-    } finally {
-      setListLoading(false);
-      setPage(page + 1);
-    }
+  const handleAdminAdd = () => {
+    setVisible(false);
   };
 
   useEffect(() => {
@@ -360,7 +360,7 @@ const GoverningBody = () => {
             <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>
                 {governingBodyLogoLoading ? (
-                  <Skeleton.Avatar active shape={"square"} size={172} />
+                  <Skeleton.Avatar active shape="square" size={172} />
                 ) : (
                   <img
                     src={governingBodyLogo64}
@@ -501,7 +501,24 @@ const GoverningBody = () => {
 
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <Title level={4}>Оголошення</Title>
+            <Title level={4}>
+              Оголошення
+              <a
+                onClick={() =>
+                  history.push(
+                    `/governingBodies/announcements/${governingBody.id}/1`
+                  )
+                }
+              >
+                {announcementsCount !== 0 &&
+                userAccesses["ViewAnnouncements"] ? (
+                  <Badge
+                    count={announcementsCount}
+                    style={{ backgroundColor: "#3c5438" }}
+                  />
+                ) : null}
+              </a>
+            </Title>
             <Row
               className="governingBodyItems"
               justify="center"
@@ -510,37 +527,27 @@ const GoverningBody = () => {
               {userAccesses["ViewAnnouncements"] ? (
                 announcementsCount > 0 ? (
                   <div
-                    id="scrollableDiv"
                     style={{
                       width: "100%",
                       height: 400,
-                      overflow: "auto",
+                      overflow: "hidden",
                     }}
                   >
-                    <InfiniteScroll
-                      dataLength={announcements.length}
-                      next={loadMoreData}
-                      hasMore={true}
-                      loader={<></>}
-                      scrollableTarget="scrollableDiv"
-                    >
-                      <List
-                        dataSource={announcements}
-                        renderItem={(item) => (
-                          <List.Item
-                            key={item.id}
-                            onClick={() => showFullAnnouncement(item.id)}
-                          >
-                            <List.Item.Meta
-                              title={<Markup content={item.title} />}
-                              description={item.date
-                                .toString()
-                                .substring(0, 10)}
-                            ></List.Item.Meta>
-                          </List.Item>
-                        )}
-                      />
-                    </InfiniteScroll>
+                    <List
+                      dataSource={announcements}
+                      renderItem={(item) => (
+                        <List.Item
+                          className="announcementItem"
+                          key={item.id}
+                          onClick={() => showFullAnnouncement(item.id)}
+                        >
+                          <List.Item.Meta
+                            title={<Markup content={item.title} />}
+                            description={moment(item.date).format("DD.MM.YYYY")}
+                          />
+                        </List.Item>
+                      )}
+                    />
                   </div>
                 ) : (
                   <Col>
@@ -831,7 +838,7 @@ const GoverningBody = () => {
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
           governingBodyId={+id}
-        ></AddGoverningBodiesSecretaryForm>
+        />
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
