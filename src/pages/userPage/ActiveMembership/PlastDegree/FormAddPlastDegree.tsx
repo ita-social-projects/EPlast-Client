@@ -79,6 +79,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   };
 
   const handleOnChange = async (value: any) => {
+    form.setFieldsValue({plastDegree : undefined});
     if (value === "Пластприят") {
       setDegreeSelectVisible(false);
       setFiltredDegrees(

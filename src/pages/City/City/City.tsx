@@ -38,7 +38,6 @@ import {
   removeCity,
   getUserCityAccess,
   getCheckPlastMember,
-  toggleMemberStatus,
   removeFollower,
   getAllAdmins,
   isUserApproved,
@@ -67,7 +66,6 @@ import {
   successfulUnarchiveAction,
   successfulArchiveAction,
   failArchiveAction,
-  failApproveAction,
 } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
@@ -75,9 +73,6 @@ import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import ModalAddPlastDegree from "../../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
-import activeMembershipApi, {
-  UserPlastDegree,
-} from "../../../api/activeMembershipApi";
 
 const City = () => {
   const history = useHistory();
@@ -599,16 +594,6 @@ const City = () => {
     setIsLoadingMemberId(memberId ?? NaN);
 
     setFollowers(followers.filter((f) => f.id !== memberId));
- 
-    if (members.length < 9) {
-      const member = await toggleMemberStatus(memberId ?? NaN);
-
-      member.data.user.imagePath = (
-        await userApi.getImage(member.data.user.imagePath)
-      ).data;
-
-      setMembers([...members, member.data]);
-    }
 
     const response = await getCityById(+id);
     setMembersCount(response.data.memberCount);
