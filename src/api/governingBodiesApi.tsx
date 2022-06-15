@@ -32,18 +32,19 @@ export const getGoverningBodiesByPage = async (
   pageSize: number,
   nameFilter?: string
 ) => {
-  const { data } = await api.get(`GoverningBodies/${page}`,
-    {
-      page,
-      pageSize,
-      nameFilter
-    }
-  );
+  const { data } = await api.get(`GoverningBodies/${page}`, {
+    page,
+    pageSize,
+    nameFilter,
+  });
   return data;
 };
 
 export const createGoverningBody = async (sendedData: any) => {
-  const { data } = await api.post("GoverningBodies/CreateGoverningBody", sendedData);
+  const { data } = await api.post(
+    "GoverningBodies/CreateGoverningBody",
+    sendedData
+  );
   return data;
 };
 
@@ -260,6 +261,26 @@ export const getAllUserId = async () => {
   });
 };
 
+export const getGoverningBodiesAdmins = async () => {
+  return await api.get("GoverningBodies/GoverningBodyAdmins").catch((error) => {
+    throw new Error(error);
+  });
+};
+
+export const getGoverningBodyAdminsByPage = async (
+  pageNumber: number,
+  pageSize: number
+) => {
+  return await api
+    .get(`GoverningBodies/GoverningBodyAdminsByPage/${pageNumber}`, {
+      pageNumber,
+      pageSize,
+    })
+    .catch((error) => {
+      throw new Error(error);
+    });
+};
+
 export const getGoverningBodyAdminsForTable = async (
   userId: string,
   isActive: boolean,
@@ -274,4 +295,12 @@ export const getGoverningBodyAdminsForTable = async (
       pageSize: pageSize,
     })
   ).data;
+};
+
+export const getUsersForGoverningBodyAdminForm = async () => {
+  return await api.get(`GoverningBodies/getUsersForGoverningBodyAdminForm`);
+};
+
+export const checkRoleNameExists = async (roleName: string) => {
+  return await api.get(`GoverningBodies/CheckRoleNameExists/${roleName}`);
 };

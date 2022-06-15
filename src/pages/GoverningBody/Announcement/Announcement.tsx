@@ -46,6 +46,7 @@ import UserApi from "../../../api/UserApi";
 import PicturesWall, { AnnouncementGallery } from "./PicturesWallModal";
 import { addSectorAnnouncement } from "../../../api/governingBodySectorsApi";
 import { pinAnnouncement } from "../../../api/announcementsApi";
+import DeleteConfirm from "./DeleteConfirm";
 
 const classes = require("./Announcement.module.css");
 
@@ -225,10 +226,16 @@ const Announcements = () => {
       setVisibleAddModal(false);
     }
   };
-  const handleDelete = (announcementId: number) => {
+
+  const onDelete = (announcementId: number) => {
     const filteredData = data.filter((d) => d.id !== announcementId);
     setData([...filteredData]);
+  }
+
+  const handleDelete = (announcementId: number) => {
+    DeleteConfirm(announcementId, onDelete);
   };
+
 
   const handlePin = async (item: Announcement) => {
     await pinAnnouncement(item.id);

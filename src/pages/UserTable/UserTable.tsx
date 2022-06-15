@@ -12,7 +12,7 @@ import {
   Card,
 } from "antd";
 import "./Filter.less";
-import { getUsersForTableByPage } from "../../api/adminApi";
+import { getUsersByAllRoles, getUsersForTableByPage } from "../../api/adminApi";
 import clubsApi from "../../api/clubsApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
@@ -175,7 +175,31 @@ const UsersTable = () => {
   };
 
   const fetchData = async () => {
-    setLoading(false);
+    try {
+      setLoading(false);
+      if (currentTabName === "registered") {
+        const registeredUsers = new Array<string>();
+        registeredUsers.push(Roles.RegisteredUser);
+        registeredUsers.push(Roles.Supporter);
+        const response = await getUsersForTableByPage({
+          Page: page,
+          PageSize: pageSize,
+          Cities: dynamicCities,
+          Regions: dynamicRegions,
+          Clubs: dynamicClubs,
+          Degrees: dynamicDegrees,
+          Tab: "confirmed",
+          SortKey: sortKey,
+          FilterRoles: registeredUsers,
+          SearchData: searchData,
+        });
+        setUsers(response.data.users);
+        setTotal(response.data.total);
+        return;
+      }
+    } finally {
+      setLoading(true);
+    }
     try {
       const response = await getUsersForTableByPage({
         Page: page,
@@ -220,8 +244,8 @@ const UsersTable = () => {
       )
         listOfTabs.push(
           {
-            key: "interested",
-            tab: "Зацікавлені",
+            key: "registered",
+            tab: "Зголошені",
           },
           {
             key: "unconfirmed",
