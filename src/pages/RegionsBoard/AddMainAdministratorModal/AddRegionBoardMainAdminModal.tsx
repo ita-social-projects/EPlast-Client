@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Drawer } from "antd";
+import { Modal } from "antd";
 import AddRegionBoardMainAdminForm from "./AddRegionBoardMainAdminForm";
 
 interface Props {
@@ -26,7 +26,7 @@ const AddRegionBoardMainAdminModal = ({
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         handleAddGoverningBodyAdmin={handleAddGoverningBodyAdmin}
-      ></AddRegionBoardMainAdminForm>
+       />
     </Modal>
   );
 };

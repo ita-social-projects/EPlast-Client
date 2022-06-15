@@ -277,10 +277,6 @@ const RegionBoard = () => {
     setVisibleAddMainAdminModal(false);
   };
 
-  const openPDF = async (item: any) => {
-    const pdf = await decisionsApi.getPdf(item.id);
-    window.open(pdf);
-  };
 
   const getGoverningBodiesAdmins = async () => {
     try {
@@ -290,7 +286,6 @@ const RegionBoard = () => {
       const responseAdmins = response.data.item1;
       await loadGbAdminsPhotos(responseAdmins);
       setAdmins(responseAdmins);
-      console.log(response);
     } finally {
       setPhotosLoading(false);
     }
