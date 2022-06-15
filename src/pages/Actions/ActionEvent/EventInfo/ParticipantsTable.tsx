@@ -192,27 +192,27 @@ const ParticipantsTable = ({
     },
   ];
 
-  if (userAccesses["ApproveParticipant"] && !isEventFinished) {
-    columns.push(
-      {
-        title: "Відвідав подію",
-        dataIndex: "wasPresent",
-        key: "eventParticipant",
-        align: "center",
-        render: (wasPresent: boolean, record: EventParticipant) => (
-          <>
-            <Checkbox
-              onChange={() => changePresentofParticipant(record.participantId)}
-              defaultChecked={wasPresent}
-            />
-          </>
-        ),
-      },
-      {
+  if (userAccesses["ApproveParticipant"]) {
+    columns.push({
+      title: "Відвідав подію",
+      dataIndex: "wasPresent",
+      key: "eventParticipant",
+      align: "center",
+      render: (wasPresent: boolean, record: EventParticipant) => (
+        <>
+          <Checkbox
+            onChange={() => changePresentofParticipant(record.participantId)}
+            defaultChecked={wasPresent}
+          />
+        </>
+      ),
+    });
+    if (!isEventFinished) {
+      columns.push({
         title: "Змінити статус",
         dataIndex: "changeStatus",
         key: "changeStatus",
-        render: (text, record) => (
+        render: (record) => (
           <Space size="small">
             {record.status != participantStatuses.Approved ? (
               <Button
@@ -279,8 +279,8 @@ const ParticipantsTable = ({
             )}
           </Space>
         ),
-      }
-    );
+      });
+    }
   }
 
   return <Table columns={columns} dataSource={Participants} />;
