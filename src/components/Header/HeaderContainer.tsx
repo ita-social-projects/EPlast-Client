@@ -212,7 +212,10 @@ const HeaderContainer = () => {
               count={notifications.filter((n) => n.checked === false).length}
             ></Badge>
             <Menu.Item className={classes.headerItem} key="4">
-              <Dropdown overlay={primaryMenu}>
+              <Dropdown
+                overlayStyle={{ position: "fixed" }}
+                overlay={primaryMenu}
+              >
                 <NavLink
                   to={`/userpage/main/${id}`}
                   className={classes.userMenu}

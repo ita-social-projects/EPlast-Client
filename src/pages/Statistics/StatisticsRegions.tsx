@@ -218,7 +218,7 @@ const StatisticsCities = () => {
       for (let i = 2000; i <= endDate; i++) {
         arrayOfYears.push({ lable: i.toString(), value: i });
       }
-      setYears(arrayOfYears);
+      setYears(arrayOfYears.reverse());
     } catch (error) {
       showError(error.message);
     }
