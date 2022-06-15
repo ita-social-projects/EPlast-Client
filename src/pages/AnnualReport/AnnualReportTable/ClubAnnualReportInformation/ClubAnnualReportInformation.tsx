@@ -29,7 +29,7 @@ import {
   tryAgain,
 } from "../../../../components/Notifications/Messages";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import AuthStore from "../../../../stores/AuthStore";
+import AuthLocalStorage from "../../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import UserApi from "../../../../api/UserApi";
 import { Roles } from "../../../../models/Roles/Roles";
@@ -89,7 +89,7 @@ const ClubAnnualReportInformation = () => {
   const checkAccessToManage = async () => {
     setIsLoading(true);
     try {
-      let token = AuthStore.getToken() as string;
+      let token = AuthLocalStorage.getToken() as string;
       let roles = UserApi.getActiveUserRoles();
       setIsAdmin(roles.includes(Roles.Admin));
       setIsClubAdmin(roles.includes(Roles.KurinHead));

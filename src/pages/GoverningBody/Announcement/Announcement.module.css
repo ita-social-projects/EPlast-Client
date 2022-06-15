@@ -1,9 +1,12 @@
-.antbtn {
-  margin-bottom: 12px !important;
-  width: 200px !important;
-  display: block !important;
-  margin-left: auto !important;
-  margin-right: 0 !important;
+.truncateText > p {
+  margin-right: 1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.addAnnouncementButton {
+  margin-bottom: 1em;
 }
 
 .demo-loadmore-list {
@@ -14,7 +17,7 @@
   display: block;
   outline: 1px solid rgb(211, 208, 208);
   height: 175px;
-  padding-left: 28px;
+  overflow: hidden;
 }
 
 .isImagePresentIcon {
@@ -24,60 +27,89 @@
   margin-top: 3%;
 }
 
+.listItemContent {
+  cursor: pointer;
+  padding: 0 0 0 1em;
+  height: 100px;
+}
+
 .listItemMeta {
+  padding-left: 28px;
   margin-left: 5%;
+  line-height: 0;
+}
+
+.moreButton {
+  width: fit-content;
+  padding: 0 1em 0 1em;
+  font-size: 26px;
+  background-color: whitesmoke;
+  transition: all 1s ease-out;
+}
+
+.moreButton:hover {
+  background-color: gray;
+}
+
+.titleButtonIcon {
+  font-size: 26px;
+  float: right;
+  margin-right: 3%;
+  margin-top: 3%;
 }
 
 .metaWrapper {
   display: block;
   position: relative;
 
-  background-image:linear-gradient(70deg, rgb(199, 233, 155), rgb(106, 199, 114));
-  margin-left:-30px;
-  width:auto;
+  background-image: linear-gradient(
+    70deg,
+    rgb(199, 233, 155),
+    rgb(106, 199, 114)
+  );
+  margin-left: -30px;
+  width: auto;
 }
 
 .menu {
   box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2) !important;
-  position: absolute;
 }
 
-.avatar{
+.avatar {
   margin-top: 18%;
 }
 
-.announcementDate{
+.announcementDate {
   text-align: right;
-  color:rgb(134, 134, 134);
+  color: rgb(134, 134, 134);
 }
 
 .homeSlider {
-  @media(max-width: 280px) {
+  @media (max-width: 280px) {
     padding-left: 8px;
     padding-right: 8px;
-      }
-  @media (max-width: 376px) and (min-width:319px) {
+  }
+  @media (max-width: 376px) and (min-width: 319px) {
     width: 100%;
     height: 300px;
     padding-left: 8px;
     padding-right: 8px;
   }
-  @media (max-width: 540px) and (min-width:411px) {
+  @media (max-width: 540px) and (min-width: 411px) {
     width: 100%;
     height: 300px;
     padding-left: 15px;
     padding-right: 15px;
   }
-  @media (max-width: 540px) and (min-width:412px) {
+  @media (max-width: 540px) and (min-width: 412px) {
     width: 100%;
     height: 300px;
     padding-left: 15px;
     padding-right: 15px;
   }
-  @media (max-width: 767px) and (min-width:541px) {
+  @media (max-width: 767px) and (min-width: 541px) {
     width: 100%;
     height: 300px;
-
   }
   @media (min-width: 768px) {
     width: 80%;
@@ -97,18 +129,17 @@
   color: #3c5438;
   font-size: 20px;
   height: 90px;
-  @media(max-width: 540px) and (min-width:411px){
-    left:-4px;
-      }
-  @media(max-width: 376px) and (min-width:319px){
-    left:-7px;
+  @media (max-width: 540px) and (min-width: 411px) {
+    left: -4px;
+  }
+  @media (max-width: 376px) and (min-width: 319px) {
+    left: -7px;
     font-size: 14px;
-      }
-  @media(max-width: 280px) {
-    left:-7px;
+  }
+  @media (max-width: 280px) {
+    left: -7px;
     font-size: 14px;
-      }
-
+  }
 }
 
 .ant-carousel .slick-next,
@@ -119,15 +150,15 @@
   color: #3c5438;
   font-size: 20px;
   height: 30px;
-  @media(max-width: 540px) and (min-width:411px){
-    right:-4px;
-      }
-  @media(max-width: 376px) and (min-width:319px){
-    right:-7px;
+  @media (max-width: 540px) and (min-width: 411px) {
+    right: -4px;
+  }
+  @media (max-width: 376px) and (min-width: 319px) {
+    right: -7px;
     font-size: 14px;
-      }
-  @media(max-width: 280px) {
-    right:-7px;
+  }
+  @media (max-width: 280px) {
+    right: -7px;
     font-size: 14px;
-      }
+  }
 }

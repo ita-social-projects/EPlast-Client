@@ -66,7 +66,7 @@ import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
 import RegionFollower from "../../models/Region/RegionFollower";
 import RegionAdmin from "../../models/Region/RegionAdmin";
-import AuthStore from "../../stores/AuthStore";
+import AuthLocalStorage from "../../AuthLocalStorage";
 
 const Region = () => {
   const history = useHistory();
@@ -308,7 +308,7 @@ const Region = () => {
   };
 
   const getUserAccessesForRegion = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserRegionAccess(+id, user.nameid).then((response) => {
       setUserAccesses(response.data);
     });

@@ -73,7 +73,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
-import AuthStore from "../../../stores/AuthStore";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 
 const City = () => {
   const history = useHistory();
@@ -579,7 +579,7 @@ const City = () => {
   };
 
   const getUserAccessesForCities = async () => {
-    let user: any = jwt(AuthStore.getToken() as string);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     await getUserCityAccess(+id, user.nameid).then((response) => {
       setUserAccesses(response.data);
     });

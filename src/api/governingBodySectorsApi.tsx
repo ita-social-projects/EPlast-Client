@@ -219,6 +219,8 @@ export const addSectorAnnouncement = (
   title: string,
   text: string,
   ImagesBase64: string[],
+  isPined: boolean,
+  governingBodyId: number,
   sectorId: number
 ) => {
   return api
@@ -226,6 +228,8 @@ export const addSectorAnnouncement = (
       title,
       text,
       ImagesBase64,
+      isPined,
+      governingBodyId,
       sectorId,
     })
     .catch((error) => {
@@ -245,7 +249,8 @@ export const editSectorAnnouncement = async (
   id: number,
   title: string,
   text: string,
-  imagesBase64: string[]
+  imagesBase64: string[],
+  isPined: boolean
 ) => {
   return api
     .put(`GoverningBodies/Sectors/EditAnnouncement/${id}`, {
@@ -253,6 +258,7 @@ export const editSectorAnnouncement = async (
       title,
       text,
       imagesBase64,
+      isPined
     })
     .catch((error) => {
       throw new Error(error);

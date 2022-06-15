@@ -211,3 +211,7 @@ export const possibleFileExtensions = (items: string) => {
 export const fileIsTooBig = (maxSize: number) => {
   return `Розмір файлу перевищує ${maxSize} Мб`;
 };
+
+export const dataCantBeFetched = (name: string) => {
+  return `Виникла помилка під час завантаження ${name}`;
+};
