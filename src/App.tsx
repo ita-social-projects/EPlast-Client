@@ -84,6 +84,7 @@ import TermsOfUse from "./pages/Terms/TermsOfUse";
 import TermsEdit from "./pages/Terms/TermsEdit";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import AnnouncementsTable from "./pages/AnnouncementsTable/AnnouncementsTable";
+import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainAdministration";
 
 const App: FC = () => (
   <div className="App">
@@ -362,6 +363,12 @@ const App: FC = () => (
             exact
             path="/regionsBoard/governingBodies"
             component={RegionBoardAdministration}
+          />
+           <RouteWithLayout
+            layout={PrivateLayout}
+            exact
+            path="/regionsBoard/administrations"
+            component={RegionBoardMainAdministration}
           />
           <RouteWithLayout
             layout={PrivateLayout}
