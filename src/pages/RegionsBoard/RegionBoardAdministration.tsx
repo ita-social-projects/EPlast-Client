@@ -60,7 +60,7 @@ const RegionBoardAdministration = () => {
       {loading ? (
         <Spinner />
       ) : (
-        <div className="cityMoreItems">
+        <div className="regionBoardMoreItems">
           {governingBodies.length > 0 ? (
             governingBodies.map((governingBody) => (
               <Card

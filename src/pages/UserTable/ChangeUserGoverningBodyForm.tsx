@@ -8,6 +8,7 @@ import {
   AutoComplete,
   DatePicker,
   Modal,
+  Input,
 } from "antd";
 import moment from "moment";
 import classes from "../Regions/Form.module.css";
@@ -277,6 +278,7 @@ const ChangeUserRoleForm = ({
         startDate: value.startDate,
         endDate: value.endDate,
         workEmail: user.email,
+        governingBodyAdminRole: value.GBARole
       };
       newAdmin.user.imagePath = (
         await userApi.getImage(newAdmin.user.imagePath)
@@ -397,7 +399,16 @@ const ChangeUserRoleForm = ({
               </Select>
             </Form.Item>
           </>
-        ) : null}
+        ) : (
+          <>
+            <Form.Item
+              label="Роль Крайового Адміна"
+              name="GBARole"
+            >
+              <Input />
+            </Form.Item>
+          </>
+        )}
 
         <Form.Item
           className={classes.formField}

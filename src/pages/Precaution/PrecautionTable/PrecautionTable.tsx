@@ -7,7 +7,7 @@ import DropDownPrecautionTable from "./DropDownPrecautionTable";
 import precautionApi from "../../../api/precautionApi";
 import AddPrecautionModal from "../PrecautionTable/AddPrecautionModal";
 import EditPrecautionTypesModal from "./EditPrecautionTypesModal";
-import UserPrecautionTableInfo from "../Interfaces/UserPrecauctionTableInfo";
+import UserPrecautionTableInfo from "../Interfaces/UserPrecauctionsTableInfo";
 import ClickAwayListener from "react-click-away-listener";
 import Precaution from "../Interfaces/Precaution";
 import PrecautionTableSettings from "../../../models/Precaution/PrecautionTableSettings";
@@ -21,9 +21,27 @@ import {
 } from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
 import "./Filter.less";
+import UserPrecaution from "../Interfaces/UserPrecaution";
+import UserPrecautionTableItem from "../Interfaces/UserPrecautionTableItem";
+import UserPrecautionsTableInfo from "../Interfaces/UserPrecauctionsTableInfo";
+
 const { Content } = Layout;
 
 const PrecautionTable = () => {
+  const EmptyUserPrecautionTableItem: UserPrecautionTableItem = {
+    id: 0,
+    number: 0,
+    precautionId: 0,
+    precautionName: "",
+    userId: "",
+    userName: "",
+    reporter: "",
+    reason: "",
+    status: "",
+    date: new Date(),
+    endDate: new Date(),
+    isActive: false,
+  };
   const classes = require("./Table.module.css");
   let user: any;
   let curToken = AuthLocalStorage.getToken() as string;
@@ -35,7 +53,9 @@ const PrecautionTable = () => {
           "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
         ] as string[])
       : [""];
-  const [recordObj, setRecordObj] = useState<any>(0);
+  const [recordObj, setRecordObj] = useState<UserPrecautionTableItem>(
+    EmptyUserPrecautionTableItem
+  );
   const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
   const [userId, setUserId] = useState<any>(0);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -44,34 +64,22 @@ const PrecautionTable = () => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [canEdit] = useState(roles.includes(Roles.Admin));
 
   const [searchedData, setSearchedData] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState<number>(0);
+  const [totalItems, setTotalItems] = useState<number>(0);
   const [statusSorter, setStatusSorter] = useState<any[]>([]);
   const [precautionNameSorter, setPrecautionNameSorter] = useState<any[]>([]);
   const [dateSorter, setDateSorter] = useState<any[]>([]);
   const [sortByOrder, setSortByOrder] = useState<any[]>(["number", "ascend"]);
-  const [precautions, setPrecautions] = useState<UserPrecautionTableInfo[]>([
-    {
-      count: 0,
-      total: 0,
-      id: 0,
-      number: 0,
-      precautionName: "",
-      userId: "",
-      userName: "",
-      reporter: "",
-      reason: "",
-      status: "",
-      date: new Date(),
-      endDate: new Date(),
-      isActive: false,
-    },
-  ]);
-  const fetchData = async () => {
+  const [tableData, setPrecautions] = useState<UserPrecautionsTableInfo>({
+    totalItems: 0,
+    userPrecautions: [EmptyUserPrecautionTableItem],
+  });
+  const [userAccess, setUserAccess] = useState<{ [key: string]: boolean }>({});
+
+  const getPrecautionTable = async () => {
     const NewTableSettings: PrecautionTableSettings = {
       sortByOrder: sortByOrder,
       statusFilter: statusSorter,
@@ -83,15 +91,27 @@ const PrecautionTable = () => {
     };
 
     setLoading(true);
-    const res: UserPrecautionTableInfo[] = await precautionApi.getAllUsersPrecautions(
+    await getUserAccesses();
+    const result: UserPrecautionsTableInfo = await precautionApi.getAllUsersPrecautions(
       NewTableSettings
     );
-    setPrecautions(res);
+    setPrecautions(result);
+    setTotalItems(result.totalItems);
     setLoading(false);
-    setTotal(res[0]?.total);
   };
+
+  const getUserAccesses = async () => {
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
+    let result: any;
+    precautionApi.getUserAccess(user.nameid).then((response) => {
+      result = response;
+      setUserAccess(response.data);
+    });
+    return result;
+  };
+
   useEffect(() => {
-    fetchData();
+    getPrecautionTable();
   }, [
     sortByOrder,
     statusSorter,
@@ -117,7 +137,7 @@ const PrecautionTable = () => {
 
   const handleAdd = async () => {
     setVisibleModal(false);
-    fetchData();
+    getPrecautionTable();
     notificationLogic("success", successfulCreateAction("Догану"));
   };
 
@@ -130,7 +150,9 @@ const PrecautionTable = () => {
   };
 
   const CreateDeleteNotification = (id: number) => {
-    const userPrecaution = precautions.find((d: { id: number }) => d.id === id);
+    const userPrecaution = tableData.userPrecautions.find(
+      (d: { id: number }) => d.id === id
+    );
     if (userPrecaution) {
       NotificationBoxApi.createNotifications(
         [userPrecaution.userId],
@@ -158,7 +180,7 @@ const PrecautionTable = () => {
         [userId],
         `Вашу пересторогу: '${name}' було змінено. `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/precautions`,
+        `/tableData`,
         `Переглянути`
       );
       NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
@@ -168,7 +190,7 @@ const PrecautionTable = () => {
               [cra.cityAdminId, cra.regionAdminId],
               `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
               NotificationBoxApi.NotificationTypes.UserNotifications,
-              `/precautions`,
+              `/tableData`,
               `Переглянути`
             );
           });
@@ -177,12 +199,21 @@ const PrecautionTable = () => {
   };
 
   const handleDelete = (id: number) => {
-    const filteredData = precautions.filter((d: { id: number }) => d.id !== id);
-    setPrecautions([...filteredData]);
+    const filteredData = tableData.userPrecautions.filter(
+      (d: { id: number }) => d.id !== id
+    );
+    const filteredInfo: UserPrecautionTableInfo = {
+      totalItems: totalItems,
+      userPrecautions: filteredData,
+    };
+    setPrecautions({
+      ...tableData,
+      ...filteredInfo,
+    });
 
-    if (page != 1 && precautions.length == 1) setPage(page - 1);
+    if (page != 1 && tableData.userPrecautions.length == 1) setPage(page - 1);
 
-    setTotal(total - 1);
+    setTotalItems(totalItems - 1);
     notificationLogic("success", successfulDeleteAction("Пересторогу"));
     CreateDeleteNotification(id);
   };
@@ -201,7 +232,7 @@ const PrecautionTable = () => {
     userId: string
   ) => {
     /* eslint no-param-reassign: "error" */
-    const editedData = precautions.filter((d) => {
+    const editedData = tableData.userPrecautions.filter((d) => {
       if (d.id === id) {
         d.precautionName = precaution.name;
         d.date = date;
@@ -216,7 +247,16 @@ const PrecautionTable = () => {
       }
       return d;
     });
-    setPrecautions([...editedData]);
+
+    const editedTableInfo: UserPrecautionTableInfo = {
+      totalItems: tableData.totalItems,
+      userPrecautions: editedData,
+    };
+
+    setPrecautions({
+      ...tableData,
+      ...editedTableInfo,
+    });
     notificationLogic("success", successfulUpdateAction("Пересторогу"));
     CreateEditNotification(userId, precaution.name);
   };
@@ -250,7 +290,7 @@ const PrecautionTable = () => {
         <>
           <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
             <Col>
-              {canEdit === true ? (
+              {userAccess["AddPrecaution"] === true ? (
                 <>
                   <Button type="primary" onClick={showModal}>
                     Додати пересторогу
@@ -272,7 +312,7 @@ const PrecautionTable = () => {
             <div>
               <Table
                 className={classes.table}
-                dataSource={precautions}
+                dataSource={tableData.userPrecautions}
                 columns={columns}
                 scroll={{ x: 1300 }}
                 onRow={(record) => {
@@ -283,7 +323,7 @@ const PrecautionTable = () => {
                     onContextMenu: (event) => {
                       event.preventDefault();
                       setShowDropdown(true);
-                      setRecordObj(record.id);
+                      setRecordObj(record);
                       setIsRecordActive(record.isActive);
                       setUserId(record.userId);
                       setX(event.pageX);
@@ -294,7 +334,7 @@ const PrecautionTable = () => {
                 pagination={{
                   current: page,
                   pageSize: pageSize,
-                  total: total,
+                  total: totalItems,
                   showLessItems: true,
                   responsive: true,
                   showSizeChanger: true,
@@ -309,12 +349,12 @@ const PrecautionTable = () => {
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownPrecautionTable
               showDropdown={showDropdown}
-              record={recordObj}
+              recordId={recordObj.id}
               userId={userId}
-              isRecordActive={isRecordActive}
               pageX={x}
               pageY={y}
-              canEdit={canEdit}
+              userAccess={userAccess}
+              isActive={recordObj.isActive}
               onDelete={handleDelete}
               onEdit={handleEdit}
             />
