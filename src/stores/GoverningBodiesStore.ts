@@ -22,8 +22,12 @@ const actions: GoverningBodiesStoreActions = {
     setState(newState);
   },
 
-  refreshByPage: (page, pageSize, nameFilter, preserveOldState) => async ({ setState, getState }) => {
-    const result: GoverningBody[] = await getGoverningBodiesByPage(page, pageSize, nameFilter);
+  refreshByPage: (page, pageSize, filters, preserveOldState) => async ({ setState, getState }) => {
+    const params = filters as {
+      ["name"]: string | undefined
+    };
+
+    const result: GoverningBody[] = await getGoverningBodiesByPage(page, pageSize, params.name);
     const newState: GoverningBodiesStoreState = preserveOldState
       ? { ...getState() }
       : {};

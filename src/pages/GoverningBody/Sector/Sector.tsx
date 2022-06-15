@@ -21,6 +21,7 @@ import {
   ExclamationCircleOutlined,
   FileTextOutlined,
   LockOutlined,
+  PushpinFilled,
 } from "@ant-design/icons";
 import Paragraph from "antd/lib/typography/Paragraph";
 import jwt from "jwt-decode";
@@ -292,6 +293,15 @@ const Sector = () => {
     }
   }, [sector]);
 
+  const announcementDescription = (item: GoverningBodyAnnouncement) => {
+    return (
+      <>
+        {moment(item.date).format("DD.MM.YYYY")}{" "}
+        {item.isPined ? <PushpinFilled /> : null}
+      </>
+    );
+  };
+
   return loading ? (
     <Spinner />
   ) : sector.id !== 0 ? (
@@ -486,7 +496,7 @@ const Sector = () => {
                         >
                           <List.Item.Meta
                             title={<Markup content={item.title} />}
-                            description={moment(item.date).format("DD.MM.YYYY")}
+                            description={announcementDescription(item)}
                           />
                         </List.Item>
                       )}
