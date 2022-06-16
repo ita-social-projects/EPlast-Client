@@ -120,7 +120,10 @@ const PrecautionTable = () => {
             />
           </ClickAwayListener>        
           <AddPrecautionModal/>
-          <EditPrecautionTypesModal/>                    
+          {/* <EditPrecautionTypesModal
+            setVisibleModal={setVisibleModalEditDist}
+            visibleModal={visibleModalEditDist}
+          />                   */}
         </>
       </Content>
     </Layout>
