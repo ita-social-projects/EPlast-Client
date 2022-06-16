@@ -93,7 +93,7 @@ const CityDetailDrawer = (props: Props) => {
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
-              name="adress"
+              name="address"
               label="Адреса"
               labelCol={{ span: 24 }}
               initialValue={
