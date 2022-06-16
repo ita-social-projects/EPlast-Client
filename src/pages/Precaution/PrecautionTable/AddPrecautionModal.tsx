@@ -1,7 +1,7 @@
 import React from "react";
 import { Drawer } from "antd";
 import FormAddPrecaution from "./FormAddPrecaution";
-import PrecautionStore from "../PrecautionTable/PrecautionStore";
+import PrecautionStore from "../../../stores/StorePrecaution";
 import { createHook } from "react-sweet-state";
 
 const AddPrecautionModal = () => {

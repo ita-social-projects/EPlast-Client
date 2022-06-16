@@ -14,7 +14,7 @@ import DeleteTypeConfirm from "./DeleteTypeConfirm";
 import Search from "antd/lib/input/Search";
 import Text from "antd/lib/typography/Text";
 import { createHook } from "react-sweet-state";
-import PrecautionStore from "./PrecautionStore";
+import PrecautionStore from "../../../stores/StorePrecaution";
 
 const FormEditPrecautionTypes = () => {
   const useStore = createHook(PrecautionStore);

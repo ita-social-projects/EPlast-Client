@@ -1,16 +1,20 @@
 import { createStore, Action} from 'react-sweet-state';
-import notificationLogic from "../../../components/Notifications/Notification";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import { dataCantBeFetched, failCreateAction, successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../../../components/Notifications/Messages';
-import PrecautionTableSettings from '../../../models/Precaution/PrecautionTableSettings';
-import precautionApi from "../../../api/precautionApi";
-import Precaution from '../Interfaces/Precaution';
-import UserPrecaution from '../Interfaces/UserPrecaution';
-import SuggestedUser from '../Interfaces/SuggestedUser';
-import UserPrecautionsTableInfo from '../Interfaces/UserPrecauctionsTableInfo';
+import notificationLogic from "../components/Notifications/Notification";
+import NotificationBoxApi from "../api/NotificationBoxApi";
+import { dataCantBeFetched, failCreateAction, successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../components/Notifications/Messages';
+//import PrecautionTableSettings from '../../../models/Precaution/PrecautionTableSettings';
+import PrecautionTableSettings from '../models/Precaution/PrecautionTableSettings';
+import precautionApi from "../api/precautionApi";
+import Precaution from '../../src/pages/Precaution/Interfaces/Precaution';
+import UserPrecaution from '../../src/pages/Precaution/Interfaces/UserPrecaution';
+import SuggestedUser from '../../src/pages/Precaution/Interfaces/SuggestedUser';
+//import UserPrecautionsTableInfo from '../Interfaces/UserPrecauctionsTableInfo';
+import UserPrecautionsTableInfo from '../../src/pages/Precaution/Interfaces/UserPrecauctionsTableInfo'
 import jwt from "jwt-decode";
-import UserPrecautionTableItem from '../Interfaces/UserPrecautionTableItem';
-import AuthLocalStorage from '../../../AuthLocalStorage';
+//import UserPrecautionTableItem from '../../Interfaces/UserPrecautionTableItem';
+import UserPrecautionTableItem from '../../src/pages/Precaution/Interfaces/UserPrecautionTableItem'
+//import AuthLocalStorage from '../../../AuthLocalStorage';
+import AuthLocalStorage from '../AuthLocalStorage';
 
 let user: any;
 let curToken = AuthLocalStorage.getToken() as string;

@@ -4,7 +4,7 @@ import Search from "antd/lib/input/Search";
 import columns from "./columns";
 import DropDownPrecautionTable from "./DropDownPrecautionTable";
 import ClickAwayListener from "react-click-away-listener";
-import PrecautionStore from "../PrecautionTable/PrecautionStore";
+import PrecautionStore from "../../../stores/StorePrecaution";
 import "./Filter.less";
 import { createHook } from "react-sweet-state";
 import AddPrecautionModal from "./AddPrecautionModal";

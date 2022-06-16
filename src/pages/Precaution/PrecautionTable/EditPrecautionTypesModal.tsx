@@ -1,7 +1,7 @@
 import React from "react";
 import { Drawer } from "antd";
 import FormEditPrecautionTypes from "./FormEditPrecautionTypes";
-import PrecautionStore from "./PrecautionStore";
+import PrecautionStore from "../../../stores/StorePrecaution";
 import { createHook } from "react-sweet-state";
 
 const EditPrecautionTypesModal = () => {

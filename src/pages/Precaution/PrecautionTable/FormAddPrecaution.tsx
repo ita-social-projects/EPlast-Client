@@ -12,7 +12,7 @@ import {
   descriptionValidation,
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
-import PrecautionStore from "./PrecautionStore";
+import PrecautionStore from "../../../stores/StorePrecaution";
 
 const FormAddPrecaution = () => {
   const useStore = createHook(PrecautionStore);
