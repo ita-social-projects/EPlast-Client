@@ -254,7 +254,6 @@ const UsersTable = () => {
       if (currentTabName === "registered") {
         const registeredUsers = new Array<string>();
         registeredUsers.push(Roles.RegisteredUser);
-        registeredUsers.push(Roles.Supporter);
         const response = await getUsersForTableByPage({
           Page: page,
           PageSize: pageSize,
