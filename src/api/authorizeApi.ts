@@ -16,11 +16,18 @@ export default class AuthorizeApi {
           AuthLocalStorage.setToken(response.data.token);
         }
       })
-      .catch((error) => {
+      .catch(async (error) => {
         if (error.response.data.value == "User-FormerMember") {
           showUserRenewalModal();
-        } else if (error.response.status === 400) {
-          notificationLogic("error", error.response.data.value);
+        }
+        switch (error.response.status) {
+          case 400:
+            notificationLogic("error", 'Щось пішло не так');
+            break;
+          case 409:
+            notificationLogic("error", 'Ваша пошта не підтверджена');
+            await this.resendConfirmingEmail(data.Email);
+            break;
         }
       });
     return response;
@@ -90,6 +97,56 @@ export default class AuthorizeApi {
       .catch((error) => {
         if (error.response.status === 400) {
           notificationLogic("error", error.response.data.value);
+        }
+      });
+    return response;
+  };
+
+  confirmingEmail = async (userId: string, token: string) => {
+    const response = await Api.get("Auth/confirmingEmail", {
+      userId: userId,
+      token: token
+    })
+      .then((response) => {
+        notificationLogic("success", 'Пошта підтверджена');
+      })
+      .catch((error) => {
+        switch (error.response.status) {
+          case 400:
+            notificationLogic("error", "Щось пішло не так")
+            break;
+          case 404:
+            notificationLogic("error", "Данного користувача не існує")
+            break;
+          case 409:
+            notificationLogic("info", "Пошта вже підтверджена")
+            break;
+          case 410:
+            notificationLogic("info", "На вашу пошту надійшов новий лист на підтвердження профіля");
+            break;
+        }
+      });
+    return response;
+  };
+
+  resendConfirmingEmail = async (userEmail: string) => {
+    const response = await Api.post("Auth/resendConfirmingEmail", {
+      userEmail: userEmail
+    })
+      .then((response) => {
+        notificationLogic("success", 'На пошту надіслано нове підтвердження');
+      })
+      .catch((error) => {
+        switch (error.response.status) {
+          case 400:
+            notificationLogic("error", "Щось пішло не так")
+            break;
+          case 404:
+            notificationLogic("error", "Данного користувача не існує")
+            break;
+          case 409:
+            notificationLogic("info", "Пошта вже підтверджена")
+            break;
         }
       });
     return response;

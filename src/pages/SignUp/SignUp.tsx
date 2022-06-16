@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, Button, Modal, Select, Calendar, DatePicker } from "antd";
+import { Form, Input, Button, Modal, Select, Calendar, DatePicker, Tabs } from "antd";
 import styles from "./SignUp.module.css";
 import Switcher from "./Switcher/Switcher";
 import { checkAddress, checkEmail, checkFacebookLink, checkInstagramLink, checkNameSurName, checkPassword, checkPhone, checkTwitterLink } from "./verification";
 import AuthorizeApi from "../../api/authorizeApi";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import {
   incorrectEmail,
   emptyInput,
@@ -21,53 +21,43 @@ import moment from "moment";
 import ReactInputMask from "react-input-mask";
 import { SelectValue } from "antd/lib/select";
 import { SingUpStore } from "../../stores/SingUpStore";
-
+import { ActiveRegionDataResponse, getActiveRegionsByPage } from "../../api/regionsApi";
+import TabList, { TabRenderMode } from "./TabList";
+import TabInputList from "./TabInputList";
+const { TabPane } = Tabs;
 let authService = new AuthorizeApi();
 
 const SignUp: React.FC = () => {
   const [form] = Form.useForm();
-  const history = useHistory();
   const [available, setAvailabe] = useState(true);
   const [visible, setVisible] = useState(false);
   const [state, actions] = SingUpStore();
-  // const [terms, setTerms] = useState<TermsOfUseModel>({
-  //   termsId: 0,
-  //   termsTitle: "",
-  //   termsText: "Немає даних",
-  //   datePublication: new Date(),
-  // });
-  // const [cities, setCities] = useState<ActiveCity[]>([]);
-  //const [cityPage, setCityPage] = useState<number>(1);
-  //const pageSize = 30;
-  //const [total, setTotal] = useState(0);
-  //const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  //const [model, setModel] = useState();
   const [loading, setLoading] = useState(false);
 
-  const fetchTermsData = async () => {
-    const termsData: TermsOfUseModel = await termsApi.getTerms();
-    const { cities, total }: ActiveCityDataResponse = (await getActiveCitiesByPage(1, state.page.size!)).data;
-    actions.setTerms(termsData);
-    console.log(termsData);
-    actions.setCities(cities);
-    actions.setPageInfo({
-      total: total,
-      number: 1
-    })
-  };
-
-  const setNamedCities = async (value: string) => {
-    const { cities: newCities, total }: ActiveCityDataResponse = (await getActiveCitiesByPage(1, state.page.size!, value)).data;
-    actions.setPageInfo({
-      total: total,
-      number: 1,
-      selectedCity: value
-    });
-    actions.setCities(newCities);
-  }
-
   useEffect(() => {
-    fetchTermsData();
+    ;
+    (async () => {
+      const termsData: TermsOfUseModel = await termsApi.getTerms();
+
+      const { cities, total: cityTotal }: ActiveCityDataResponse
+        = (await getActiveCitiesByPage(1, state.cityPage.size!)).data;
+      const { regions, total: regionTotal }: ActiveRegionDataResponse
+        = (await getActiveRegionsByPage(1, state.regionPage.size!)).data
+
+      actions.setTerms(termsData);
+
+      actions.setCities(cities);
+      actions.setCityPageInfo({
+        total: cityTotal,
+        number: 1
+      });
+
+      actions.setRegions(regions);
+      actions.setRegionPageInfo({
+        total: regionTotal,
+        number: 1
+      });
+    })();
   }, []);
 
   const handler = {
@@ -80,8 +70,6 @@ const SignUp: React.FC = () => {
 
         setVisible(false);
         setAvailabe(false);
-        console.log(state.formData);
-        console.log(state.terms);
         //await authService.register(state.formData);
         setAvailabe(true);
         // history.push("/signin");
@@ -91,32 +79,71 @@ const SignUp: React.FC = () => {
       }
     },
     select: {
-      scroll: async (event: Event) => {
+      cityScroll: async (event: Event) => {
         const target = event.target as HTMLDivElement;
         const currentPosition = target.scrollTop + target.offsetHeight;
-        const fetchPosition = target.scrollHeight - 200;
+        const fetchPosition = target.scrollHeight - 150;
         if (loading === false
           && currentPosition > fetchPosition
-          && Math.ceil(state.page.total! / state.page.size!) !== state.page.number!) {
+          && Math.ceil(state.cityPage.total! / state.cityPage.size!) !== state.cityPage.number!) {
           setLoading(true);
           const data: ActiveCityDataResponse
-            = (await getActiveCitiesByPage(state.page.number! + 1, state.page.size!, state.page.selectedCity)).data;
+            = (await getActiveCitiesByPage(state.cityPage.number! + 1, state.cityPage.size!, state.cityPage.text)).data;
           const { total, cities: newCities } = data;
-          actions.setPageInfo({
+          actions.setCityPageInfo({
             total: total,
-            number: state.page.number! + 1,
+            number: state.cityPage.number! + 1,
           });
           actions.addCityRange(newCities);
           setLoading(false);
         }
       },
+      regionScroll: async (event: Event) => {
+        const target = event.target as HTMLDivElement;
+        const currentPosition = target.scrollTop + target.offsetHeight;
+        const fetchPosition = target.scrollHeight - 150;
+        if (loading === false
+          && currentPosition > fetchPosition
+          && Math.ceil(state.regionPage.total! / state.regionPage.size!) !== state.regionPage.number!) {
+          setLoading(true);
+          const data: ActiveRegionDataResponse
+            = (await getActiveRegionsByPage(state.regionPage.number! + 1, state.regionPage.size!, state.regionPage.text)).data;
+          const { total, regions: newRegions } = data;
+          actions.setRegionPageInfo({
+            total: total,
+            number: state.regionPage.number! + 1,
+          });
+          actions.addRegionsRange(newRegions);
+          setLoading(false);
+        }
+      },
       filter: (input: string, option: any) => {
         return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-      }
+      },
+    },
+    search: {
+      city: async (value: string) => {
+        const { cities: newCities, total }: ActiveCityDataResponse = (await getActiveCitiesByPage(1, state.cityPage.size!, value)).data;
+        actions.setCityPageInfo({
+          total: total,
+          number: 1,
+          text: value
+        });
+        actions.setCities(newCities);
+      },
+      region: async (value: string) => {
+        const { regions: newRegions, total }: ActiveRegionDataResponse = (await getActiveRegionsByPage(1, state.regionPage.size!, value)).data;
+        actions.setRegionPageInfo({
+          total: total,
+          number: 1,
+          text: value
+        });
+        actions.setRegions(newRegions);
+      },
     }
   }
 
-  const validationSchema = {
+  const validator = {
     Email: [
       { required: true, message: emptyInput() },
       { validator: checkEmail },
@@ -153,15 +180,12 @@ const SignUp: React.FC = () => {
       { validator: checkPhone },
     ],
     FacebookLink: [
-      { required: true, message: emptyInput() },
       { validator: checkFacebookLink },
     ],
     TwitterLink: [
-      { required: true, message: emptyInput() },
       { validator: checkTwitterLink },
     ],
     InstagramLink: [
-      { required: true, message: emptyInput() },
       { validator: checkInstagramLink },
     ],
   };
@@ -174,24 +198,24 @@ const SignUp: React.FC = () => {
         form={form}
         onFinish={handler.submit}
       >
-        <Form.Item name="SurName" rules={validationSchema.SurName}>
+        <Form.Item name="SurName" rules={validator.SurName}>
           <Input className={styles.MyInput} placeholder="Прізвище" />
         </Form.Item>
 
-        <Form.Item name="Name" rules={validationSchema.Name}>
+        <Form.Item name="Name" rules={validator.Name}>
           <Input className={styles.MyInput} placeholder="Ім'я" />
         </Form.Item>
 
-        <Form.Item name="MiddleName" rules={validationSchema.MiddleName}>
+        <Form.Item name="MiddleName" rules={validator.MiddleName}>
           <Input className={styles.MyInput} placeholder="По батькові" />
         </Form.Item>
 
-        <Form.Item name="Address" rules={validationSchema.Address}>
+        <Form.Item name="Address" rules={validator.Address}>
           <Input className={styles.MyInput} placeholder="Місце проживання" />
         </Form.Item>
 
         <Form.Item
-          rules={validationSchema.Date}
+          rules={validator.Date}
         >
           <DatePicker
             name="Date"
@@ -222,34 +246,112 @@ const SignUp: React.FC = () => {
           </Select>
         </Form.Item>
 
-        <Form.Item
-          name="CityId"
-          rules={[{ required: true, message: emptyInput() }]}
-        >
-          <Select
-            onSearch={async (value: string) => {
+        <TabList
+          renderMode={TabRenderMode.UnmountOther}
+          pairs={[{
+            title: "Станиця",
+            content: (
+              <Form.Item
+                name="CityId"
+                rules={[{ required: true, message: emptyInput() }]}
+              >
+                <Select
+                  onSearch={handler.search.city}
+                  showSearch
+                  onPopupScroll={(e: any) => handler.select.cityScroll(e)}
+                  className={styles.MySelect}
+                  placeholder="Оберіть станицю"
+                  filterOption={handler.select.filter}
+                >
+                  {state.cities.map((apd) => {
+                    return (
+                      <Select.Option key={apd.id} value={apd.id}>
+                        {apd.name}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            )
+          },
+          {
+            disabled: true,
+            title: "АБO",
+            content: (
+              <></>
+            )
+          },
+          {
+            title: "В моєму осередку немає Пласту",
+            content: (
+              <Form.Item
+                name="RegionId"
+                rules={[{ required: true, message: emptyInput() }]}
+              >
+                <Select
+                  onSearch={handler.search.region}
+                  showSearch
+                  onPopupScroll={(e: any) => handler.select.regionScroll(e)}
+                  className={styles.MySelect}
+                  placeholder="Оберіть округу"
+                  filterOption={handler.select.filter}
+                >
+                  {state.regions.map((apd) => {
+                    return (
+                      <Select.Option key={apd.id} value={apd.id}>
+                        {apd.regionName}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            )
+          }
+          ]}
+        />
 
-              await setNamedCities(value);
-            }}
-            showSearch
-            onPopupScroll={(e: any) => handler.select.scroll(e)}
-            className={styles.MySelect}
-            placeholder="Оберіть станицю"
-            filterOption={handler.select.filter}
-          >
-            {state.cities.map((apd) => {
-              return (
-                <Select.Option key={apd.id} value={apd.id}>
-                  {apd.name}
-                </Select.Option>
-              );
-            })}
-          </Select>
-        </Form.Item>
+        <TabInputList items={
+          [{
+            tabTitle: "Facebook",
+            formItem: {
+              name: "FacebookLink",
+              rules: validator.FacebookLink
+            },
+            input: {
+              type: "url",
+              className: styles.MyInput,
+              placeholder: "Facebook сторінка"
+            }
+          },
+          {
+            tabTitle: "Twitter",
+            formItem: {
+              name: "TwitterLink",
+              rules: validator.TwitterLink
+            },
+            input: {
+              type: "url",
+              className: styles.MyInput,
+              placeholder: "Twitter сторінка"
+            }
+          },
+          {
+            tabTitle: "Instagram",
+            formItem: {
+              name: "InstagramLink",
+              rules: validator.InstagramLink
+            },
+            input: {
+              type: "url",
+              className: styles.MyInput,
+              placeholder: "Instagram сторінка"
+            }
+          }]
+        } />
 
         <Form.Item
           name="Phone"
-          rules={validationSchema.PhoneNumber}
+          rules={validator.PhoneNumber}
         >
           <div className={"ant-form-item-control-input-content"}>
             <ReactInputMask
@@ -260,29 +362,13 @@ const SignUp: React.FC = () => {
           </div>
         </Form.Item>
 
-        <Form.Item name="FacebookLink" rules={validationSchema.FacebookLink}>
-          <Input type="url"
-            className={styles.MyInput}
-            placeholder="Facebook сторінка" />
-        </Form.Item>
-        <Form.Item name="TwitterLink" rules={validationSchema.TwitterLink}>
-          <Input type="url"
-            className={styles.MyInput}
-            placeholder="Twitter сторінка" />
-        </Form.Item>
-        <Form.Item name="InstagramLink" rules={validationSchema.InstagramLink}>
-          <Input type="url"
-            className={styles.MyInput}
-            placeholder="Instagram сторінка" />
-        </Form.Item>
-
-        <Form.Item name="Email" rules={validationSchema.Email}>
+        <Form.Item name="Email" rules={validator.Email}>
           <Input
             className={styles.MyInput}
             placeholder="Електронна пошта" />
         </Form.Item>
 
-        <Form.Item name="Password" rules={validationSchema.Password}>
+        <Form.Item name="Password" rules={validator.Password}>
           <Input.Password
             visibilityToggle={true}
             className={styles.MyInput}

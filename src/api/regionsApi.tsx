@@ -1,3 +1,4 @@
+import ActiveRegion from "../models/Region/ActiveRegion";
 import RegionAnnualReportQuestions from "../pages/AnnualReport/Interfaces/RegionAnnualReportQuestions";
 import api from "./api";
 
@@ -300,6 +301,15 @@ const removeAnnualReport = async (id: number) => {
   });
 };
 
+
+export interface ActiveRegionDataResponse {
+  page: number
+  pageSize: number
+  regions: ActiveRegion[]
+  total: number
+  canCreate: boolean
+}
+
 export const getActiveRegionsByPage = async (
   page: number,
   pageSize: number,
@@ -308,7 +318,7 @@ export const getActiveRegionsByPage = async (
   return await api
     .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName })
     .catch((error) => {
-      throw error;
+      throw new Error(error);
     });
 };
 

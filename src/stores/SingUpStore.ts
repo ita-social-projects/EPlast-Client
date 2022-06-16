@@ -1,4 +1,5 @@
 import { Action, createHook, createStore } from "react-sweet-state";
+import ActiveRegion from "../models/Region/ActiveRegion";
 import TermsOfUse from "../models/TermsOfUse/TermsOfUseModel";
 import { GenderIdEnum } from "../models/UserTable/Gender";
 import City, { ActiveCity } from "../pages/AnnualReport/Interfaces/City";
@@ -7,19 +8,22 @@ type PageInfo = {
     total?: number
     size?: number
     number?: number
-    selectedCity?: string
+    text?: string
 }
 
 type State = {
     cities: ActiveCity[]
+    regions: ActiveRegion[]
     terms: TermsOfUse
-    page: PageInfo
+    cityPage: PageInfo
+    regionPage: PageInfo
     formData: {
         surName: string
         name: string
         middleName: string
         address: string
-        cityId: number
+        cityId?: number
+        regionId?: number
         email: string
         password: string
         confirmPassword: string
@@ -33,17 +37,24 @@ type State = {
 
 const initialState: State = {
     cities: [],
+    regions: [],
     terms: {
         termsId: 0,
         termsTitle: "",
         termsText: "Немає даних",
         datePublication: new Date(),
     },
-    page: {
+    cityPage: {
         total: 0,
-        size: 30,
+        size: 15,
         number: 1,
-        selectedCity: ""
+        text: ""
+    },
+    regionPage: {
+        total: 0,
+        size: 15,
+        number: 1,
+        text: ""
     },
     formData: {
         surName: "",
@@ -51,6 +62,7 @@ const initialState: State = {
         middleName: "",
         address: "",
         cityId: 0,
+        regionId: 0,
         email: "",
         password: "",
         confirmPassword: "",
@@ -63,14 +75,24 @@ const initialState: State = {
 };
 
 const actions = {
+    setTerms: (termsOfUse: TermsOfUse): Action<State> => async ({ setState, getState }) => {
+        setState({
+            terms: termsOfUse,
+        })
+    },
     setCities: (cities: ActiveCity[]): Action<State> => async ({ setState, getState }) => {
         setState({
             cities: cities
         })
     },
-    setTerms: (termsOfUse: TermsOfUse): Action<State> => async ({ setState, getState }) => {
+    addRegionsRange: (regions: ActiveRegion[]): Action<State> => async ({ setState, getState }) => {
         setState({
-            terms: termsOfUse,
+            regions: [...getState().regions, ...regions]
+        })
+    },
+    setRegions: (regions: ActiveRegion[]): Action<State> => async ({ setState, getState }) => {
+        setState({
+            regions: regions
         })
     },
     addCityRange: (cities: ActiveCity[]): Action<State> => async ({ setState, getState }) => {
@@ -78,13 +100,23 @@ const actions = {
             cities: [...getState().cities, ...cities]
         })
     },
-    setPageInfo: ({ total, number, selectedCity, size }: PageInfo): Action<State> => async ({ setState, getState }) => {
+    setCityPageInfo: ({ total, number, text: selectedCity, size }: PageInfo): Action<State> => async ({ setState, getState }) => {
         setState({
-            page: {
-                total: total || getState().page.total,
-                number: number || getState().page.number,
-                size: getState().page.size,
-                selectedCity: selectedCity
+            cityPage: {
+                total: total || getState().cityPage.total,
+                number: number || getState().cityPage.number,
+                size: getState().cityPage.size,
+                text: selectedCity
+            }
+        })
+    },
+    setRegionPageInfo: ({ total, number, text: selectedCity, size }: PageInfo): Action<State> => async ({ setState, getState }) => {
+        setState({
+            regionPage: {
+                total: total || getState().cityPage.total,
+                number: number || getState().cityPage.number,
+                size: getState().cityPage.size,
+                text: selectedCity
             }
         })
     },
