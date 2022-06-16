@@ -36,6 +36,8 @@ import User from "../Distinction/Interfaces/User";
 import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
+import { useLocation, useParams } from "react-router-dom";
+import queryString from "querystring";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -65,7 +67,8 @@ const UsersTable = () => {
   const [canView, setCanView] = useState<boolean>(false);
   const [tabList, setTabList] = useState<any[]>([]);
   const [, forceUpdate] = useState({});
-  const [currentTabName, setCurrentTabName] = useState<string>("confirmed");
+  const [currentTabName, setCurrentTabName] = useState<string>("");
+  const [isTabInitialized, setTabInitialized] = useState(false);
   const [isInactive, setIsInactive] = useState(false);
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
@@ -73,6 +76,18 @@ const UsersTable = () => {
   const [clearFilter, setClearFilter] = useState(false);
   const { SHOW_PARENT } = TreeSelect;
   const { Search } = Input;
+  const location = useLocation();
+  const [queryParams, setQueryParams] = useState<any>();
+
+  useEffect(() => {
+    fetchParametersFromUrl();
+    fetchCities();
+    fetchRegions();
+    fetchClubs();
+    fetchDegrees();
+    forceUpdate({});
+    initializePage();
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -87,14 +102,6 @@ const UsersTable = () => {
     currentTabName,
     clearFilter,
   ]);
-
-  useEffect(() => {
-    fetchCities();
-    fetchRegions();
-    fetchClubs();
-    fetchDegrees();
-    forceUpdate({});
-  }, []);
 
   const searchFieldMaxLength: number = 150;
 
@@ -167,6 +174,24 @@ const UsersTable = () => {
     }
   };
 
+  const fetchParametersFromUrl = async () => {
+    let query = location.search.slice(1,location.search.length);
+    let queryParams = queryString.parse(query);
+
+    let params = {
+      tab: queryParams.tab as string ?? undefined,
+      cityFilter: parseInt(queryParams.cityFilter as string) ?? undefined
+    }
+
+    applyQueryParameters(params);
+  }
+
+  const applyQueryParameters = (params: any) => {
+    let acceptableTabs = ["confirmed", "registered", "unconfirmed"]
+    setCurrentTabName(params.tab && acceptableTabs.includes(params.tab) ? params.tab : "confirmed");
+    setTabInitialized(true);
+  }
+
   const showError = (message: string) => {
     Modal.error({
       title: "Помилка!",
@@ -174,9 +199,58 @@ const UsersTable = () => {
     });
   };
 
+  const initializePage = () => {
+    setLoading(false);
+
+    let roles = userApi.getActiveUserRoles();
+    let rolesThatCanView = [
+      Roles.Admin,
+      Roles.GoverningBodyAdmin,
+      Roles.GoverningBodyHead,
+      Roles.OkrugaHead,
+      Roles.OkrugaHeadDeputy,
+      Roles.CityHead,
+      Roles.CityHeadDeputy,
+      Roles.KurinHead,
+      Roles.KurinHeadDeputy,
+      Roles.PlastMember,
+      Roles.Supporter
+    ] as string[]
+
+    setCanView(roles.some((v) => rolesThatCanView.includes(v)));
+
+    let listOfTabs = [
+        {
+          key: "confirmed",
+          tab: "Всі користувачі",
+        },
+    ];
+    
+    if (
+      roles.includes(Roles.Admin) ||
+      roles.includes(Roles.GoverningBodyAdmin)
+    )
+      listOfTabs.push(
+        {
+          key: "registered",
+          tab: "Зголошені",
+        },
+        {
+          key: "unconfirmed",
+          tab: "Непідтверджені",
+        }
+      );
+    setTabList(listOfTabs);
+  }
+
   const fetchData = async () => {
+    if (!currentTabName) { 
+      console.log("not working...");
+      return;
+    }
+    setLoading(false);
     try {
-      setLoading(false);
+      console.log("from fetchdata " + currentTabName);
       if (currentTabName === "registered") {
         const registeredUsers = new Array<string>();
         registeredUsers.push(Roles.RegisteredUser);
@@ -200,6 +274,7 @@ const UsersTable = () => {
     } finally {
       setLoading(true);
     }
+
     try {
       const response = await getUsersForTableByPage({
         Page: page,
@@ -218,41 +293,6 @@ const UsersTable = () => {
       setCurrentUser(
         (await userApi.getUserProfileById(user.nameid, user.nameid)).data.user
       );
-      let roles = userApi.getActiveUserRoles();
-      setCanView(
-        roles.includes(Roles.Admin) ||
-          roles.includes(Roles.GoverningBodyAdmin) ||
-          roles.includes(Roles.GoverningBodyHead) ||
-          roles.includes(Roles.OkrugaHead) ||
-          roles.includes(Roles.OkrugaHeadDeputy) ||
-          roles.includes(Roles.CityHead) ||
-          roles.includes(Roles.CityHeadDeputy) ||
-          roles.includes(Roles.KurinHead) ||
-          roles.includes(Roles.KurinHeadDeputy) ||
-          roles.includes(Roles.PlastMember) ||
-          roles.includes(Roles.Supporter)
-      );
-      let listOfTabs = [
-        {
-          key: "confirmed",
-          tab: "Всі користувачі",
-        },
-      ];
-      if (
-        roles.includes(Roles.Admin) ||
-        roles.includes(Roles.GoverningBodyAdmin)
-      )
-        listOfTabs.push(
-          {
-            key: "registered",
-            tab: "Зголошені",
-          },
-          {
-            key: "unconfirmed",
-            tab: "Непідтверджені",
-          }
-        );
-      setTabList(listOfTabs);
       setUsers(response.data.users);
       setTotal(response.data.total);
     } catch (error) {

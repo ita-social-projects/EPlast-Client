@@ -1147,7 +1147,10 @@ const City = () => {
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/cities/followers/${city.id}`)}
+                onClick={() => { 
+                  if (userAccesses["EditCity"]) history.push(`/user/table?tab=registered&cityFilter=${city.id}`);
+                  else history.push(`/cities/followers/${city.id}`);
+               }}
               >
                 Більше
               </Button>
