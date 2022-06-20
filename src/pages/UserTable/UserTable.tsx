@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Table,
   Input,
@@ -12,13 +12,12 @@ import {
   Card,
 } from "antd";
 import "./Filter.less";
-import { getUsersByAllRoles, getUsersForTableByPage } from "../../api/adminApi";
+import { getUsersForTableByPage } from "../../api/adminApi";
 import clubsApi from "../../api/clubsApi";
 import DropDownUserTable from "./DropDownUserTable";
 import Title from "antd/lib/typography/Title";
 import ColumnsForUserTable from "./ColumnsForUserTable";
 import UserTable from "../../models/UserTable/UserTable";
-import Spinner from "../Spinner/Spinner";
 import ClickAwayListener from "react-click-away-listener";
 import { TreeNode } from "antd/lib/tree-select";
 import City from "../Statistics/Interfaces/City";
@@ -36,7 +35,7 @@ import User from "../Distinction/Interfaces/User";
 import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import queryString from "querystring";
 
 const UsersTable = () => {
@@ -67,8 +66,14 @@ const UsersTable = () => {
   const [canView, setCanView] = useState<boolean>(false);
   const [tabList, setTabList] = useState<any[]>([]);
   const [, forceUpdate] = useState({});
+
   const [currentTabName, setCurrentTabName] = useState<string>("");
-  const [isTabInitialized, setTabInitialized] = useState(false);
+  const activeUserIsAdmin = useRef(false);
+
+  const cityList = useRef<Array<City>>([]);
+  const clubList = useRef<Array<Club>>([]);
+  const [isQueryLoaded, setQueryLoaded] = useState(false);
+
   const [isInactive, setIsInactive] = useState(false);
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
@@ -77,16 +82,16 @@ const UsersTable = () => {
   const { SHOW_PARENT } = TreeSelect;
   const { Search } = Input;
   const location = useLocation();
-  const [queryParams, setQueryParams] = useState<any>();
+  const queryParams = useRef<any>({});
 
   useEffect(() => {
+    initializePage();
     fetchParametersFromUrl();
     fetchCities();
-    fetchRegions();
     fetchClubs();
+    fetchRegions();
     fetchDegrees();
     forceUpdate({});
-    initializePage();
   }, []);
 
   useEffect(() => {
@@ -101,6 +106,7 @@ const UsersTable = () => {
     userArhive,
     currentTabName,
     clearFilter,
+    isQueryLoaded
   ]);
 
   const searchFieldMaxLength: number = 150;
@@ -108,20 +114,21 @@ const UsersTable = () => {
   const fetchCities = async () => {
     try {
       let response = await citiesApi.getCities();
-      let cities = response.data as City[];
       setCities(
-        cities.map((item) => {
+        response.data.map((item: any) => {
           return {
             label: item.name,
             value: item.id,
           };
-        })
-      );
+        }))
+      cityList.current = response.data;
+      getCityFromQuery();
     } catch (error) {
       //don't set value type, check on github will fail
       showError(error.message);
     }
   };
+
   const fetchRegions = async () => {
     try {
       let response = await regionsApi.getRegionsNames();
@@ -139,6 +146,7 @@ const UsersTable = () => {
       showError(error.message);
     }
   };
+
   const fetchClubs = async () => {
     try {
       let response = await clubsApi.getClubs();
@@ -150,12 +158,15 @@ const UsersTable = () => {
             value: item.id,
           };
         })
-      );
+      )
+      clubList.current = response.data;
+      getClubFromQuery();
     } catch (error) {
       //don't set value type, check on github will fail
       showError(error.message);
     }
   };
+
   const fetchDegrees = async () => {
     try {
       let response = await activeMembershipApi.getAllPlastDegrees();
@@ -174,22 +185,68 @@ const UsersTable = () => {
     }
   };
 
-  const fetchParametersFromUrl = async () => {
+  const fetchParametersFromUrl = () => {
+    // for some reason queryString won't remove the ? at the start
+    // of a query, so we have to slice that manually...
     let query = location.search.slice(1,location.search.length);
-    let queryParams = queryString.parse(query);
+    let queryParamsArray = queryString.parse(query);
 
     let params = {
-      tab: queryParams.tab as string ?? undefined,
-      cityFilter: parseInt(queryParams.cityFilter as string) ?? undefined
+      tab: queryParamsArray.tab as string ?? undefined,
+      city: parseInt(queryParamsArray.city as string) ?? undefined,
+      club: parseInt(queryParamsArray.club as string) ?? undefined
     }
 
-    applyQueryParameters(params);
+    // doing this to avoid exception on getClubFromQuery
+    form.setFieldsValue({
+      locationFilter: []
+    })
+
+    queryParams.current = params;
+    getTabFromQuery();
   }
 
-  const applyQueryParameters = (params: any) => {
+  const getTabFromQuery = () => {
     let acceptableTabs = ["confirmed", "registered", "unconfirmed"]
-    setCurrentTabName(params.tab && acceptableTabs.includes(params.tab) ? params.tab : "confirmed");
-    setTabInitialized(true);
+
+    let tab = queryParams.current.tab;
+    setCurrentTabName(tab && acceptableTabs.includes(tab) && activeUserIsAdmin.current ? tab : "confirmed");
+  }
+
+  const getCityFromQuery = () => {
+    let city = queryParams.current.city
+    if (city) {
+      let cityExists = cityList.current.some((item) => item.id === city);
+
+      if (cityExists) {
+        let cityFilter = `value1 ${city}`;
+
+        form.setFieldsValue({
+          locationFilter: [cityFilter]
+        })
+
+        setDynamicCities([...dynamicCities, city]);
+      }
+    }
+  }
+
+  const getClubFromQuery = () => {
+    let club = queryParams.current.club
+    if (club) {
+      let clubExists = clubList.current.some((item) => item.id === club);
+
+      if (clubExists) {
+        let clubFilter = `value4 ${club}`;
+
+        form.setFieldsValue({
+          locationFilter: [...form.getFieldValue("locationFilter"), clubFilter]
+        });
+
+        setDynamicClubs([...dynamicClubs, club]);
+      }
+    }
+    
+    setQueryLoaded(true);
   }
 
   const showError = (message: string) => {
@@ -200,7 +257,9 @@ const UsersTable = () => {
   };
 
   const initializePage = () => {
-    setLoading(false);
+    let jwt = AuthLocalStorage.getToken() as string;
+    let user = jwt_decode(jwt) as any;
+    userApi.getUserProfileById(user.nameid, user.nameid).then((response) => setCurrentUser(response.data.user));
 
     let roles = userApi.getActiveUserRoles();
     let rolesThatCanView = [
@@ -219,6 +278,9 @@ const UsersTable = () => {
 
     setCanView(roles.some((v) => rolesThatCanView.includes(v)));
 
+    let userIsAdmin = roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin);
+    activeUserIsAdmin.current = userIsAdmin;
+
     let listOfTabs = [
         {
           key: "confirmed",
@@ -226,10 +288,7 @@ const UsersTable = () => {
         },
     ];
     
-    if (
-      roles.includes(Roles.Admin) ||
-      roles.includes(Roles.GoverningBodyAdmin)
-    )
+    if (userIsAdmin) {
       listOfTabs.push(
         {
           key: "registered",
@@ -240,41 +299,21 @@ const UsersTable = () => {
           tab: "Непідтверджені",
         }
       );
+      }
     setTabList(listOfTabs);
   }
 
   const fetchData = async () => {
-    if (!currentTabName) { 
-      console.log("not working...");
-      return;
-    }
-    setLoading(false);
-    try {
-      console.log("from fetchdata " + currentTabName);
-      if (currentTabName === "registered") {
-        const registeredUsers = new Array<string>();
-        registeredUsers.push(Roles.RegisteredUser);
-        const response = await getUsersForTableByPage({
-          Page: page,
-          PageSize: pageSize,
-          Cities: dynamicCities,
-          Regions: dynamicRegions,
-          Clubs: dynamicClubs,
-          Degrees: dynamicDegrees,
-          Tab: "confirmed",
-          SortKey: sortKey,
-          FilterRoles: registeredUsers,
-          SearchData: searchData,
-        });
-        setUsers(response.data.users);
-        setTotal(response.data.total);
-        return;
-      }
-    } finally {
-      setLoading(true);
-    }
+    if (!(currentTabName && isQueryLoaded)) return;
 
     try {
+      let registeredUsers;
+
+      if (currentTabName === "registered") {
+        registeredUsers = new Array<string>();
+        registeredUsers.push(Roles.RegisteredUser);
+      }
+
       const response = await getUsersForTableByPage({
         Page: page,
         PageSize: pageSize,
@@ -282,23 +321,19 @@ const UsersTable = () => {
         Regions: dynamicRegions,
         Clubs: dynamicClubs,
         Degrees: dynamicDegrees,
-        Tab: currentTabName,
+        Tab: currentTabName == "registered" ? "confirmed" : currentTabName,
         SortKey: sortKey,
-        FilterRoles: filter,
+        FilterRoles: registeredUsers ?? filter,
         SearchData: searchData,
       });
-      let jwt = AuthLocalStorage.getToken() as string;
-      let user = jwt_decode(jwt) as any;
-      setCurrentUser(
-        (await userApi.getUserProfileById(user.nameid, user.nameid)).data.user
-      );
+
       setUsers(response.data.users);
       setTotal(response.data.total);
-    } catch (error) {
+      setLoading(true);
+    }
+    catch (error) {
       //don't set value type, check on github will fail
       showError(error.message);
-    } finally {
-      setLoading(true);
     }
   };
 
@@ -443,41 +478,12 @@ const UsersTable = () => {
 
   const handleFilter = async () => {
     setPage(1);
-    setCurrentTabName(currentTabName);
-    if (
-      dynamicCities.length == 0 &&
-      dynamicRegions.length == 0 &&
-      dynamicClubs.length == 0 &&
-      dynamicDegrees.length == 0
-    ) {
-      fetchData();
-    } else {
-      setLoading(false);
-      try {
-        let response = await getUsersForTableByPage({
-          Page: page,
-          PageSize: pageSize,
-          Cities: dynamicCities,
-          Regions: dynamicRegions,
-          Clubs: dynamicClubs,
-          Degrees: dynamicDegrees,
-          Tab: currentTabName,
-          SortKey: sortKey,
-          FilterRoles: filter,
-          SearchData: searchData,
-        });
-        setUsers(response.data.users);
-        setTotal(response.data.total);
-      } catch (error) {
-        //don't set value type, check on github will fail
-        showError(error.message);
-      } finally {
-        setLoading(true);
-      }
-    }
+    setLoading(false);
+    fetchData();
   };
 
-  const onTabChange = async (key: string) => {
+  const onTabChange = (key: string) => {
+    setLoading(false);
     setPage(1);
     setPageSize(pageSize);
     setCurrentTabName(key);
@@ -502,15 +508,17 @@ const UsersTable = () => {
         Загальна кількість користувачів: {total}
       </Title>
       <div className={classes.searchContainer}>
+        {loading ? 
         <div className={classes.filterContainer}>
           <Form form={form} onFinish={handleFilter}>
             <Row className={classes.rowForFilterSearch}>
               <Col className={classes.colForTreeSelect}>
                 <Form.Item
+                  name="locationFilter"
                   rules={[
                     {
                       required: true,
-                      message: shouldContain("хоча б одна опція"),
+                      message: shouldContain("хоча б одну опцію"),
                       type: "array",
                     },
                   ]}
@@ -568,7 +576,7 @@ const UsersTable = () => {
               </Col>
             </Row>
           </Form>
-        </div>
+        </div> : <div></div>}
         <div className={classes.searchArea}>
           <Search
             placeholder="Пошук"
