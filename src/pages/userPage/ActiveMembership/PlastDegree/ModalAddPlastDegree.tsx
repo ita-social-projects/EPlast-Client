@@ -5,6 +5,7 @@ import activeMembershipApi, {
   UserPlastDegree,
 } from "../../../../api/activeMembershipApi";
 import FormAddPlastDegree from "./FormAddPlastDegree";
+import { LoadingOutlined } from "@ant-design/icons";
 
 type ModalAddPlastDegreeProps = {
   userId: string;
@@ -13,62 +14,46 @@ type ModalAddPlastDegreeProps = {
   setVisibleModal: (visibleModal: boolean) => void;
   handleAddDegree: () => void;
 };
-const ModalAddPlastDegree = ({
-  visibleModal,
-  setVisibleModal,
-  isCityAdmin,
-  userId,
-  handleAddDegree,
-}: ModalAddPlastDegreeProps) => {
-  const [availablePlastDegree, setAvailablePlastDegree] = useState<
-    Array<PlastDegree>
-  >([]);
+
+const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
+  const [plastDegrees, setPlastDegrees] = useState<Array<PlastDegree>>([]);
+  const [currentUserDegree, setCurrentUserDegree] = useState<UserPlastDegree>();
   const [cancel, setCancel] = useState<boolean>(false);
+  const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
 
   const handleCancel = () => {
-    setVisibleModal(false);
+    props.setVisibleModal(false);
+    setIsUserDataLoaded(false);
     setCancel(true);
   };
 
-  const getAvailablePlastDegree = (
-    allDegrees: Array<PlastDegree>,
-    userPlastDegree: UserPlastDegree
-  ): Array<PlastDegree> => {
-    setCancel(false);
-    const aupd: Array<PlastDegree> = [];
-    allDegrees.forEach((d) => {
-      if (userPlastDegree?.plastDegree?.id !== d.id) {
-        aupd.push(d);
-      }
-    });
-    return aupd;
-  };
   const fetchData = async () => {
-    await activeMembershipApi.getAllPlastDegrees().then(async (response) => {
-      await activeMembershipApi.getUserPlastDegree(userId).then((res) => {
-        setAvailablePlastDegree(getAvailablePlastDegree(response, res));
-      });
-    });
+    await activeMembershipApi.getAllPlastDegrees().then((response) => {setPlastDegrees(response)});
+    await activeMembershipApi.getUserPlastDegree(props.userId).then((response) => setCurrentUserDegree(response));
+    setIsUserDataLoaded(true);
   };
+
   useEffect(() => {
-    fetchData();
-  }, [userId]);
+    if (props.visibleModal) fetchData();
+  }, [props.visibleModal]);
+
   return (
     <Modal
-      visible={visibleModal}
+      visible={props.visibleModal}
       onCancel={handleCancel}
-      title="Надання Пластового ступеня"
+      title="Прийняти пластуна до"
       footer={null}
     >
-      <FormAddPlastDegree
-        handleAddDegree={handleAddDegree}
-        userId={userId}
-        isCityAdmin={isCityAdmin!}
-        setVisibleModal={setVisibleModal}
-        availablePlastDegree={availablePlastDegree}
+      {isUserDataLoaded ? <FormAddPlastDegree
+        handleAddDegree={props.handleAddDegree}
+        userId={props.userId}
+        setVisibleModal={props.setVisibleModal}
+        plastDegrees={plastDegrees}
+        currentUserDegree={currentUserDegree}
         resetAvailablePlastDegree={fetchData}
         cancel={cancel}
-      />
+        isModalVisible={props.visibleModal}
+      /> : <LoadingOutlined style={{fontSize: 24}}/> }
     </Modal>
   );
 };
