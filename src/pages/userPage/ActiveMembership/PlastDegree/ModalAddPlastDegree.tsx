@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Modal } from "antd";
 import activeMembershipApi, {
   PlastDegree,
@@ -21,6 +21,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
   const [currentUserDegree, setCurrentUserDegree] = useState<UserPlastDegree>();
   const [cancel, setCancel] = useState<boolean>(false);
   const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
+  const userAllData = useRef<any>({});
   const [fullName, setFullName] = useState<string>();
   const [age, setAge] = useState<number | string>();
 
@@ -31,7 +32,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
   };
 
   async function getAge() {
-    const userBirthday = (await userApi.getById(props.userId)).data.user.birthday;
+    const userBirthday = userAllData.current.user.birthday;
     if (userBirthday === "0001-01-01T00:00:00" || undefined) {
       return "?";
     } else {
@@ -48,6 +49,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
     await activeMembershipApi.getAllPlastDegrees().then((response) => {setPlastDegrees(response)});
     await activeMembershipApi.getUserPlastDegree(props.userId).then((response) => setCurrentUserDegree(response));
     const userData = (await userApi.getById(props.userId)).data;
+    userAllData.current = userData;
     setFullName(userData.user.firstName + " " + userData.user.lastName);
     setAge(await getAge());
     setIsUserDataLoaded(true);
