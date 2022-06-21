@@ -1043,7 +1043,7 @@ const City = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>
-              Прихильники станиці{" "}
+            Зголошені станиці{" "}
               <a onClick={() => history.push(`/cities/followers/${city.id}`)}>
                 {followersCount !== 0 ? (
                   <Badge
