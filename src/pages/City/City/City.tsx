@@ -889,7 +889,10 @@ const City = () => {
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/cities/members/${city.id}`)}
+                onClick={() => {
+                  if (userAccesses["EditCity"]) history.push(`/user/table?city=${city.id}`);
+                  else history.push(`/cities/members/${city.id}`);
+                  }}
               >
                 Більше
               </Button>
@@ -1147,7 +1150,10 @@ const City = () => {
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/cities/followers/${city.id}`)}
+                onClick={() => { 
+                  if (userAccesses["EditCity"]) history.push(`/user/table?tab=registered&city=${city.id}`);
+                  else history.push(`/cities/followers/${city.id}`);
+               }}
               >
                 Більше
               </Button>

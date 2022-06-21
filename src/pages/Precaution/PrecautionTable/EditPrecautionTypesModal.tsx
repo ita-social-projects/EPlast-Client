@@ -1,5 +1,5 @@
 import React from "react";
-import { Drawer, Modal } from "antd";
+import { Drawer } from "antd";
 import FormEditPrecautionTypes from "./FormEditPrecautionTypes";
 
 interface Props {

@@ -31,14 +31,12 @@ const CityDetailDrawer = (props: Props) => {
               label="Посилання"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.cityURL?.length > 0 ? props.city.cityURL : "---"
+                props.city.cityURL
               }
             >
               <a href={props.city.cityURL} target="_blank">
                 <Input
-                  value={
-                    props.city.cityURL?.length > 0 ? props.city.cityURL : "---"
-                  }
+                   placeholder="Не вказано"
                   disabled
                 />
               </a>
@@ -50,17 +48,11 @@ const CityDetailDrawer = (props: Props) => {
               label="Номер телефону"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.phoneNumber?.length > 0
-                  ? props.city.phoneNumber
-                  : "---"
+                props.city.phoneNumber
               }
             >
               <Input
-                value={
-                  props.city.phoneNumber?.length > 0
-                    ? props.city.phoneNumber
-                    : "---"
-                }
+               placeholder="Не вказано"
                 disabled
               />
             </Form.Item>
@@ -73,11 +65,11 @@ const CityDetailDrawer = (props: Props) => {
               label="Електронна пошта"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.email?.length > 0 ? props.city.email : "---"
+                props.city.email
               }
             >
               <Input
-                value={props.city.email?.length > 0 ? props.city.email : "---"}
+                placeholder="Не вказано"
                 disabled
               />
             </Form.Item>
@@ -88,13 +80,11 @@ const CityDetailDrawer = (props: Props) => {
               label="Округа"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.region?.length > 0 ? props.city.region : "---"
+                props.city.region
               }
             >
               <Input
-                value={
-                  props.city.region?.length > 0 ? props.city.region : "---"
-                }
+                placeholder="Не вказано"
                 disabled
               />
             </Form.Item>
@@ -103,38 +93,15 @@ const CityDetailDrawer = (props: Props) => {
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
-              name="street"
-              label="Вулиця"
+              name="address"
+              label="Адреса"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.street?.length > 0 ? props.city.street : "---"
+                props.city.address
               }
             >
               <Input
-                value={
-                  props.city.street?.length > 0 ? props.city.street : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="houseNumber"
-              label="Номер будинку"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.city.houseNumber?.length > 0
-                  ? props.city.houseNumber
-                  : "---"
-              }
-            >
-              <Input
-                value={
-                  props.city.houseNumber?.length > 0
-                    ? props.city.houseNumber
-                    : "---"
-                }
+                 placeholder="Не вказано"
                 disabled
               />
             </Form.Item>
@@ -143,40 +110,15 @@ const CityDetailDrawer = (props: Props) => {
         <Row justify="center" gutter={[12, 0]}>
           <Col md={12} xs={24}>
             <Form.Item
-              name="officeNumber"
-              label="Номер офісу/квартири"
+              name="level"
+              label="Рівень"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.officeNumber?.length > 0
-                  ? props.city.officeNumber
-                  : "---"
+                props.city.level
               }
             >
               <Input
-                value={
-                  props.city.officeNumber?.length > 0
-                    ? props.city.officeNumber
-                    : "---"
-                }
-                disabled
-              />
-            </Form.Item>
-          </Col>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="postIndex"
-              label="Поштовий індекс"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.city.postIndex?.length > 0 ? props.city.postIndex : "---"
-              }
-            >
-              <Input
-                value={
-                  props.city.postIndex?.length > 0
-                    ? props.city.postIndex
-                    : "---"
-                }
+                 placeholder="Не вказано"
                 disabled
               />
             </Form.Item>
@@ -189,9 +131,7 @@ const CityDetailDrawer = (props: Props) => {
               label="Опис"
               labelCol={{ span: 24 }}
               initialValue={
-                props.city.description?.length > 0
-                  ? props.city.description
-                  : "---"
+                props.city.description
               }
             >
               <TextArea
@@ -199,11 +139,7 @@ const CityDetailDrawer = (props: Props) => {
                   minRows: 1,
                   maxRows: 9,
                 }}
-                value={
-                  props.city.description?.length > 0
-                    ? props.city.description
-                    : "---"
-                }
+                placeholder="Не вказано"
                 disabled
               />
             </Form.Item>

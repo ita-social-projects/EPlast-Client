@@ -32,7 +32,7 @@ function EditTerms() {
 
   const fetchUser = async () => {
     let roles = UserApi.getActiveUserRoles();
-    setCanEdit(roles.includes(Roles.Admin));
+    setCanEdit(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin));
   };
 
   const fetchTermsData = async () => {

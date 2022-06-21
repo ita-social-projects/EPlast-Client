@@ -24,6 +24,7 @@ import { IDropdownItem, DropdownItemCreator } from "./DropdownItem";
 import { DropdownFunc } from "../../models/UserTable/DropdownFunc";
 import ChangeUserGoverningBodyModal from "./ChangeUserGoverningBodyModal";
 import DeleteGoverningBodyAdminModal from "./DeleteGoverningBodyAdminModal";
+import AcceptUserToCityModal from "./AcceptUserToCityModal";
 
 const authService = new AuthorizeApi();
 
@@ -68,12 +69,13 @@ const DropDown = (props: Props) => {
     showDeleteGoverningBodyAdminModal,
     setShowDeleteGoverningBodyAdminModal,
   ] = useState<boolean>(false);
+  const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
+    false
+  );
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
-  const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
-  const [currentUserAdminRoles, setCurrentUserAdminRoles] = useState<
-    Array<AdminRole>
-  >([]);
+  const [, setGoverningBodyHead] = useState<boolean>(true);
+  const [currentUserAdminRoles] = useState<Array<AdminRole>>([]);
   const [canViewProfile, setCanViewProfile] = useState<boolean>(false);
   const [canDelete, setCanDelete] = useState<boolean>(false);
   const [
@@ -100,6 +102,7 @@ const DropDown = (props: Props) => {
     false
   );
   const [canAddDegree, setCanAddDegree] = useState<boolean>(false);
+  const [canAcceptToCity, setCanAcceptToCity] = useState<boolean>(false);
 
   const [chainOfAccessibility, setChainOfAccessibility] = useState<
     IDropdownItem
@@ -234,6 +237,8 @@ const DropDown = (props: Props) => {
 
     setCanAddDegree(result?.get(DropdownFunc.AddDegree) ?? false);
 
+    setCanAcceptToCity(result?.get(DropdownFunc.AcceptToCity) ?? false);
+
     setSuperAdmin(currentUserAdminRoles.includes(AdminRole.Admin));
     setGoverningBodyHead(
       currentUserAdminRoles.includes(AdminRole.GoverningBodyHead)
@@ -278,6 +283,9 @@ const DropDown = (props: Props) => {
         break;
       case "11":
         await setShowDeleteGoverningBodyAdminModal(true);
+        break;
+      case "12":
+        await setShowAcceptToCityModal(true);
         break;
       default:
         break;
@@ -341,22 +349,6 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeGoverningBodyAdministration ? (
-            <Menu.Item key="10">
-              <EditOutlined />
-              Провід Пласту
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {inActiveTab === false && canDeleteGoverningBodyAdministration ? (
-            <Menu.Item key="11">
-              <EditOutlined />
-              Відмінити роль Адміна
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
           {inActiveTab === false && canChangeUserAccess ? (
             <Menu.Item key="6">
               <EditOutlined />
@@ -381,6 +373,31 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
+          {inActiveTab === false && canChangeGoverningBodyAdministration ? (
+            <Menu.Item key="10">
+              <EditOutlined />
+              Провід Пласту
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {inActiveTab === false && canDeleteGoverningBodyAdministration ? (
+            <Menu.Item key="11">
+              <EditOutlined />
+              Відмінити роль Адміна
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {inActiveTab === false && canAcceptToCity ? (
+            <Menu.Item key="12">
+              <EditOutlined />
+              Прийняти до уладу
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+
           <ChangeUserRoleModal
             record={record}
             showModal={showEditModal}
@@ -427,6 +444,13 @@ const DropDown = (props: Props) => {
             userId={record}
             visibleModal={visibleModalDegree}
             setVisibleModal={setVisibleModalDegree}
+          />
+          <AcceptUserToCityModal
+            record={record}
+            showModal={showAcceptToCityModal}
+            user={selectedUser}
+            setShowModal={setShowAcceptToCityModal}
+            onChange={onChange}
           />
         </Menu>
       ) : null}

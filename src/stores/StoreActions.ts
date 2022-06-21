@@ -19,6 +19,9 @@ export type SingleEntityStoreActions<TStoreState, TContainerProps = null> = {
     /**
      * Get all entities from the backend. Always overwrites a previously stored entities in store's state.
      * 
+     * @param filters
+     * Plane object which will be sent to backend to filter data from database.
+     * 
      * @remarks 
      * **DO NOT USE THIS ACTION** if you expect large amount of entities being pulled from backend.
      * Using this action in such cases may result in large client memory usage and very wide bandwith usage.
@@ -27,7 +30,7 @@ export type SingleEntityStoreActions<TStoreState, TContainerProps = null> = {
      * @throws {@link Error}
      * Thrown when GET request has failed (status 4xx - 5xx).
      */
-    refreshAll: (nameFilter?: string) => Action<TStoreState, TContainerProps, Promise<void>>;
+    refreshAll: (filters?: { [filterName: string]: string | number | boolean }) => Action<TStoreState, TContainerProps, Promise<void>>;
 
     /**
      * Update (in fact - replace) the entity on the backend with all properties from the new state.
@@ -76,6 +79,9 @@ export type StoreActions<
          *
          * @param pageSize
          * Amount of entities on one page.
+         * 
+         * @param filters
+         * Plane object which will be sent to backend to filter data from database.
          *
          * @param preserveOldState
          * Pass `true` to preserve old state, pass `false` to overwrite it.
@@ -83,7 +89,7 @@ export type StoreActions<
          * @throws {@link Error}
          * Thrown when GET request has failed (status 4xx - 5xx).
          */
-        refreshByPage: (page: number, pageSize: number, nameFilter?: string, preserveOldState?: boolean) => Action<TStoreState, TContainerProps, Promise<void>>;
+        refreshByPage: (page: number, pageSize: number, filters?: { [filterName: string]: string | number | boolean }, preserveOldState?: boolean) => Action<TStoreState, TContainerProps, Promise<void>>;
 
         /**
          * Get single entity from the backend.
