@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Form, DatePicker, Select, Input, Button, Row, Col } from "antd";
-import Precaution from "../Interfaces/Precaution";
-import UserPrecaution from "../Interfaces/UserPrecaution";
 import precautionApi from "../../../api/precautionApi";
 import formclasses from "./Form.module.css";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import notificationLogic from "../../../components/Notifications/Notification";
-import {
-  failCreateAction,
-  dataCantBeFetched,
-} from "../../../components/Notifications/Messages";
+import { createHook } from "react-sweet-state";
 import {
   emptyInput,
   maxNumber,
@@ -19,60 +12,20 @@ import {
   descriptionValidation,
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
-import SuggestedUser from "../Interfaces/SuggestedUser";
+import PrecautionStore from "../../../stores/StorePrecaution";
 
-type FormAddPrecautionProps = {
-  setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: () => void;
-};
-
-const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
-  const { setVisibleModal, onAdd } = props;
+const FormAddPrecaution = () => {
+  const useStore = createHook(PrecautionStore);
+  const [state, actions] = useStore();
   const [form] = Form.useForm();
-
-  const [userData, setUserData] = useState<SuggestedUser[]>(
-    Array<SuggestedUser>()
-  );
-  const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
-  const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-  const [loadingPrecautionStatus, setLoadingPrecautionStatus] = useState(false);
   const dateFormat = "DD.MM.YYYY";
 
   const disabledStartDate = (current: any) => {
     return current && current > moment();
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoadingPrecautionStatus(true);
-      await precautionApi
-        .getPrecautions()
-        .then((response) => {
-          setDistData(response.data);
-          setLoadingPrecautionStatus(false);
-        })
-        .catch(() => {
-          notificationLogic(
-            "error",
-            dataCantBeFetched("пересторог. Спробуйте пізніше")
-          );
-        });
-
-      setLoadingUserStatus(true);
-      await precautionApi
-        .getUsersForPrecaution()
-        .then((response) => {
-          setUserData(response.data);
-          setLoadingUserStatus(false);
-        })
-        .catch(() => {
-          notificationLogic(
-            "error",
-            dataCantBeFetched("користувачів. Спробуйте пізніше")
-          );
-        });
-    };
-    fetchData();
+  useEffect(() => {    
+    actions.fetchDataFormAddPrecaution();
   }, []);
 
   const backgroundColor = (user: any) => {
@@ -81,93 +34,12 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
       : { backgroundColor: "white" };
   };
 
-  const handleCancel = () => {
-    form.resetFields();
-    setVisibleModal(false);
-  };
-
-  const createNotifications = async (userPrecaution: UserPrecaution) => {
-    await NotificationBoxApi.createNotifications(
-      [userPrecaution.userId],
-      `Вам було надано нову пересторогу: '${userPrecaution.precaution.name}' від ${userPrecaution.reporter}. `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/Precautions`,
-      `Переглянути`
-    );
-
-    await NotificationBoxApi.getCitiesForUserAdmins(userPrecaution.userId).then(
-      (res) => {
-        res.cityRegionAdmins.length !== 0 &&
-          res.cityRegionAdmins.forEach(async (cra) => {
-            await NotificationBoxApi.createNotifications(
-              [cra.cityAdminId, cra.regionAdminId],
-              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нову пересторогу: '${userPrecaution.precaution.name}' від ${userPrecaution.reporter}. `,
-              NotificationBoxApi.NotificationTypes.UserNotifications,
-              `/Precautions`,
-              `Переглянути`
-            );
-          });
-      }
-    );
-  };
-  const AddPrecaution = async (newPrecaution: UserPrecaution) => {
-    await precautionApi.addUserPrecaution(newPrecaution);
-    setVisibleModal(false);
-    form.resetFields();
-    onAdd();
-    await createNotifications(newPrecaution);
-  };
-
-  const activePrecautionNofication = async (newPrecaution: UserPrecaution) => {
-    await precautionApi
-      .getUserActivePrecautionEndDate(
-        newPrecaution.userId,
-        newPrecaution.precaution.name
-      )
-      .then((response) => {
-        notificationLogic(
-          "error",
-          failCreateAction(
-            "пересторогу! Користувач має активну до " + response.data + "!"
-          )
-        );
-      });
-  };
-  const handleSubmit = async (values: any) => {
-    const newPrecaution: UserPrecaution = {
-      id: 0,
-      precautionId: JSON.parse(values.Precaution).id,
-      precaution: JSON.parse(values.Precaution),
-      user: JSON.parse(values.user),
-      userId: JSON.parse(values.user).id,
-      status: values.status,
-      date: values.date,
-      endDate: values.date,
-      isActive: true,
-      reporter: values.reporter,
-      reason: values.reason,
-      number: values.number,
-    };
-
-    await precautionApi
-      .checkUserPrecautionsType(
-        newPrecaution.userId,
-        newPrecaution.precaution.name
-      )
-      .then((response) => {
-        if (response.data) {
-          activePrecautionNofication(newPrecaution);
-        } else {
-          AddPrecaution(newPrecaution);
-        }
-      });
-  };
   return (
     <Form
       name="basic"
-      onFinish={handleSubmit}
+      onFinish={(values: any ) => actions.addModalHandleSubmit(values, form)}
       form={form}
-      id="area"
+      id="addArea"
       style={{ position: "relative" }}
     >
       <Row justify="start" gutter={[12, 0]}>
@@ -236,10 +108,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             <Select
               className={formclasses.selectField}
               showSearch
-              loading={loadingPrecautionStatus}
+              loading={state.loadingPrecautionStatus}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              {distData?.map((user) => (
+              {state.addDistData?.map((user) => (
                 <Select.Option key={user.id} value={JSON.stringify(user)}>
                   {user.name}
                 </Select.Option>
@@ -265,10 +137,10 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             <Select
               className={formclasses.selectField}
               showSearch
-              loading={loadingUserStatus}
+              loading={state.loadingUserStatus}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              {userData?.map((user) => (
+              {state.userData?.map((user) => (
                 <Select.Option
                   key={user.id}
                   value={JSON.stringify(user)}
@@ -318,7 +190,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
               className={formclasses.selectField}
               disabledDate={disabledStartDate}
               getPopupContainer={() =>
-                document.getElementById("area")! as HTMLElement
+                document.getElementById("addArea")! as HTMLElement
               }
               popupStyle={{ position: "absolute" }}
             />
@@ -384,7 +256,7 @@ const FormAddPrecaution: React.FC<FormAddPrecautionProps> = (props: any) => {
             <div className={formclasses.cardButton}>
               <Button
                 key="back"
-                onClick={handleCancel}
+                onClick={() => actions.addModalhandleCancel(form)}
                 className={formclasses.buttons}
               >
                 Відмінити
