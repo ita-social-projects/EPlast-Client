@@ -2,19 +2,17 @@ import { createStore, Action} from 'react-sweet-state';
 import notificationLogic from "../components/Notifications/Notification";
 import NotificationBoxApi from "../api/NotificationBoxApi";
 import { dataCantBeFetched, failCreateAction, successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../components/Notifications/Messages';
-//import PrecautionTableSettings from '../../../models/Precaution/PrecautionTableSettings';
 import PrecautionTableSettings from '../models/Precaution/PrecautionTableSettings';
 import precautionApi from "../api/precautionApi";
-import Precaution from '../../src/pages/Precaution/Interfaces/Precaution';
 import UserPrecaution from '../../src/pages/Precaution/Interfaces/UserPrecaution';
 import SuggestedUser from '../../src/pages/Precaution/Interfaces/SuggestedUser';
-//import UserPrecautionsTableInfo from '../Interfaces/UserPrecauctionsTableInfo';
 import UserPrecautionsTableInfo from '../../src/pages/Precaution/Interfaces/UserPrecauctionsTableInfo'
 import jwt from "jwt-decode";
-//import UserPrecautionTableItem from '../../Interfaces/UserPrecautionTableItem';
 import UserPrecautionTableItem from '../../src/pages/Precaution/Interfaces/UserPrecautionTableItem'
-//import AuthLocalStorage from '../../../AuthLocalStorage';
 import AuthLocalStorage from '../AuthLocalStorage';
+import deleteConfirm from "../../src/pages/Precaution/PrecautionTable/DeleteConfirm";
+import User from "../../src/models/UserTable/User";
+import Precaution from '../../src/pages/Precaution/Interfaces/Precaution';
 
 let user: any;
 let curToken = AuthLocalStorage.getToken() as string;
@@ -27,14 +25,30 @@ roles =
       ] as string[])
     : [""];
 
+const EmptyUserPrecautionTableItem: UserPrecautionTableItem = {
+      id: 0,
+      number: 0,
+      precautionId: 0,
+      precautionName: "",
+      userId: "",
+      userName: "",
+      reporter: "",
+      reason: "",
+      status: "",
+      date: new Date(),
+      endDate: new Date(),
+      isActive: false,
+    };
+
 type State = {
-  EmptyUserPrecautionTableItem: UserPrecautionTableItem,
+  pageX: number,
+  pageY: number,
+  userId: number,
 
   loading: boolean,
   loadingPrecautionStatus: boolean,
   showDropdown: boolean,
   visibleModal: boolean,
-  editVisibleModal: boolean,
 
   searchedData: string,
   statusSorter:any[],
@@ -51,38 +65,30 @@ type State = {
   loadingUserStatus: boolean,
   userData: SuggestedUser[],
   userAccess: { [key: string]: boolean },
+  recordObj: UserPrecautionTableItem,
 
-  editDistData: Precaution[],
-  editTitle: string,
-  editCurDist: Precaution,
-  editVisible: boolean,
-  editVisRule: boolean,
-  editLoading: boolean,
+  showEditModal: boolean,
+  userPrecaution: UserPrecaution,
+  editModalLoading: boolean,
+  editModalUserData: SuggestedUser[],
+  editModalDistData: Precaution[],
+  editModalLoadingUserStatus: boolean,
+  editModalLoadingPrecautionStatus: boolean,
+  editModalPrecaution: Precaution,
+  editModalUser: User,
+
 };
 
 type Actions = typeof actions;
 
 const initialState = { 
-  EmptyUserPrecautionTableItem:{
-    id: 0,
-    number: 0,
-    precautionId: 0,
-    precautionName: "",
-    userId: "",
-    userName: "",
-    reporter: "",
-    reason: "",
-    status: "",
-    date: new Date(),
-    endDate: new Date(),
-    isActive: false,
-  },
-
+  pageX:0, 
+  pageY:0,
+  userId:0,
   loading: false,  
   loadingPrecautionStatus: false,
   showDropdown: false,
   visibleModal:false,
-  editVisibleModal:false,
 
   searchedData:"",
   statusSorter: [],
@@ -115,19 +121,37 @@ const initialState = {
   loadingUserStatus: false,
   userData: Array<SuggestedUser>(),
   userAccess: {},
+  recordObj: EmptyUserPrecautionTableItem,
 
-  editDistData:[{
-    name: "",
+  showEditModal: false,
+  userPrecaution: {
     id: 0,
-  }],
-  editTitle:"",
-  editCurDist: {
-    name: "",
-    id: 0,
+    precaution: {
+      id: 0,
+      name: "",
+    },
+    precautionId: 0,
+    status: "",
+    userId: "",
+    reporter: "",
+    reason: "",
+    number: 0,
+    date: new Date(),
+    endDate: new Date(),
+    isActive: true,
+    user: new User(),
   },
-  editVisible: false,
-  editVisRule: false,
-  editLoading: false,
+  editModalLoading: false,
+  editModalUserData: Array<SuggestedUser>(),
+  editModalDistData: Array<Precaution>(),
+  editModalLoadingUserStatus: false,
+  editModalLoadingPrecautionStatus: false,
+  editModalPrecaution: {
+    id: 0,
+    name: "",
+  },
+  editModalUser: new User(),
+
 };
 
 const actions = {
@@ -180,109 +204,39 @@ const actions = {
         setState({
           visibleModal: visible
         })      
-    },
-  
-  setEditLoading:
-    (status: boolean): Action<State> =>
-      ({setState}) => {
-        setState({
-          editLoading: status
-        })      
-    },
-  
-  editModalHandleDelete:
-   (id: number): Action<State> =>
-   ({setState, getState}) => {
-      const filteredData = getState().editDistData.filter((d: { id: number }) => d.id !== id);
-      setState({
-        editDistData: [...filteredData],
-        editVisible: false
-      })
-      notificationLogic("success", "Тип перестороги успішно видалено!");
-    },
-
-  editModalHandleAdd:
-   ():Action<State> =>
-   async ({setState, getState}) => {
-      const newPrecaution: Precaution = {
-        id: 0,
-        name: getState().editTitle,
-      };
-      if (getState().editTitle.length != 0) {
-        await precautionApi.addPrecaution(newPrecaution);
-        const res: Precaution[] = (await precautionApi.getPrecautions()).data;
-        setState({
-          editDistData: res,
-          editTitle: ""
-        })
-        notificationLogic("success", "Тип перестороги додано!");
-      } else {
-        notificationLogic("error", "Хибна назва");
-      }
-    },
-
-  editModalSetTitle:
-   (newTitle: any):Action<State> =>
-    async ({setState}) => {
-      setState({
-        editTitle: newTitle
-      })
     },  
   
-  editModalSetVisRule:
-    (newVisRule: boolean):Action<State> =>
-     async ({setState}) => {
-       setState({
-         editVisRule: newVisRule
-       })
-     }, 
+  setPageX:
+  (x: number): Action<State> => 
+   ({ setState }) => {    
+    setState({
+      pageX: x
+    });
+  },
 
-  editModalShowEdit:
-   (id: number):Action<State> =>
-    async ({setState, getState}) => {
-      const Precaution = (await precautionApi.getPrecautionById(id)).data;
-      setState({
-        editCurDist: Precaution 
-      })
-      if (getState().editCurDist.id != id) {
-        setState({
-          editVisible: true
-        })       
-      } else {
-        setState({
-          editVisible: false,
-          editCurDist: {
-            name: "",
-            id: 0,
-          }        
-        })
-      }
-    },
-  
-  editModalHandleEdit:
-   ():Action<State> =>
-    async ({setState, getState, dispatch}) => {
-      if (getState().editCurDist.name.length !== 0) {
-        await precautionApi.editPrecaution(getState().editCurDist);
-        notificationLogic("success", "Тип перестороги успішно змінено!");
-        dispatch(actions.editFetchData());
-        setState({
-          editCurDist: {
-            name: "",
-            id: 0,
-          },
-          editVisible: false
-        })
-      } else notificationLogic("error", "Хибна назва");
-    },
-  
-  setEditVisibleModal:
-    (visible: boolean): Action<State> =>
-      ({setState}) => {
-        setState({
-          editVisibleModal: visible
-        })      
-    },  
+  setPageY:
+  (y: number): Action<State> => 
+   ({ setState }) => {    
+    setState({
+      pageY: y
+    });
+  },
+
+  setUserId:
+  (id: any): Action<State> => 
+   ({ setState }) => {    
+    setState({
+      userId: id
+    });
+  },
+
+  setRecordObj:
+  (object: UserPrecautionTableItem): Action<State> => 
+   ({ setState }) => {    
+    setState({
+      recordObj: object
+    });
+  },
 
   handleAdd:
    (): Action<State> => 
@@ -297,7 +251,7 @@ const actions = {
   handleClickAway:
    (): Action<State> => 
    ({ setState }) => {    
-    setState({
+    setState({    
       showDropdown: false
     });
   },
@@ -318,24 +272,7 @@ const actions = {
         page: 1
       });
     },
-  
-  editFetchData:
-  ():Action<State> =>
-  async ({setState}) => {
-      const distData = (await precautionApi.getPrecautions()).data;
-      setState({
-        editDistData: distData
-      })
-    },
 
-  editSetCurDist:
-    (newCurDist: any): Action<State> => 
-      ({ setState }) => {
-        setState({
-          editCurDist: newCurDist  
-        });      
-      },
-  
   showModalPrecautionTable:
   (): Action<State> => 
     ({ setState }) => {
@@ -375,14 +312,6 @@ const actions = {
       
       notificationLogic("success", successfulDeleteAction("Пересторогу"));  
       dispatch(actions.CreateDeleteNotification(id)); 
-    },
-
-  showModalEditTypes:
-   (newEditVisibleModal: boolean):Action<State> =>
-   ({setState}) => {
-     setState({
-       editVisibleModal: newEditVisibleModal
-     })
     },
 
   handleEditPrecautionTable:
@@ -529,6 +458,181 @@ const actions = {
             userData: response.data,
             loadingUserStatus: false
           })
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("користувачів. Спробуйте пізніше")
+          );
+        });
+    },    
+
+    dropDownHandleItemClick:
+      (item: any, onDelete:any):Action<State> =>
+        async ({dispatch, getState}) => {
+          switch (item.key) {
+                case "1":
+                  window.open(`/userpage/main/${getState().userId}`);
+                  break;
+                case "2":
+                  await deleteConfirm(getState().recordObj.id, onDelete);
+                  break;
+                case "3":
+                  await dispatch(actions.setShowEditModal(true));
+                  break;
+                default:
+                  break;
+              }
+    },
+
+    setUserPrecaution:
+      (precaution: UserPrecaution): Action<State> => 
+      ({ setState }) => {    
+        setState({
+          userPrecaution: precaution
+        });
+    },
+
+    setShowEditModal:
+      (status: boolean): Action<State> => 
+      ({ setState }) => {    
+        setState({
+          showEditModal: status
+        });
+    },
+
+    setEditModalLoading:
+      (status: boolean): Action<State> => 
+      ({ setState }) => {    
+        setState({
+          editModalLoading: status
+        });
+    },
+
+    dropDownFetchData:
+      (): Action<State> => 
+       async ({ getState, dispatch}) => {    
+        await precautionApi
+        .getUserPrecautionById(getState().recordObj.id)
+        .then((res) => dispatch(actions.setUserPrecaution(res.data)));
+    },
+    
+    setEditModalPrecaution:
+      (precaution: Precaution): Action<State> => 
+       ({setState}) => {    
+        setState({
+          editModalPrecaution: precaution
+        })
+    },
+
+    setEditModalUser:
+      (newUser: any): Action<State> => 
+       ({setState}) => {    
+        setState({
+          editModalUser: newUser
+        })
+    },
+
+    editModalHandleCancel:
+      (form: any): Action<State> => 
+       ({setState}) => {    
+        form.resetFields();
+        setState({
+          showEditModal: false
+        })
+    },
+
+    editModalSetPrecautionChange:
+      (dist: any): Action<State> => 
+       ({setState}) => {    
+        dist = JSON.parse(dist);
+        setState({
+          editModalPrecaution: dist
+        })
+    },
+
+    editModalSetUserChange:
+      (user: any): Action<State> => 
+       ({setState}) => {    
+        user = JSON.parse(user);
+        setState({
+          editModalUser: user
+        })
+    },
+
+    editModalHandleFinish:
+      (editedUserPrecaution: any, form: any): Action<State> => 
+       async ({setState, getState, dispatch}) => {    
+        const newPrecaution: UserPrecaution = {
+          id: getState().userPrecaution.id,
+          precautionId: getState().editModalPrecaution.id,
+          precaution: getState().editModalPrecaution,
+          user: getState().editModalUser,
+          userId: getState().editModalUser.id,
+          status: editedUserPrecaution.status,
+          date: editedUserPrecaution.date,
+          endDate: getState().userPrecaution.endDate,
+          isActive: editedUserPrecaution.status === "Скасовано" ? false : true,
+          reporter: editedUserPrecaution.reporter,
+          reason: editedUserPrecaution.reason,
+          number: editedUserPrecaution.number,
+        };
+    
+        await precautionApi.editUserPrecaution(newPrecaution);
+        setState({
+          showEditModal: false
+        })        
+        form.resetFields();
+
+        dispatch(actions.handleEditPrecautionTable(
+          newPrecaution.id,
+          newPrecaution.precaution,
+          newPrecaution.date,
+          newPrecaution.endDate,
+          newPrecaution.isActive,
+          newPrecaution.reason,
+          newPrecaution.status,
+          newPrecaution.reporter,
+          newPrecaution.number,
+          newPrecaution.user,
+          newPrecaution.user.id
+        ));
+    },
+
+    editModalFetchData:
+      (): Action<State> => 
+       async ({setState}) => {    
+        setState({
+          editModalDistData: [],
+          editModalUserData: [],
+          editModalLoadingPrecautionStatus: true
+        })
+
+      await precautionApi
+        .getPrecautions()
+        .then((response) => {
+          setState({
+            editModalDistData: response.data,
+            editModalLoadingPrecautionStatus: false
+          })
+        })
+        .catch(() => {
+          notificationLogic(
+            "error",
+            dataCantBeFetched("пересторог. Спробуйте пізніше")
+          );
+        });
+
+      setState({
+        editModalLoadingUserStatus: true
+      })
+      await precautionApi
+        .getUsersForPrecaution()
+        .then((response) => {
+          setState({
+            editModalUserData: response.data,
+            editModalLoadingUserStatus: false
+          })          
         })
         .catch(() => {
           notificationLogic(

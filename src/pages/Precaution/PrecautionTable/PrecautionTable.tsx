@@ -8,8 +8,6 @@ import PrecautionStore from "../../../stores/StorePrecaution";
 import "./Filter.less";
 import { createHook } from "react-sweet-state";
 import AddPrecautionModal from "./AddPrecautionModal";
-import EditPrecautionTypesModal from "./EditPrecautionTypesModal";
-import UserPrecautionTableItem from "../Interfaces/UserPrecautionTableItem";
 
 const { Content } = Layout;
 
@@ -18,14 +16,6 @@ const PrecautionTable = () => {
   
   const useStore = createHook(PrecautionStore);
   const [state, actions] = useStore();
-
-  const [recordObj, setRecordObj] = useState<UserPrecautionTableItem>(
-    state.EmptyUserPrecautionTableItem
-  );
-  const [isRecordActive, setIsRecordActive] = useState<boolean>(false);
-  const [userId, setUserId] = useState<any>(0);
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
 
   useEffect(() => {
     actions.handleGetPrecautionTable();
@@ -43,7 +33,7 @@ const PrecautionTable = () => {
     <Layout>
       <Content
         onClick={() => {
-          state.showDropdown = false;
+          actions.setShowDropdown(false);
         }}
       >
         <h1 className={classes.titleTable}>Перестороги</h1>
@@ -78,16 +68,15 @@ const PrecautionTable = () => {
                 onRow={(record) => {
                   return {
                     onClick: () => {
-                      state.showDropdown = false;
+                      actions.setShowDropdown(false);
                     },
                     onContextMenu: (event) => {
                       event.preventDefault();
                       actions.setShowDropdown(true);
-                      setRecordObj(record);
-                      setIsRecordActive(record.isActive);
-                      setUserId(record.userId);
-                      setX(event.pageX);
-                      setY(event.pageY);
+                      actions.setRecordObj(record);
+                      actions.setUserId(record.userId);
+                      actions.setPageX(event.pageX);
+                      actions.setPageY(event.pageY);
                     },
                   };
                 }}
@@ -107,23 +96,9 @@ const PrecautionTable = () => {
             </div>
           }
           <ClickAwayListener onClickAway={actions.handleClickAway}>
-            <DropDownPrecautionTable            
-              showDropdown={state.showDropdown}
-              recordId={recordObj.id}
-              userId={userId}
-              pageX={x}
-              pageY={y}              
-              onDelete={actions.handleDeletePrecautionTable}
-              onEdit={actions.handleEditPrecautionTable}
-              userAccess={state.userAccess}
-              isActive={recordObj.isActive}
-            />
+            <DropDownPrecautionTable/>
           </ClickAwayListener>        
           <AddPrecautionModal/>
-          {/* <EditPrecautionTypesModal
-            setVisibleModal={setVisibleModalEditDist}
-            visibleModal={visibleModalEditDist}
-          />                   */}
         </>
       </Content>
     </Layout>

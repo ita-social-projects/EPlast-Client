@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Select, DatePicker, Row, Col } from "antd";
 import precautionApi from "../../../api/precautionApi";
-import UserPrecaution from "../Interfaces/UserPrecaution";
 import formclasses from "./Form.module.css";
-import adminApi from "../../../api/adminApi";
-import Precaution from "../Interfaces/Precaution";
 import {
   emptyInput,
-  failEditAction,
   maxNumber,
-  minNumber,
 } from "../../../components/Notifications/Messages";
 import moment from "moment";
 import "moment/locale/uk";
@@ -17,142 +12,31 @@ import {
   descriptionValidation,
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
-import SuggestedUser from "../Interfaces/SuggestedUser";
-import notificationLogic from "../../../components/Notifications/Notification";
-import { dataCantBeFetched } from "../../../components/Notifications/Messages";
-import { Store } from "antd/lib/form/interface";
+import { createHook } from "react-sweet-state";
+import PrecautionStore from "../../../stores/StorePrecaution";
 moment.locale("uk-ua");
 
-interface Props {
-  oldUserPrecaution: UserPrecaution;
-  setShowModal: (showModal: boolean) => void;
-  onEdit: (
-    id: number,
-    Precaution: Precaution,
-    date: Date,
-    endDate: Date,
-    isActive: boolean,
-    reason: string,
-    status: string,
-    reporter: string,
-    number: number,
-    user: any,
-    userId: string
-  ) => void;
-}
+const FormEditPrecaution = () => {
+  const useStore = createHook(PrecautionStore);
+  const [state, actions] = useStore();
 
-const FormEditPrecaution = ({
-  oldUserPrecaution,
-  setShowModal,
-  onEdit,
-}: Props) => {
-  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm(); 
-  const [userData, setUserData] = useState<SuggestedUser[]>(
-    Array<SuggestedUser>()
-  );
-  const [distData, setDistData] = useState<Precaution[]>(Array<Precaution>());
-  const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-  const [loadingPrecautionStatus, setLoadingPrecautionStatus] = useState(false);
-  const [precaution, setPrecaution] = useState<Precaution>(
-    oldUserPrecaution.precaution
-  );
-  const [user, setUser] = useState<any>(oldUserPrecaution.user);
   const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {
-    setLoading(true);
+    actions.setShowDropdown(false);
+    actions.setEditModalLoading(true);
     form.resetFields();
-    const fetchData = async () => {
-      setDistData([]);
-      setUserData([]);
-
-      setLoadingPrecautionStatus(true);
-      precautionApi
-        .getPrecautions()
-        .then((response) => {
-          setDistData(response.data);
-          setLoadingPrecautionStatus(false);
-        })
-        .catch(() => {
-          notificationLogic(
-            "error",
-            dataCantBeFetched("пересторог. Спробуйте пізніше")
-          );
-        });
-
-      setLoadingUserStatus(true);
-      precautionApi
-        .getUsersForPrecaution()
-        .then((response) => {
-          setUserData(response.data);
-          setLoadingUserStatus(false);
-        })
-        .catch(() => {
-          notificationLogic(
-            "error",
-            dataCantBeFetched("користувачів. Спробуйте пізніше")
-          );
-        });
-    };
-    fetchData();
-    setLoading(false);
-    setPrecaution(oldUserPrecaution.precaution);
-    setUser(oldUserPrecaution.user);
-  }, [oldUserPrecaution]);
+    actions.editModalFetchData();
+    actions.setEditModalLoading(false);
+    actions.setEditModalPrecaution(state.userPrecaution.precaution);
+    actions.setEditModalUser(state.userPrecaution.user);
+  }, [state.userPrecaution]);
 
   const backgroundColor = (user: any) => {
     return user.isInLowerRole
       ? { backgroundColor: "#D3D3D3" }
       : { backgroundColor: "white" };
-  };
-
-  const handleCancel = () => {
-    form.resetFields();
-    setShowModal(false);
-  };
-
-  const precautionChange = (dist: any) => {
-    dist = JSON.parse(dist);
-    setPrecaution(dist);
-  };
-  const userChange = (user: any) => {
-    user = JSON.parse(user);
-    setUser(user);
-  };
-
-  const handleFinish = async (editedUserPrecaution: any) => {
-    const newPrecaution: UserPrecaution = {
-      id: oldUserPrecaution.id,
-      precautionId: precaution.id,
-      precaution: precaution,
-      user: user,
-      userId: user.id,
-      status: editedUserPrecaution.status,
-      date: editedUserPrecaution.date,
-      endDate: oldUserPrecaution.endDate,
-      isActive: editedUserPrecaution.status === "Скасовано" ? false : true,
-      reporter: editedUserPrecaution.reporter,
-      reason: editedUserPrecaution.reason,
-      number: editedUserPrecaution.number,
-    };
-
-    await precautionApi.editUserPrecaution(newPrecaution);
-    setShowModal(false);
-    form.resetFields();
-    onEdit(
-      newPrecaution.id,
-      newPrecaution.precaution,
-      newPrecaution.date,
-      newPrecaution.endDate,
-      newPrecaution.isActive,
-      newPrecaution.reason,
-      newPrecaution.status,
-      newPrecaution.reporter,
-      newPrecaution.number,
-      newPrecaution.user,
-      newPrecaution.user.id
-    );
   };
 
   const isDisabledStartDate = (current: any) => {
@@ -161,18 +45,18 @@ const FormEditPrecaution = ({
 
   return (
     <div>
-      {!loading && (
+      {!state.editModalLoading && (
         <Form
           name="basic"
-          onFinish={handleFinish}
+          onFinish={(editUserPrecaution) => actions.editModalHandleFinish(editUserPrecaution, form)}
           form={form}
-          id="area"
+          id="editArea"
           style={{ position: "relative" }}
         >
           <Row justify="start" gutter={[12, 0]}>
             <Col md={24} xs={24}>
               <Form.Item
-                initialValue={oldUserPrecaution.number}
+                initialValue={state.userPrecaution.number}
                 className={formclasses.formField}
                 label="Номер в реєстрі"
                 labelCol={{ span: 24 }}
@@ -191,7 +75,7 @@ const FormEditPrecaution = ({
                   {
                     validator: async (_: object, value: number) =>
                       value && !isNaN(value) && value > 0
-                        ? value == oldUserPrecaution.number ||
+                        ? value == state.userPrecaution.number ||
                           (await precautionApi
                             .checkNumberExisting(value)
                             .then((response) => response.data === false))
@@ -229,7 +113,7 @@ const FormEditPrecaution = ({
                 label="Пересторога"
                 labelCol={{ span: 24 }}
                 name="Precaution"
-                initialValue={oldUserPrecaution.precaution.name}
+                initialValue={state.userPrecaution.precaution.name}
                 rules={[
                   {
                     required: true,
@@ -240,11 +124,11 @@ const FormEditPrecaution = ({
                 <Select
                   className={formclasses.selectField}
                   showSearch
-                  onSelect={precautionChange}
-                  loading={loadingPrecautionStatus}
+                  onSelect={actions.editModalSetPrecautionChange}
+                  loading={state.editModalLoadingPrecautionStatus}
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
-                  {distData?.map((o) => (
+                  {state.editModalDistData?.map((o) => (
                     <Select.Option key={o.id} value={JSON.stringify(o)}>
                       {o.name}
                     </Select.Option>
@@ -260,7 +144,7 @@ const FormEditPrecaution = ({
                 label="Ім'я"
                 labelCol={{ span: 24 }}
                 name="user"
-                initialValue={`${oldUserPrecaution.user.firstName} ${oldUserPrecaution.user.lastName}`}
+                initialValue={`${state.userPrecaution.user.firstName} ${state.userPrecaution.user.lastName}`}
                 rules={[
                   {
                     required: true,
@@ -270,19 +154,19 @@ const FormEditPrecaution = ({
               >
                 <Select
                   className={formclasses.selectField}
-                  onSelect={userChange}
+                  onSelect={actions.editModalSetUserChange}
                   showSearch
-                  loading={loadingUserStatus}
+                  loading={state.editModalLoadingUserStatus}
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
-                  {userData?.map((o) => (
+                  {state.editModalUserData?.map((user) => (
                     <Select.Option
-                      key={o.id}
-                      value={JSON.stringify(o)}
-                      style={backgroundColor(o)}
-                      disabled={!o.isAvailable}
+                      key={user.id}
+                      value={JSON.stringify(user)}
+                      style={backgroundColor(user)}
+                      disabled={!user.isAvailable}
                     >
-                      {o.firstName + " " + o.lastName + " (" + o.email + ")"}
+                      {user.firstName + " " + user.lastName + " (" + user.email + ")"}
                     </Select.Option>
                   ))}
                 </Select>
@@ -296,7 +180,7 @@ const FormEditPrecaution = ({
                 label="Подання від"
                 labelCol={{ span: 24 }}
                 name="reporter"
-                initialValue={oldUserPrecaution.reporter}
+                initialValue={state.userPrecaution.reporter}
                 rules={descriptionValidation.Reporter}
               >
                 <Input
@@ -314,7 +198,7 @@ const FormEditPrecaution = ({
                 name="date"
                 label="Дата затвердження"
                 labelCol={{ span: 24 }}
-                initialValue={moment.utc(oldUserPrecaution.date).local()}
+                initialValue={moment.utc(state.userPrecaution.date).local()}
                 rules={[
                   {
                     required: true,
@@ -325,8 +209,9 @@ const FormEditPrecaution = ({
                 <DatePicker
                   format={dateFormat}
                   className={formclasses.selectField}
+                  disabledDate={isDisabledStartDate}
                   getPopupContainer={() =>
-                    document.getElementById("area")! as HTMLElement
+                    document.getElementById("editArea")! as HTMLElement
                   }
                   popupStyle={{ position: "absolute" }}
                 />
@@ -340,7 +225,7 @@ const FormEditPrecaution = ({
                 label="Обгрунтування"
                 labelCol={{ span: 24 }}
                 name="reason"
-                initialValue={oldUserPrecaution.reason}
+                initialValue={state.userPrecaution.reason}
                 rules={descriptionValidation.Reason}
               >
                 <Input.TextArea
@@ -362,7 +247,7 @@ const FormEditPrecaution = ({
                 label="Статус"
                 labelCol={{ span: 24 }}
                 name="status"
-                initialValue={oldUserPrecaution.status}
+                initialValue={state.userPrecaution.status}
                 rules={[
                   {
                     required: true,
@@ -393,7 +278,7 @@ const FormEditPrecaution = ({
             <div className={formclasses.cardButton}>
               <Button
                 key="back"
-                onClick={handleCancel}
+                onClick={() => actions.editModalHandleCancel(form)}
                 className={formclasses.buttons}
               >
                 Відмінити

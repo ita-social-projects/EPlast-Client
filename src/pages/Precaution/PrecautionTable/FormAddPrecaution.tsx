@@ -39,7 +39,7 @@ const FormAddPrecaution = () => {
       name="basic"
       onFinish={(values: any ) => actions.addModalHandleSubmit(values, form)}
       form={form}
-      id="area"
+      id="addArea"
       style={{ position: "relative" }}
     >
       <Row justify="start" gutter={[12, 0]}>
@@ -190,7 +190,7 @@ const FormAddPrecaution = () => {
               className={formclasses.selectField}
               disabledDate={disabledStartDate}
               getPopupContainer={() =>
-                document.getElementById("area")! as HTMLElement
+                document.getElementById("addArea")! as HTMLElement
               }
               popupStyle={{ position: "absolute" }}
             />
