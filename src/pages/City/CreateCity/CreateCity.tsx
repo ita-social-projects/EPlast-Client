@@ -81,6 +81,7 @@ const CreateCity = () => {
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
+  const levels = [1, 2, 3];
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -627,22 +628,18 @@ const CreateCity = () => {
                 labelCol={{ span: 24 }}
                 initialValue={
                   isFollowerPath ? regionFollower.level : 1
-                }
-                
-              
+                }                              
               >
-                <Input
-                  onChange={(e) => {
-                    form.setFieldsValue({
-                      level: getOnlyNums(e.target.value),
-                    });
-                  }}
-                  autoComplete="off"
-                  value={
-                    isFollowerPath ? regionFollower.level : city.level
-                  }
-                  maxLength={5}
-                />
+                <Select
+                showSearch
+                optionFilterProp="children"
+                >
+                {levels.map((item: number) => (
+                  <Select.Option value={item}>
+                  {item}
+                  </Select.Option>
+                ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
