@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal } from "antd";
 import ChangeUserRoleForm from "./ChangeUserRoleForm";
+import "./ChangeUserRoleModal.less";
 import Form from "antd/lib/form/Form";
 
 interface Props {
