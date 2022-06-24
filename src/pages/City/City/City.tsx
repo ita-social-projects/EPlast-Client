@@ -1076,7 +1076,7 @@ const City = () => {
                   </Col>
                 ) : null
               ) : (
-                <Paragraph>Ще немає прихильників станиці</Paragraph>
+                <Paragraph>Ще немає зголошених станиці</Paragraph>
               )}
               {followers.length !== 0 ? (
                 followers
@@ -1143,7 +1143,7 @@ const City = () => {
                     </Col>
                   ))
               ) : canJoin ? null : (
-                <Paragraph>Ще немає прихильників станиці</Paragraph>
+                <Paragraph>Ще немає зголошених станиці</Paragraph>
               )}
             </Row>
             <div className="cityMoreButton">
