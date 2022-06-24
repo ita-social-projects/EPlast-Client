@@ -91,6 +91,7 @@ const SortedCities = ({ switcher }: Props) => {
   };
 
   const handleSearch = (event: any) => {
+    handleChange(1);
     setSearchedData(event);
   };
 
@@ -121,7 +122,7 @@ const SortedCities = ({ switcher }: Props) => {
 
   useEffect(() => {
     setPage(+p);
-  });
+  }, []);
 
   useEffect(() => {
     switcher ? getNotActiveCities(page) : getActiveCities(page);
