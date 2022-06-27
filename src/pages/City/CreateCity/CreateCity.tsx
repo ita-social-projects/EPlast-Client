@@ -180,15 +180,15 @@ const CreateCity = () => {
           : activeUser.id,
         appeal: values.appeal,
         cityName: values.name,
-        cityDescription: values.description,
+        cityDescription: values.description == "" ? null : values.description,
         logo:
           regionFollower.logo?.length === 0 ? undefined : regionFollower.logo,
         regionId: values.region,
         address: values.address,
         level: values.level,
-        cityURL: values.cityURL,
+        cityURL: values.cityURL == "" ? null : values.cityURL,
         email: values.email,
-        phoneNumber: values.phoneNumber,
+        phoneNumber: values.phoneNumber == "" ? null : values.email,
       };
       if (!regionFollower.id) {
         seeAddFollowerModal(newRegionFollower);
@@ -197,15 +197,15 @@ const CreateCity = () => {
       }
     } else {
       const newCity: CityProfile = {
-        cityURL: values.cityURL,
-        description: values.description,
+        cityURL: values.cityURL == "" ? null : values.cityURL,
+        description: values.description == "" ? null : values.description,
         email: values.email,
         head: city.head,
         headDeputy: city.headDeputy,
         id: city.id,
         logo: city.logo?.length === 0 ? null : city.logo,
         name: values.name,
-        phoneNumber: values.phoneNumber,
+        phoneNumber: values.phoneNumber == "" ? null : values.phoneNumber,
         level: values.level,
         region: values.region,
         address: values.address,
