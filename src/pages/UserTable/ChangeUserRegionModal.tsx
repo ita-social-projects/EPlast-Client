@@ -26,7 +26,7 @@ const ChangeUserRegionModal = ({
   const newAdmin: any = {
     id: 0,
     userId: record,
-    user: new RegionUser(),
+    user: user,
     adminType: new AdminType(),
     regionId: regionId,
   };

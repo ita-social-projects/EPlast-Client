@@ -26,7 +26,7 @@ const ChangeUserCityModal = ({
   const newAdmin: CityAdmin = {
     id: 0,
     userId: record,
-    user: new CityUser(),
+    user: user,
     adminType: new AdminType(),
     cityId: cityId,
   };
