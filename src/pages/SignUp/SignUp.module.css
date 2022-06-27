@@ -39,6 +39,22 @@
     vertical-align: middle;
 }
 
+.MyCheckbox {
+    margin-bottom: 10px;
+}
+
+.selectWrapper {
+    position: relative;
+    font-size: 20px;
+}
+
+.selectLoader { 
+    position: absolute;
+    z-index: 1;
+    right: 40px;
+    top: 5px;
+}
+
 .MyReactInputMask {
     background: #f7f9fc !important;
     border: 0 !important;
@@ -48,6 +64,16 @@
     border-bottom: 1px solid #dfe7f1 !important;
     width: 100% !important;
     text-align: left;;
+}
+
+.RadioInput {
+    height: 30px;
+    border: unset;
+    border-bottom: 1px solid #3c5438;
+    padding: 0 0 0 10px !important;
+    border-radius: 0;
+    width: 130%;
+
 }
 
 #confirmButton{
@@ -100,6 +126,9 @@
     }
     .forgot{
         font-size: 13px;
+    }
+    .RadioInput {
+        display: block;
     }
 }
 

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import styles from "./SignUp.module.css";
 
 import { Tabs } from "antd";
 const { TabPane } = Tabs;
@@ -27,7 +28,7 @@ const TabList: React.FC<TabInputsProps> = ({ pairs, renderMode }) => {
     return (
         <Tabs onChange={e => handleChange(Number(e))} defaultActiveKey={activeTab.toString()}>
             {pairs.map((p, i) =>
-                <TabPane disabled={p.disabled} tab={p.title} key={i}>
+                <TabPane  disabled={p.disabled} tab={p.title} key={i}>
                     {renderMode === TabRenderMode.UnmountOther &&
                         activeTab !== i ? <></> : p.content}
                 </TabPane>

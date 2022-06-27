@@ -5,6 +5,7 @@ import {
   minLength,
   shouldContain,
 } from "../../components/Notifications/Messages";
+import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
 
 export const checkEmail = (role: object, value: string, callback: any) => {
   const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -31,6 +32,19 @@ export const checkNameSurName = (
   return callback();
 };
 
+export const checkOblastIsSpecified = (
+  role: object,
+  value: string,
+  callback: any
+) => {
+  if (Number(value) === UkraineOblasts.NotSpecified) {
+    return callback(
+      "Оберіть область"
+    );
+  }
+  return callback();
+};
+
 export const checkPhone = (role: object, value: string, callback: any) => {
   const reg = /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/;
   if (reg.test(value) === false) {
@@ -43,7 +57,7 @@ export const checkPhone = (role: object, value: string, callback: any) => {
 };
 
 export const checkPassword = (role: object, value: string, callback: any) => {
-  const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
+  const reg = /^(?=.*\d)(?=.*[a-zа-яієїґ])(?=.*[A-ZА-ЯІЄЇҐ])(?=.*[^a-zA-ZА-ЯІіЄєЇїҐґ0-9])(?!.*\s).{8,}$/;
   if (value.length > 0) {
     if (value.length < 8) {
       return callback(minLength(8));
@@ -51,7 +65,7 @@ export const checkPassword = (role: object, value: string, callback: any) => {
     if (reg.test(value) === false) {
       return callback(
         shouldContain(
-          "лише латинські літери (хоча б одну велику), цифри та знаки"
+          "хоча б одну велику і малу літери, цифри та знаки"
         )
       );
     }
@@ -78,7 +92,7 @@ export const checkFacebookLink = (
   value: string,
   callback: any
 ) => {
-  const regNew = /^(https?\:)?(\/\/)(www[\.])?(facebook.com\/)?(?:profile.php\?id=)?([0-9]{1,25})[\/]?$/;
+  const regNew = /^(https?\:)?(\/\/)(www[\.])?(facebook.com\/)?(?:profile.php\?id=)?([0-9a-zA-Z.]{1,25})[\/]?$/;
   if (value.length !== 0 && regNew.test(value) === false) {
     return callback(
       shouldContain("посилання на особисту сторінку facebook")
@@ -92,7 +106,7 @@ export const checkTwitterLink = (
   value: string,
   callback: any
 ) => {
-  const reg: RegExp = /^(https?\:)?(\/\/)(www[\.])?(twitter.com\/)([a-zA-Z0-9_]{1,25})[\/]?$/;
+  const reg: RegExp = /^(https?\:)?(\/\/)(www[\.])?(twitter.com\/)([a-zA-Z0-9_.]{1,25})[\/]?$/;
   if ((value.length !== 0 && reg.test(value) === false)) {
     return callback(
       shouldContain("посилання на особисту сторінку twitter")
@@ -106,7 +120,7 @@ export const checkInstagramLink = (
   value: string,
   callback: any
 ) => {
-  const reg = /^(https?\:)?(\/\/)(www[\.])?(instagram.com\/)([a-zA-Z0-9_]{1,25})[\/]?$/;
+  const reg = /^(https?\:)?(\/\/)(www[\.])?(instagram.com\/)([a-zA-Z0-9_.]{1,25})[\/]?$/;
   if ((value.length !== 0 && reg.test(value) === false)) {
     return callback(
       shouldContain("посилання на особисту сторінку instagram")

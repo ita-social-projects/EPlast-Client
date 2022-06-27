@@ -44,7 +44,6 @@ const TabInputList: React.FC<TabInputListProps> = ({ items }) => {
                                         {...item.input}
                                     />
                                 </Form.Item>
-
                             ),
                             disabled: indexError !== index && indexError !== null
                         }))

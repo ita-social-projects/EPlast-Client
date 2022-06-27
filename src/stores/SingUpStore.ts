@@ -1,4 +1,5 @@
 import { Action, createHook, createStore } from "react-sweet-state";
+import UkraineOblasts from "../models/Oblast/UkraineOblasts";
 import ActiveRegion from "../models/Region/ActiveRegion";
 import TermsOfUse from "../models/TermsOfUse/TermsOfUseModel";
 import { GenderIdEnum } from "../models/UserTable/Gender";
@@ -18,9 +19,9 @@ type State = {
     cityPage: PageInfo
     regionPage: PageInfo
     formData: {
-        surName: string
-        name: string
-        middleName: string
+        lastName: string
+        firstName: string
+        fatherName: string
         address: string
         cityId?: number
         regionId?: number
@@ -28,10 +29,13 @@ type State = {
         password: string
         confirmPassword: string
         genderId: GenderIdEnum
-        phone: string
+        phoneNumber: string
+        referal: string
         facebookLink: string
         twitterLink: string
         instagramLink: string
+        birthday?: Date,
+        oblast: UkraineOblasts,
     }
 };
 
@@ -46,31 +50,34 @@ const initialState: State = {
     },
     cityPage: {
         total: 0,
-        size: 15,
+        size: 30,
         number: 1,
         text: ""
     },
     regionPage: {
         total: 0,
-        size: 15,
+        size: 30,
         number: 1,
         text: ""
     },
     formData: {
-        surName: "",
-        name: "",
-        middleName: "",
+        lastName: "",
+        firstName: "",
+        fatherName: "",
         address: "",
-        cityId: 0,
-        regionId: 0,
+        cityId: undefined,
+        regionId: undefined,
         email: "",
+        referal: "",
         password: "",
         confirmPassword: "",
         genderId: GenderIdEnum.UnwillingToChoose,
-        phone: "",
+        phoneNumber: "",
         facebookLink: "",
         twitterLink: "",
-        instagramLink: ""
+        instagramLink: "",
+        birthday: undefined,
+        oblast: UkraineOblasts.NotSpecified
     }
 };
 
@@ -123,6 +130,15 @@ const actions = {
     setFormData: (data: any): Action<State> => async ({ setState, getState }) => {
         setState({
             formData: data
+        })
+    },
+    setReferal: (value: string): Action<State> => async ({ setState, getState }) => {
+        console.log(value)
+        setState({
+            formData: {
+                ...getState().formData,
+                referal: value,
+            }
         })
     },
 };
