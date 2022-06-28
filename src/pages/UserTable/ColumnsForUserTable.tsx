@@ -229,7 +229,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
         </Row>
       ),
       dataIndex: "birthday",
-      width: 130,
+      width: 145,
       render: (date: Date) => {
         return SortColumnHighlight(
           4,
@@ -244,7 +244,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: "Стать",
       dataIndex: "gender",
-      width: 80,
+      width: 75,
       render: (gender: any) => {
         if (gender === null) {
           return <h4>Не вказано</h4>;
