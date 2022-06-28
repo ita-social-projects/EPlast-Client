@@ -131,7 +131,7 @@ const CityFollowers = () => {
 
   return (
     <Layout.Content>
-      <Title level={2}>Прихильники станиці</Title>
+      <Title level={2}>Зголошені станиці</Title>
       {loading ? (
         <Spinner />
       ) : (

@@ -889,7 +889,10 @@ const City = () => {
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/cities/members/${city.id}`)}
+                onClick={() => {
+                  if (userAccesses["EditCity"]) history.push(`/user/table?city=${city.id}`);
+                  else history.push(`/cities/members/${city.id}`);
+                  }}
               >
                 Більше
               </Button>
@@ -1043,7 +1046,7 @@ const City = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>
-              Прихильники станиці{" "}
+            Зголошені станиці{" "}
               <a onClick={() => history.push(`/cities/followers/${city.id}`)}>
                 {followersCount !== 0 ? (
                   <Badge
@@ -1073,7 +1076,7 @@ const City = () => {
                   </Col>
                 ) : null
               ) : (
-                <Paragraph>Ще немає прихильників станиці</Paragraph>
+                <Paragraph>Ще немає зголошених станиці</Paragraph>
               )}
               {followers.length !== 0 ? (
                 followers
@@ -1140,14 +1143,17 @@ const City = () => {
                     </Col>
                   ))
               ) : canJoin ? null : (
-                <Paragraph>Ще немає прихильників станиці</Paragraph>
+                <Paragraph>Ще немає зголошених станиці</Paragraph>
               )}
             </Row>
             <div className="cityMoreButton">
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/cities/followers/${city.id}`)}
+                onClick={() => { 
+                  if (userAccesses["EditCity"]) history.push(`/user/table?tab=registered&city=${city.id}`);
+                  else history.push(`/cities/followers/${city.id}`);
+               }}
               >
                 Більше
               </Button>
