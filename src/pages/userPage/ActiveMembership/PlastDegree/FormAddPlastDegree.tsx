@@ -45,11 +45,13 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   const [cities, setCities] = useState<CityProfile[]>([]);
 
   const [disabled, setDisabled] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   const [isFormReady, setFormReady] = useState(false);
   const { UpdateData } = useContext(PersonalDataContext);
 
   const handleFinish = async (info: any) => {
+    setLoading(true);
     info.plastDegree = filtredDegrees.find((item) => item.name === "Пластприят")?.id ?? info.plastDegree;
     const degreeName = filtredDegrees.find((item) => item.id === info.plastDegree)?.name;
 
@@ -58,8 +60,6 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       dateStart: info.datepickerStart._d,
       userId: props.userId,
     };
-
-    props.setVisibleModal(false);
 
     const cityDefault = cities.find((x) => x.name == info.userCity)?.id;
 
@@ -71,6 +71,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     props.handleAddDegree();
     form.resetFields();
     props.resetAvailablePlastDegree();
+    setLoading(false);
     if (UpdateData) {
       await UpdateData();
     }
@@ -82,6 +83,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       `Дійсному членстві`
     );
     notificationLogic("success", successfulAddDegree());
+    props.setVisibleModal(false);
   };
 
   const handleOnChange = async (value: any) => {
@@ -257,7 +259,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         />
       </Form.Item>
       <Form.Item>
-        <Button className={classes.cardButton} type="primary" htmlType="submit">
+        <Button className={classes.cardButton} type="primary" htmlType="submit" loading={loading}>
           Додати
         </Button>
       </Form.Item>
