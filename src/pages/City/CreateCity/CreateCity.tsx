@@ -136,39 +136,38 @@ const CreateCity = () => {
   };
 
   const getRegionFollower = async (followerId: number) => {
-    await getRegionFollowerById(followerId)
-      .then(async (followerResponse) => {
-        setRegionFollower(followerResponse.data);
-        await UserApi.getById(followerResponse.data.userId).then(
-          (applicantResponse) => {
-            setApplicant(applicantResponse.data.user);
-          }
-        );
-        await getRegionById(followerResponse.data.regionId).then(
-          (regionResponse) => {
-            setAppealRegion(regionResponse.data);
-          }
-        );
-      })
+    await getRegionFollowerById(followerId).then(async (followerResponse) => {
+      setRegionFollower(followerResponse.data);
+      await UserApi.getById(followerResponse.data.userId).then(
+        (applicantResponse) => {
+          setApplicant(applicantResponse.data.user);
+        }
+      );
+      await getRegionById(followerResponse.data.regionId).then(
+        (regionResponse) => {
+          setAppealRegion(regionResponse.data);
+        }
+      );
+    });
   };
 
   const getCity = async () => {
-      const response = await getCityById(+id);
-      if (response.data.logo !== null) {
-        const logo = await getLogo(response.data.logo);
-        response.data.logo = logo.data;
-      }
+    const response = await getCityById(+id);
+    if (response.data.logo !== null) {
+      const logo = await getLogo(response.data.logo);
+      response.data.logo = logo.data;
+    }
     setCity(response.data);
   };
 
   const getRegions = async () => {
-      const response = await getRegionsNames();
+    const response = await getRegionsNames();
     setRegions(response.data);
   };
 
   const getActiveUser = async () => {
-      const activeUserId = UserApi.getActiveUserId();
-      const response = await UserApi.getById(activeUserId);
+    const activeUserId = UserApi.getActiveUserId();
+    const response = await UserApi.getById(activeUserId);
     setActiveUser(response.data.user);
   };
 
@@ -187,9 +186,9 @@ const CreateCity = () => {
         regionId: values.region,
         address: values.address,
         level: values.level,
-        cityURL: values.cityURL,
+        cityURL: values.cityURL === "" ? null : values.cityURL,
         email: values.email,
-        phoneNumber: values.phoneNumber,
+        phoneNumber: values.phoneNumber === "" ? null : values.email,
       };
       if (!regionFollower.id) {
         seeAddFollowerModal(newRegionFollower);
@@ -198,7 +197,7 @@ const CreateCity = () => {
       }
     } else {
       const newCity: CityProfile = {
-        cityURL: values.cityURL,
+        cityURL: values.cityURL === "" ? null : values.cityURL,
         description: values.description,
         email: values.email,
         head: city.head,
@@ -206,14 +205,14 @@ const CreateCity = () => {
         id: city.id,
         logo: city.logo?.length === 0 ? null : city.logo,
         name: values.name,
-        phoneNumber: values.phoneNumber,
+        phoneNumber: values.phoneNumber === "" ? null : values.phoneNumber,
         level: values.level,
         region: values.region,
         address: values.address,
         isActive: city.isActive,
       };
       if (!city.id) {
-        CreateCity(newCity,-1);
+        CreateCity(newCity, -1);
       } else {
         EditCity(newCity);
       }
@@ -258,7 +257,6 @@ const CreateCity = () => {
   };
 
   const CreateCity = async (newCity: CityProfile, regionFollowerId: number) => {
-
     const responsePromise = createCity(JSON.stringify(newCity));
     const response = await responsePromise;
     city.id = response.data;
@@ -345,14 +343,12 @@ const CreateCity = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-          <b>
-            Відмінити створення станиці ?
-          </b>{" "}
+          <b>Відмінити створення станиці ?</b>{" "}
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
-        history.goBack()
+        history.goBack();
       },
     });
   };
@@ -366,7 +362,6 @@ const CreateCity = () => {
   };
 
   const loadData = async () => {
-
     try {
       if (isFollowerPath) {
         if (location.pathname.startsWith(`${followerPath}edit`)) {
@@ -458,7 +453,7 @@ const CreateCity = () => {
                 >
                   <Input
                     style={{ cursor: "pointer" }}
-                      readOnly
+                    readOnly
                     maxLength={51}
                     onClick={() =>
                       location.pathname.startsWith(followerPath + "edit")
@@ -528,7 +523,7 @@ const CreateCity = () => {
                 initialValue={
                   isFollowerPath ? regionFollower.cityURL : city.cityURL
                 }
-                rules={[descriptionValidation.Link]}
+                rules={descriptionValidation.Link}
               >
                 <Input
                   value={isFollowerPath ? regionFollower.cityURL : city.cityURL}

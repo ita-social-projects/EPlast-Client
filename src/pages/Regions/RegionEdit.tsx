@@ -232,7 +232,7 @@ const RegionEditFormPage = () => {
                   name="link"
                   initialValue={chosenRegion?.link}
                   labelCol={{ span: 24 }}
-                  rules={[descriptionValidation.Link]}
+                  rules={descriptionValidation.Link}
                 >
                   <Input maxLength={257} value={chosenRegion?.link} />
                 </Form.Item>

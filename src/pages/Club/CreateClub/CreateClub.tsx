@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { Button, Form, Input, Layout, Upload, Row, Col, Card, Modal } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Layout,
+  Upload,
+  Row,
+  Col,
+  Card,
+  Modal,
+} from "antd";
 import {
   DeleteOutlined,
   LoadingOutlined,
@@ -113,7 +123,7 @@ const CreateClub = () => {
 
   const handleSubmit = async (values: any) => {
     const newClub: ClubProfile = {
-      clubURL: values.clubURL,
+      clubURL: values.clubURL === "" ? null : values.clubURL,
       description: values.description,
       email: values.email,
       head: club.head,
@@ -121,7 +131,7 @@ const CreateClub = () => {
       id: club.id,
       logo: club.logo?.length === 0 ? null : club.logo,
       name: values.name,
-      phoneNumber: values.phoneNumber,
+      phoneNumber: values.phoneNumber === "" ? null : values.phoneNumber,
       slogan: values.slogan,
       isActive: club.isActive,
     };
@@ -162,14 +172,12 @@ const CreateClub = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-          <b>
-            Відмінити створення куреня ?
-          </b>{" "}
+          <b>Відмінити створення куреня ?</b>{" "}
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
-        history.goBack()
+        history.goBack();
       },
     });
   };
@@ -242,7 +250,7 @@ const CreateClub = () => {
                 label="Посилання"
                 labelCol={{ span: 24 }}
                 initialValue={club.clubURL}
-                rules={[descriptionValidation.Link]}
+                rules={descriptionValidation.Link}
               >
                 <Input value={club.clubURL} maxLength={linkMaxLength} />
               </Form.Item>
