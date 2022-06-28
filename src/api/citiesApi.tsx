@@ -248,7 +248,7 @@ export const getUsersAdministrations = async (UserId: string) => {
 };
 
 export const getCities = async () => {
-  return await api.get(`CitiesFCities`).catch((error) => {
+  return await api.get(`Cities/Cities`).catch((error) => {
     throw new Error(error);
   });
 };
