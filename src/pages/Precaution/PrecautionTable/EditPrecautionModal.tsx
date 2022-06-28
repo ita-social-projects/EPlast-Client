@@ -1,50 +1,24 @@
 import React from "react";
 import { Drawer } from "antd";
 import FormEditPrecaution from "./FormEditPrecaution";
-import UserPrecaution from "../Interfaces/UserPrecaution";
-import Precaution from "../Interfaces/Precaution";
-import PrecautionUser from "../Interfaces/PrecautionUser";
+import { createHook } from "react-sweet-state";
+import PrecautionStore from "../../../stores/StorePrecaution";
 
-interface Props {
-  userPrecaution: UserPrecaution;
-  showModal: boolean;
-  setShowModal: (showModal: boolean) => void;
-  onEdit: (
-    id: number,
-    Precaution: Precaution,
-    date: Date,
-    endDate: Date,
-    isActive: boolean,
-    reason: string,
-    status: string,
-    reporter: string,
-    number: number,
-    user: PrecautionUser,
-    userId: string
-  ) => void;
-}
-const EditPrecautionModal = ({
-  userPrecaution,
-  showModal,
-  setShowModal,
-  onEdit,
-}: Props) => {
-  const handleCancel = () => setShowModal(false);
+const EditPrecautionModal = () => {
+  const useStore = createHook(PrecautionStore);
+  const [state, actions] = useStore();
+
   return (
     <Drawer
       title="Редагувати пересторогу"
       placement="right"
       width="auto"
       height={1000}
-      visible={showModal}
-      onClose={handleCancel}
+      visible={state.showEditModal}
+      onClose={() => actions.setShowEditModal(false)}
       footer={null}
     >
-      <FormEditPrecaution
-        oldUserPrecaution={userPrecaution}
-        setShowModal={setShowModal}
-        onEdit={onEdit}
-      />
+      <FormEditPrecaution/>
     </Drawer>
   );
 };
