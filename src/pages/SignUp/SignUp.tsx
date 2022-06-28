@@ -154,14 +154,14 @@ const SignUp: React.FC = () => {
         setCityLoading(true);
         setRegionLoading(true);
    
-        // const { cities, total: cityTotal }: ActiveCityDataResponse
-        //   = (await getActiveCitiesByPage(1, state.cityPage.size!, null, Number(value))).data;
+        const { cities, total: cityTotal }: ActiveCityDataResponse
+          = (await getActiveCitiesByPage(1, state.cityPage.size!, null, Number(value))).data;
 
-        // actions.setCities(cities);
-        // actions.setCityPageInfo({
-        //   total: cityTotal,
-        //   number: 1
-        // });
+        actions.setCities(cities);
+        actions.setCityPageInfo({
+          total: cityTotal,
+          number: 1
+        });
 
         const { regions, total: regionTotal }: ActiveRegionDataResponse
           = (await getActiveRegionsByPage(1, state.regionPage.size!, null, Number(value))).data
