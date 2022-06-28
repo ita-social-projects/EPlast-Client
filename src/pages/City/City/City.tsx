@@ -596,8 +596,11 @@ const City = () => {
     setFollowers(followers.filter((f) => f.id !== memberId));
 
     const response = await getCityById(+id);
+    setMembers(response.data.members);
     setMembersCount(response.data.memberCount);
     setFollowersCount(response.data.followerCount);
+    setPhotosLoading(true);
+    setPhotos([...response.data.members], response.data.logo);
   };
 
   useEffect(() => {
@@ -1150,7 +1153,7 @@ const City = () => {
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => { 
+                onClick={() => {
                   if (userAccesses["EditCity"]) history.push(`/user/table?tab=registered&city=${city.id}`);
                   else history.push(`/cities/followers/${city.id}`);
                }}
