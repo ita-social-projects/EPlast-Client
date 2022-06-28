@@ -1,127 +1,71 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Menu } from "antd";
 import {
   FileSearchOutlined,
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import deleteConfirm from "./DeleteConfirm";
 import classes from "../../DecisionTable/Table.module.css";
-import UserPrecaution from "../Interfaces/UserPrecaution";
-import User from "../../../models/UserTable/User";
-import precautionApi from "../../../api/precautionApi";
-import DropDownProps from "../Interfaces/DropDownPrecautionTableProps";
+import PrecautionStore from "../../../stores/StorePrecaution";
 import EditPrecautionModal from "./EditPrecautionModal";
+import { createHook } from "react-sweet-state";
 
-const DropDown = (props: DropDownProps) => {
-  const {
-    recordId,
-    userId,
-    pageX,
-    pageY,
-    showDropdown,
-    userAccess,
-    isActive,
-    onDelete,
-    onEdit,
-  } = props;
-  const [showEditModal, setShowEditModal] = useState(false);
-
-  const [userPrecaution, setData] = useState<UserPrecaution>({
-    id: 0,
-    precaution: {
-      id: 0,
-      name: "",
-    },
-    precautionId: 0,
-    status: "",
-    userId: "",
-    reporter: "",
-    reason: "",
-    number: 0,
-    date: new Date(),
-    endDate: new Date(),
-    isActive: true,
-    user: new User(),
-  });
+const DropDown = () => {
+  const useStore = createHook(PrecautionStore);
+  const [state, actions] = useStore();
 
   useEffect(() => {
-    if (showEditModal) {
-      const fetchData = async () => {
-        await precautionApi
-          .getUserPrecautionById(recordId)
-          .then((res) => setData(res.data));
-      };
-      fetchData();
+    if (state.showEditModal) {      
+      actions.dropDownFetchData();      
     }
-  }, [showEditModal]);
+  }, [state.showEditModal]);
 
-  const handleItemClick = async (item: any) => {
-    switch (item.key) {
-      case "1":
-        window.open(`/userpage/main/${userId}`);
-        break;
-      case "2":
-        deleteConfirm(recordId, onDelete);
-        break;
-      case "3":
-        await setShowEditModal(true);
-        break;
-      default:
-        break;
-    }
-  };
   return (
     <>
       <Menu
-        onClick={handleItemClick}
+        onClick={(item: any) => actions.dropDownHandleItemClick(item, actions.handleDeletePrecautionTable)}
         theme="dark"
         selectable={false}
         className={classes.menu}
         style={{
-          top: pageY,
+          top: state.pageY,
           left:
-            window.innerWidth - (pageX + 194) < 0
+            window.innerWidth - (state.pageX + 194) < 0
               ? window.innerWidth - 237
-              : pageX,
-          display: showDropdown ? "block" : "none",
+              : state.pageX,
+          display: state.showDropdown ? "block" : "none",
         }}
       >
         <Menu.Item key="1">
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
-        {isActive && userAccess["EditActivePrecaution"] && (
+        {state.recordObj.isActive && state.userAccess["EditActivePrecaution"] && (
           <Menu.Item key="3">
             <EditOutlined />
             Редагувати
           </Menu.Item>
         )}
-        {!isActive && userAccess["EditInactivePrecaution"] && (
+        {!state.recordObj.isActive && state.userAccess["EditInactivePrecaution"] && (
           <Menu.Item key="3">
             <EditOutlined />
             Редагувати
           </Menu.Item>
         )}
-        {isActive && userAccess["DeleteActivePrecaution"] && (
+        {state.recordObj.isActive && state.userAccess["DeleteActivePrecaution"] && (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
           </Menu.Item>
         )}
-        {!isActive && userAccess["DeleteInactivePrecaution"] && (
+        {!state.recordObj.isActive && state.userAccess["DeleteInactivePrecaution"] && (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
           </Menu.Item>
         )}
       </Menu>
-      <EditPrecautionModal
-        userPrecaution={userPrecaution}
-        showModal={showEditModal}
-        setShowModal={setShowEditModal}
-        onEdit={onEdit}
-      />
+      <EditPrecautionModal/>
     </>
   );
 };

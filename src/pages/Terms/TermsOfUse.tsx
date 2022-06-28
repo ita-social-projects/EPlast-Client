@@ -37,7 +37,7 @@ const TermsOfUse = () => {
 
   const fetchUser = () => {
     let roles = UserApi.getActiveUserRoles();
-    setCanEdit(roles.includes(Roles.Admin));
+    setCanEdit(roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin));
   };
 
   useEffect(() => {

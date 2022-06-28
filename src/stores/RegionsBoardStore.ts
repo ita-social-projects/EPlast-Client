@@ -92,7 +92,7 @@ const regionsBoardStore = createStore<RegionsBoardStoreState, RegionsBoardStoreA
 /**
  * Get regions board.
  */
-export const GetStoredRegionsBoard = createHook(regionsBoardStore);
+export const UseStoredRegionsBoard = createHook(regionsBoardStore);
 
 /**
  * Get documents from regions board.
@@ -101,7 +101,7 @@ export const GetStoredRegionsBoard = createHook(regionsBoardStore);
  * 
  * @deprecated Documents will move to their special store some time.
  */
-export const GetStoredRegionsBoardDocuments = createHook(regionsBoardStore, {
+export const UseStoredRegionsBoardDocuments = createHook(regionsBoardStore, {
   selector: (state) => state.documents
 });
 
@@ -114,6 +114,6 @@ export const GetStoredRegionsBoardDocuments = createHook(regionsBoardStore, {
  * 
  * @deprecated Documents will move to their special store some time.
  */
-export const GetStoredRegionsBoardDocumentById = createHook(regionsBoardStore, {
+export const UseStoredRegionsBoardDocumentById = createHook(regionsBoardStore, {
   selector: (state, id: number): CityDocument | undefined => state.documents.find(d => d.id === id)
 });

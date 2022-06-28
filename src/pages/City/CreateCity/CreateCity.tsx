@@ -69,7 +69,6 @@ const CreateCity = () => {
   const location = useLocation();
   const followerPath = "/regions/follower/";
   const isFollowerPath = location.pathname.includes(followerPath);
-
   const [isDataLoaded, setDataLoaded] = useState<boolean>(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(
@@ -82,6 +81,7 @@ const CreateCity = () => {
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
+  const levels = [1, 2, 3];
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -136,41 +136,38 @@ const CreateCity = () => {
   };
 
   const getRegionFollower = async (followerId: number) => {
-    await getRegionFollowerById(followerId)
-      .then(async (followerResponse) => {
-        setRegionFollower(followerResponse.data);
-        await UserApi.getById(followerResponse.data.userId).then(
-          (applicantResponse) => {
-            setApplicant(applicantResponse.data.user);
-          }
-        );
-        await getRegionById(followerResponse.data.regionId).then(
-          (regionResponse) => {
-            setAppealRegion(regionResponse.data);
-          }
-        );
-      })
+    await getRegionFollowerById(followerId).then(async (followerResponse) => {
+      setRegionFollower(followerResponse.data);
+      await UserApi.getById(followerResponse.data.userId).then(
+        (applicantResponse) => {
+          setApplicant(applicantResponse.data.user);
+        }
+      );
+      await getRegionById(followerResponse.data.regionId).then(
+        (regionResponse) => {
+          setAppealRegion(regionResponse.data);
+        }
+      );
+    });
   };
 
   const getCity = async () => {
-      const response = await getCityById(+id);
-
-      if (response.data.logo !== null) {
-        const logo = await getLogo(response.data.logo);
-        response.data.logo = logo.data;
-      }
-
+    const response = await getCityById(+id);
+    if (response.data.logo !== null) {
+      const logo = await getLogo(response.data.logo);
+      response.data.logo = logo.data;
+    }
     setCity(response.data);
   };
 
   const getRegions = async () => {
-      const response = await getRegionsNames();
+    const response = await getRegionsNames();
     setRegions(response.data);
   };
 
   const getActiveUser = async () => {
-      const activeUserId = UserApi.getActiveUserId();
-      const response = await UserApi.getById(activeUserId);
+    const activeUserId = UserApi.getActiveUserId();
+    const response = await UserApi.getById(activeUserId);
     setActiveUser(response.data.user);
   };
 
@@ -187,15 +184,12 @@ const CreateCity = () => {
         logo:
           regionFollower.logo?.length === 0 ? undefined : regionFollower.logo,
         regionId: values.region,
-        street: values.street,
-        houseNumber: values.houseNumber,
-        officeNumber: values.officeNumber,
-        postIndex: values.postIndex,
-        cityURL: values.cityURL,
+        address: values.address,
+        level: values.level,
+        cityURL: values.cityURL === "" ? null : values.cityURL,
         email: values.email,
-        phoneNumber: values.phoneNumber,
+        phoneNumber: values.phoneNumber === "" ? null : values.email,
       };
-
       if (!regionFollower.id) {
         seeAddFollowerModal(newRegionFollower);
       } else {
@@ -203,23 +197,20 @@ const CreateCity = () => {
       }
     } else {
       const newCity: CityProfile = {
-        cityURL: values.cityURL,
+        cityURL: values.cityURL === "" ? null : values.cityURL,
         description: values.description,
         email: values.email,
         head: city.head,
         headDeputy: city.headDeputy,
-        houseNumber: values.houseNumber,
         id: city.id,
         logo: city.logo?.length === 0 ? null : city.logo,
-        officeNumber: values.officeNumber,
         name: values.name,
-        phoneNumber: values.phoneNumber,
-        postIndex: values.postIndex,
+        phoneNumber: values.phoneNumber === "" ? null : values.phoneNumber,
+        level: values.level,
         region: values.region,
-        street: values.street,
+        address: values.address,
         isActive: city.isActive,
       };
-
       if (!city.id) {
         CreateCity(newCity, -1);
       } else {
@@ -230,7 +221,6 @@ const CreateCity = () => {
 
   const CreateRegionFollower = async (newRegionFollower: RegionFollower) => {
     const responsePromise = createRegionFollower(newRegionFollower);
-
     return responsePromise
       .then(async () => {
         notificationLogic("success", successfulCreateAction("Заяву"));
@@ -252,16 +242,14 @@ const CreateCity = () => {
       email: newRegionFollower.email,
       head: city.head,
       headDeputy: city.headDeputy,
-      houseNumber: newRegionFollower.houseNumber,
       id: city.id,
       logo:
         newRegionFollower.logo?.length === 0 ? null : newRegionFollower.logo!,
-      officeNumber: newRegionFollower.officeNumber,
       name: newRegionFollower.cityName,
       phoneNumber: newRegionFollower.phoneNumber,
-      postIndex: newRegionFollower.postIndex,
+      level: newRegionFollower.level,
       region: appealRegion.regionName,
-      street: newRegionFollower.street,
+      address: newRegionFollower.address,
       isActive: city.isActive,
     };
 
@@ -355,14 +343,12 @@ const CreateCity = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-          <b>
-            Відмінити створення станиці ?
-          </b>{" "}
+          <b>Відмінити створення станиці ?</b>{" "}
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
-        history.goBack()
+        history.goBack();
       },
     });
   };
@@ -376,7 +362,6 @@ const CreateCity = () => {
   };
 
   const loadData = async () => {
-
     try {
       if (isFollowerPath) {
         if (location.pathname.startsWith(`${followerPath}edit`)) {
@@ -468,7 +453,7 @@ const CreateCity = () => {
                 >
                   <Input
                     style={{ cursor: "pointer" }}
-                      readOnly
+                    readOnly
                     maxLength={51}
                     onClick={() =>
                       location.pathname.startsWith(followerPath + "edit")
@@ -538,7 +523,7 @@ const CreateCity = () => {
                 initialValue={
                   isFollowerPath ? regionFollower.cityURL : city.cityURL
                 }
-                rules={[descriptionValidation.Link]}
+                rules={descriptionValidation.Link}
               >
                 <Input
                   value={isFollowerPath ? regionFollower.cityURL : city.cityURL}
@@ -574,9 +559,6 @@ const CreateCity = () => {
                 name="email"
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
-                initialValue={
-                  isFollowerPath ? regionFollower.email : city.email
-                }
                 rules={descriptionValidation.Email}
               >
                 <Input
@@ -617,84 +599,39 @@ const CreateCity = () => {
             </Col>
             <Col md={11} xs={24}>
               <Form.Item
-                name="street"
-                label="Вулиця"
+                name="address"
+                label="Адреса"
                 labelCol={{ span: 24 }}
                 initialValue={
-                  isFollowerPath ? regionFollower.street : city.street
+                  isFollowerPath ? regionFollower.address : city.address
                 }
                 rules={descriptionValidation.Street}
               >
                 <Input
-                  value={isFollowerPath ? regionFollower.street : city.street}
+                  value={isFollowerPath ? regionFollower.address : city.address}
                   maxLength={51}
                 />
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                name="houseNumber"
-                label="Номер будинку"
+                name="level"
+                label="Рівень"
                 labelCol={{ span: 24 }}
                 initialValue={
-                  isFollowerPath ? regionFollower.houseNumber : city.houseNumber
-                }
-                rules={descriptionValidation.houseNumber}
+                  isFollowerPath ? regionFollower.level : 1
+                }                              
               >
-                <Input
-                  value={
-                    isFollowerPath
-                      ? regionFollower.houseNumber
-                      : city.houseNumber
-                  }
-                  maxLength={6}
-                />
-              </Form.Item>
-            </Col>
-            <Col md={11} xs={24}>
-              <Form.Item
-                name="officeNumber"
-                label="Номер офісу/квартири"
-                labelCol={{ span: 24 }}
-                initialValue={
-                  isFollowerPath
-                    ? regionFollower.officeNumber
-                    : city.officeNumber
-                }
-                rules={descriptionValidation.officeNumber}
-              >
-                <Input
-                  value={
-                    isFollowerPath
-                      ? regionFollower.officeNumber
-                      : city.officeNumber
-                  }
-                  maxLength={6}
-                />
-              </Form.Item>
-            </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
-                label="Поштовий індекс"
-                labelCol={{ span: 24 }}
-                initialValue={
-                  isFollowerPath ? regionFollower.postIndex : city.postIndex
-                }
-                name="postIndex"
-                rules={descriptionValidation.postIndex}
-              >
-                <Input
-                  onChange={(e) => {
-                    form.setFieldsValue({
-                      postIndex: getOnlyNums(e.target.value),
-                    });
-                  }}
-                  autoComplete="off"
-                  value={
-                    isFollowerPath ? regionFollower.postIndex : city.postIndex
-                  }
-                  maxLength={5}
-                />
+                <Select
+                showSearch
+                optionFilterProp="children"
+                >
+                {levels.map((item: number) => (
+                  <Select.Option value={item}>
+                  {item}
+                  </Select.Option>
+                ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>

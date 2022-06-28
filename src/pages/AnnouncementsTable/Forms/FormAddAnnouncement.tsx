@@ -20,6 +20,9 @@ import { descriptionValidation } from "../../../models/GllobalValidations/Descri
 import notificationLogic from "../../../components/Notifications/Notification";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { AnnouncementsTableStore } from "../../../stores/AnnouncementsStore/store";
+import { getUsersByAllRoles } from "../../../api/adminApi";
+import { Roles } from "../../../models/Roles/Roles";
+import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 
 type FormAddAnnouncementProps = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -35,7 +38,6 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   props: any
 ) => {
   const [state, actions] = AnnouncementsTableStore();
-  const path: string = "/announcements";
 
   const [form] = Form.useForm();
 
@@ -54,14 +56,36 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
 
-  const newNotification = async () => {
-    await NotificationBoxApi.createNotifications(
-      state.usersToSendNotification,
-      "Додане нове оголошення.",
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `${path}/1`,
-      `Переглянути`
+  const getUsers = async () => {
+    let result: any;
+    await getUsersByAllRoles([[Roles.RegisteredUser]], false).then(
+      (response) => {
+        result = response;
+      }
     );
+    return result;
+  };
+  const newNotification = async () => {
+    const usersId = ((await getUsers()).data as ShortUserInfo[]).map(
+      (user) => user.id
+    );
+    if (!selectSectorId) {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/governingBodies/announcements/${selectGoverningBodyId}/1`,
+        `Переглянути`
+      );
+    } else {
+      await NotificationBoxApi.createNotifications(
+        usersId,
+        "Додане нове оголошення.",
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/sector/announcements/${selectGoverningBodyId}/${selectSectorId}/1`,
+        `Переглянути`
+      );
+    }
   };
 
   const checkFile = (fileName: string) => {
