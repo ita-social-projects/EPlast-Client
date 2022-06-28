@@ -321,7 +321,7 @@ const UsersTable = () => {
         Regions: dynamicRegions,
         Clubs: dynamicClubs,
         Degrees: dynamicDegrees,
-        Tab: currentTabName == "registered" ? "confirmed" : currentTabName,
+        Tab: currentTabName,
         SortKey: sortKey,
         FilterRoles: registeredUsers ?? filter,
         SearchData: searchData,
