@@ -318,7 +318,9 @@ export const getActiveRegionsByPage = async (
   oblast: UkraineOblasts = UkraineOblasts.NotSpecified
 ) => {
   return await api
-    .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName, oblast })
+    .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName
+    //  , oblast 
+    })
     .catch((error) => {
       throw new Error(error);
     });
