@@ -21,10 +21,10 @@ import { ActiveRegionDataResponse, getActiveRegionsByPage } from "../../api/regi
 import TabList, { TabRenderMode } from "./TabList";
 import TabInputList from "./TabInputList";
 import Spinner from "../Spinner/Spinner";
-import RadioOrInput from "./RadioOrInput";
 import OblastsRecord from "../../models/Oblast/OblastsRecord";
 import { SelectValue } from "antd/lib/select";
 import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
+import CheckboxsItem from "./CheckboxsItem";
 
 let authService = new AuthorizeApi();
 
@@ -37,55 +37,37 @@ const SignUp: React.FC = () => {
   const [regionLoading, setRegionLoading] = useState(false);
   const [cityTimeout, setCityTimeout] = useState(setTimeout(() => { }, 0));
   const [regionTimeout, setRegionTimeout] = useState(setTimeout(() => { }, 0));
-  const [hasntPlast, setHasntPlast] = useState(false)
+  const [hasPlast, setHasntPlast] = useState(false)
   const [areaSelected, setAreaSelected] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
-    setCityLoading(true);
-    setRegionLoading(true);
 
     (async () => {
       const termsData: TermsOfUseModel = await termsApi.getTerms();
+      actions.setTerms(termsData);
 
-      // const { cities, total: cityTotal }: ActiveCityDataResponse
-      //   = (await getActiveCitiesByPage(1, state.cityPage.size!)).data;
-      // const { regions, total: regionTotal }: ActiveRegionDataResponse
-      //   = (await getActiveRegionsByPage(1, state.regionPage.size!)).data
-
-      // actions.setTerms(termsData);
-
-      // actions.setCities(cities);
-      // actions.setCityPageInfo({
-      //   total: cityTotal,
-      //   number: 1
-      // });
-
-      // actions.setRegions(regions);
-      // actions.setRegionPageInfo({
-      //   total: regionTotal,
-      //   number: 1
-      // });
-
-      // setCityLoading(false);
-      // setRegionLoading(false);
     })();
   }, []);
 
   const handler = {
     submit: async (values: any) => {
-      actions.setFormData({ ...values, referal: state.formData.referal });
-      console.log(state.formData);
+      actions.setFormData(values);
       setVisible(true);
     },
     terms: {
       confirm: async () => {
         setVisible(false);
         setAvailabe(false);
-        console.log(state.formData)
-        //await authService.register(state.formData);
+        const request = {
+          ...state.formData,
+          referal: state.formData.referals.join(', '),
+          referals: undefined
+        };
+        console.log(request);
+        await authService.register(request);
         setAvailabe(true);
-        //history.push("/signin");
+        history.push("/signin");
       },
       cancel: async () => {
         setVisible(false);
@@ -101,7 +83,7 @@ const SignUp: React.FC = () => {
           && Math.ceil(state.cityPage.total! / state.cityPage.size!) !== state.cityPage.number!) {
           setCityLoading(true);
           const data: ActiveCityDataResponse
-            = (await getActiveCitiesByPage(state.cityPage.number! + 1, state.cityPage.size!, state.cityPage.text)).data;
+            = (await getActiveCitiesByPage(state.cityPage.number! + 1, state.cityPage.size!, state.cityPage.text, state.formData.oblast)).data;
           const { total, cities: newCities } = data;
           actions.setCityPageInfo({
             total: total,
@@ -120,7 +102,7 @@ const SignUp: React.FC = () => {
           && Math.ceil(state.regionPage.total! / state.regionPage.size!) !== state.regionPage.number!) {
           setRegionLoading(true);
           const data: ActiveRegionDataResponse
-            = (await getActiveRegionsByPage(state.regionPage.number! + 1, state.regionPage.size!, state.regionPage.text)).data;
+            = (await getActiveRegionsByPage(state.regionPage.number! + 1, state.regionPage.size!, state.regionPage.text, state.formData.oblast)).data;
           const { total, regions: newRegions } = data;
           actions.setRegionPageInfo({
             total: total,
@@ -167,9 +149,35 @@ const SignUp: React.FC = () => {
       },
     },
     change: {
-      oblast: (value: SelectValue) => {
-        setAreaSelected(value !== UkraineOblasts.NotSpecified)
-      }
+      oblast: async (value: SelectValue) => {
+        setAreaSelected(value !== UkraineOblasts.NotSpecified);
+        setCityLoading(true);
+        setRegionLoading(true);
+   
+        // const { cities, total: cityTotal }: ActiveCityDataResponse
+        //   = (await getActiveCitiesByPage(1, state.cityPage.size!, null, Number(value))).data;
+
+        // actions.setCities(cities);
+        // actions.setCityPageInfo({
+        //   total: cityTotal,
+        //   number: 1
+        // });
+
+        const { regions, total: regionTotal }: ActiveRegionDataResponse
+          = (await getActiveRegionsByPage(1, state.regionPage.size!, null, Number(value))).data
+
+        actions.setRegions(regions);
+        actions.setRegionPageInfo({
+          total: regionTotal,
+          number: 1
+        });
+
+        setCityLoading(false);
+        setRegionLoading(false);
+      },
+      hasPlast: async () => {
+        setHasntPlast(!hasPlast)
+      },
     }
   };
 
@@ -300,11 +308,11 @@ const SignUp: React.FC = () => {
             )}
           </Select>
         </Form.Item>
-        <Checkbox className={styles.MyCheckbox} disabled={!areaSelected} checked={hasntPlast} onChange={() => setHasntPlast(!hasntPlast)}>
-          В моєму осередку не має пласту
+        <Checkbox className={styles.MyCheckbox} disabled={!areaSelected} checked={hasPlast} onChange={handler.change.hasPlast}>
+          В моєму осередку немає пласту
         </Checkbox>
         {
-          hasntPlast
+          hasPlast
             ? <Form.Item
               name="regionId"
               rules={[{ required: true, message: emptyInput() }]}
@@ -442,12 +450,15 @@ const SignUp: React.FC = () => {
           />
         </Form.Item>
 
-        <RadioOrInput
-          setField={actions.setReferal}
-          radioList={[
+        <CheckboxsItem
+          title="Звідки ви дізналися про Пласт?"
+          checkboxList={[
             "Друг",
-            "Подруга"
-          ]} inputLabel="Інше..." />
+            "Подруга",
+            "Соц мережі"
+          ]}
+          name="referals"
+        />
 
         <Form.Item>
           <Button

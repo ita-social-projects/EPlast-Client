@@ -30,7 +30,7 @@ type State = {
         confirmPassword: string
         genderId: GenderIdEnum
         phoneNumber: string
-        referal: string
+        referals: string[]
         facebookLink: string
         twitterLink: string
         instagramLink: string
@@ -68,7 +68,7 @@ const initialState: State = {
         cityId: undefined,
         regionId: undefined,
         email: "",
-        referal: "",
+        referals: [],
         password: "",
         confirmPassword: "",
         genderId: GenderIdEnum.UnwillingToChoose,
@@ -131,16 +131,7 @@ const actions = {
         setState({
             formData: data
         })
-    },
-    setReferal: (value: string): Action<State> => async ({ setState, getState }) => {
-        console.log(value)
-        setState({
-            formData: {
-                ...getState().formData,
-                referal: value,
-            }
-        })
-    },
+    }
 };
 
 type Actions = typeof actions;

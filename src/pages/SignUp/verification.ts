@@ -23,7 +23,7 @@ export const checkNameSurName = (
   value: string,
   callback: any
 ) => {
-  const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ']{1,25})*$/;
+  const reg = /^[а-яА-ЯІіЄєЇїҐґ' ]{1,25}((\s+|-))*$/;
   if (value.length !== 0 && reg.test(value) === false) {
     return callback(
       shouldContain("тільки літери та бути коротшим за 25 символів")
@@ -78,7 +78,7 @@ export const checkAddress = (
   value: string,
   callback: any
 ) => {
-  const reg = /^[a-zA-Zа-яА-ЯІіЄєЇїҐґ0-9 ']{1,50}((\s+|-)[a-zA-Zа-яА-ЯІіЄєЇїҐґ0-9 ']{1,50})*$/;
+  const reg = /^[а-яА-ЯІіЄєЇїҐґ' ]{1,50}(\s+|-)*$/;
   if ((value.length !== 0 && reg.test(value) === false) || value.trim().length === 0) {
     return callback(
       shouldContain("тільки літери та бути коротшим за 50 символів")

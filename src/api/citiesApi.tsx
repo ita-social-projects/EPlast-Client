@@ -1,4 +1,5 @@
 import { HttpResponse } from "@microsoft/signalr";
+import UkraineOblasts from "../models/Oblast/UkraineOblasts";
 import { ActiveCity } from "../pages/AnnualReport/Interfaces/City";
 import api from "./api";
 
@@ -33,10 +34,11 @@ export interface ActiveCityDataResponse {
 export const getActiveCitiesByPage = async (
   page: number,
   pageSize: number,
-  name: string | null = null
+  name: string | null = null,
+  oblast: UkraineOblasts = UkraineOblasts.NotSpecified
 ) => {
   return await api
-    .get(`Cities/Profiles/Active/${page}`, { page, pageSize, name })
+    .get(`Cities/Profiles/Active/${page}`, { page, pageSize, name, oblast })
     .catch((error) => {
       throw new Error(error);
     });
