@@ -86,7 +86,7 @@ const SortedRegions = ({ switcher }: Props) => {
   };
 
   const handleSearch = (event: any) => {
-    setPage(1);
+    handleChange(1);
     setSearchedData(event);
   };
 
@@ -116,7 +116,7 @@ const SortedRegions = ({ switcher }: Props) => {
 
   useEffect(() => {
     setPage(+p);
-  });
+  }, []);
 
   useEffect(() => {
     switcher ? getNotActiveRegions(page) : getActiveRegions(page);

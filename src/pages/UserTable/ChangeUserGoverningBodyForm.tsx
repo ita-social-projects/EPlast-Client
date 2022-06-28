@@ -8,17 +8,23 @@ import {
   AutoComplete,
   DatePicker,
   Modal,
+  Input,
+  message,
 } from "antd";
 import moment from "moment";
 import classes from "../Regions/Form.module.css";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
-import { emptyInput } from "../../components/Notifications/Messages";
+import {
+  emptyInput,
+  inputOnlyWhiteSpaces,
+} from "../../components/Notifications/Messages";
 import { Roles } from "../../models/Roles/Roles";
 import {
   addAdministrator,
   getGoverningBodiesList,
   getGoverningBodyById,
   addMainAdmin,
+  checkRoleNameExists,
 } from "../../api/governingBodiesApi";
 import { GoverningBody } from "../../api/decisionsApi";
 import SectorProfile from "../../models/GoverningBody/Sector/SectorProfile";
@@ -65,6 +71,8 @@ const ChangeUserRoleForm = ({
 
   const [selectSectorId, setSelectSectorId] = useState<any>();
   const [selectGoverningBodyId, setSelectGoverningBodyId] = useState<number>(0);
+
+  const [isSubmitActive, setIsSubmitActive] = useState<boolean>(true);
 
   const fetchData = async () => {
     setGvbLoading(true);
@@ -277,6 +285,7 @@ const ChangeUserRoleForm = ({
         startDate: value.startDate,
         endDate: value.endDate,
         workEmail: user.email,
+        governingBodyAdminRole: value.GBARole,
       };
       newAdmin.user.imagePath = (
         await userApi.getImage(newAdmin.user.imagePath)
@@ -314,6 +323,26 @@ const ChangeUserRoleForm = ({
       setHideFields(true);
     } else {
       setHideFields(false);
+    }
+  };
+
+  const checkRoleName = async () => {
+    const roleValue = form.getFieldValue("governingBodyAdminRole");
+    if (roleValue.trim().length !== 0) {
+      checkRoleNameExists(roleValue).then((response) => {
+        if (response.data) {
+          form.setFields([
+            {
+              name: "governingBodyAdminRole",
+              errors: ["Така роль адміністратора вже існує!"],
+            },
+          ]);
+          setIsSubmitActive(false);
+        }
+        else{
+          setIsSubmitActive(true);
+        }
+      });
     }
   };
 
@@ -397,7 +426,24 @@ const ChangeUserRoleForm = ({
               </Select>
             </Form.Item>
           </>
-        ) : null}
+        ) : (
+          <>
+            <Form.Item
+              className="adminTypeFormItem"
+              name="governingBodyAdminRole"
+              label="Роль адміністратора"
+              labelCol={{ span: 24 }}
+              rules={[
+                {
+                  pattern: /^\s*\S.*$/,
+                  message: inputOnlyWhiteSpaces(),
+                },
+              ]}
+            >
+              <Input onChange={checkRoleName} />
+            </Form.Item>
+          </>
+        )}
 
         <Form.Item
           className={classes.formField}
@@ -437,7 +483,11 @@ const ChangeUserRoleForm = ({
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit">
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={!isSubmitActive}
+              >
                 Призначити
               </Button>
             </Col>

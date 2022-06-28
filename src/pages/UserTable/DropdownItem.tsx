@@ -89,6 +89,7 @@ export class DropdownItemCreator {
     const addDegreeeItem: AddUserDegreeItem = new AddUserDegreeItem();
     const editGoverningBodyItem: EditUserGoverningBodyItem = new EditUserGoverningBodyItem();
     const deleteGoverningBodyItem: DeleteUserGoverningBodyItem = new DeleteUserGoverningBodyItem();
+    const acceptToCityItem: AcceptToCityItem = new AcceptToCityItem();
 
     const checkerCreator: CheckCreator = new CheckCreator();
     DropdownItem.checkCreator = checkerCreator;
@@ -103,8 +104,8 @@ export class DropdownItemCreator {
       .setNext(editGoverningBodyItem)
       .setNext(deleteGoverningBodyItem)
       .setNext(addDegreeeItem)
-      .setNext(editUserRole);
-
+      .setNext(editUserRole)
+      .setNext(acceptToCityItem);
     return checkProfileItem;
   }
 }
@@ -409,6 +410,42 @@ class DeleteUserGoverningBodyItem extends DropdownItem {
   }
 }
 
+//Прийняти до уладу
+class AcceptToCityItem extends DropdownItem {
+  public handle(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>
+  ): void {
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForAcceptToCity();
+
+    if (
+      DropdownItem.checker.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        []
+      )
+    ) {
+      DropdownItem.handlersResults.set(DropdownFunc.AcceptToCity, true);
+    } else {
+      DropdownItem.handlersResults.set(DropdownFunc.AcceptToCity, false);
+    }
+
+    super.handle(
+      currentUser,
+      currentUserAdminRoles,
+      selectedUser,
+      selectedUserAdminRoles,
+      selectedUserNonAdminRoles
+    );
+  }
+}
+
 //Поточний стан користувача
 class EditUserRoleHandler extends DropdownItem {
   public handle(
@@ -494,6 +531,7 @@ class CheckCreator {
   private userGovAdmin: CurrUserIsGovAdminCheck = new CurrUserIsGovAdminCheck();
   private selectedUserGovAdmin: SelectedUserIsGovAdminCheck = new SelectedUserIsGovAdminCheck();
   private userPlastMember: SelectedUserIsPlastMemberCheck = new SelectedUserIsPlastMemberCheck();
+  private userRegistered: SelectedUserIsRegisteredCheck = new SelectedUserIsRegisteredCheck();
   private hasPlace: SelectedUserHasPlace = new SelectedUserHasPlace();
   private placesId: CurrUserIsAdminForSelectedUserCheck = new CurrUserIsAdminForSelectedUserCheck();
   private falseCheck: FinalFalseCheck = new FinalFalseCheck();
@@ -554,13 +592,25 @@ class CheckCreator {
   }
 
   public rebuildChainForSettingGoverningBodiesMembers(): ICheck {
-    this.checkId.setNext(this.userPlastMember)?.setNext(null);
+    this.checkId
+    .setNext(this.adminRightsCompare)
+    ?.setNext(this.userPlastMember)
+    ?.setNext(null);
 
     return this.checkId;
   }
 
   public rebuildChainForDeleteGoverningBodiesAdmins(): ICheck {
-    this.checkId.setNext(this.selectedUserGovAdmin)?.setNext(null);
+    this.checkId
+    .setNext(this.selectedUserGovAdmin)
+    ?.setNext(this.adminRightsCompare)
+    ?.setNext(null);
+
+    return this.checkId;
+  }
+
+  public rebuildChainForAcceptToCity(): ICheck {
+    this.checkId.setNext(this.userRegistered)?.setNext(null);
 
     return this.checkId;
   }
@@ -704,6 +754,24 @@ class SelectedUserIsPlastMemberCheck extends Check {
     places: Array<Place>
   ): boolean {
     if (selectedUserNonAdminRoles.includes(NonAdminRole.PlastMember)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+//Checks if selected user is Registered,
+class SelectedUserIsRegisteredCheck extends Check {
+  public check(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>,
+    places: Array<Place>
+  ): boolean {
+    if (selectedUserNonAdminRoles.includes(NonAdminRole.RegisteredUser)) {
       return true;
     } else {
       return false;

@@ -15,6 +15,7 @@ import {
   inputOnlyWhiteSpaces,
   incorrectName,
   maxNumber,
+  incorrectUrl,
 } from "../../components/Notifications/Messages";
 
 export const descriptionValidation = {
@@ -114,7 +115,7 @@ export const descriptionValidation = {
   ],
   RegionEmail: [
     {
-      pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       message: incorrectEmail,
     },
     {
@@ -128,7 +129,7 @@ export const descriptionValidation = {
   ],
   Email: [
     {
-      pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       message: incorrectEmail,
     },
     {
@@ -144,10 +145,16 @@ export const descriptionValidation = {
     pattern: /^((\+?3)?8)?((0\(\d{2}\)?)|(\(0\d{2}\))|(0\d{2}))-\d{3}-\d{2}-\d{2}$/,
     message: incorrectPhone,
   },
-  Link: {
-    max: 256,
-    message: maxLength(256),
-  },
+  Link: [
+    {
+      pattern: /\b(https?|ftp|file):\/\/[\-A-Za-zА-Яа-яЇїІіЄєҐґ0-9+&@#\/%?=~_|!:,.;]*[\-A-Za-zА-Яа-яЇїІіЄєҐґ0-9+&@#\/%=~_|]/,
+      message: incorrectUrl,
+    },
+    {
+      max: 256,
+      message: maxLength(256),
+    },
+  ],
   Street: [
     {
       pattern: /^\S*((?=([А-ЯҐЄІЇа-яґєії\d]+[\.\-']?))\2\s?)+$/,
@@ -180,10 +187,6 @@ export const descriptionValidation = {
     {
       pattern: /^[1-9]{1}\d*\/?[А-ЯҐЄІЇа-яґєії]?([1-9]{1}\d*)?$/,
       message: incorrectOficeNumber,
-    },
-    {
-      required: true,
-      message: emptyInput(),
     },
     {
       max: 5,

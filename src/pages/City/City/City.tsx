@@ -38,7 +38,6 @@ import {
   removeCity,
   getUserCityAccess,
   getCheckPlastMember,
-  toggleMemberStatus,
   removeFollower,
   getAllAdmins,
   isUserApproved,
@@ -67,13 +66,13 @@ import {
   successfulUnarchiveAction,
   successfulArchiveAction,
   failArchiveAction,
-  failApproveAction,
 } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddCitiesNewSecretaryForm from "../AddAdministratorModal/AddCitiesSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
 import AuthLocalStorage from "../../../AuthLocalStorage";
+import ModalAddPlastDegree from "../../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 
 const City = () => {
   const history = useHistory();
@@ -110,49 +109,16 @@ const City = () => {
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [activeUserID, setActiveUserID] = useState<string>();
+  const [selectedFollowerUID, setSelectedFollowerUID] = useState<string>();
+  const [visibleAddModalDegree, setVisibleAddModalDegree] = useState<boolean>(
+    false
+  );
   const documentsToShow = 6;
   const adminsToShow = 6;
   const membersToShow = 9;
   const followersToShow = 5;
   const followersToShowOnAdd = 6;
   const classes = require("./Modal.module.css");
-
-  const changeApproveStatus = async (memberId: number) => {
-    if (!isLoadingPlus) {
-      notificationLogic("warning", failApproveAction());
-      return;
-    }
-    setIsLoadingMemberId(memberId);
-    setIsLoadingPlus(false);
-    const member = await toggleMemberStatus(memberId);
-    moment.locale("uk-ua");
-
-    await createNotification(
-      member.data.userId,
-      "Вітаємо, вас зараховано до членів станиці",
-      true
-    );
-
-    if (member.data.wasInRegisteredUserRole) {
-      await createNotification(
-        member.data.userId,
-        "Тобі надано нову роль: 'Прихильник' в станиці",
-        true
-      );
-    }
-
-    member.data.user.imagePath = (
-      await userApi.getImage(member.data.user.imagePath)
-    ).data;
-    const response = await getCityById(+id);
-    setMembersCount(response.data.memberCount);
-    setFollowersCount(response.data.followerCount);
-    if (members.length < 9) {
-      setMembers([...members, member.data]);
-    }
-    setFollowers(followers.filter((f) => f.id !== memberId));
-    setIsLoadingPlus(true);
-  };
 
   const removeMember = async (followerID: number) => {
     await removeFollower(followerID);
@@ -193,6 +159,14 @@ const City = () => {
       setFollowers([...followers, follower.data]);
     }
     setCanJoin(false);
+
+    if (follower.data.wasInRegisteredUserRole) {
+      await createNotification(
+        follower.data.userId,
+        "Тобі надано нову роль: 'Прихильник' в станиці",
+        true
+      );
+    }
   };
 
   const ArchiveCity = async () => {
@@ -615,6 +589,20 @@ const City = () => {
     }
   };
 
+  const handleAddDegree = async () => {
+    const memberId = followers.find((item) => item.userId === selectedFollowerUID)?.id;
+    setIsLoadingMemberId(memberId ?? NaN);
+
+    setFollowers(followers.filter((f) => f.id !== memberId));
+
+    const response = await getCityById(+id);
+    setMembers(response.data.members);
+    setMembersCount(response.data.memberCount);
+    setFollowersCount(response.data.followerCount);
+    setPhotosLoading(true);
+    setPhotos([...response.data.members], response.data.logo);
+  };
+
   useEffect(() => {
     getCity();
   }, []);
@@ -904,7 +892,10 @@ const City = () => {
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/cities/members/${city.id}`)}
+                onClick={() => {
+                  if (userAccesses["EditCity"]) history.push(`/user/table?city=${city.id}`);
+                  else history.push(`/cities/members/${city.id}`);
+                  }}
               >
                 Більше
               </Button>
@@ -1058,7 +1049,7 @@ const City = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>
-              Прихильники станиці{" "}
+            Зголошені станиці{" "}
               <a onClick={() => history.push(`/cities/followers/${city.id}`)}>
                 {followersCount !== 0 ? (
                   <Badge
@@ -1088,7 +1079,7 @@ const City = () => {
                   </Col>
                 ) : null
               ) : (
-                <Paragraph>Ще немає прихильників станиці</Paragraph>
+                <Paragraph>Ще немає зголошених станиці</Paragraph>
               )}
               {followers.length !== 0 ? (
                 followers
@@ -1129,9 +1120,10 @@ const City = () => {
                           >
                             <PlusOutlined
                               className="approveIcon"
-                              onClick={async () =>
-                                await changeApproveStatus(followers.id)
-                              }
+                              onClick={() => {
+                                setSelectedFollowerUID(followers.userId);
+                                setVisibleAddModalDegree(true);
+                              }}
                             />
                           </Tooltip>
                         ) : followers.userId === activeUserID ? (
@@ -1154,14 +1146,17 @@ const City = () => {
                     </Col>
                   ))
               ) : canJoin ? null : (
-                <Paragraph>Ще немає прихильників станиці</Paragraph>
+                <Paragraph>Ще немає зголошених станиці</Paragraph>
               )}
             </Row>
             <div className="cityMoreButton">
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/cities/followers/${city.id}`)}
+                onClick={() => {
+                  if (userAccesses["EditCity"]) history.push(`/user/table?tab=registered&city=${city.id}`);
+                  else history.push(`/cities/followers/${city.id}`);
+               }}
               >
                 Більше
               </Button>
@@ -1203,6 +1198,15 @@ const City = () => {
           onAdd={handleConfirm}
         />
       </Modal>
+
+      {userAccesses["EditCity"] ? (
+        <ModalAddPlastDegree
+          visibleModal={visibleAddModalDegree}
+          setVisibleModal={setVisibleAddModalDegree}
+          userId={selectedFollowerUID as string}
+          handleAddDegree={handleAddDegree}
+        ></ModalAddPlastDegree>
+      ) : null}
 
       {userAccesses["EditCity"] ? (
         <AddDocumentModal
