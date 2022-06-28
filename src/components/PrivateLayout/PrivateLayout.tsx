@@ -328,7 +328,7 @@ const PrivateLayout = ({ children }: any) => {
                     icon={<FileTextOutlined />}
                     onClick={() => {
                       handleClickAway();
-                      history.push(`/annualreport/table/country`);
+                      history.push(`/annualreport/table/region`);
                     }}
                     key="9"
                   >

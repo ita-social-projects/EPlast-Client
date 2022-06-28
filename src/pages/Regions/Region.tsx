@@ -809,7 +809,7 @@ const Region = () => {
                       type="primary"
                       className="cityInfoButton"
                       onClick={() =>
-                        history.push(`/annualreport/table/country`)
+                        history.push(`/annualreport/table/region`)
                       }
                     >
                       Річні звіти
