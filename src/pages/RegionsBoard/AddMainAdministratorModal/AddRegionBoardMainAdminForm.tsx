@@ -1,23 +1,17 @@
 import { Button, Col, DatePicker, Form, Input, Row, Select } from "antd";
-import React, { useEffect } from "react";
-import GoverningBodyAdmin from "../../../models/GoverningBody/GoverningBodyAdmin";
-import AdminType from "../../../models/Admin/AdminType";
-import { useState } from "react";
+import React, { useEffect , useState } from "react";
+import moment from "moment";
 import {
-  addMainAdmin,
   checkRoleNameExists,
-} from "../../../api/governingBodiesApi";
+ getUsersForGoverningBodyAdminForm } from "../../../api/governingBodiesApi";
 import {
   dataCantBeFetched,
   emptyInput,
   inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages";
-import moment from "moment";
-import User from "../../../models/UserTable/User";
 import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
-import { getUsersForGoverningBodies } from "../../../api/adminApi";
 import notificationLogic from "../../../components/Notifications/Notification";
-import { getUsersForGoverningBodyAdminForm } from "../../../api/governingBodiesApi";
+
 
 type Props = {
   setVisibleModal: (visibleModal: boolean) => void;

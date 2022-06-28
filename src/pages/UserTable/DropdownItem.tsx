@@ -592,13 +592,19 @@ class CheckCreator {
   }
 
   public rebuildChainForSettingGoverningBodiesMembers(): ICheck {
-    this.checkId.setNext(this.userPlastMember)?.setNext(null);
+    this.checkId
+    .setNext(this.adminRightsCompare)
+    ?.setNext(this.userPlastMember)
+    ?.setNext(null);
 
     return this.checkId;
   }
 
   public rebuildChainForDeleteGoverningBodiesAdmins(): ICheck {
-    this.checkId.setNext(this.selectedUserGovAdmin)?.setNext(null);
+    this.checkId
+    .setNext(this.selectedUserGovAdmin)
+    ?.setNext(this.adminRightsCompare)
+    ?.setNext(null);
 
     return this.checkId;
   }
