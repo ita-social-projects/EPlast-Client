@@ -564,9 +564,6 @@ const CreateCity = () => {
                 name="email"
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
-                initialValue={
-                  isFollowerPath ? regionFollower.email : city.email
-                }
                 rules={descriptionValidation.Email}
               >
                 <Input
