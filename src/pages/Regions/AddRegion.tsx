@@ -59,7 +59,7 @@ const AddNewRegionFormPage = () => {
         description: values.description,
         phoneNumber: values.phoneNumber,
         email: values.email,
-        link: values.link,
+        link: values.link === "" ? null : values.link,
         logo: logo,
         street: values.street,
         houseNumber: values.houseNumber,
@@ -120,16 +120,12 @@ const AddNewRegionFormPage = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-      
-          <b>
-          Відмінити створення округи ?
-          </b>{" "}
-         
+          <b>Відмінити створення округи ?</b>{" "}
         </div>
       ),
       onCancel() {},
       onOk() {
-        history.goBack()
+        history.goBack();
       },
     });
   };
@@ -231,7 +227,7 @@ const AddNewRegionFormPage = () => {
                   label="Посилання"
                   name="link"
                   labelCol={{ span: 24 }}
-                  rules={[descriptionValidation.Link]}
+                  rules={descriptionValidation.Link}
                 >
                   <Input maxLength={257} />
                 </Form.Item>
