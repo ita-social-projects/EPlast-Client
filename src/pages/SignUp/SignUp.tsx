@@ -59,12 +59,17 @@ const SignUp: React.FC = () => {
       confirm: async () => {
         setVisible(false);
         setAvailabe(false);
+        const { facebookLink, twitterLink, instagramLink, fatherName }
+          = state.formData
         const request = {
           ...state.formData,
           referal: state.formData.referals.join(', '),
-          referals: undefined
+          referals: undefined,
+          facebookLink: facebookLink === "" ? null : facebookLink,
+          twitterLink: twitterLink === "" ? null : twitterLink,
+          instagramLink: instagramLink === "" ? null : instagramLink,
+          fatherName: fatherName === "" ? null : fatherName,
         };
-        console.log(request);
         await authService.register(request);
         setAvailabe(true);
         history.push("/signin");
@@ -153,18 +158,22 @@ const SignUp: React.FC = () => {
         setAreaSelected(value !== UkraineOblasts.NotSpecified);
         setCityLoading(true);
         setRegionLoading(true);
-   
+
+        const cityPromise = getActiveCitiesByPage(1, state.cityPage.size!, null, Number(value));
+        const regionPromise = getActiveRegionsByPage(1, state.regionPage.size!, null, Number(value));
+
+        const [cityRes, regionRes] = await Promise.all([cityPromise, regionPromise])
+
         const { cities, total: cityTotal }: ActiveCityDataResponse
-          = (await getActiveCitiesByPage(1, state.cityPage.size!, null, Number(value))).data;
+          = cityRes.data
+        const { regions, total: regionTotal }: ActiveRegionDataResponse
+          = regionRes.data
 
         actions.setCities(cities);
         actions.setCityPageInfo({
           total: cityTotal,
           number: 1
         });
-
-        const { regions, total: regionTotal }: ActiveRegionDataResponse
-          = (await getActiveRegionsByPage(1, state.regionPage.size!, null, Number(value))).data
 
         actions.setRegions(regions);
         actions.setRegionPageInfo({
@@ -295,6 +304,7 @@ const SignUp: React.FC = () => {
           rules={validator.Oblast}
         >
           <Select
+            aria-autocomplete="none"
             showSearch
             className={styles.MySelect}
             placeholder="Оберіть область"
@@ -318,6 +328,7 @@ const SignUp: React.FC = () => {
               rules={[{ required: true, message: emptyInput() }]}
             >
               <Select
+                aria-autocomplete="none"
                 onSearch={handler.search.region}
                 showSearch
                 disabled={!areaSelected}
@@ -341,6 +352,7 @@ const SignUp: React.FC = () => {
               rules={[{ required: true, message: emptyInput() }]}
             >
               <Select
+                aria-autocomplete="none"
                 onSearch={handler.search.city}
                 showSearch
                 disabled={!areaSelected}
@@ -453,9 +465,14 @@ const SignUp: React.FC = () => {
         <CheckboxsItem
           title="Звідки ви дізналися про Пласт?"
           checkboxList={[
-            "Друг",
-            "Подруга",
-            "Соц мережі"
+            "Від друзів, рідних",
+            "Facebook",
+            "Інші соцмережі",
+            "Телебачення",
+            "Інтернет ЗМІ",
+            "Захід у моєму місті",
+            "У навчальному закладі",
+            "Пройшов онлайн курс ВУМ",
           ]}
           name="referals"
         />

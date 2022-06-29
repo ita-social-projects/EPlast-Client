@@ -82,7 +82,7 @@ const SignIn: React.FC = () => {
   const confirmationEmail = async () => {
     const { userId, token } = params;
     if (userId !== null && token !== null) {
-      await authService.confirmingEmail(userId, token);
+      await authService.confirmEmail(userId, token);
     }
   }
 
