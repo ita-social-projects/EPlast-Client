@@ -106,7 +106,7 @@ const UsersTable = () => {
     userArhive,
     currentTabName,
     clearFilter,
-    isQueryLoaded
+    isQueryLoaded,
   ]);
 
   const searchFieldMaxLength: number = 150;
@@ -120,7 +120,8 @@ const UsersTable = () => {
             label: item.name,
             value: item.id,
           };
-        }))
+        })
+      );
       cityList.current = response.data;
       getCityFromQuery();
     } catch (error) {
@@ -158,7 +159,7 @@ const UsersTable = () => {
             value: item.id,
           };
         })
-      )
+      );
       clubList.current = response.data;
       getClubFromQuery();
     } catch (error) {
@@ -188,33 +189,37 @@ const UsersTable = () => {
   const fetchParametersFromUrl = () => {
     // for some reason queryString won't remove the ? at the start
     // of a query, so we have to slice that manually...
-    let query = location.search.slice(1,location.search.length);
+    let query = location.search.slice(1, location.search.length);
     let queryParamsArray = queryString.parse(query);
 
     let params = {
-      tab: queryParamsArray.tab as string ?? undefined,
+      tab: (queryParamsArray.tab as string) ?? undefined,
       city: parseInt(queryParamsArray.city as string) ?? undefined,
-      club: parseInt(queryParamsArray.club as string) ?? undefined
-    }
+      club: parseInt(queryParamsArray.club as string) ?? undefined,
+    };
 
     // doing this to avoid exception on getClubFromQuery
     form.setFieldsValue({
-      locationFilter: []
-    })
+      locationFilter: [],
+    });
 
     queryParams.current = params;
     getTabFromQuery();
-  }
+  };
 
   const getTabFromQuery = () => {
-    let acceptableTabs = ["confirmed", "registered", "unconfirmed"]
+    let acceptableTabs = ["confirmed", "registered", "unconfirmed"];
 
     let tab = queryParams.current.tab;
-    setCurrentTabName(tab && acceptableTabs.includes(tab) && activeUserIsAdmin.current ? tab : "confirmed");
-  }
+    setCurrentTabName(
+      tab && acceptableTabs.includes(tab) && activeUserIsAdmin.current
+        ? tab
+        : "confirmed"
+    );
+  };
 
   const getCityFromQuery = () => {
-    let city = queryParams.current.city
+    let city = queryParams.current.city;
     if (city) {
       let cityExists = cityList.current.some((item) => item.id === city);
 
@@ -222,16 +227,16 @@ const UsersTable = () => {
         let cityFilter = `value1 ${city}`;
 
         form.setFieldsValue({
-          locationFilter: [cityFilter]
-        })
+          locationFilter: [cityFilter],
+        });
 
         setDynamicCities([...dynamicCities, city]);
       }
     }
-  }
+  };
 
   const getClubFromQuery = () => {
-    let club = queryParams.current.club
+    let club = queryParams.current.club;
     if (club) {
       let clubExists = clubList.current.some((item) => item.id === club);
 
@@ -239,15 +244,15 @@ const UsersTable = () => {
         let clubFilter = `value4 ${club}`;
 
         form.setFieldsValue({
-          locationFilter: [...form.getFieldValue("locationFilter"), clubFilter]
+          locationFilter: [...form.getFieldValue("locationFilter"), clubFilter],
         });
 
         setDynamicClubs([...dynamicClubs, club]);
       }
     }
-    
+
     setQueryLoaded(true);
-  }
+  };
 
   const showError = (message: string) => {
     Modal.error({
@@ -259,7 +264,9 @@ const UsersTable = () => {
   const initializePage = () => {
     let jwt = AuthLocalStorage.getToken() as string;
     let user = jwt_decode(jwt) as any;
-    userApi.getUserProfileById(user.nameid, user.nameid).then((response) => setCurrentUser(response.data.user));
+    userApi
+      .getUserProfileById(user.nameid, user.nameid)
+      .then((response) => setCurrentUser(response.data.user));
 
     let roles = userApi.getActiveUserRoles();
     let rolesThatCanView = [
@@ -273,21 +280,26 @@ const UsersTable = () => {
       Roles.KurinHead,
       Roles.KurinHeadDeputy,
       Roles.PlastMember,
-      Roles.Supporter
-    ] as string[]
+      Roles.Supporter,
+    ] as string[];
 
     setCanView(roles.some((v) => rolesThatCanView.includes(v)));
 
-    let userIsAdmin = roles.includes(Roles.Admin) || roles.includes(Roles.GoverningBodyAdmin);
+    let userIsAdmin =
+      roles.includes(Roles.Admin) ||
+      roles.includes(Roles.GoverningBodyAdmin) ||
+      roles.includes(Roles.CityReferentUPS) ||
+      roles.includes(Roles.CityReferentUSP) ||
+      roles.includes(Roles.CityReferentOfActiveMembership);
     activeUserIsAdmin.current = userIsAdmin;
 
     let listOfTabs = [
-        {
-          key: "confirmed",
-          tab: "Всі користувачі",
-        },
+      {
+        key: "confirmed",
+        tab: "Всі користувачі",
+      },
     ];
-    
+
     if (userIsAdmin) {
       listOfTabs.push(
         {
@@ -299,9 +311,9 @@ const UsersTable = () => {
           tab: "Непідтверджені",
         }
       );
-      }
+    }
     setTabList(listOfTabs);
-  }
+  };
 
   const fetchData = async () => {
     if (!(currentTabName && isQueryLoaded)) return;
@@ -330,8 +342,7 @@ const UsersTable = () => {
       setUsers(response.data.users);
       setTotal(response.data.total);
       setLoading(true);
-    }
-    catch (error) {
+    } catch (error) {
       //don't set value type, check on github will fail
       showError(error.message);
     }
@@ -508,75 +519,78 @@ const UsersTable = () => {
         Загальна кількість користувачів: {total}
       </Title>
       <div className={classes.searchContainer}>
-        {loading ? 
-        <div className={classes.filterContainer}>
-          <Form form={form} onFinish={handleFilter}>
-            <Row className={classes.rowForFilterSearch}>
-              <Col className={classes.colForTreeSelect}>
-                <Form.Item
-                  name="locationFilter"
-                  rules={[
-                    {
-                      required: true,
-                      message: shouldContain("хоча б одну опцію"),
-                      type: "array",
-                    },
-                  ]}
-                >
-                  <TreeSelect
-                    placeholder="Фільтр"
-                    maxTagCount={2}
-                    showSearch
-                    multiple
-                    onDeselect={ondeSelect}
-                    onSelect={onSelect}
-                    treeCheckable={true}
-                    showCheckedStrategy={SHOW_PARENT}
-                    filterTreeNode={(input, option) =>
-                      (option?.title as string)
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                    allowClear
-                    onChange={(event: any) => {
-                      if (event.length == 0) {
-                        setDynamicRegions([]);
-                        setDynamicCities([]);
-                        setDynamicClubs([]);
-                        setDynamicDegrees([]);
-                        setClearFilter(!clearFilter);
+        {loading ? (
+          <div className={classes.filterContainer}>
+            <Form form={form} onFinish={handleFilter}>
+              <Row className={classes.rowForFilterSearch}>
+                <Col className={classes.colForTreeSelect}>
+                  <Form.Item
+                    name="locationFilter"
+                    rules={[
+                      {
+                        required: true,
+                        message: shouldContain("хоча б одну опцію"),
+                        type: "array",
+                      },
+                    ]}
+                  >
+                    <TreeSelect
+                      placeholder="Фільтр"
+                      maxTagCount={2}
+                      showSearch
+                      multiple
+                      onDeselect={ondeSelect}
+                      onSelect={onSelect}
+                      treeCheckable={true}
+                      showCheckedStrategy={SHOW_PARENT}
+                      filterTreeNode={(input, option) =>
+                        (option?.title as string)
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
                       }
-                    }}
-                  >
-                    <TreeNode value={0} title="Всі округи">
-                      {getDynamicRegions()}
-                    </TreeNode>
-                    <TreeNode value={1} title="Всі станиці">
-                      {getDynamicCities()}
-                    </TreeNode>
-                    <TreeNode value={2} title="Всі курені">
-                      {getDynamicClubs()}
-                    </TreeNode>
-                    <TreeNode value={3} title="Всі ступені УПС/УСП">
-                      {getDynamicDegrees()}
-                    </TreeNode>
-                  </TreeSelect>
-                </Form.Item>
-              </Col>
-              <Col className={classes.colForButton}>
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className={classes.okButton}
-                  >
-                    OK
-                  </Button>
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-        </div> : <div></div>}
+                      allowClear
+                      onChange={(event: any) => {
+                        if (event.length == 0) {
+                          setDynamicRegions([]);
+                          setDynamicCities([]);
+                          setDynamicClubs([]);
+                          setDynamicDegrees([]);
+                          setClearFilter(!clearFilter);
+                        }
+                      }}
+                    >
+                      <TreeNode value={0} title="Всі округи">
+                        {getDynamicRegions()}
+                      </TreeNode>
+                      <TreeNode value={1} title="Всі станиці">
+                        {getDynamicCities()}
+                      </TreeNode>
+                      <TreeNode value={2} title="Всі курені">
+                        {getDynamicClubs()}
+                      </TreeNode>
+                      <TreeNode value={3} title="Всі ступені УПС/УСП">
+                        {getDynamicDegrees()}
+                      </TreeNode>
+                    </TreeSelect>
+                  </Form.Item>
+                </Col>
+                <Col className={classes.colForButton}>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className={classes.okButton}
+                    >
+                      OK
+                    </Button>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          </div>
+        ) : (
+          <div></div>
+        )}
         <div className={classes.searchArea}>
           <Search
             placeholder="Пошук"
