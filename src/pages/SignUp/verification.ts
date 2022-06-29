@@ -78,7 +78,7 @@ export const checkAddress = (
   value: string,
   callback: any
 ) => {
-  const reg = /^[а-яА-ЯІіЄєЇїҐґ' ]{1,50}(\s+|-)*$/;
+  const reg = /^[а-яА-ЯІіЄєЇїҐґ'., ]{1,50}(\s+|-)*$/;
   if ((value.length !== 0 && reg.test(value) === false) || value.trim().length === 0) {
     return callback(
       shouldContain("тільки літери та бути коротшим за 50 символів")
