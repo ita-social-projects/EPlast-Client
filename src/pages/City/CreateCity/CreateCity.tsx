@@ -61,6 +61,7 @@ import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { getGoverningBodiesAdmins } from "../../../api/governingBodiesApi";
+import { getSuperAdmins } from "../../../api/adminApi";
 
 const classes = require("../../Club/Club/Modal.module.css");
 
@@ -152,6 +153,11 @@ const CreateCity = () => {
         if (user) listOfReceivers.push(user.userId);
       });
     
+    getSuperAdmins()
+      .then((response) => {
+        response.data.map((user: any) => listOfReceivers.push(user.id));
+      });
+
     console.log(listOfReceivers);
     
     return listOfReceivers;
