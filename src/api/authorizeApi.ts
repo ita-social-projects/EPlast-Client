@@ -35,11 +35,11 @@ export default class AuthorizeApi {
   register = async (data: any) => {
     const response = await Api.post("Auth/signup", data)
       .then((response) => {
-        notificationLogic("success", response.data.value);
+        notificationLogic("success", "Вам на пошту прийшов лист з пітвердженням");
       })
       .catch((error) => {
         if (error.response.status === 400) {
-          notificationLogic("error", error.response.data.value);
+          notificationLogic("error", "Щось пішло не так");
         }
       });
     return response;
@@ -101,11 +101,9 @@ export default class AuthorizeApi {
     return response;
   };
 
-  confirmingEmail = async (userId: string, token: string) => {
-    const response = await Api.get("Auth/confirmingEmail", {
-      userId: userId,
-      token: token
-    })
+  confirmEmail = async (userId: string, token: string) => {
+    const encodedToken = encodeURI(token);
+    const response = Api.post(`Auth/confirmEmail?userId=${userId}&token=${encodedToken}`)
       .then((response) => {
         notificationLogic("success", 'Пошта підтверджена');
       })
