@@ -59,12 +59,17 @@ const SignUp: React.FC = () => {
       confirm: async () => {
         setVisible(false);
         setAvailabe(false);
+        const { facebookLink, twitterLink, instagramLink, fatherName }
+          = state.formData
         const request = {
           ...state.formData,
           referal: state.formData.referals.join(', '),
-          referals: undefined
+          referals: undefined,
+          facebookLink: facebookLink === "" ? undefined : facebookLink,
+          twitterLink: twitterLink === "" ? undefined : twitterLink,
+          instagramLink: instagramLink === "" ? undefined : instagramLink,
+          fatherName: fatherName === "" ? undefined : fatherName,
         };
-        console.log(request);
         await authService.register(request);
         setAvailabe(true);
         history.push("/signin");
@@ -153,7 +158,7 @@ const SignUp: React.FC = () => {
         setAreaSelected(value !== UkraineOblasts.NotSpecified);
         setCityLoading(true);
         setRegionLoading(true);
-   
+
         const { cities, total: cityTotal }: ActiveCityDataResponse
           = (await getActiveCitiesByPage(1, state.cityPage.size!, null, Number(value))).data;
 

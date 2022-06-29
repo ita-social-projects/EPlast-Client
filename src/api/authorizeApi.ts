@@ -101,11 +101,8 @@ export default class AuthorizeApi {
     return response;
   };
 
-  confirmingEmail = async (userId: string, token: string) => {
-    const response = await Api.get("Auth/confirmingEmail", {
-      userId: userId,
-      token: token
-    })
+  confirmEmail = async (userId: string, token: string) => {
+    const response = Api.post(`Auth/confirmEmail?userId=${userId}&token=${token}`)
       .then((response) => {
         notificationLogic("success", 'Пошта підтверджена');
       })
