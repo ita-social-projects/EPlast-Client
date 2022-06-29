@@ -65,10 +65,10 @@ const SignUp: React.FC = () => {
           ...state.formData,
           referal: state.formData.referals.join(', '),
           referals: undefined,
-          facebookLink: facebookLink === "" ? undefined : facebookLink,
-          twitterLink: twitterLink === "" ? undefined : twitterLink,
-          instagramLink: instagramLink === "" ? undefined : instagramLink,
-          fatherName: fatherName === "" ? undefined : fatherName,
+          facebookLink: facebookLink === "" ? null : facebookLink,
+          twitterLink: twitterLink === "" ? null : twitterLink,
+          instagramLink: instagramLink === "" ? null : instagramLink,
+          fatherName: fatherName === "" ? null : fatherName,
         };
         await authService.register(request);
         setAvailabe(true);

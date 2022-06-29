@@ -35,11 +35,11 @@ export default class AuthorizeApi {
   register = async (data: any) => {
     const response = await Api.post("Auth/signup", data)
       .then((response) => {
-        notificationLogic("success", response.data.value);
+        notificationLogic("success", "Вам на пошту прийшов лист з пітвердженням");
       })
       .catch((error) => {
         if (error.response.status === 400) {
-          notificationLogic("error", error.response.data.value);
+          notificationLogic("error", "Щось пішло не так");
         }
       });
     return response;
