@@ -300,6 +300,7 @@ const SignUp: React.FC = () => {
           rules={validator.Oblast}
         >
           <Select
+            aria-autocomplete="none"
             showSearch
             className={styles.MySelect}
             placeholder="Оберіть область"
@@ -323,6 +324,7 @@ const SignUp: React.FC = () => {
               rules={[{ required: true, message: emptyInput() }]}
             >
               <Select
+                aria-autocomplete="none"
                 onSearch={handler.search.region}
                 showSearch
                 disabled={!areaSelected}
@@ -346,6 +348,7 @@ const SignUp: React.FC = () => {
               rules={[{ required: true, message: emptyInput() }]}
             >
               <Select
+                aria-autocomplete="none"
                 onSearch={handler.search.city}
                 showSearch
                 disabled={!areaSelected}
