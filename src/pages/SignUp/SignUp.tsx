@@ -314,11 +314,13 @@ const SignUp: React.FC = () => {
             onChange={handler.change.oblast}
             filterOption={handler.select.filter}
           >
-            {Object.entries(OblastsWithoutNotSpecifiedRecord).map(([key, value]) =>
-              <Select.Option key={key} value={Number(key)}>
-                {value}
-              </Select.Option>
-            )}
+            {Object.entries(OblastsWithoutNotSpecifiedRecord)
+              .sort(([key1, value1], [key2, value2]) => value1.localeCompare(value2))
+              .map(([key, value]) =>
+                <Select.Option key={key} value={Number(key)}>
+                  {value}
+                </Select.Option>
+              )}
           </Select>
         </Form.Item>
         <Checkbox className={styles.MyCheckbox} disabled={!areaSelected} checked={hasPlast} onChange={handler.change.hasPlast}>

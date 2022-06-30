@@ -132,6 +132,7 @@ const SignIn: React.FC = () => {
         initialValues={initialValues}
         form={form}
         onFinish={handler.form.submit}
+        hideRequiredMark={true}
       >
         <Form.Item label="Пошта" name="Email" rules={validator.Email}>
           <Input
