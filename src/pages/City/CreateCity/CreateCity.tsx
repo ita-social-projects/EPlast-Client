@@ -157,8 +157,6 @@ const CreateCity = () => {
       .then((response) => {
         response.data.map((user: any) => listOfReceivers.push(user.id));
       });
-
-    console.log(listOfReceivers);
     
     return listOfReceivers;
   }
@@ -252,10 +250,6 @@ const CreateCity = () => {
     return responsePromise
       .then(async (response) => {
         let peopleToReceiveNotification = await getNotificationReceivers(parseInt(newRegionFollower.regionId));
-        console.log("==SERVER INFO==");
-        console.log(response);
-        console.log("==CLIENT INFO==");
-        console.log(newRegionFollower);
         notificationLogic("success", successfulCreateAction("Заяву"));
         await createNotification(
           newRegionFollower.userId,
