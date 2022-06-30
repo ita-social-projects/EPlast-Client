@@ -12,14 +12,17 @@ import {
   Card,
 } from "antd";
 import "./Filter.less";
+import Title from "antd/lib/typography/Title";
+import ClickAwayListener from "react-click-away-listener";
+import { TreeNode } from "antd/lib/tree-select";
+import jwt_decode from "jwt-decode";
+import queryString from "querystring";
+import { useLocation } from "react-router-dom";
 import { getUsersForTableByPage } from "../../api/adminApi";
 import clubsApi from "../../api/clubsApi";
 import DropDownUserTable from "./DropDownUserTable";
-import Title from "antd/lib/typography/Title";
 import ColumnsForUserTable from "./ColumnsForUserTable";
 import UserTable from "../../models/UserTable/UserTable";
-import ClickAwayListener from "react-click-away-listener";
-import { TreeNode } from "antd/lib/tree-select";
 import City from "../Statistics/Interfaces/City";
 import activeMembershipApi, {
   PlastDegree,
@@ -33,10 +36,7 @@ import citiesApi from "../../api/citiesApi";
 import userApi from "../../api/UserApi";
 import User from "../Distinction/Interfaces/User";
 import AuthLocalStorage from "../../AuthLocalStorage";
-import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
-import { useLocation } from "react-router-dom";
-import queryString from "querystring";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -100,7 +100,6 @@ const UsersTable = () => {
     page,
     pageSize,
     updatedUser,
-    searchData,
     sortKey,
     filter,
     userArhive,
@@ -194,7 +193,8 @@ const UsersTable = () => {
     let params = {
       tab: queryParamsArray.tab as string ?? undefined,
       city: parseInt(queryParamsArray.city as string) ?? undefined,
-      club: parseInt(queryParamsArray.club as string) ?? undefined
+      club: parseInt(queryParamsArray.club as string) ?? undefined,
+      search: queryParamsArray.search as string ?? undefined,
     }
 
     // doing this to avoid exception on getClubFromQuery
@@ -204,6 +204,7 @@ const UsersTable = () => {
 
     queryParams.current = params;
     getTabFromQuery();
+    getSearchFromQuery();
   }
 
   const getTabFromQuery = () => {
@@ -212,6 +213,13 @@ const UsersTable = () => {
     let tab = queryParams.current.tab;
     setCurrentTabName(tab && acceptableTabs.includes(tab) && activeUserIsAdmin.current ? tab : "confirmed");
   }
+
+  const getSearchFromQuery = () => {
+    const search = queryParams.current.search;
+    setSearchData(search);
+
+  }
+
 
   const getCityFromQuery = () => {
     let city = queryParams.current.city
@@ -339,13 +347,14 @@ const UsersTable = () => {
 
   const handleSearch = (e: any) => {
     setPage(1);
-    setSearchData(e);
+    fetchData();
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.toLowerCase() === "") {
       setSearchData("");
     }
+    setSearchData(e.target.value);
   };
 
   const onSelect = (selectedKeys: any, e: any) => {
@@ -579,6 +588,7 @@ const UsersTable = () => {
         </div> : <div></div>}
         <div className={classes.searchArea}>
           <Search
+            value={searchData}
             placeholder="Пошук"
             allowClear
             enterButton
