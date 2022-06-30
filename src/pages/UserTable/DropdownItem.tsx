@@ -89,7 +89,6 @@ export class DropdownItemCreator {
     const addDegreeeItem: AddUserDegreeItem = new AddUserDegreeItem();
     const editGoverningBodyItem: EditUserGoverningBodyItem = new EditUserGoverningBodyItem();
     const deleteGoverningBodyItem: DeleteUserGoverningBodyItem = new DeleteUserGoverningBodyItem();
-    const acceptToCityItem: AcceptToCityItem = new AcceptToCityItem();
 
     const checkerCreator: CheckCreator = new CheckCreator();
     DropdownItem.checkCreator = checkerCreator;
@@ -105,7 +104,6 @@ export class DropdownItemCreator {
       .setNext(deleteGoverningBodyItem)
       .setNext(addDegreeeItem)
       .setNext(editUserRole)
-      .setNext(acceptToCityItem);
     return checkProfileItem;
   }
 }
@@ -410,42 +408,6 @@ class DeleteUserGoverningBodyItem extends DropdownItem {
   }
 }
 
-//Прийняти до уладу
-class AcceptToCityItem extends DropdownItem {
-  public handle(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>
-  ): void {
-    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForAcceptToCity();
-
-    if (
-      DropdownItem.checker.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        []
-      )
-    ) {
-      DropdownItem.handlersResults.set(DropdownFunc.AcceptToCity, true);
-    } else {
-      DropdownItem.handlersResults.set(DropdownFunc.AcceptToCity, false);
-    }
-
-    super.handle(
-      currentUser,
-      currentUserAdminRoles,
-      selectedUser,
-      selectedUserAdminRoles,
-      selectedUserNonAdminRoles
-    );
-  }
-}
-
 //Поточний стан користувача
 class EditUserRoleHandler extends DropdownItem {
   public handle(
@@ -595,6 +557,7 @@ class CheckCreator {
     this.checkId
     .setNext(this.adminRightsCompare)
     ?.setNext(this.userPlastMember)
+    ?.setNext(this.userGovAdmin)
     ?.setNext(null);
 
     return this.checkId;
@@ -602,15 +565,9 @@ class CheckCreator {
 
   public rebuildChainForDeleteGoverningBodiesAdmins(): ICheck {
     this.checkId
-    .setNext(this.selectedUserGovAdmin)
-    ?.setNext(this.adminRightsCompare)
+    .setNext(this.adminRightsCompare)
+    ?.setNext(this.selectedUserGovAdmin)
     ?.setNext(null);
-
-    return this.checkId;
-  }
-
-  public rebuildChainForAcceptToCity(): ICheck {
-    this.checkId.setNext(this.userRegistered)?.setNext(null);
 
     return this.checkId;
   }
@@ -850,6 +807,9 @@ class SelectedUserHasPlace extends Check {
           break;
         case Place.Club:
           chainContinues = chainContinues || selectedUser.clubId !== null;
+          break;
+        case Place.GoverningBody:
+          chainContinues = chainContinues || selectedUser.governingBodyId !== null;
           break;
         default:
           chainContinues = false;
