@@ -1,4 +1,4 @@
-import UkraineOblasts from "../models/Oblast/UkraineOblasts";
+import UkraineOblasts, { UkraineOblastsWithoutNotSpecified } from "../models/Oblast/UkraineOblasts";
 import ActiveRegion from "../models/Region/ActiveRegion";
 import RegionAnnualReportQuestions from "../pages/AnnualReport/Interfaces/RegionAnnualReportQuestions";
 import api from "./api";
@@ -315,11 +315,12 @@ export const getActiveRegionsByPage = async (
   page: number,
   pageSize: number,
   regionName: string | null = null,
-  oblast: UkraineOblasts = UkraineOblasts.NotSpecified
+  oblast: | UkraineOblastsWithoutNotSpecified | UkraineOblasts = UkraineOblasts.NotSpecified
 ) => {
   return await api
-    .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName
-    //  , oblast 
+    .get(`Regions/Profiles/Active/${page}`, {
+      page, pageSize, regionName
+      //  , oblast 
     })
     .catch((error) => {
       throw new Error(error);

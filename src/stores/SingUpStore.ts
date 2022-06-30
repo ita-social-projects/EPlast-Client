@@ -1,5 +1,5 @@
 import { Action, createHook, createStore } from "react-sweet-state";
-import UkraineOblasts from "../models/Oblast/UkraineOblasts";
+import UkraineOblasts, { UkraineOblastsWithoutNotSpecified } from "../models/Oblast/UkraineOblasts";
 import ActiveRegion from "../models/Region/ActiveRegion";
 import TermsOfUse from "../models/TermsOfUse/TermsOfUseModel";
 import { GenderIdEnum } from "../models/UserTable/Gender";
@@ -35,7 +35,7 @@ type State = {
         twitterLink: string
         instagramLink: string
         birthday?: Date,
-        oblast: UkraineOblasts,
+        oblast?: UkraineOblastsWithoutNotSpecified,
     }
 };
 
@@ -77,7 +77,7 @@ const initialState: State = {
         twitterLink: "",
         instagramLink: "",
         birthday: undefined,
-        oblast: UkraineOblasts.NotSpecified
+        oblast: undefined
     }
 };
 

@@ -21,7 +21,7 @@ import { ActiveRegionDataResponse, getActiveRegionsByPage } from "../../api/regi
 import TabList, { TabRenderMode } from "./TabList";
 import TabInputList from "./TabInputList";
 import Spinner from "../Spinner/Spinner";
-import OblastsRecord from "../../models/Oblast/OblastsRecord";
+import OblastsRecord, { OblastsWithoutNotSpecifiedRecord } from "../../models/Oblast/OblastsRecord";
 import { SelectValue } from "antd/lib/select";
 import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
 import CheckboxsItem from "./CheckboxsItem";
@@ -226,8 +226,10 @@ const SignUp: React.FC = () => {
     ],
     Address: [
       { validator: checkAddress },
+      { required: true, message: emptyInput() }
     ],
     PhoneNumber: [
+      { required: true, message: emptyInput() },
       { validator: checkPhone },
     ],
     FacebookLink: [
@@ -245,33 +247,35 @@ const SignUp: React.FC = () => {
     <div className={styles.mainContainerSignUp} >
       <Switcher page="SignUp" />
       <Form
+        layout="vertical"
         initialValues={state.formData}
         name="SignUpForm"
         form={form}
         onFinish={handler.submit}
       >
-        <Form.Item name="lastName" rules={validator.LastName}>
-          <Input className={styles.MyInput} placeholder="Прізвище" />
+        <Form.Item label="Прізвище" name="lastName" rules={validator.LastName}>
+          <Input placeholder="введіть прізвище" />
         </Form.Item>
 
-        <Form.Item name="firstName" rules={validator.FirstName}>
-          <Input className={styles.MyInput} placeholder="Ім'я" />
+        <Form.Item label="Ім'я" name="firstName" rules={validator.FirstName}>
+          <Input placeholder="введіть ім'я" />
         </Form.Item>
 
-        <Form.Item name="fatherName" rules={validator.FatherName}>
-          <Input className={styles.MyInput} placeholder="По батькові" />
+        <Form.Item label="По батькові" name="fatherName" rules={validator.FatherName}>
+          <Input placeholder="введіть по батькові" />
         </Form.Item>
 
-        <Form.Item name="address" rules={validator.Address}>
-          <Input className={styles.MyInput} placeholder="Місце проживання" />
+        <Form.Item label="Місце проживання" name="address" rules={validator.Address}>
+          <Input placeholder="введіть місце проживання" />
         </Form.Item>
 
         <Form.Item
           rules={validator.Date}
           name="birthday"
+          label="Дата народження"
         >
           <DatePicker
-            placeholder="Дата народження"
+            placeholder="оберіть дату народження"
             className={styles.MyDatePicker}
             format="DD.MM.YYYY"
             disabledDate={current => {
@@ -283,10 +287,9 @@ const SignUp: React.FC = () => {
         <Form.Item
           name="genderId"
           initialValue={GenderNameEnum.NotSpecified}
+          label="Стать"
         >
-          <Select
-            className={styles.MySelect}
-            placeholder="Стать">
+          <Select>
             <Select.Option value={GenderIdEnum.UnwillingToChoose}>
               {genderRecords[GenderIdEnum.UnwillingToChoose]}
             </Select.Option>
@@ -302,16 +305,16 @@ const SignUp: React.FC = () => {
         <Form.Item
           name="oblast"
           rules={validator.Oblast}
+          label="Область"
         >
           <Select
             aria-autocomplete="none"
             showSearch
-            className={styles.MySelect}
-            placeholder="Оберіть область"
+            placeholder="оберіть область"
             onChange={handler.change.oblast}
             filterOption={handler.select.filter}
           >
-            {Object.entries(OblastsRecord).map(([key, value]) =>
+            {Object.entries(OblastsWithoutNotSpecifiedRecord).map(([key, value]) =>
               <Select.Option key={key} value={Number(key)}>
                 {value}
               </Select.Option>
@@ -326,6 +329,7 @@ const SignUp: React.FC = () => {
             ? <Form.Item
               name="regionId"
               rules={[{ required: true, message: emptyInput() }]}
+              label="Округа"
             >
               <Select
                 aria-autocomplete="none"
@@ -333,8 +337,7 @@ const SignUp: React.FC = () => {
                 showSearch
                 disabled={!areaSelected}
                 onPopupScroll={(e: any) => handler.select.regionScroll(e)}
-                className={styles.MySelect}
-                placeholder="Оберіть округу"
+                placeholder="оберіть округу"
                 filterOption={handler.select.filter}
               >
                 {state.regions.map((apd) => {
@@ -350,6 +353,7 @@ const SignUp: React.FC = () => {
             : <Form.Item
               name="cityId"
               rules={[{ required: true, message: emptyInput() }]}
+              label="Станиця"
             >
               <Select
                 aria-autocomplete="none"
@@ -357,8 +361,7 @@ const SignUp: React.FC = () => {
                 showSearch
                 disabled={!areaSelected}
                 onPopupScroll={(e: any) => handler.select.cityScroll(e)}
-                className={styles.MySelect}
-                placeholder="Оберіть станицю"
+                placeholder="оберіть станицю"
                 filterOption={handler.select.filter}
               >
                 {state.cities.map((apd) => {
@@ -375,13 +378,13 @@ const SignUp: React.FC = () => {
           [{
             tabTitle: "Facebook",
             formItem: {
+
               name: "facebookLink",
               rules: validator.FacebookLink
             },
             input: {
               type: "url",
-              className: styles.MyInput,
-              placeholder: "Facebook сторінка"
+              placeholder: "введіть посилання на facebook сторінку"
             }
           },
           {
@@ -392,20 +395,18 @@ const SignUp: React.FC = () => {
             },
             input: {
               type: "url",
-              className: styles.MyInput,
-              placeholder: "Twitter сторінка"
+              placeholder: "введіть посилання на twitter сторінку"
             }
           },
           {
             tabTitle: "Instagram",
             formItem: {
               name: "instagramLink",
-              rules: validator.InstagramLink
+              rules: validator.InstagramLink,
             },
             input: {
               type: "url",
-              className: styles.MyInput,
-              placeholder: "Instagram сторінка"
+              placeholder: "введіть посилання на instagram сторінку"
             }
           }]
         } />
@@ -413,33 +414,33 @@ const SignUp: React.FC = () => {
         <Form.Item
           name="phoneNumber"
           rules={validator.PhoneNumber}
+          label="Телефон"
         >
           <div className={"ant-form-item-control-input-content"}>
             <ReactInputMask
-              className={`ant-input ${styles.MyInput}`}
+              className={`ant-input`}
               mask="+380(99)-999-99-99"
-              placeholder="Номер телефону"
+              placeholder="введіть номер телефону"
             />
           </div>
         </Form.Item>
 
-        <Form.Item name="email" rules={validator.Email}>
+        <Form.Item label="Пошта" name="email" rules={validator.Email}>
           <Input
-            className={styles.MyInput}
-            placeholder="Електронна пошта" />
+            placeholder="введіть електронну пошту" />
         </Form.Item>
 
-        <Form.Item name="password" rules={validator.Password}>
+        <Form.Item name="password" label="Пароль" rules={validator.Password}>
           <Input.Password
             visibilityToggle={true}
-            className={styles.MyInput}
-            placeholder="Пароль"
+            placeholder="введіть пароль"
           />
         </Form.Item>
 
         <Form.Item
           name="confirmPassword"
           dependencies={["password"]}
+          label="Підтверження пароля"
           rules={[
             {
               required: true,
@@ -457,8 +458,7 @@ const SignUp: React.FC = () => {
         >
           <Input.Password
             visibilityToggle={true}
-            className={styles.MyInput}
-            placeholder="Підтвердити пароль"
+            placeholder="введіть пароль ще раз"
           />
         </Form.Item>
 
