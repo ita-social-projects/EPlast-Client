@@ -288,6 +288,13 @@ const UsersTable = () => {
     let userIsAdmin =
       roles.includes(Roles.Admin) ||
       roles.includes(Roles.GoverningBodyAdmin) ||
+      roles.includes(Roles.OkrugaHead) ||
+      roles.includes(Roles.OkrugaHeadDeputy) ||
+      roles.includes(Roles.OkrugaReferentUPS) ||
+      roles.includes(Roles.OkrugaReferentUSP) ||
+      roles.includes(Roles.OkrugaReferentOfActiveMembership) ||
+      roles.includes(Roles.CityHead) ||
+      roles.includes(Roles.CityHeadDeputy) ||
       roles.includes(Roles.CityReferentUPS) ||
       roles.includes(Roles.CityReferentUSP) ||
       roles.includes(Roles.CityReferentOfActiveMembership);
