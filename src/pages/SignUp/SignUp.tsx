@@ -37,16 +37,15 @@ const SignUp: React.FC = () => {
   const [regionLoading, setRegionLoading] = useState(false);
   const [cityTimeout, setCityTimeout] = useState(setTimeout(() => { }, 0));
   const [regionTimeout, setRegionTimeout] = useState(setTimeout(() => { }, 0));
-  const [hasPlast, setHasntPlast] = useState(false)
+  const [hasPlast, setHasntPlast] = useState(false);
   const [areaSelected, setAreaSelected] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
-
+    actions.resetFormData();
     (async () => {
       const termsData: TermsOfUseModel = await termsApi.getTerms();
       actions.setTerms(termsData);
-
     })();
   }, []);
 

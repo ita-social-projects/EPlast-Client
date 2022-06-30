@@ -131,6 +131,29 @@ const actions = {
         setState({
             formData: data
         })
+    },
+    resetFormData: (): Action<State> => async ({ setState }) => {
+        setState({
+            formData: {
+                lastName: "",
+                firstName: "",
+                fatherName: "",
+                address: "",
+                cityId: undefined,
+                regionId: undefined,
+                email: "",
+                referals: [],
+                password: "",
+                confirmPassword: "",
+                genderId: GenderIdEnum.UnwillingToChoose,
+                phoneNumber: "",
+                facebookLink: "",
+                twitterLink: "",
+                instagramLink: "",
+                birthday: undefined,
+                oblast: undefined
+            }
+        })
     }
 };
 
