@@ -102,7 +102,6 @@ const DropDown = (props: Props) => {
     false
   );
   const [canAddDegree, setCanAddDegree] = useState<boolean>(false);
-  const [canAcceptToCity, setCanAcceptToCity] = useState<boolean>(false);
 
   const [chainOfAccessibility, setChainOfAccessibility] = useState<
     IDropdownItem
@@ -237,8 +236,6 @@ const DropDown = (props: Props) => {
 
     setCanAddDegree(result?.get(DropdownFunc.AddDegree) ?? false);
 
-    setCanAcceptToCity(result?.get(DropdownFunc.AcceptToCity) ?? false);
-
     setSuperAdmin(currentUserAdminRoles.includes(AdminRole.Admin));
     setGoverningBodyHead(
       currentUserAdminRoles.includes(AdminRole.GoverningBodyHead)
@@ -283,9 +280,6 @@ const DropDown = (props: Props) => {
         break;
       case "11":
         await setShowDeleteGoverningBodyAdminModal(true);
-        break;
-      case "12":
-        await setShowAcceptToCityModal(true);
         break;
       default:
         break;
@@ -360,7 +354,7 @@ const DropDown = (props: Props) => {
           {inActiveTab === false && canAddDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
-              Додати ступінь
+              Прийняти до уладу
             </Menu.Item>
           ) : (
             <> </>
@@ -385,14 +379,6 @@ const DropDown = (props: Props) => {
             <Menu.Item key="11">
               <EditOutlined />
               Відмінити роль Адміна
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {inActiveTab === false && canAcceptToCity ? (
-            <Menu.Item key="12">
-              <EditOutlined />
-              Прийняти до уладу
             </Menu.Item>
           ) : (
             <> </>
