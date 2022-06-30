@@ -215,7 +215,7 @@ const UsersTable = () => {
   }
 
   const getSearchFromQuery = () => {
-    const search = queryParams.current.search;
+    const search = queryParams.current.search ?? "";
     setSearchData(search);
 
   }
