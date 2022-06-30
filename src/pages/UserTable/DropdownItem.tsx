@@ -532,7 +532,6 @@ class CheckCreator {
   public rebuildChainForAddingDegree(): ICheck {
     this.checkId
       .setNext(this.adminRightsCompare)
-      ?.setNext(this.hasPlace)
       ?.setNext(this.userHeadAdmin)
       ?.setNext(this.userGovAdmin)
       ?.setNext(this.placesId)

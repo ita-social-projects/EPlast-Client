@@ -354,7 +354,7 @@ const DropDown = (props: Props) => {
           {inActiveTab === false && canAddDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
-              Додати ступінь
+              Прийняти до уладу
             </Menu.Item>
           ) : (
             <> </>
