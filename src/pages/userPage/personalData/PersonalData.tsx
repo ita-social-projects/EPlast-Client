@@ -13,6 +13,7 @@ import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from "../../../components/Notifications/Notification";
 import ScrollToTop from "../../../components/ScrollToTop/ScrollToTop";
+import Course from "./Course";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
@@ -116,6 +117,7 @@ export default function ({
         UpdateData,
       }}
     >
+      
       <ScrollToTop />
       <div className="mainContainer">
         <Menu id={userId} />
@@ -146,6 +148,10 @@ export default function ({
         ) : specify === "approvers" ? (
           <div className="content">
             <Approvers />
+          </div>
+        ): specify === "course" ? (
+          <div className="content">
+            <Course />
           </div>
         ) : (
           <div className="content">
