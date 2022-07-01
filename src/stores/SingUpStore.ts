@@ -1,5 +1,5 @@
 import { Action, createHook, createStore } from "react-sweet-state";
-import UkraineOblasts from "../models/Oblast/UkraineOblasts";
+import UkraineOblasts, { UkraineOblastsWithoutNotSpecified } from "../models/Oblast/UkraineOblasts";
 import ActiveRegion from "../models/Region/ActiveRegion";
 import TermsOfUse from "../models/TermsOfUse/TermsOfUseModel";
 import { GenderIdEnum } from "../models/UserTable/Gender";
@@ -35,7 +35,7 @@ type State = {
         twitterLink: string
         instagramLink: string
         birthday?: Date,
-        oblast: UkraineOblasts,
+        oblast?: UkraineOblastsWithoutNotSpecified,
     }
 };
 
@@ -77,7 +77,7 @@ const initialState: State = {
         twitterLink: "",
         instagramLink: "",
         birthday: undefined,
-        oblast: UkraineOblasts.NotSpecified
+        oblast: undefined
     }
 };
 
@@ -130,6 +130,29 @@ const actions = {
     setFormData: (data: any): Action<State> => async ({ setState, getState }) => {
         setState({
             formData: data
+        })
+    },
+    resetFormData: (): Action<State> => async ({ setState }) => {
+        setState({
+            formData: {
+                lastName: "",
+                firstName: "",
+                fatherName: "",
+                address: "",
+                cityId: undefined,
+                regionId: undefined,
+                email: "",
+                referals: [],
+                password: "",
+                confirmPassword: "",
+                genderId: GenderIdEnum.UnwillingToChoose,
+                phoneNumber: "",
+                facebookLink: "",
+                twitterLink: "",
+                instagramLink: "",
+                birthday: undefined,
+                oblast: undefined
+            }
         })
     }
 };

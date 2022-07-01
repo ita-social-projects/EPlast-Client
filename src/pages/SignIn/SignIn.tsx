@@ -127,22 +127,22 @@ const SignIn: React.FC = () => {
     <div className={styles.mainContainer}>
       <Switcher page="SignIn" />
       <Form
+        layout="vertical"
         name="SignInForm"
         initialValues={initialValues}
         form={form}
         onFinish={handler.form.submit}
+        hideRequiredMark={true}
       >
-        <Form.Item name="Email" rules={validator.Email}>
+        <Form.Item label="Пошта" name="Email" rules={validator.Email}>
           <Input
-            className={styles.SignInInput}
-            placeholder="Електронна пошта"
+            placeholder="Введіть електронну пошту"
           />
         </Form.Item>
-        <Form.Item name="Password" rules={validator.Password}>
+        <Form.Item label="Пароль" name="Password" rules={validator.Password}>
           <Input.Password
             visibilityToggle={true}
-            className={styles.SignInInput}
-            placeholder="Пароль"
+            placeholder="Введіть пароль"
           />
         </Form.Item>
         <Form.Item name="remember" valuePropName="checked">

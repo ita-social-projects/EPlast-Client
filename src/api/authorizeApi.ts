@@ -35,7 +35,7 @@ export default class AuthorizeApi {
   register = async (data: any) => {
     const response = await Api.post("Auth/signup", data)
       .then((response) => {
-        notificationLogic("success", "Вам на пошту прийшов лист з пітвердженням");
+        notificationLogic("success", "Вам на пошту прийшов лист з підтвердженням");
       })
       .catch((error) => {
         if (error.response.status === 400) {
