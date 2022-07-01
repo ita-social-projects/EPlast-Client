@@ -7,8 +7,7 @@ export enum DropdownFunc {
   EditRole, // Змінити поточний стан користувача
   EditGoverningBody, // Змінити Крайовий Провід користувача
   DeleteGoverningBody, // Відмінити роль Крайового Адміна
-  AddDegree, // Додати ступінь користувачу
-  AcceptToCity // Прийняти користувача до уладу
+  AddDegree, // Прийняти до уладу користувача
 }
 
 // Displays all possible items in dropdown
