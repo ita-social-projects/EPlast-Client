@@ -29,6 +29,7 @@ import {
 } from "../../../api/citiesApi";
 import {
   createRegionFollower,
+  getRegionAdministration,
   getRegionById,
   getRegionFollowerById,
   getRegionsNames,
@@ -59,6 +60,9 @@ import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import { getGoverningBodiesAdmins } from "../../../api/governingBodiesApi";
+import { getSuperAdmins } from "../../../api/adminApi";
+import { AdminTypes } from "../../../models/Admin/AdminTypesEnum";
 
 const classes = require("../../Club/Club/Modal.module.css");
 
@@ -135,6 +139,29 @@ const CreateCity = () => {
     event.stopPropagation();
   };
 
+  const getNotificationReceivers = async (regionId: number) => {
+    let listOfReceivers: string[] = [];
+
+    getGoverningBodiesAdmins()
+      .then((response) => {
+        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.GoverningBodyAdmin && admin.status === true);
+        if (user) listOfReceivers.push(user.userId);
+      });
+      
+    getRegionAdministration(regionId)
+      .then((response) => {
+        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.OkrugaHead && admin.status === true);
+        if (user) listOfReceivers.push(user.userId);
+      });
+    
+    getSuperAdmins()
+      .then((response) => {
+        response.data.map((user: any) => listOfReceivers.push(user.id));
+      });
+    
+    return listOfReceivers;
+  }
+
   const getRegionFollower = async (followerId: number) => {
     await getRegionFollowerById(followerId).then(async (followerResponse) => {
       setRegionFollower(followerResponse.data);
@@ -148,7 +175,7 @@ const CreateCity = () => {
           setAppealRegion(regionResponse.data);
         }
       );
-    });
+    })
   };
 
   const getCity = async () => {
@@ -222,12 +249,20 @@ const CreateCity = () => {
   const CreateRegionFollower = async (newRegionFollower: RegionFollower) => {
     const responsePromise = createRegionFollower(newRegionFollower);
     return responsePromise
-      .then(async () => {
+      .then(async (response) => {
+        let peopleToReceiveNotification = await getNotificationReceivers(parseInt(newRegionFollower.regionId));
         notificationLogic("success", successfulCreateAction("Заяву"));
         await createNotification(
           newRegionFollower.userId,
-          `Вітаємо, вашу заяву на створення станиці '${newRegionFollower.cityName}' успішно створено! Заява очікує розгляду адміністрацією округи.`
+          `Вітаємо, вашу заяву на створення станиці ${newRegionFollower.cityName} успішно створено! Заява очікує розгляду адміністрацією округи.`
         );
+        await NotificationBoxApi.createNotifications(
+          peopleToReceiveNotification,
+          `На ваш розгляд чекає заява на створення станиці `,
+          NotificationBoxApi.NotificationTypes.UserNotifications,
+          `/regions/follower/edit/${response.data}`,
+          `${newRegionFollower.cityName}.`
+        )
         history.push(`/cities/page/1`);
       })
       .catch(() => {
