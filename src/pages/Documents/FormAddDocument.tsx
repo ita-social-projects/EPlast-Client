@@ -130,7 +130,6 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = ({ setVisibleModal, onA
         };
         await documentsApi.post(newDocument);
         setVisibleModal(false);
-        console.log(newDocument)
         onAdd();
         form.resetFields();
         setFileData({ FileAsBase64: null, FileName: null });

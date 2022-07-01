@@ -1,9 +1,10 @@
 import { Action, createHook, createStore } from "react-sweet-state";
 import documentsApi, { TypeGetParser, TypeKeyValueParser } from "../api/documentsApi";
 import openNotificationWithIcon from "../components/Notifications/Notification";
+import { DocumentPost } from "../models/Documents/DocumentPost";
 import DocumentsTableInfo from "../models/Documents/DocumentsTableInfo";
 
-type State = {
+type DocumentState = {
     recordId: number
     data: DocumentsTableInfo[]
     page: number
@@ -20,7 +21,7 @@ type State = {
     }[]
 };
 
-const initialState: State = {
+const initialState: DocumentState = {
     recordId: 0,
     data: [],
     page: 1,
@@ -48,50 +49,38 @@ const initialState: State = {
 };
 
 const actions = {
-    init: (): Action<State> => async ({ setState, getState }) => {
-        const res: DocumentsTableInfo[] = await documentsApi.getAllDocuments(
-            getState().searchedData,
-            getState().page,
-            getState().pageSize,
-            getState().status
-        );
-
+    init: (documents: DocumentsTableInfo[]): Action<DocumentState> => async ({ setState, getState }) => {
         setState({
-            total: res[0]?.total,
-            count: res[0]?.count,
-            data: res,
+            total: documents[0]?.total,
+            count: documents[0]?.count,
+            data: documents,
         });
-        console.log(getState())
     },
-    add: (): Action<State> => async ({ setState, getState }) => {
+    add: (document: DocumentPost): Action<DocumentState> => async ({ setState, getState }) => {
         const { data, total, count } = getState()
-        try {
-            const res = await documentsApi.getLast()
-            const dec: DocumentsTableInfo = {
-                id: res.id,
-                name: res.name,
-                governingBody: res.governingBody.governingBodyName,
-                type: TypeGetParser(res.type),
-                description: res.description,
-                fileName: res.fileName,
-                date: res.date,
+
+        const dec: DocumentsTableInfo = {
+            id: document.id,
+            name: document.name,
+            governingBody: document.governingBody.governingBodyName,
+            type: TypeGetParser(document.type),
+            description: document.description,
+            fileName: document.fileName,
+            date: document.date,
+            total: total + 1,
+            count: count + 1,
+        };
+
+        if (TypeKeyValueParser(TypeGetParser(document.type))
+            === getState().status) {
+            setState({
                 total: total + 1,
                 count: count + 1,
-            };
-            console.log(dec)
-            if (TypeKeyValueParser(TypeGetParser(res.type))
-                === getState().status) {
-                setState({
-                    total: total + 1,
-                    count: count + 1,
-                    data: [...data, dec]
-                });
-            }
-        } catch (error) {
-            openNotificationWithIcon("error", "Документу не існує");
+                data: [...data, dec]
+            });
         }
     },
-    delete: (id: number): Action<State> => async ({ setState, getState }) => {
+    delete: (id: number): Action<DocumentState> => async ({ setState, getState }) => {
         const { data, total, count } = getState()
         const filteredData = data.filter((d) => d.id !== id);
 
@@ -101,35 +90,35 @@ const actions = {
             count: count - 1
         })
     },
-    search: (event: any): Action<State> => async ({ setState }) => {
+    search: (event: any): Action<DocumentState> => async ({ setState }) => {
         setState({
             page: 1,
             searchedData: event,
         })
     },
-    resetSearchedData: (): Action<State> => async ({ setState }) => {
+    resetSearchedData: (): Action<DocumentState> => async ({ setState }) => {
         setState({
             searchedData: "",
         })
     },
-    changePagination: (number: number, size: number): Action<State> => async ({ setState }) => {
+    changePagination: (number: number, size: number): Action<DocumentState> => async ({ setState }) => {
         setState({
             page: number,
             pageSize: size
         })
     },
-    changeStatus: (status: string): Action<State> => async ({ setState }) => {
+    changeStatus: (status: string): Action<DocumentState> => async ({ setState }) => {
         setState({
             status: status
         })
     },
-    setXY: (x: number, y: number): Action<State> => async ({ setState }) => {
+    setXY: (x: number, y: number): Action<DocumentState> => async ({ setState }) => {
         setState({
             x: x,
             y: y
         })
     },
-    setRecord: (id: number): Action<State> => async ({ setState }) => {
+    setRecord: (id: number): Action<DocumentState> => async ({ setState }) => {
         setState({
             recordId: id
         })
@@ -138,7 +127,7 @@ const actions = {
 
 type Actions = typeof actions;
 
-const Store = createStore<State, Actions>({
+const Store = createStore<DocumentState, Actions>({
     initialState,
     actions,
 });

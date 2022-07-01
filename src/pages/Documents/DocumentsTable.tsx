@@ -11,6 +11,10 @@ import Search from "antd/lib/input/Search";
 import classes from "./Table.module.css";
 import AuthLocalStorage from "../../AuthLocalStorage";
 import { DocumentsStore } from "../../stores/DocumentsStore";
+import DocumentsTableInfo from "../../models/Documents/DocumentsTableInfo";
+import documentsApi from "../../api/documentsApi";
+import { DocumentPost } from "../../models/Documents/DocumentPost";
+import openNotificationWithIcon from "../../components/Notifications/Notification";
 
 const { Content } = Layout;
 
@@ -27,6 +31,24 @@ const DocumentsTable: React.FC = () => {
     "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
   ] as string[];
 
+  useEffect(() => {
+    setLoading(true);
+    (async () => {
+      try {
+        const documents: DocumentsTableInfo[] = await documentsApi.getAllDocuments(
+          state.searchedData,
+          state.page,
+          state.pageSize,
+          state.status
+        );
+        await actions.init(documents);
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [state.searchedData, state.page, state.pageSize, state.status]);
+
   const accesser = {
     canEdit: roles.includes(Roles.Admin)
       || roles.includes(Roles.GoverningBodyAdmin),
@@ -40,19 +62,15 @@ const DocumentsTable: React.FC = () => {
     plastMember: roles.includes(Roles.PlastMember),
   }
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchData = async () => {
-      await actions.init();
-      setLoading(false);
-    };
-    fetchData();
-  }, [state.searchedData, state.page, state.pageSize, state.status]);
-
   const handler = {
     add: {
       documentsModal: async () => {
-        actions.add()
+        try {
+          const document: DocumentPost = await documentsApi.getLast();
+          actions.add(document)
+        } catch (error) {
+          openNotificationWithIcon("error", "Документу не існує");
+        }
       }
     },
     delete: {
@@ -94,28 +112,28 @@ const DocumentsTable: React.FC = () => {
         <h1 className={classes.titleTable}>Репозитарій</h1>
         <>
           <div className={classes.searchContainer}>
-            {accesser.canEdit == true ||
-              accesser.regionAdm == true ||
-              accesser.regionAdmDep == true ||
-              accesser.cityAdm == true ||
-              accesser.cityAdmDep == true ||
-              accesser.clubAdm == true ||
-              accesser.clubAdmDep == true ? (
+            {accesser.canEdit ||
+              accesser.regionAdm ||
+              accesser.regionAdmDep ||
+              accesser.cityAdm ||
+              accesser.cityAdmDep ||
+              accesser.clubAdm ||
+              accesser.clubAdmDep ? (
               <Button type="primary" onClick={handler.click.addBtn}>
                 Додати документ
               </Button>
             ) : (
               <> </>
             )}
-            {accesser.canEdit == true ||
-              accesser.regionAdm == true ||
-              accesser.regionAdmDep == true ||
-              accesser.cityAdm == true ||
-              accesser.cityAdmDep == true ||
-              accesser.clubAdm == true ||
-              accesser.clubAdmDep == true ||
-              accesser.supporter == true ||
-              accesser.plastMember == true ? (
+            {accesser.canEdit ||
+              accesser.regionAdm ||
+              accesser.regionAdmDep ||
+              accesser.cityAdm ||
+              accesser.cityAdmDep ||
+              accesser.clubAdm ||
+              accesser.clubAdmDep ||
+              accesser.supporter ||
+              accesser.plastMember ? (
               <Search
                 enterButton
                 placeholder="Пошук"
@@ -128,15 +146,15 @@ const DocumentsTable: React.FC = () => {
             )}
           </div>
 
-          {accesser.canEdit == true ||
-            accesser.regionAdm == true ||
-            accesser.regionAdmDep == true ||
-            accesser.cityAdm == true ||
-            accesser.cityAdmDep == true ||
-            accesser.clubAdm == true ||
-            accesser.clubAdmDep == true ||
-            accesser.supporter == true ||
-            accesser.plastMember == true ? (
+          {accesser.canEdit ||
+            accesser.regionAdm ||
+            accesser.regionAdmDep ||
+            accesser.cityAdm ||
+            accesser.cityAdmDep ||
+            accesser.clubAdm ||
+            accesser.clubAdmDep ||
+            accesser.supporter ||
+            accesser.plastMember ? (
             <Card
               style={{ width: "100%" }}
               tabList={state.tabList}
