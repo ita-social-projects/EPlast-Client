@@ -664,9 +664,8 @@ const CreateCity = () => {
                       ? regionFollower.cityDescription
                       : city.description
                   }
-                  maxLength={1000}
+                  maxLength={1001}
                   rows={4}
-                  showCount
                 />
               </Form.Item>
             </Col>
