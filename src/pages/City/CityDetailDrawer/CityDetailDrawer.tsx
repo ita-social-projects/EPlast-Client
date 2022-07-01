@@ -76,24 +76,7 @@ const CityDetailDrawer = (props: Props) => {
           </Col>
           <Col md={12} xs={24}>
             <Form.Item
-              name="region"
-              label="Округа"
-              labelCol={{ span: 24 }}
-              initialValue={
-                props.city.region
-              }
-            >
-              <Input
-                placeholder="Не вказано"
-                disabled
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row justify="center" gutter={[12, 0]}>
-          <Col md={12} xs={24}>
-            <Form.Item
-              name="adress"
+              name="address"
               label="Адреса"
               labelCol={{ span: 24 }}
               initialValue={
@@ -108,6 +91,21 @@ const CityDetailDrawer = (props: Props) => {
           </Col>
         </Row>
         <Row justify="center" gutter={[12, 0]}>
+          <Col md={12} xs={24}>
+            <Form.Item
+              name="region"
+              label="Округа"
+              labelCol={{ span: 24 }}
+              initialValue={
+                props.city.region
+              }
+            >
+              <Input
+                placeholder="Не вказано"
+                disabled
+              />
+            </Form.Item>
+          </Col>
           <Col md={12} xs={24}>
             <Form.Item
               name="level"
@@ -136,7 +134,7 @@ const CityDetailDrawer = (props: Props) => {
             >
               <TextArea
                 autoSize={{
-                  minRows: 1,
+                  minRows: 4,
                   maxRows: 9,
                 }}
                 placeholder="Не вказано"

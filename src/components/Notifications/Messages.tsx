@@ -3,6 +3,8 @@ import React from "react";
 const wrongFormat = "Вкажіть, будь ласка, правильний формат";
 export const incorrectEmail = wrongFormat + " електронної пошти";
 
+export const incorrectUrl = wrongFormat + " URL-посилання";
+
 export const emptyInput = (name?: string) => {
   return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
 };

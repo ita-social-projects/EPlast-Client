@@ -104,7 +104,6 @@ export class DropdownItemCreator {
       .setNext(deleteGoverningBodyItem)
       .setNext(addDegreeeItem)
       .setNext(editUserRole);
-
     return checkProfileItem;
   }
 }
@@ -494,6 +493,7 @@ class CheckCreator {
   private userGovAdmin: CurrUserIsGovAdminCheck = new CurrUserIsGovAdminCheck();
   private selectedUserGovAdmin: SelectedUserIsGovAdminCheck = new SelectedUserIsGovAdminCheck();
   private userPlastMember: SelectedUserIsPlastMemberCheck = new SelectedUserIsPlastMemberCheck();
+  private userRegistered: SelectedUserIsRegisteredCheck = new SelectedUserIsRegisteredCheck();
   private hasPlace: SelectedUserHasPlace = new SelectedUserHasPlace();
   private placesId: CurrUserIsAdminForSelectedUserCheck = new CurrUserIsAdminForSelectedUserCheck();
   private falseCheck: FinalFalseCheck = new FinalFalseCheck();
@@ -532,7 +532,6 @@ class CheckCreator {
   public rebuildChainForAddingDegree(): ICheck {
     this.checkId
       .setNext(this.adminRightsCompare)
-      ?.setNext(this.hasPlace)
       ?.setNext(this.userHeadAdmin)
       ?.setNext(this.userGovAdmin)
       ?.setNext(this.placesId)
@@ -554,13 +553,20 @@ class CheckCreator {
   }
 
   public rebuildChainForSettingGoverningBodiesMembers(): ICheck {
-    this.checkId.setNext(this.userPlastMember)?.setNext(null);
+    this.checkId
+      .setNext(this.adminRightsCompare)
+      ?.setNext(this.userPlastMember)
+      ?.setNext(this.userGovAdmin)
+      ?.setNext(null);
 
     return this.checkId;
   }
 
   public rebuildChainForDeleteGoverningBodiesAdmins(): ICheck {
-    this.checkId.setNext(this.selectedUserGovAdmin)?.setNext(null);
+    this.checkId
+      .setNext(this.adminRightsCompare)
+      ?.setNext(this.selectedUserGovAdmin)
+      ?.setNext(null);
 
     return this.checkId;
   }
@@ -711,6 +717,24 @@ class SelectedUserIsPlastMemberCheck extends Check {
   }
 }
 
+//Checks if selected user is Registered,
+class SelectedUserIsRegisteredCheck extends Check {
+  public check(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>,
+    places: Array<Place>
+  ): boolean {
+    if (selectedUserNonAdminRoles.includes(NonAdminRole.RegisteredUser)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
 //Checks if selected user is Governing body Admin,
 class SelectedUserIsGovAdminCheck extends Check {
   public check(
@@ -783,6 +807,10 @@ class SelectedUserHasPlace extends Check {
         case Place.Club:
           chainContinues = chainContinues || selectedUser.clubId !== null;
           break;
+        case Place.GoverningBody:
+          chainContinues =
+            chainContinues || selectedUser.governingBodyId !== null;
+          break;
         default:
           chainContinues = false;
       }
@@ -821,6 +849,9 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
             (this.checkIfUserHasRights(currentUserAdminRoles, [
               AdminRole.OkrugaHead,
               AdminRole.OkrugaHeadDeputy,
+              AdminRole.OkrugaReferentUPS,
+              AdminRole.OkrugaReferentUSP,
+              AdminRole.OkrugaReferentOfActiveMembership,
             ]) &&
               this.idsAreEqual(currentUser.regionId, selectedUser.regionId));
           break;
@@ -830,6 +861,9 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
             (this.checkIfUserHasRights(currentUserAdminRoles, [
               AdminRole.CityHead,
               AdminRole.CityHeadDeputy,
+              AdminRole.CityReferentUPS,
+              AdminRole.CityReferentUSP,
+              AdminRole.CityReferentOfActiveMembership,
             ]) &&
               this.idsAreEqual(currentUser.cityId, selectedUser.cityId));
           break;

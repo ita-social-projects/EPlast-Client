@@ -1,3 +1,6 @@
+import { HttpResponse } from "@microsoft/signalr";
+import UkraineOblasts from "../models/Oblast/UkraineOblasts";
+import { ActiveCity } from "../pages/AnnualReport/Interfaces/City";
 import api from "./api";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
@@ -21,13 +24,21 @@ export const getCityById = async (id: number) => {
   });
 };
 
+export interface ActiveCityDataResponse {
+  page: number
+  pageSize: number
+  cities: ActiveCity[]
+  total: number
+}
+
 export const getActiveCitiesByPage = async (
   page: number,
   pageSize: number,
-  name: string | null = null
+  name: string | null = null,
+  oblast: UkraineOblasts = UkraineOblasts.NotSpecified
 ) => {
   return await api
-    .get(`Cities/Profiles/Active/${page}`, { page, pageSize, name })
+    .get(`Cities/Profiles/Active/${page}`, { page, pageSize, name, oblast })
     .catch((error) => {
       throw new Error(error);
     });
@@ -39,7 +50,7 @@ export const getNotActiveCitiesByPage = async (
   name: string | null = null
 ) => {
   return await api
-    .get(`Cities/Profiles/NotActive/${page}`, { page, pageSize, name })
+    .get(`Cities/Profiles/NotActive/${page}`, {page, pageSize, name })
     .catch((error) => {
       throw new Error(error);
     });
@@ -241,6 +252,7 @@ export const getCities = async () => {
     throw new Error(error);
   });
 };
+
 export default {
   getCities,
   getUsersAdministrations,

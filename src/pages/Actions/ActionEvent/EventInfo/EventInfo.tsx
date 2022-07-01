@@ -59,6 +59,7 @@ export interface EventParticipant {
   userId: string;
   statusId: number;
   status: string;
+  wasPresent: boolean;
 }
 
 export interface EventAdmin {

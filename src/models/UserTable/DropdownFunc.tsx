@@ -1,13 +1,13 @@
 export enum DropdownFunc {
   CheckProfile = 0, // Перевірити профіль користувача
-  Delete = 1, // Видалити користувача
-  EditRegion = 2, // Змінити округу користувача
-  EditCity = 3, // Змінити станицю користувача
-  EditClub = 4, // Змінити курінь користувача
-  EditRole = 5, // Змінити поточний стан користувача
-  EditGoverningBody = 6, // Змінити Крайовий Провід користувача
-  DeleteGoverningBody = 7, // Відмінити роль Крайового Адміна
-  AddDegree = 8, // Додати ступінь користувачу
+  Delete, // Видалити користувача
+  EditRegion, // Змінити округу користувача
+  EditCity, // Змінити станицю користувача
+  EditClub, // Змінити курінь користувача
+  EditRole, // Змінити поточний стан користувача
+  EditGoverningBody, // Змінити Крайовий Провід користувача
+  DeleteGoverningBody, // Відмінити роль Крайового Адміна
+  AddDegree, // Прийняти до уладу користувача
 }
 
 // Displays all possible items in dropdown

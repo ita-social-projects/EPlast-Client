@@ -1,3 +1,5 @@
+import UkraineOblasts from "../models/Oblast/UkraineOblasts";
+import ActiveRegion from "../models/Region/ActiveRegion";
 import RegionAnnualReportQuestions from "../pages/AnnualReport/Interfaces/RegionAnnualReportQuestions";
 import api from "./api";
 
@@ -300,15 +302,27 @@ const removeAnnualReport = async (id: number) => {
   });
 };
 
+
+export interface ActiveRegionDataResponse {
+  page: number
+  pageSize: number
+  regions: ActiveRegion[]
+  total: number
+  canCreate: boolean
+}
+
 export const getActiveRegionsByPage = async (
   page: number,
   pageSize: number,
-  regionName: string | null = null
+  regionName: string | null = null,
+  oblast: UkraineOblasts = UkraineOblasts.NotSpecified
 ) => {
   return await api
-    .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName })
+    .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName
+    //  , oblast 
+    })
     .catch((error) => {
-      throw error;
+      throw new Error(error);
     });
 };
 

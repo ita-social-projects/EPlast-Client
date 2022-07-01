@@ -979,7 +979,11 @@ const Club = () => {
               <Button
                 type="primary"
                 className="clubInfoButton"
-                onClick={() => history.push(`/clubs/members/${club.id}`)}
+                onClick={() => {
+                  if (userAccesses.EditClub) history.push(`/user/table?club=${club.id}`);
+                  else history.push(`/clubs/members/${club.id}`);
+                  }
+                }
               >
                 Більше
               </Button>
@@ -1125,7 +1129,7 @@ const Club = () => {
         >
           <Card hoverable className="clubCard">
             <Title level={4}>
-              Прихильники куреня{" "}
+              Зголошені куреня{" "}
               <a onClick={() => history.push(`/clubs/followers/${club.id}`)}>
                 {followersCount !== 0 ? (
                   <Badge
@@ -1155,7 +1159,7 @@ const Club = () => {
                   </Col>
                 ) : null
               ) : (
-                <Paragraph>Ще немає прихильників куреня</Paragraph>
+                <Paragraph>Ще немає зголошених куреня</Paragraph>
               )}
               {followers.length !== 0 ? (
                 followers.slice(0, canJoin ? 5 : 6).map((followers) => (
@@ -1209,14 +1213,17 @@ const Club = () => {
                   </Col>
                 ))
               ) : canJoin ? null : (
-                <Paragraph>Ще немає прихильників куреня</Paragraph>
+                <Paragraph>Ще немає зголошених куреня</Paragraph>
               )}
             </Row>
             <div className="clubMoreButton">
               <Button
                 type="primary"
                 className="clubInfoButton"
-                onClick={() => history.push(`/clubs/followers/${club.id}`)}
+                onClick={() => {
+                  if (userAccesses.EditClub) history.push(`/user/table?tab=registered&club=${club.id}`)
+                  else history.push(`/clubs/followers/${club.id}`)}
+                }
               >
                 Більше
               </Button>

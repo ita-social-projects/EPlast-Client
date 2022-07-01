@@ -1,40 +1,36 @@
 import React from "react";
 import { Modal } from "antd";
-import ChangeUserRoleForm from "./ChangeUserRoleForm";
-import "./ChangeUserRoleModal.less";
-import Form from "antd/lib/form/Form";
+import AcceptUserToCityForm from "./AcceptUserToCityForm";
 
 interface Props {
+  onChange: (id: string, userRoles: string) => void;
   record: string;
   showModal: boolean;
   setShowModal: (showModal: any) => void;
-  onChange: (id: string, userRoles: string) => void;
   user: any;
 }
-const ChangeUserRoleModal = ({
+const AcceptUserToCityModal = ({
   record,
   showModal,
   setShowModal,
   onChange,
-  user,
 }: Props) => {
   return (
     <Modal
-      title="Редагування прав доступу користувача"
+      title="Додати зголошеного в станицю"
       visible={showModal}
       centered
       footer={null}
       onCancel={() => setShowModal(false)}
-      destroyOnClose={true}
     >
-      <ChangeUserRoleForm
+      <AcceptUserToCityForm
+        onChange={onChange}
         record={record}
         setShowModal={setShowModal}
-        onChange={onChange}
-        user={user}
+        showModal={showModal}
       />
     </Modal>
   );
 };
 
-export default ChangeUserRoleModal;
+export default AcceptUserToCityModal;

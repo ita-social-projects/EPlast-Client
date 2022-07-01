@@ -156,7 +156,11 @@
         margin-bottom: 7px;
     }
     .loginCircle{
-        width: 58px;
+       transform: scale(0.7);
+    }
+    .loginRectangle{
+        height: 40px;
+        margin-top: 10px;
     }
 }
 
@@ -176,7 +180,7 @@
         margin-bottom: 7px;
     }
     .loginCircle{
-        width: 58px;
+        transform: scale(0.7);
     }
 }
 
@@ -197,7 +201,11 @@
         margin-bottom: 5px;
     }
     .loginCircle{
-        width: 55px;
+        transform: scale(0.7);
+    }
+    .loginRectangle{
+        height: 40px;
+        margin-top: 10px;
     }
 }
 
@@ -218,6 +226,10 @@
         margin-bottom: 6px;
     }
     .loginCircle{
-        width: 50px;
+        transform: scale(0.5);
+    }
+    .loginRectangle{
+        height: 30px;
+        margin-top: 15px;
     }
 }

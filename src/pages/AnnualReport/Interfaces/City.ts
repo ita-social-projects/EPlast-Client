@@ -8,4 +8,10 @@ interface City {
   cityMembers: any | null;
 }
 
+export interface ActiveCity {
+  id: number;
+  name: string;
+  logo: string
+}
+
 export default City;
