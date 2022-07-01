@@ -103,7 +103,7 @@ export class DropdownItemCreator {
       .setNext(editGoverningBodyItem)
       .setNext(deleteGoverningBodyItem)
       .setNext(addDegreeeItem)
-      .setNext(editUserRole)
+      .setNext(editUserRole);
     return checkProfileItem;
   }
 }
@@ -554,19 +554,19 @@ class CheckCreator {
 
   public rebuildChainForSettingGoverningBodiesMembers(): ICheck {
     this.checkId
-    .setNext(this.adminRightsCompare)
-    ?.setNext(this.userPlastMember)
-    ?.setNext(this.userGovAdmin)
-    ?.setNext(null);
+      .setNext(this.adminRightsCompare)
+      ?.setNext(this.userPlastMember)
+      ?.setNext(this.userGovAdmin)
+      ?.setNext(null);
 
     return this.checkId;
   }
 
   public rebuildChainForDeleteGoverningBodiesAdmins(): ICheck {
     this.checkId
-    .setNext(this.adminRightsCompare)
-    ?.setNext(this.selectedUserGovAdmin)
-    ?.setNext(null);
+      .setNext(this.adminRightsCompare)
+      ?.setNext(this.selectedUserGovAdmin)
+      ?.setNext(null);
 
     return this.checkId;
   }
@@ -808,7 +808,8 @@ class SelectedUserHasPlace extends Check {
           chainContinues = chainContinues || selectedUser.clubId !== null;
           break;
         case Place.GoverningBody:
-          chainContinues = chainContinues || selectedUser.governingBodyId !== null;
+          chainContinues =
+            chainContinues || selectedUser.governingBodyId !== null;
           break;
         default:
           chainContinues = false;
@@ -848,6 +849,9 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
             (this.checkIfUserHasRights(currentUserAdminRoles, [
               AdminRole.OkrugaHead,
               AdminRole.OkrugaHeadDeputy,
+              AdminRole.OkrugaReferentUPS,
+              AdminRole.OkrugaReferentUSP,
+              AdminRole.OkrugaReferentOfActiveMembership,
             ]) &&
               this.idsAreEqual(currentUser.regionId, selectedUser.regionId));
           break;
@@ -857,6 +861,9 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
             (this.checkIfUserHasRights(currentUserAdminRoles, [
               AdminRole.CityHead,
               AdminRole.CityHeadDeputy,
+              AdminRole.CityReferentUPS,
+              AdminRole.CityReferentUSP,
+              AdminRole.CityReferentOfActiveMembership,
             ]) &&
               this.idsAreEqual(currentUser.cityId, selectedUser.cityId));
           break;
