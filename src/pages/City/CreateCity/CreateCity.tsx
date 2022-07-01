@@ -62,6 +62,7 @@ import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import { getGoverningBodiesAdmins } from "../../../api/governingBodiesApi";
 import { getSuperAdmins } from "../../../api/adminApi";
+import { AdminTypes } from "../../../models/Admin/AdminTypesEnum";
 
 const classes = require("../../Club/Club/Modal.module.css");
 
@@ -143,13 +144,13 @@ const CreateCity = () => {
 
     getGoverningBodiesAdmins()
       .then((response) => {
-        let user = response.data.find((admin: any) => admin.adminTypeId === 19 && admin.status === true);
+        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.GoverningBodyAdmin && admin.status === true);
         if (user) listOfReceivers.push(user.userId);
       });
       
     getRegionAdministration(regionId)
       .then((response) => {
-        let user = response.data.find((admin: any) => admin.adminTypeId === 8 && admin.status === true);
+        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.OkrugaHead && admin.status === true);
         if (user) listOfReceivers.push(user.userId);
       });
     
