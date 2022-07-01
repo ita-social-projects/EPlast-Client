@@ -218,7 +218,7 @@ const CreateCity = () => {
         level: values.level,
         cityURL: values.cityURL === "" ? null : values.cityURL,
         email: values.email,
-        phoneNumber: values.phoneNumber === "" ? null : values.email,
+        phoneNumber: values.phoneNumber === "" ? null : values.phoneNumber,
         oblast: values.oblast,
       };
       if (!regionFollower.id) {
@@ -599,6 +599,11 @@ const CreateCity = () => {
                 <Select
                   showSearch
                   optionFilterProp="children"
+                  disabled={
+                    location.pathname.startsWith(followerPath + "edit")
+                      ? true
+                      : false
+                  }
                 >
                   {regions
                   .sort((a, b) => a.regionName.localeCompare(b.regionName))
@@ -642,11 +647,6 @@ const CreateCity = () => {
                 <ReactInputMask
                   mask="+380(99)-999-99-99"
                   maskChar={null}
-                  value={
-                    isFollowerPath
-                      ? regionFollower.phoneNumber
-                      : city.phoneNumber
-                  }
                 >
                   {(inputProps: any) => <Input {...inputProps} />}
                 </ReactInputMask>
@@ -674,9 +674,9 @@ const CreateCity = () => {
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
                 rules={descriptionValidation.Email}
+                initialValue={isFollowerPath ? regionFollower.email : city.email}
               >
                 <Input
-                  value={isFollowerPath ? regionFollower.email : city.email}
                   maxLength={51}
                 />
               </Form.Item>

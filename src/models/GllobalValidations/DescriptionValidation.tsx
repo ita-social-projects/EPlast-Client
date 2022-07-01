@@ -157,7 +157,7 @@ export const descriptionValidation = {
   ],
   Street: [
     {
-      pattern: /^\S*((?=([А-ЯҐЄІЇа-яґєії\d]+[\.\-']?))\2\s?)+$/,
+      pattern: /^\S*((?=([А-ЯҐЄІЇа-яґєії\d]+[\.\-\,']?))\2\s?)+$/,
       message: incorrectStreet,
     },
     {
