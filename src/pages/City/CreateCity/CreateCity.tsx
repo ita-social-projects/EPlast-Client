@@ -29,6 +29,7 @@ import {
 } from "../../../api/citiesApi";
 import {
   createRegionFollower,
+  getRegionAdministration,
   getRegionById,
   getRegionFollowerById,
   getRegionsNames,
@@ -59,6 +60,12 @@ import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
+import OblastsRecord from "../../../models/Oblast/OblastsRecord";
+import UkraineOblasts from "../../../models/Oblast/UkraineOblasts";
+import TextArea from "antd/lib/input/TextArea";
+import { getGoverningBodiesAdmins } from "../../../api/governingBodiesApi";
+import { getSuperAdmins } from "../../../api/adminApi";
+import { AdminTypes } from "../../../models/Admin/AdminTypesEnum";
 
 const classes = require("../../Club/Club/Modal.module.css");
 
@@ -135,6 +142,29 @@ const CreateCity = () => {
     event.stopPropagation();
   };
 
+  const getNotificationReceivers = async (regionId: number) => {
+    let listOfReceivers: string[] = [];
+
+    getGoverningBodiesAdmins()
+      .then((response) => {
+        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.GoverningBodyAdmin && admin.status === true);
+        if (user) listOfReceivers.push(user.userId);
+      });
+      
+    getRegionAdministration(regionId)
+      .then((response) => {
+        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.OkrugaHead && admin.status === true);
+        if (user) listOfReceivers.push(user.userId);
+      });
+    
+    getSuperAdmins()
+      .then((response) => {
+        response.data.map((user: any) => listOfReceivers.push(user.id));
+      });
+    
+    return listOfReceivers;
+  }
+
   const getRegionFollower = async (followerId: number) => {
     await getRegionFollowerById(followerId).then(async (followerResponse) => {
       setRegionFollower(followerResponse.data);
@@ -148,7 +178,7 @@ const CreateCity = () => {
           setAppealRegion(regionResponse.data);
         }
       );
-    });
+    })
   };
 
   const getCity = async () => {
@@ -189,6 +219,7 @@ const CreateCity = () => {
         cityURL: values.cityURL === "" ? null : values.cityURL,
         email: values.email,
         phoneNumber: values.phoneNumber === "" ? null : values.email,
+        oblast: values.oblast,
       };
       if (!regionFollower.id) {
         seeAddFollowerModal(newRegionFollower);
@@ -210,6 +241,7 @@ const CreateCity = () => {
         region: values.region,
         address: values.address,
         isActive: city.isActive,
+        oblast: values.oblast,
       };
       if (!city.id) {
         CreateCity(newCity, -1);
@@ -222,12 +254,20 @@ const CreateCity = () => {
   const CreateRegionFollower = async (newRegionFollower: RegionFollower) => {
     const responsePromise = createRegionFollower(newRegionFollower);
     return responsePromise
-      .then(async () => {
+      .then(async (response) => {
+        let peopleToReceiveNotification = await getNotificationReceivers(parseInt(newRegionFollower.regionId));
         notificationLogic("success", successfulCreateAction("Заяву"));
         await createNotification(
           newRegionFollower.userId,
-          `Вітаємо, вашу заяву на створення станиці '${newRegionFollower.cityName}' успішно створено! Заява очікує розгляду адміністрацією округи.`
+          `Вітаємо, вашу заяву на створення станиці ${newRegionFollower.cityName} успішно створено! Заява очікує розгляду адміністрацією округи.`
         );
+        await NotificationBoxApi.createNotifications(
+          peopleToReceiveNotification,
+          `На ваш розгляд чекає заява на створення станиці `,
+          NotificationBoxApi.NotificationTypes.UserNotifications,
+          `/regions/follower/edit/${response.data}`,
+          `${newRegionFollower.cityName}.`
+        )
         history.push(`/cities/page/1`);
       })
       .catch(() => {
@@ -251,6 +291,7 @@ const CreateCity = () => {
       region: appealRegion.regionName,
       address: newRegionFollower.address,
       isActive: city.isActive,
+      oblast: newRegionFollower.oblast,
     };
 
     CreateCity(newCity, regionFollower.id);
@@ -495,76 +536,54 @@ const CreateCity = () => {
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                name="description"
-                label="Опис"
+                name="level"
+                label="Рівень"
                 labelCol={{ span: 24 }}
                 initialValue={
-                  isFollowerPath
-                    ? regionFollower.cityDescription
-                    : city.description
-                }
-                rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
+                  isFollowerPath ? regionFollower.level : 1
+                }                              
               >
-                <Input
-                  value={
-                    isFollowerPath
-                      ? regionFollower.cityDescription
-                      : city.description
-                  }
-                  maxLength={1001}
-                />
+                <Select
+                showSearch
+                optionFilterProp="children"
+                >
+                {levels.map((item: number) => (
+                  <Select.Option value={item}>
+                  {item}
+                  </Select.Option>
+                ))}
+                </Select>
               </Form.Item>
-            </Col>
-            <Col md={11} xs={24}>
+            </Col><Col md={11} xs={24}>
               <Form.Item
-                name="cityURL"
-                label="Посилання"
+                name="oblast"
+                label="Область"
                 labelCol={{ span: 24 }}
                 initialValue={
-                  isFollowerPath ? regionFollower.cityURL : city.cityURL
+                  isFollowerPath ? regionFollower.oblast : city.oblast
                 }
-                rules={descriptionValidation.Link}
+                rules={[{ required: true, message: emptyInput("область") }]}
               >
-                <Input
-                  value={isFollowerPath ? regionFollower.cityURL : city.cityURL}
-                  maxLength={257}
-                />
-              </Form.Item>
-            </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
-              <Form.Item
-                name="phoneNumber"
-                label="Номер телефону"
-                labelCol={{ span: 24 }}
-                initialValue={
-                  isFollowerPath ? regionFollower.phoneNumber : city.phoneNumber
-                }
-                rules={[descriptionValidation.Phone]}
-              >
-                <ReactInputMask
-                  mask="+380(99)-999-99-99"
-                  maskChar={null}
-                  value={
-                    isFollowerPath
-                      ? regionFollower.phoneNumber
-                      : city.phoneNumber
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  disabled={
+                    location.pathname.startsWith(followerPath + "edit")
+                      ? true
+                      : false
                   }
                 >
-                  {(inputProps: any) => <Input {...inputProps} />}
-                </ReactInputMask>
-              </Form.Item>
-            </Col>
-            <Col md={11} xs={24}>
-              <Form.Item
-                name="email"
-                label="Електронна пошта"
-                labelCol={{ span: 24 }}
-                rules={descriptionValidation.Email}
-              >
-                <Input
-                  value={isFollowerPath ? regionFollower.email : city.email}
-                  maxLength={51}
-                />
+                  {Object.entries(OblastsRecord)
+                  .sort(([keya, valuea], [keyb, valueb]) => valuea.localeCompare(valueb))
+                  .map(([key, value]) => {
+                    return Number(key) !== 0 ?
+                    <Select.Option key={key} value={Number(key)}>
+                      {value}
+                    </Select.Option>
+                    : null
+                  }
+                  )}
+                </Select>
               </Form.Item>
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
@@ -580,13 +599,10 @@ const CreateCity = () => {
                 <Select
                   showSearch
                   optionFilterProp="children"
-                  disabled={
-                    location.pathname.startsWith(followerPath + "edit")
-                      ? true
-                      : false
-                  }
                 >
-                  {regions.map((item: RegionProfile) => (
+                  {regions
+                  .sort((a, b) => a.regionName.localeCompare(b.regionName))
+                  .map((item: RegionProfile) => (
                     <Select.Option
                       key={item.id}
                       value={isFollowerPath ? item.id : item.regionName}
@@ -615,23 +631,77 @@ const CreateCity = () => {
             </Col>
             <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
-                name="level"
-                label="Рівень"
+                name="phoneNumber"
+                label="Номер телефону"
                 labelCol={{ span: 24 }}
                 initialValue={
-                  isFollowerPath ? regionFollower.level : 1
-                }                              
+                  isFollowerPath ? regionFollower.phoneNumber : city.phoneNumber
+                }
+                rules={[descriptionValidation.Phone]}
               >
-                <Select
-                showSearch
-                optionFilterProp="children"
+                <ReactInputMask
+                  mask="+380(99)-999-99-99"
+                  maskChar={null}
+                  value={
+                    isFollowerPath
+                      ? regionFollower.phoneNumber
+                      : city.phoneNumber
+                  }
                 >
-                {levels.map((item: number) => (
-                  <Select.Option value={item}>
-                  {item}
-                  </Select.Option>
-                ))}
-                </Select>
+                  {(inputProps: any) => <Input {...inputProps} />}
+                </ReactInputMask>
+              </Form.Item>
+            </Col>
+            <Col md={11} xs={24}>
+              <Form.Item
+                name="cityURL"
+                label="Посилання"
+                labelCol={{ span: 24 }}
+                initialValue={
+                  isFollowerPath ? regionFollower.cityURL : city.cityURL
+                }
+                rules={descriptionValidation.Link}
+              >
+                <Input
+                  value={isFollowerPath ? regionFollower.cityURL : city.cityURL}
+                  maxLength={257}
+                />
+              </Form.Item>
+            </Col>
+            <Col md={{span: 11, offset: 2}} xs={24}>
+              <Form.Item
+                name="email"
+                label="Електронна пошта"
+                labelCol={{ span: 24 }}
+                rules={descriptionValidation.Email}
+              >
+                <Input
+                  value={isFollowerPath ? regionFollower.email : city.email}
+                  maxLength={51}
+                />
+              </Form.Item>
+            </Col>
+            <Col md={{ span: 24 }} xs={24}>
+              <Form.Item
+                name="description"
+                label="Опис"
+                labelCol={{ span: 24 }}
+                initialValue={
+                  isFollowerPath
+                    ? regionFollower.cityDescription
+                    : city.description
+                }
+                rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
+              >
+                <TextArea
+                  value={
+                    isFollowerPath
+                      ? regionFollower.cityDescription
+                      : city.description
+                  }
+                  maxLength={1001}
+                  rows={4}
+                />
               </Form.Item>
             </Col>
           </Row>
