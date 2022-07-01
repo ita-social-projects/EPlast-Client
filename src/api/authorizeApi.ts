@@ -16,11 +16,17 @@ export default class AuthorizeApi {
           AuthLocalStorage.setToken(response.data.token);
         }
       })
-      .catch((error) => {
+      .catch(async (error) => {
         if (error.response.data.value == "User-FormerMember") {
           showUserRenewalModal();
-        } else if (error.response.status === 400) {
-          notificationLogic("error", error.response.data.value);
+        }
+        switch (error.response.status) {
+          case 400:
+            notificationLogic("error", 'Щось пішло не так');
+            break;
+          case 409:
+            notificationLogic("error", 'Ваша пошта не підтверджена');
+            break;
         }
       });
     return response;
@@ -29,11 +35,11 @@ export default class AuthorizeApi {
   register = async (data: any) => {
     const response = await Api.post("Auth/signup", data)
       .then((response) => {
-        notificationLogic("success", response.data.value);
+        notificationLogic("success", "Вам на пошту прийшов лист з підтвердженням");
       })
       .catch((error) => {
         if (error.response.status === 400) {
-          notificationLogic("error", error.response.data.value);
+          notificationLogic("error", "Щось пішло не так");
         }
       });
     return response;
@@ -90,6 +96,31 @@ export default class AuthorizeApi {
       .catch((error) => {
         if (error.response.status === 400) {
           notificationLogic("error", error.response.data.value);
+        }
+      });
+    return response;
+  };
+
+  confirmEmail = async (userId: string, token: string) => {
+    const encodedToken = encodeURI(token);
+    const response = Api.post(`Auth/confirmEmail?userId=${userId}&token=${encodedToken}`)
+      .then((response) => {
+        notificationLogic("success", 'Пошта підтверджена');
+      })
+      .catch((error) => {
+        switch (error.response.status) {
+          case 400:
+            notificationLogic("error", "Щось пішло не так")
+            break;
+          case 404:
+            notificationLogic("error", "Данного користувача не існує")
+            break;
+          case 409:
+            notificationLogic("info", "Пошта вже підтверджена")
+            break;
+          case 410:
+            notificationLogic("info", "На вашу пошту надійшов новий лист на підтвердження профіля");
+            break;
         }
       });
     return response;

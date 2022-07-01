@@ -24,6 +24,7 @@ import { IDropdownItem, DropdownItemCreator } from "./DropdownItem";
 import { DropdownFunc } from "../../models/UserTable/DropdownFunc";
 import ChangeUserGoverningBodyModal from "./ChangeUserGoverningBodyModal";
 import DeleteGoverningBodyAdminModal from "./DeleteGoverningBodyAdminModal";
+import AcceptUserToCityModal from "./AcceptUserToCityModal";
 
 const authService = new AuthorizeApi();
 
@@ -68,12 +69,13 @@ const DropDown = (props: Props) => {
     showDeleteGoverningBodyAdminModal,
     setShowDeleteGoverningBodyAdminModal,
   ] = useState<boolean>(false);
+  const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
+    false
+  );
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
-  const [governingBodyHead, setGoverningBodyHead] = useState<boolean>(true);
-  const [currentUserAdminRoles, setCurrentUserAdminRoles] = useState<
-    Array<AdminRole>
-  >([]);
+  const [, setGoverningBodyHead] = useState<boolean>(true);
+  const [currentUserAdminRoles] = useState<Array<AdminRole>>([]);
   const [canViewProfile, setCanViewProfile] = useState<boolean>(false);
   const [canDelete, setCanDelete] = useState<boolean>(false);
   const [
@@ -341,6 +343,30 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
+          {inActiveTab === false && canChangeUserAccess ? (
+            <Menu.Item key="6">
+              <EditOutlined />
+              Поточний стан користувача
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {inActiveTab === false && canAddDegree ? (
+            <Menu.Item key="7">
+              <PlusCircleOutlined />
+              Прийняти до уладу
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {inActiveTab === false && superAdmin ? (
+            <Menu.Item key="9">
+              <MailOutlined />
+              Активувати
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
           {inActiveTab === false && canChangeGoverningBodyAdministration ? (
             <Menu.Item key="10">
               <EditOutlined />
@@ -357,30 +383,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeUserAccess ? (
-            <Menu.Item key="6">
-              <EditOutlined />
-              Поточний стан користувача
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {inActiveTab === false && canAddDegree ? (
-            <Menu.Item key="7">
-              <PlusCircleOutlined />
-              Додати ступінь
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {inActiveTab === false && superAdmin ? (
-            <Menu.Item key="9">
-              <MailOutlined />
-              Активувати
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
+
           <ChangeUserRoleModal
             record={record}
             showModal={showEditModal}
@@ -427,6 +430,13 @@ const DropDown = (props: Props) => {
             userId={record}
             visibleModal={visibleModalDegree}
             setVisibleModal={setVisibleModalDegree}
+          />
+          <AcceptUserToCityModal
+            record={record}
+            showModal={showAcceptToCityModal}
+            user={selectedUser}
+            setShowModal={setShowAcceptToCityModal}
+            onChange={onChange}
           />
         </Menu>
       ) : null}

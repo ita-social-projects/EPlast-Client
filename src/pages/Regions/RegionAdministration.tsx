@@ -8,6 +8,8 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import jwt from "jwt-decode";
+import Title from "antd/lib/typography/Title";
+import moment from "moment";
 import {
   editAdminStatus,
   getRegionAdministration,
@@ -17,9 +19,7 @@ import {
 } from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
 import "./Region.less";
-import moment from "moment";
 import "moment/locale/uk";
-import Title from "antd/lib/typography/Title";
 import Spinner from "../Spinner/Spinner";
 import CityAdmin from "../../models/City/CityAdmin";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
@@ -29,7 +29,13 @@ import RegionAdmin from "../../models/Region/RegionAdmin";
 import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../components/Tooltip";
+import notificationLogic from "../../components/Notifications/Notification";
 import AuthLocalStorage from "../../AuthLocalStorage";
+import {
+  failDeleteAction,
+  successfulDeleteAction,
+} from "../../components/Notifications/Messages";
+
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 22;
@@ -116,12 +122,27 @@ const RegionAdministration = () => {
   }
 
   const removeAdministrator = async (admin: CityAdmin) => {
-    await editAdminStatus(admin.id);
-    await createNotification(
-      admin.userId,
-      `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`
-    );
-    setAdministration(administration.filter((u) => u.id !== admin.id));
+    try {
+      await editAdminStatus(admin.id);
+      await removeAdmin(admin.id);
+      await createNotification(
+        admin.userId,
+        `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`
+      );
+      setAdministration(administration.filter((u) => u.id !== admin.id));
+      notificationLogic(
+        "success",
+        successfulDeleteAction(
+          admin.adminType.adminTypeName,
+          `${admin.user.firstName} ${admin.user.lastName}`
+        )
+      );
+    } catch {
+      notificationLogic(
+        "error",
+        failDeleteAction(admin.adminType.adminTypeName)
+      );
+    }
   };
 
   const showModal = (member: RegionAdmin) => {

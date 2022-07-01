@@ -100,6 +100,7 @@ const SortedClubs = ({ switcher }: Props) => {
   };
 
   const handleSearch = (event: any) => {
+    handleChange(1);
     setSearchedData(event);
   };
 
@@ -139,7 +140,7 @@ const SortedClubs = ({ switcher }: Props) => {
 
   useEffect(() => {
     setPage(+p);
-  });
+  }, []);
 
   useEffect(() => {
     switcher ? getNotActiveClubs(page) : getActiveClubs(page);

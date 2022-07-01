@@ -1,3 +1,4 @@
+import UkraineOblasts from "../Oblast/UkraineOblasts";
 import CityAdmin from "./CityAdmin";
 
 export default class CityProfile {
@@ -9,13 +10,12 @@ export default class CityProfile {
   phoneNumber: string;
   email: string;
   region: string;
-  street: string;
-  houseNumber: string;
-  officeNumber: string;
-  postIndex: string;
+  address: string;
+  level: number;
   head: CityAdmin;
   headDeputy: CityAdmin;
   isActive: boolean;
+  oblast: UkraineOblasts;
   constructor() {
     this.id = 0;
     this.name = "";
@@ -25,12 +25,11 @@ export default class CityProfile {
     this.phoneNumber = "";
     this.email = "";
     this.region = "";
-    this.street = "";
-    this.houseNumber = "";
-    this.officeNumber = "";
-    this.postIndex = "";
+    this.address = "";
+    this.level = 1;
     this.head = new CityAdmin();
     this.headDeputy = new CityAdmin();
     this.isActive = true;
+    this.oblast = UkraineOblasts.NotSpecified;
   }
 }

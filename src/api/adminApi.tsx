@@ -82,6 +82,11 @@ export const getUsersByExactRoles = async (
   return response;
 };
 
+export const getSuperAdmins = async () => {
+  const response = await Api.get("Admin/superAdmins/");
+  return response;
+};
+
 export const getUsersForGoverningBodies = async () => {
   return await Api.get(`Admin/GetUsersForGoverningBodies`).catch((error) => {
     throw new Error(error);

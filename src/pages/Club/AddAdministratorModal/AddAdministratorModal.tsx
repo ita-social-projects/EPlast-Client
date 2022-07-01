@@ -81,8 +81,6 @@ const AddAdministratorModal = (props: Props) => {
               ? `Чи дійсно ви хочете змінити дату правління на  ${ moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")}`
               : ""
           }
-          
-          
         </div>
       ),
       onCancel() {},

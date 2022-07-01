@@ -5,6 +5,8 @@ export default class GoverningBodyUser {
   imagePath: string;
   email: string;
   phoneNumber: string;
+  isInLowerRole: boolean;
+  isInDeputyRole: boolean;
 
   constructor() {
     this.id = "";
@@ -13,5 +15,7 @@ export default class GoverningBodyUser {
     this.imagePath = "";
     this.email = "";
     this.phoneNumber = "";
+    this.isInLowerRole = false;
+    this.isInDeputyRole = false;
   }
 }

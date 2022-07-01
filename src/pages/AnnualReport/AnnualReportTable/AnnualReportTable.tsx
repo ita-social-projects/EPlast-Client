@@ -40,7 +40,7 @@ const setTagColor = (status: number) => {
 
 const tabList = [
   {
-    key: "country",
+    key: "region",
     tab: "Річні звіти округ",
   },
   {
@@ -351,7 +351,7 @@ const AnnualReportTable = () => {
         />
       </div>
     ),
-    country: (
+    region: (
       <div>
         <RegionAnnualReportTable
           columns={columnsRegion}

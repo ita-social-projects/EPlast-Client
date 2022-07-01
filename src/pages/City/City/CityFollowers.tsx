@@ -9,8 +9,8 @@ import {
 } from "@ant-design/icons";
 import {
   getAllFollowers,
+  getCityById,
   removeFollower,
-  toggleMemberStatus,
 } from "../../../api/citiesApi";
 import userApi from "../../../api/UserApi";
 import "./City.less";
@@ -22,6 +22,7 @@ import { Roles } from "../../../models/Roles/Roles";
 import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../../components/Tooltip";
+import ModalAddPlastDegree from "../../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 
 const CityFollowers = () => {
   const { id } = useParams();
@@ -34,6 +35,14 @@ const CityFollowers = () => {
   const [cityName, setCityName] = useState<string>("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserID, setActiveUserID] = useState<string>();
+  const [followersCount, setFollowersCount] = useState<number>();
+  const [membersCount, setMembersCount] = useState<number>();
+  const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
+  const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
+  const [selectedFollowerUID, setSelectedFollowerUID] = useState<string>();
+  const [visibleAddModalDegree, setVisibleAddModalDegree] = useState<boolean>(
+    false
+  );
 
   const getFollowers = async () => {
     setLoading(true);
@@ -87,14 +96,6 @@ const CityFollowers = () => {
     );
   };
 
-  const addMember = async (follower: CityMember) => {
-    setFollowers(followers.filter((u) => u.id !== follower.id));
-    await toggleMemberStatus(follower.id);
-    await createNotification(
-      follower.userId,
-      "Вітаємо, вас зараховано до членів станиці"
-    );
-  };
 
   const removeMember = async (follower: CityMember) => {
     setFollowers(followers.filter((u) => u.id !== follower.id));
@@ -113,13 +114,24 @@ const CityFollowers = () => {
     setPhotosLoading(false);
   };
 
+  const handleAddDegree = async () => {
+    const memberId = followers.find((item) => item.userId === selectedFollowerUID)?.id;
+    setIsLoadingMemberId(memberId ?? NaN);
+
+    setFollowers(followers.filter((f) => f.id !== memberId));
+
+    const response = await getCityById(+id);
+    setMembersCount(response.data.memberCount);
+    setFollowersCount(response.data.followerCount);
+  };
+
   useEffect(() => {
     getFollowers();
   }, []);
 
   return (
     <Layout.Content>
-      <Title level={2}>Прихильники станиці</Title>
+      <Title level={2}>Зголошені станиці</Title>
       {loading ? (
         <Spinner />
       ) : (
@@ -130,9 +142,15 @@ const CityFollowers = () => {
                 key={follower.id}
                 className="detailsCard"
                 actions={
-                  canEdit
+                  (canEdit && isLoadingPlus) || (isLoadingMemberId !== follower.id &&
+                    !isLoadingPlus)
                     ? [
-                        <PlusOutlined onClick={() => addMember(follower)} />,
+                        <PlusOutlined
+                          onClick={() => {
+                            setSelectedFollowerUID(follower.userId);
+                            setVisibleAddModalDegree(true);
+                          }}
+                        />,
                         <CloseOutlined
                           onClick={() => seeDeleteModal(follower)}
                         />,
@@ -174,6 +192,7 @@ const CityFollowers = () => {
           ) : (
             <Title level={4}>Ще немає прихильників станиці</Title>
           )}
+
         </div>
       )}
       <div className="cityMoreItems">
@@ -187,6 +206,16 @@ const CityFollowers = () => {
           Назад
         </Button>
       </div>
+      {canEdit ||
+        activeUserRoles.includes(Roles.Supporter) ||
+        activeUserRoles.includes(Roles.PlastMember) ? (
+        <ModalAddPlastDegree
+          visibleModal={visibleAddModalDegree}
+          setVisibleModal={setVisibleAddModalDegree}
+          userId={selectedFollowerUID as string}
+          handleAddDegree={handleAddDegree}
+        ></ModalAddPlastDegree>
+      ) : null}
     </Layout.Content>
   );
 };
