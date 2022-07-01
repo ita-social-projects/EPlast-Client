@@ -238,7 +238,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
           <Select placeholder="Оберіть станицю" disabled={disabled}>
             {cities.map((apd) => {
               return (
-                <Select.Option key={apd.id} value={apd.id}>
+                <Select.Option key={apd.id} value={apd.name}>
                   {apd.name}
                 </Select.Option>
               );
