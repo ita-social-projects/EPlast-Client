@@ -1,3 +1,5 @@
+import UkraineOblasts from "../Oblast/UkraineOblasts";
+
 export default class RegionFollower {
   id: number;
   userId: string;
@@ -11,7 +13,7 @@ export default class RegionFollower {
   cityURL: string;
   email: string;
   phoneNumber: string;
-
+  oblast: UkraineOblasts;
   constructor() {
     this.id = 0;
     this.userId = "";
@@ -25,5 +27,6 @@ export default class RegionFollower {
     this.cityURL = "";
     this.email = "";
     this.phoneNumber = "";
+    this.oblast = UkraineOblasts.NotSpecified;
   }
 }

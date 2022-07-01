@@ -1,3 +1,4 @@
+import UkraineOblasts from "../Oblast/UkraineOblasts";
 import CityAdmin from "./CityAdmin";
 
 export default class CityProfile {
@@ -14,6 +15,7 @@ export default class CityProfile {
   head: CityAdmin;
   headDeputy: CityAdmin;
   isActive: boolean;
+  oblast: UkraineOblasts;
   constructor() {
     this.id = 0;
     this.name = "";
@@ -28,5 +30,6 @@ export default class CityProfile {
     this.head = new CityAdmin();
     this.headDeputy = new CityAdmin();
     this.isActive = true;
+    this.oblast = UkraineOblasts.NotSpecified;
   }
 }
