@@ -253,19 +253,19 @@ const SignUp: React.FC = () => {
         onFinish={handler.submit}
       >
         <Form.Item label="Прізвище" name="lastName" rules={validator.LastName}>
-          <Input placeholder="введіть прізвище" />
+          <Input placeholder="Введіть прізвище" />
         </Form.Item>
 
         <Form.Item label="Ім'я" name="firstName" rules={validator.FirstName}>
-          <Input placeholder="введіть ім'я" />
+          <Input placeholder="Введіть ім'я" />
         </Form.Item>
 
         <Form.Item label="По батькові" name="fatherName" rules={validator.FatherName}>
-          <Input placeholder="введіть по батькові" />
+          <Input placeholder="Введіть по батькові" />
         </Form.Item>
 
         <Form.Item label="Місце проживання" name="address" rules={validator.Address}>
-          <Input placeholder="введіть місце проживання" />
+          <Input placeholder="Введіть місце проживання" />
         </Form.Item>
 
         <Form.Item
@@ -274,7 +274,7 @@ const SignUp: React.FC = () => {
           label="Дата народження"
         >
           <DatePicker
-            placeholder="оберіть дату народження"
+            placeholder="Оберіть дату народження"
             className={styles.MyDatePicker}
             format="DD.MM.YYYY"
             disabledDate={current => {
@@ -309,7 +309,7 @@ const SignUp: React.FC = () => {
           <Select
             aria-autocomplete="none"
             showSearch
-            placeholder="оберіть область"
+            placeholder="Оберіть область"
             onChange={handler.change.oblast}
             filterOption={handler.select.filter}
           >
@@ -338,7 +338,7 @@ const SignUp: React.FC = () => {
                 showSearch
                 disabled={!areaSelected}
                 onPopupScroll={(e: any) => handler.select.regionScroll(e)}
-                placeholder="оберіть округу"
+                placeholder="Оберіть округу"
                 filterOption={handler.select.filter}
               >
                 {state.regions.map((apd) => {
@@ -362,7 +362,7 @@ const SignUp: React.FC = () => {
                 showSearch
                 disabled={!areaSelected}
                 onPopupScroll={(e: any) => handler.select.cityScroll(e)}
-                placeholder="оберіть станицю"
+                placeholder="Оберіть станицю"
                 filterOption={handler.select.filter}
               >
                 {state.cities.map((apd) => {
@@ -379,13 +379,12 @@ const SignUp: React.FC = () => {
           [{
             tabTitle: "Facebook",
             formItem: {
-
               name: "facebookLink",
               rules: validator.FacebookLink
             },
             input: {
               type: "url",
-              placeholder: "введіть посилання на facebook сторінку"
+              placeholder: "Введіть посилання на facebook сторінку"
             }
           },
           {
@@ -396,7 +395,7 @@ const SignUp: React.FC = () => {
             },
             input: {
               type: "url",
-              placeholder: "введіть посилання на twitter сторінку"
+              placeholder: "Введіть посилання на twitter сторінку"
             }
           },
           {
@@ -407,7 +406,7 @@ const SignUp: React.FC = () => {
             },
             input: {
               type: "url",
-              placeholder: "введіть посилання на instagram сторінку"
+              placeholder: "Введіть посилання на instagram сторінку"
             }
           }]
         } />
@@ -421,20 +420,20 @@ const SignUp: React.FC = () => {
             <ReactInputMask
               className={`ant-input`}
               mask="+380(99)-999-99-99"
-              placeholder="введіть номер телефону"
+              placeholder="Введіть номер телефону"
             />
           </div>
         </Form.Item>
 
         <Form.Item label="Пошта" name="email" rules={validator.Email}>
           <Input
-            placeholder="введіть електронну пошту" />
+            placeholder="Введіть електронну пошту" />
         </Form.Item>
 
         <Form.Item name="password" label="Пароль" rules={validator.Password}>
           <Input.Password
             visibilityToggle={true}
-            placeholder="введіть пароль"
+            placeholder="Введіть пароль"
           />
         </Form.Item>
 
@@ -459,7 +458,7 @@ const SignUp: React.FC = () => {
         >
           <Input.Password
             visibilityToggle={true}
-            placeholder="введіть пароль ще раз"
+            placeholder="Введіть пароль ще раз"
           />
         </Form.Item>
 

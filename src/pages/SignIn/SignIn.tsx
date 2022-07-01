@@ -136,13 +136,13 @@ const SignIn: React.FC = () => {
       >
         <Form.Item label="Пошта" name="Email" rules={validator.Email}>
           <Input
-            placeholder="введіть електронну пошту"
+            placeholder="Введіть електронну пошту"
           />
         </Form.Item>
         <Form.Item label="Пароль" name="Password" rules={validator.Password}>
           <Input.Password
             visibilityToggle={true}
-            placeholder="введіть пароль"
+            placeholder="Введіть пароль"
           />
         </Form.Item>
         <Form.Item name="remember" valuePropName="checked">
