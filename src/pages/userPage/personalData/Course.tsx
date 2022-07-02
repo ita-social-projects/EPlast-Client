@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, Button, Form, Input, Skeleton, Tooltip } from "antd";
+import { Alert, Button, Col, Form, Input, Skeleton, Tooltip } from "antd";
 import moment from "moment";
 import { useParams, useHistory, Link } from "react-router-dom";
 import { StickyContainer } from "react-sticky";
-import Facebook from "../../../assets/images/facebookGreen.svg";
+
 
 import PlastLogo from "../../../assets/images/logo_PLAST.png"
 import AvatarAndProgressStatic from "./AvatarAndProgressStatic";
@@ -13,6 +13,7 @@ import classes from "../Blanks/Blanks.module.css";
 import AddAchievementsModal from "../Blanks/UserAchievements/AddAchievementsModal";
 import { getAllCourse, getAllCourseByUserId } from "../../../api/courseApi";
 import Course from "../../../models/Course/Course";
+import Title from "antd/lib/typography/Title";
 
 export default function () {
 
@@ -41,13 +42,8 @@ export default function () {
   };
 
   const fetchData = async () => {
-   // const response =  await getAllCourse();
-    const response1 = await getAllCourseByUserId(activeUserId);
-
-    console.log(response1);
-
-    setallCourses(response1.data);
-   
+       const response = await getAllCourseByUserId(activeUserId);
+    setallCourses(response.data);
     setDataLoaded(true);
   };
 
@@ -69,19 +65,16 @@ export default function () {
     </div>
   ) : isDataLoaded === true ? (
     <div className="container">
-      <Form name="basic" className="formContainer">
-     
-
-        <div className="allFields">
+  
+    
       {
       allCourses.map((sectitem) =>
         
-          <div className="rowBlock">
+         
+          <Col>
 
+          <Title level={2}>{sectitem.name}</Title>
           
-            <h1> {   sectitem.name}  </h1> <br/>
-            
-
             <p> <strong>{userProfile?.user.firstName} </strong>, пройдіть курс для продовження співпраці з нами   </p>
 
 
@@ -92,11 +85,8 @@ export default function () {
               >
                 <img src={PlastLogo} alt="PlastLogo" />
               </a>
-           
-            
           </div>    
-
-          </div>
+          </Col>
          ) }
         { !showAchievementModal ? (
             <div className="rowBlock">
@@ -118,7 +108,7 @@ export default function () {
             {showAchievementModal ? (
              <div className="rowBlock">
            
-           <p > Курс пройдено, сертифікат можна переглянути в  <Link to={urlaim} > <b>Досягненнях</b> </Link> :</p><br/>
+           <p > Курс пройдено, сертифікат можна переглянути в  <Link to={urlaim} > <b>Досягненнях</b> </Link> </p><br/>
         
 
 
@@ -127,19 +117,13 @@ export default function () {
 
            
              <AddAchievementsModal
-            userId={activeUserId}
+             userId={activeUserId}
              visibleModal={visibleAchievementModal}
              setVisibleModal={setvisibleAchievementModal}
              showModal={showAchievementModal}
              setshowModal={setshowAchievementModal}
             />
 
-
-
-       
-        
-        </div>
-      </Form>
     </div>
   )  : (
     <> </>

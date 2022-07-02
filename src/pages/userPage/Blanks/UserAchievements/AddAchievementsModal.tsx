@@ -13,6 +13,7 @@ import {
   fileIsTooBig,
   successfulDeleteAction,
 } from "../../../../components/Notifications/Messages";
+import { ChangeStatusCourseByUserId } from "../../../../api/courseApi";
 
 const { Dragger } = Upload;
 
@@ -82,6 +83,7 @@ const AddAchievementsModal = (props: Props) => {
     await addAchievementDocuments(props.userId, files);
     props.setVisibleModal(false);
     props.setshowModal(true);
+    await ChangeStatusCourseByUserId(props.userId);
     form.resetFields();
     removeFile();
     setDisabled(true);
