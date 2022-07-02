@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Form, Input, Button, Modal, Select, DatePicker, Tabs, Space, Spin, Switch, Checkbox } from "antd";
 import styles from "./SignUp.module.css";
 import Switcher from "./Switcher/Switcher";
@@ -17,14 +17,13 @@ import { GenderIdEnum, GenderNameEnum, genderRecords } from "../../models/UserTa
 import moment from "moment";
 import ReactInputMask from "react-input-mask";
 import { SingUpStore } from "../../stores/SingUpStore";
-import { ActiveRegionDataResponse, getActiveRegionsByPage } from "../../api/regionsApi";
-import TabList, { TabRenderMode } from "./TabList";
+import { ActiveRegionDataResponse, getActiveRegionsByPage, getRegions } from "../../api/regionsApi";
 import TabInputList from "./TabInputList";
-import Spinner from "../Spinner/Spinner";
-import OblastsRecord, { OblastsWithoutNotSpecifiedRecord } from "../../models/Oblast/OblastsRecord";
 import { SelectValue } from "antd/lib/select";
 import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
 import CheckboxsItem from "./CheckboxsItem";
+import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
+import RegionForAdministration from "../../models/Region/RegionForAdministration";
 
 let authService = new AuthorizeApi();
 
@@ -35,14 +34,13 @@ const SignUp: React.FC = () => {
   const [state, actions] = SingUpStore();
   const [cityLoading, setCityLoading] = useState(false);
   const [regionLoading, setRegionLoading] = useState(false);
-  const [cityTimeout, setCityTimeout] = useState(setTimeout(() => { }, 0));
-  const [regionTimeout, setRegionTimeout] = useState(setTimeout(() => { }, 0));
   const [hasPlast, setHasntPlast] = useState(false);
   const [areaSelected, setAreaSelected] = useState(false);
+  const regionSelectRef = useRef(null);
+  const citySelectRef = useRef(null);
   const history = useHistory();
 
   useEffect(() => {
-    actions.resetFormData();
     (async () => {
       const termsData: TermsOfUseModel = await termsApi.getTerms();
       actions.setTerms(termsData);
@@ -97,59 +95,8 @@ const SignUp: React.FC = () => {
           setCityLoading(false);
         }
       },
-      regionScroll: async (event: Event) => {
-        const target = event.target as HTMLDivElement;
-        const currentPosition = target.scrollTop + target.offsetHeight;
-        const fetchPosition = target.scrollHeight - 120;
-        if (regionLoading === false
-          && currentPosition > fetchPosition
-          && Math.ceil(state.regionPage.total! / state.regionPage.size!) !== state.regionPage.number!) {
-          setRegionLoading(true);
-          const data: ActiveRegionDataResponse
-            = (await getActiveRegionsByPage(state.regionPage.number! + 1, state.regionPage.size!, state.regionPage.text, state.formData.oblast)).data;
-          const { total, regions: newRegions } = data;
-          actions.setRegionPageInfo({
-            total: total,
-            number: state.regionPage.number! + 1,
-          });
-          actions.addRegionsRange(newRegions);
-          setRegionLoading(false);
-        }
-      },
       filter: (input: string, option: any) => {
         return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 || option.value === 0;
-      },
-    },
-    search: {
-      city: (value: string) => {
-        clearTimeout(cityTimeout);
-        setCityLoading(true);
-        const timeout = setTimeout(async () => {
-          const { cities: newCities, total }: ActiveCityDataResponse = (await getActiveCitiesByPage(1, state.cityPage.size!, value)).data;
-          actions.setCityPageInfo({
-            total: total,
-            number: 1,
-            text: value
-          });
-          actions.setCities(newCities);
-          setCityLoading(false);
-        }, 750);
-        setCityTimeout(timeout);
-      },
-      region: (value: string) => {
-        clearTimeout(regionTimeout);
-        setRegionLoading(true);
-        const timeout = setTimeout(async () => {
-          const { regions: newRegions, total }: ActiveRegionDataResponse = (await getActiveRegionsByPage(1, state.regionPage.size!, value)).data;
-          actions.setRegionPageInfo({
-            total: total,
-            number: 1,
-            text: value
-          });
-          actions.setRegions(newRegions);
-          setRegionLoading(false);
-        }, 750);
-        setRegionTimeout(timeout);
       },
     },
     change: {
@@ -158,14 +105,19 @@ const SignUp: React.FC = () => {
         setCityLoading(true);
         setRegionLoading(true);
 
+        form.setFieldsValue({
+          regionId: undefined,
+          cityId: undefined
+        });
+
         const cityPromise = getActiveCitiesByPage(1, state.cityPage.size!, null, Number(value));
-        const regionPromise = getActiveRegionsByPage(1, state.regionPage.size!, null, Number(value));
+        const regionPromise = getRegions(Number(value));
 
         const [cityRes, regionRes] = await Promise.all([cityPromise, regionPromise])
 
         const { cities, total: cityTotal }: ActiveCityDataResponse
           = cityRes.data
-        const { regions, total: regionTotal }: ActiveRegionDataResponse
+        const regions: RegionForAdministration[]
           = regionRes.data
 
         actions.setCities(cities);
@@ -175,10 +127,6 @@ const SignUp: React.FC = () => {
         });
 
         actions.setRegions(regions);
-        actions.setRegionPageInfo({
-          total: regionTotal,
-          number: 1
-        });
 
         setCityLoading(false);
         setRegionLoading(false);
@@ -308,18 +256,14 @@ const SignUp: React.FC = () => {
         >
           <Select
             aria-autocomplete="none"
-            showSearch
             placeholder="Оберіть область"
             onChange={handler.change.oblast}
-            filterOption={handler.select.filter}
           >
-            {Object.entries(OblastsWithoutNotSpecifiedRecord)
-              .sort(([key1, value1], [key2, value2]) => value1.localeCompare(value2))
-              .map(([key, value]) =>
-                <Select.Option key={key} value={Number(key)}>
-                  {value}
-                </Select.Option>
-              )}
+            {OblastsWithoutNotSpecified.map(([key, value]) =>
+              <Select.Option key={key} value={key}>
+                {value}
+              </Select.Option>
+            )}
           </Select>
         </Form.Item>
         <Checkbox className={styles.MyCheckbox} disabled={!areaSelected} checked={hasPlast} onChange={handler.change.hasPlast}>
@@ -333,13 +277,11 @@ const SignUp: React.FC = () => {
               label="Округа"
             >
               <Select
+                ref={regionSelectRef}
                 aria-autocomplete="none"
-                onSearch={handler.search.region}
-                showSearch
                 disabled={!areaSelected}
-                onPopupScroll={(e: any) => handler.select.regionScroll(e)}
                 placeholder="Оберіть округу"
-                filterOption={handler.select.filter}
+                value={state.formData.regionId}
               >
                 {state.regions.map((apd) => {
                   return (
@@ -358,12 +300,10 @@ const SignUp: React.FC = () => {
             >
               <Select
                 aria-autocomplete="none"
-                onSearch={handler.search.city}
-                showSearch
                 disabled={!areaSelected}
                 onPopupScroll={(e: any) => handler.select.cityScroll(e)}
                 placeholder="Оберіть станицю"
-                filterOption={handler.select.filter}
+                value={state.formData.cityId}
               >
                 {state.cities.map((apd) => {
                   return (

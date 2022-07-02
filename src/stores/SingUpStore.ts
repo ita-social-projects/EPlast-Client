@@ -1,9 +1,10 @@
 import { Action, createHook, createStore } from "react-sweet-state";
-import UkraineOblasts, { UkraineOblastsWithoutNotSpecified } from "../models/Oblast/UkraineOblasts";
+import UkraineOblasts from "../models/Oblast/UkraineOblasts";
 import ActiveRegion from "../models/Region/ActiveRegion";
+import RegionForAdministration from "../models/Region/RegionForAdministration";
 import TermsOfUse from "../models/TermsOfUse/TermsOfUseModel";
 import { GenderIdEnum } from "../models/UserTable/Gender";
-import City, { ActiveCity } from "../pages/AnnualReport/Interfaces/City";
+import { ActiveCity } from "../pages/AnnualReport/Interfaces/City";
 
 type PageInfo = {
     total?: number
@@ -14,10 +15,9 @@ type PageInfo = {
 
 type State = {
     cities: ActiveCity[]
-    regions: ActiveRegion[]
+    regions: RegionForAdministration[]
     terms: TermsOfUse
     cityPage: PageInfo
-    regionPage: PageInfo
     formData: {
         lastName: string
         firstName: string
@@ -35,7 +35,7 @@ type State = {
         twitterLink: string
         instagramLink: string
         birthday?: Date,
-        oblast?: UkraineOblastsWithoutNotSpecified,
+        oblast?: UkraineOblasts,
     }
 };
 
@@ -49,12 +49,6 @@ const initialState: State = {
         datePublication: new Date(),
     },
     cityPage: {
-        total: 0,
-        size: 30,
-        number: 1,
-        text: ""
-    },
-    regionPage: {
         total: 0,
         size: 30,
         number: 1,
@@ -92,12 +86,12 @@ const actions = {
             cities: cities
         })
     },
-    addRegionsRange: (regions: ActiveRegion[]): Action<State> => async ({ setState, getState }) => {
+    addRegionsRange: (regions: RegionForAdministration[]): Action<State> => async ({ setState, getState }) => {
         setState({
             regions: [...getState().regions, ...regions]
         })
     },
-    setRegions: (regions: ActiveRegion[]): Action<State> => async ({ setState, getState }) => {
+    setRegions: (regions: RegionForAdministration[]): Action<State> => async ({ setState, getState }) => {
         setState({
             regions: regions
         })
@@ -117,42 +111,9 @@ const actions = {
             }
         })
     },
-    setRegionPageInfo: ({ total, number, text: selectedCity, size }: PageInfo): Action<State> => async ({ setState, getState }) => {
-        setState({
-            regionPage: {
-                total: total || getState().cityPage.total,
-                number: number || getState().cityPage.number,
-                size: getState().cityPage.size,
-                text: selectedCity
-            }
-        })
-    },
     setFormData: (data: any): Action<State> => async ({ setState, getState }) => {
         setState({
             formData: data
-        })
-    },
-    resetFormData: (): Action<State> => async ({ setState }) => {
-        setState({
-            formData: {
-                lastName: "",
-                firstName: "",
-                fatherName: "",
-                address: "",
-                cityId: undefined,
-                regionId: undefined,
-                email: "",
-                referals: [],
-                password: "",
-                confirmPassword: "",
-                genderId: GenderIdEnum.UnwillingToChoose,
-                phoneNumber: "",
-                facebookLink: "",
-                twitterLink: "",
-                instagramLink: "",
-                birthday: undefined,
-                oblast: undefined
-            }
         })
     }
 };
