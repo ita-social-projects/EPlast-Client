@@ -1,4 +1,4 @@
-import UkraineOblasts from "./UkraineOblasts";
+import UkraineOblasts, { UkraineOblastsWithoutNotSpecified } from "./UkraineOblasts";
 
 const OblastsRecord: Record<UkraineOblasts, string> = {
     [UkraineOblasts.NotSpecified]: "Не обрано",
@@ -28,5 +28,9 @@ const OblastsRecord: Record<UkraineOblasts, string> = {
     [UkraineOblasts.Zaporizhzhia]: "Запорізька",
     [UkraineOblasts.Zhytomyr]: "Житомирська",
 }
+
+const { 0: notSpecified, ...otherProps } = OblastsRecord;
+export const OblastsWithoutNotSpecifiedRecord: Record<UkraineOblastsWithoutNotSpecified, string>
+    = { ...otherProps };
 
 export default OblastsRecord;
