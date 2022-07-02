@@ -51,8 +51,7 @@ const initialState: State = {
     cityPage: {
         total: 0,
         size: 30,
-        number: 1,
-        text: ""
+        number: 1
     },
     formData: {
         lastName: "",

@@ -85,7 +85,7 @@ const SignUp: React.FC = () => {
           && Math.ceil(state.cityPage.total! / state.cityPage.size!) !== state.cityPage.number!) {
           setCityLoading(true);
           const data: ActiveCityDataResponse
-            = (await getActiveCitiesByPage(state.cityPage.number! + 1, state.cityPage.size!, state.cityPage.text, state.formData.oblast)).data;
+            = (await getActiveCitiesByPage(state.cityPage.number! + 1, state.cityPage.size!, undefined, state.formData.oblast)).data;
           const { total, cities: newCities } = data;
           actions.setCityPageInfo({
             total: total,
