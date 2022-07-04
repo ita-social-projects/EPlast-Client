@@ -3,36 +3,33 @@ import { Menu } from "antd";
 import "./Menu.less";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { PersonalDataContext } from "../personalData/PersonalData";
-import UserApi from "../../../api/UserApi";
-import { Roles } from "../../../models/Roles/Roles";
 
 type CustomMenuProps = {
   id: string;
 };
 const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
   let { url } = useRouteMatch();
-  const { activeUserId, userProfileAccess } = useContext(PersonalDataContext);
+  const {activeUserId, userProfileAccess } = useContext(PersonalDataContext);
   const history = useHistory();
-  const [onlyRegistered, setOnlyRegistered] = useState(false);
   
   url = url.replace(`/userpage/`, "").replace(`/${props.id}`, "");
 
   useEffect(() => {
-    let roles = UserApi.getActiveUserRoles();
-    setOnlyRegistered(roles.includes(Roles.Supporter) && roles.length === 1)
-  }, []);  
+    console.log(activeUserId, userProfileAccess["CanSeeUserEvents"], props.id)
+  }, [activeUserId]);
 
   return (
     <div className="wrapperMenu">
       <Menu mode="horizontal" className="menu" selectedKeys={[url]}>
-        <Menu.Item
+        <Menu.Item  
           className="menuItem"
           key="main"
           onClick={() => history.push(`/userpage/main/${props.id}`)}
         >
           Персональні дані
         </Menu.Item>
-        {!onlyRegistered ? (
+        {(userProfileAccess["CanSeeUserActiveMembership"]
+          || props.id !== activeUserId) ? (
         <Menu.Item
           className="menuItem"
           key="activeMembership"
@@ -42,7 +39,8 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         </Menu.Item>) : (
           <> </>
         )}
-        {!onlyRegistered ? (
+         {(userProfileAccess["CanSeeUserSecretariesPage"]
+          || props.id !== activeUserId) ? (
         <Menu.Item
           className="menuItem"
           key="secretaries"
@@ -52,7 +50,8 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         </Menu.Item>) : (
           <> </>
         )}
-        {!onlyRegistered ? (
+         {(userProfileAccess["CanSeeUserEvents"]
+          || props.id !== activeUserId) ? (
           <Menu.Item
             className="menuItem"
             key="eventuser"
@@ -61,25 +60,29 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
             Події
           </Menu.Item>) : (
                 <> </>
-              )}        
+              )}  
+          {(userProfileAccess["CanSeeUserBlankPage"]
+            || props.id !== activeUserId) ? (      
           <Menu.Item
             className="menuItem"
             key="blank"
             onClick={() => history.push(`/userpage/blank/${props.id}`)}
           >
             Бланки
-          </Menu.Item>
-
-        {!onlyRegistered ? (
-        <Menu.Item
-          className="menuItem"
-          key="approvers"
-          onClick={() => history.push(`/userpage/approvers/${props.id}`)}
-        >
-          Поручення
-        </Menu.Item>) : (
-          <> </>
-        )}
+          </Menu.Item>) : (
+                <> </>
+              )} 
+          {(userProfileAccess["CanSeeUserApproversPage"] 
+            || props.id !== activeUserId) ? (      
+          <Menu.Item
+            className="menuItem"
+            key="approvers"
+            onClick={() => history.push(`/userpage/approvers/${props.id}`)}
+          >
+            Поручення
+          </Menu.Item>) : (
+            <> </>
+          )}
       </Menu>
     </div>
   );
