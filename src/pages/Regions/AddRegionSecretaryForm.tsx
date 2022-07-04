@@ -55,9 +55,6 @@ const AddNewSecretaryForm = (props: any) => {
         adminTypeName: value.AdminType,
       },
       regionId: props.regionId,
-      AdminTypeId: await (
-        await regionsApi.getAdminTypeIdByName(value.AdminType)
-      ).data,
       userId:
         property === undefined ? JSON.parse(value.userId).id : property.userId,
       user: JSON.parse(value.userId),
@@ -68,7 +65,6 @@ const AddNewSecretaryForm = (props: any) => {
   };
 
   const handleSubmit = async (values: any) => {
-    console.log("success... Somehow(");
     const newAdmin = await SetAdmin(props.admin, values);
     onAdd(newAdmin);
   };
@@ -145,6 +141,9 @@ const AddNewSecretaryForm = (props: any) => {
                 !activeUserRoles.includes(Roles.Admin),
             },
             { value: Roles.OkrugaHeadDeputy },
+            { value: Roles.OkrugaReferentUPS },
+            { value: Roles.OkrugaReferentUSP },
+            { value: Roles.OkrugaReferentOfActiveMembership },
             { value: "Писар" },
             { value: "Бунчужний" },
             { value: "Скарбник" },
