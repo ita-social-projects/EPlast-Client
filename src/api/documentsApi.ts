@@ -10,6 +10,7 @@ import { DocumentPost } from "../models/Documents/DocumentPost";
 import { MethodicDocumentType } from "../models/Documents/MethodicDocumentType";
 import { string } from "yup";
 import { stat } from "fs";
+import { AxiosResponse } from "axios";
 
 const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(",");
@@ -35,6 +36,11 @@ const getById = async (id: number) => {
 const getAll = async () => {
   const { data } = await Api.get("MethodicDocuments");
 
+  return data;
+};
+
+const getLast = async () => {
+  const { data } = await Api.get("MethodicDocuments/Last");
   return data;
 };
 
@@ -75,15 +81,18 @@ const getPdf = async (id: number) => {
   return link;
 };
 
-const post = async (data: any) => {
-  const response = await Api.post("MethodicDocuments", data)
+const post = async (data: any): Promise<any | null> => {
+  let document: number | null = null
+
+  await Api.post("MethodicDocuments", data)
     .then((response) => {
       notificationLogic("success", successfulCreateAction("Документ"));
+      document = response.data
     })
     .catch((error) => {
       notificationLogic("error", error.response.data.value);
     });
-  return response;
+  return document;
 };
 
 const postForCheckFile = async (data: any) => {
@@ -143,6 +152,12 @@ export const TypeGetParser = (Type: number): string => {
   if (Type === 2) return "Інше";
   return "Не визначено";
 };
+export const TypeKeyValueParser = (Type: string): string => {
+  if (Type === "Нормативний акт") return "legislation";
+  if (Type === "Методичний документ") return "Methodics";
+  if (Type === "Інше") return "Other";
+  return "Не визначено";
+};
 
 export default {
   getById,
@@ -154,6 +169,7 @@ export default {
   post,
   postForCheckFile,
   put,
+  getLast,
   remove,
   TypePostParser,
   TypeGetParser,
