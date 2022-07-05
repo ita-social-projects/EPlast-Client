@@ -2,44 +2,52 @@ import React, { useEffect, useState } from "react";
 import { Table, Button, Layout, Card } from "antd";
 import columns from "./columns";
 import DropDown from "./DropDownDocuments";
-import documentsApi, { TypeGetParser } from "../../api/documentsApi";
-import notificationLogic from "../../components/Notifications/Notification";
 import ClickAwayListener from "react-click-away-listener";
 import Spinner from "../Spinner/Spinner";
 import jwt_decode from "jwt-decode";
 import AddDocumentsModal from "./AddDocumetsModal";
 import { Roles } from "../../models/Roles/Roles";
-import DocumentsTableInfo from "../../models/Documents/DocumentsTableInfo";
 import Search from "antd/lib/input/Search";
 import classes from "./Table.module.css";
 import AuthLocalStorage from "../../AuthLocalStorage";
+import { DocumentsStore } from "../../stores/DocumentsStore";
+import DocumentsTableInfo from "../../models/Documents/DocumentsTableInfo";
+import documentsApi from "../../api/documentsApi";
+import { DocumentPost } from "../../models/Documents/DocumentPost";
+import openNotificationWithIcon from "../../components/Notifications/Notification";
 
 const { Content } = Layout;
 
 const DocumentsTable: React.FC = () => {
+
+  const [state, actions] = DocumentsStore();
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [recordId, setRecordId] = useState<number>(0);
-  const [data, setData] = useState<DocumentsTableInfo[]>(
-    Array<DocumentsTableInfo>()
-  );
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
-  const [searchedData, setSearchedData] = useState("");
   const [visibleModal, setVisibleModal] = useState(false);
-
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
-  const [status, setStatus] = useState<string>("legislation");
-
 
   const jwt = AuthLocalStorage.getToken() as string;
   const decodedJwt = jwt_decode(jwt) as any;
   const roles = decodedJwt[
     "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
   ] as string[];
+
+  useEffect(() => {
+    setLoading(true);
+    (async () => {
+      try {
+        const documents: DocumentsTableInfo[] = await documentsApi.getAllDocuments(
+          state.searchedData,
+          state.page,
+          state.pageSize,
+          state.status
+        );
+        await actions.init(documents);
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [state.searchedData, state.page, state.pageSize, state.status]);
 
   const accesser = {
     canEdit: roles.includes(Roles.Admin)
@@ -54,80 +62,38 @@ const DocumentsTable: React.FC = () => {
     plastMember: roles.includes(Roles.PlastMember),
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-
-      setLoading(true);
-      const res: DocumentsTableInfo[] = await documentsApi.getAllDocuments(
-        searchedData,
-        page,
-        pageSize,
-        status
-      );
-      setTotal(res[0]?.total);
-      setCount(res[0]?.count);
-      setData(res);
-      setLoading(false);
-    };
-    fetchData();
-  }, [searchedData, page, pageSize, status]);
-
   const handler = {
     add: {
       documentsModal: async () => {
-        const lastId = data[data.length - 1].id;
         try {
-          const res = await documentsApi.getById(lastId + 1)
-          const dec: DocumentsTableInfo = {
-            id: res.id,
-            name: res.name,
-            governingBody: res.governingBody.governingBodyName,
-            type: TypeGetParser(res.type),
-            description: res.description,
-            fileName: res.fileName,
-            date: res.date,
-            total: total + 1,
-            count: count + 1,
-          };
-          setTotal(total + 1);
-          setCount(count + 1);
-          setData([...data, dec]);
+          const document: DocumentPost = await documentsApi.getLast();
+          actions.add(document)
         } catch (error) {
-          notificationLogic("error", "Документу не існує");
+          openNotificationWithIcon("error", "Документу не існує");
         }
       }
     },
     delete: {
       dropDown: (id: number) => {
-        const filteredData = data.filter((d) => d.id !== id);
-        setData([...filteredData]);
-        setTotal(total - 1);
-        setCount(count - 1);
+        actions.delete(id)
       }
     },
     search: {
       searchBar: (event: any) => {
-        setPage(1);
-        setSearchedData(event);
-        setData(data);
+        actions.search(event)
       }
     },
     change: {
       searchBar: (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.value.toLowerCase() === "")
-          setSearchedData("");
-        setData(data);
+          actions.resetSearchedData()
       },
       table: (page: number) => {
-        setPage(page);
-      },
-      showSize: () => {
-        setPage(page);
-        setPageSize(pageSize);
+        actions.changePagination(page, state.pageSize);
       },
       tabCard: (key: string) => {
-        setPageSize(pageSize);
-        setStatus(key);
+        actions.changePagination(1, state.pageSize);
+        actions.changeStatus(key)
       }
     },
     click: {
@@ -135,21 +101,6 @@ const DocumentsTable: React.FC = () => {
       away: () => setShowDropdown(false)
     }
   }
-
-  const tabList = [
-    {
-      key: "legislation",
-      tab: "Нормативні акти",
-    },
-    {
-      key: "Methodics",
-      tab: "Методичні документи",
-    },
-    {
-      key: "Other",
-      tab: "Різне",
-    },
-  ];
 
   return (
     <Layout>
@@ -161,28 +112,28 @@ const DocumentsTable: React.FC = () => {
         <h1 className={classes.titleTable}>Репозитарій</h1>
         <>
           <div className={classes.searchContainer}>
-            {accesser.canEdit == true ||
-              accesser.regionAdm == true ||
-              accesser.regionAdmDep == true ||
-              accesser.cityAdm == true ||
-              accesser.cityAdmDep == true ||
-              accesser.clubAdm == true ||
-              accesser.clubAdmDep == true ? (
+            {accesser.canEdit ||
+              accesser.regionAdm ||
+              accesser.regionAdmDep ||
+              accesser.cityAdm ||
+              accesser.cityAdmDep ||
+              accesser.clubAdm ||
+              accesser.clubAdmDep ? (
               <Button type="primary" onClick={handler.click.addBtn}>
                 Додати документ
               </Button>
             ) : (
               <> </>
             )}
-            {accesser.canEdit == true ||
-              accesser.regionAdm == true ||
-              accesser.regionAdmDep == true ||
-              accesser.cityAdm == true ||
-              accesser.cityAdmDep == true ||
-              accesser.clubAdm == true ||
-              accesser.clubAdmDep == true ||
-              accesser.supporter == true ||
-              accesser.plastMember == true ? (
+            {accesser.canEdit ||
+              accesser.regionAdm ||
+              accesser.regionAdmDep ||
+              accesser.cityAdm ||
+              accesser.cityAdmDep ||
+              accesser.clubAdm ||
+              accesser.clubAdmDep ||
+              accesser.supporter ||
+              accesser.plastMember ? (
               <Search
                 enterButton
                 placeholder="Пошук"
@@ -195,30 +146,30 @@ const DocumentsTable: React.FC = () => {
             )}
           </div>
 
-          {accesser.canEdit == true ||
-            accesser.regionAdm == true ||
-            accesser.regionAdmDep == true ||
-            accesser.cityAdm == true ||
-            accesser.cityAdmDep == true ||
-            accesser.clubAdm == true ||
-            accesser.clubAdmDep == true ||
-            accesser.supporter == true ||
-            accesser.plastMember == true ? (
+          {accesser.canEdit ||
+            accesser.regionAdm ||
+            accesser.regionAdmDep ||
+            accesser.cityAdm ||
+            accesser.cityAdmDep ||
+            accesser.clubAdm ||
+            accesser.clubAdmDep ||
+            accesser.supporter ||
+            accesser.plastMember ? (
             <Card
               style={{ width: "100%" }}
-              tabList={tabList}
-              activeTabKey={status}
+              tabList={state.tabList}
+              activeTabKey={state.status}
               onTabChange={handler.change.tabCard}
             />
           ) : (
-            <Card style={{ width: "100%" }} activeTabKey={status} />
+            <Card style={{ width: "100%" }} activeTabKey={state.status} />
           )}
           {loading ? (
             <Spinner />
           ) : (
             <Table
               className={classes.table}
-              dataSource={data}
+              dataSource={state.data}
               scroll={{ x: 1300 }}
               columns={columns}
               bordered
@@ -231,9 +182,8 @@ const DocumentsTable: React.FC = () => {
                   onContextMenu: (event) => {
                     event.preventDefault();
                     setShowDropdown(true);
-                    setRecordId(record.id);
-                    setX(event.pageX);
-                    setY(event.pageY);
+                    actions.setXY(event.pageX, event.pageY);
+                    actions.setRecord(record.id);
                   },
                 };
               }}
@@ -247,14 +197,13 @@ const DocumentsTable: React.FC = () => {
                 }
               }}
               pagination={{
-                current: page,
-                pageSize: pageSize,
-                total: count,
+                current: state.page,
+                pageSize: state.pageSize,
+                total: state.count,
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
                 onChange: handler.change.table,
-                onShowSizeChange: handler.change.showSize,
               }}
             />
           )}
@@ -262,9 +211,9 @@ const DocumentsTable: React.FC = () => {
           <ClickAwayListener onClickAway={handler.click.away}>
             <DropDown
               showDropdown={showDropdown}
-              record={recordId}
-              pageX={x}
-              pageY={y}
+              record={state.recordId}
+              pageX={state.x}
+              pageY={state.y}
               onDelete={handler.delete.dropDown}
             />
           </ClickAwayListener>
