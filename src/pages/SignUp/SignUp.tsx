@@ -41,6 +41,7 @@ const SignUp: React.FC = () => {
   const history = useHistory();
 
   useEffect(() => {
+    actions.resetFormData();
     (async () => {
       const termsData: TermsOfUseModel = await termsApi.getTerms();
       actions.setTerms(termsData);
