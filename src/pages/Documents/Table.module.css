@@ -3,6 +3,11 @@
   margin-bottom: 15px;
 }
 
+.table [class*=ant-table-cell]:first-child {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 /* Search container */
 .searchContainer{
   display: flex;

@@ -30,14 +30,12 @@ const CityDetailDrawer = (props: Props) => {
               name="cityURL"
               label="Посилання"
               labelCol={{ span: 24 }}
-              initialValue={
-                props.city.cityURL
-              }
             >
               <a href={props.city.cityURL} target="_blank">
                 <Input
                    placeholder="Не вказано"
                   disabled
+                  value={props.city.cityURL}
                 />
               </a>
             </Form.Item>
