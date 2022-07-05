@@ -12,6 +12,8 @@ import Transgender from "../../assets/images/lgbt.svg";
 import { Roles } from "../../models/Roles/Roles";
 import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
 import styles from "./UserTable.module.css";
+import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
+import OblastsRecord from "../../models/Oblast/OblastsRecord";
 
 const setTagColor = (userRoles: string) => {
   let color = "";
@@ -65,6 +67,7 @@ interface Props {
   setFilter: any;
   setPage: any;
   filterRole: any;
+  isZgolosheni: boolean;
 }
 
 const ColumnsForUserTable = (props: Props): any[] => {
@@ -80,6 +83,9 @@ const ColumnsForUserTable = (props: Props): any[] => {
   const [filterStatus, setFilterStatus] = useState({
     value: Array<boolean>(numberOfElementsInFilter).fill(false),
   });
+
+  // names of the keys that aren't displayed in "Зголошені" tab
+  const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
 
   const onChangeCheckbox = (e: any, i: number) => {
     let value = filterStatus.value.slice();
@@ -145,7 +151,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
     };
   };
 
-  return [
+  let columns = [
     {
       title: (
         <Row className="tableHeader">
@@ -169,7 +175,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
       },
       dataIndex: "userSystemId",
       fixed: true,
-      width: 75,
+      width: 60,
     },
     {
       title: (
@@ -181,7 +187,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
         </Row>
       ),
       dataIndex: "firstName",
-      width: 150,
+      width: 130,
       render: (firstName: any) => {
         return SortColumnHighlight(
           2,
@@ -205,7 +211,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
         </Row>
       ),
       dataIndex: "lastName",
-      width: 150,
+      width: 130,
       render: (lastName: any) => {
         return SortColumnHighlight(
           3,
@@ -222,20 +228,22 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col className="col-title">Дата народження</Col>
+          <Col className="col-title">{props.isZgolosheni ? "Вік" : "Дата народження"}</Col>
           <Col className="col-value">
             <SortDirection sort={4} />
           </Col>
         </Row>
       ),
       dataIndex: "birthday",
-      width: 145,
+      width: props.isZgolosheni ? 120 : 145,
       render: (date: Date) => {
         return SortColumnHighlight(
           4,
           <>
             {date !== null
-              ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY")
+              ? props.isZgolosheni
+                ? `${moment().diff(moment.utc(date.toLocaleString()), 'years')} (${moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY")})`
+                : moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY")
               : ""}
           </>
         );
@@ -244,7 +252,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: "Стать",
       dataIndex: "gender",
-      width: 75,
+      width: 70,
       render: (gender: any) => {
         if (gender === null) {
           return <h4>Не вказано</h4>;
@@ -535,7 +543,100 @@ const ColumnsForUserTable = (props: Props): any[] => {
         );
       },
     },
-  ];
+  ]
+
+  let columnsForZgolosheni = [
+    {
+      title: (
+        <Row className="tableHeader">
+          <Col className="col-title">Область</Col>
+          <Col className="col-value">
+            <SortDirection sort={10} />
+          </Col>
+        </Row>
+      ),
+      dataIndex: "oblast",
+      width: 110,
+      render: (oblast: UkraineOblasts) => {
+        return SortColumnHighlight(
+          10,
+          <div className={styles.parentDiv}>
+            <Tag color={"blue"} key={OblastsRecord[oblast]} className={styles.tagText}>
+              <Tooltip placement="topLeft" title={OblastsRecord[oblast]}>
+                {OblastsRecord[oblast]}
+              </Tooltip>
+            </Tag>
+          </div>
+        );
+      },
+    },
+    {
+      title: "Місце проживання",
+      dataIndex: "address",
+      width: 170,
+      render: (address: string) => {
+        return (
+          <div className={styles.divWrapper}>
+            <div className={styles.tagText}>
+              <Tooltip placement="top" title={address}>
+                {address}
+              </Tooltip>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      title: "Звідки дізнався про Пласт",
+      dataIndex: "referal",
+      width: 170,
+      render: (referals: string) => {
+        return (
+          <div className={styles.parentDiv}>
+            {referals?.split(',').map(referal => {
+              return (
+                <Tag
+                  color="blue"
+                  key={referal}
+                  className={styles.tagText}
+                >
+                  <Tooltip placement="leftTop" title={referal}>
+                    {referal}
+                  </Tooltip>
+                </Tag>
+              )
+            })
+            }
+          </div>
+        );
+      },
+    },
+  ]
+
+  let phoneNumberColumn = {
+    title: "Номер телефону",
+    dataIndex: "phoneNumber",
+    width: 140,
+    render: (phoneNumber: any) => {
+      return (
+        <div className={styles.divWrapper}>
+          <div className={styles.tagText}>
+            <Tooltip placement="top" title={phoneNumber}>
+              {phoneNumber}
+            </Tooltip>
+          </div>
+        </div>
+      );
+    },
+  }
+
+  if (props.isZgolosheni) {
+    columns.splice(columns.findIndex(column => column.dataIndex == "email"), 0, phoneNumberColumn);
+    let filtered = columns.filter((column) => !forbiddenKeysForZgolosheni.includes(column.dataIndex));
+    columns = filtered.concat(columnsForZgolosheni);
+  }
+
+  return columns;
 };
 
 export default ColumnsForUserTable;

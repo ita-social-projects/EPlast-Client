@@ -1,5 +1,6 @@
 import Gender from "./Gender";
 import User from "../UserTable/User";
+import UkraineOblasts from "../Oblast/UkraineOblasts";
 
 export default class UserTable {
   id: string;
@@ -14,6 +15,10 @@ export default class UserTable {
   regionName: string;
   cityName: string;
   clubName: string;
+  address: string;
+  phoneNumber: string;
+  oblast: UkraineOblasts;
+  referal: string;
   userPlastDegreeName: string;
   userRoles: string;
   upuDegree: string;
@@ -31,6 +36,10 @@ export default class UserTable {
     this.regionName = "";
     this.cityName = "";
     this.clubName = "";
+    this.address = "";
+    this.phoneNumber = "";
+    this.oblast = UkraineOblasts.NotSpecified;
+    this.referal = "";
     this.userPlastDegreeName = "";
     this.userRoles = "";
     this.upuDegree = "";
