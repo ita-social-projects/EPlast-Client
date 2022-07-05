@@ -569,8 +569,6 @@ const CreateCity = () => {
                   optionFilterProp="children"
                   disabled={
                     location.pathname.startsWith(followerPath + "edit")
-                      ? true
-                      : false
                   }
                 >
                   {Object.entries(OblastsRecord)
@@ -601,8 +599,6 @@ const CreateCity = () => {
                   optionFilterProp="children"
                   disabled={
                     location.pathname.startsWith(followerPath + "edit")
-                      ? true
-                      : false
                   }
                 >
                   {regions
