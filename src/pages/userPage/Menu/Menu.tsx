@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { Menu } from "antd";
 import "./Menu.less";
 import { useHistory, useRouteMatch } from "react-router-dom";
@@ -13,10 +13,6 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
   const history = useHistory();
   
   url = url.replace(`/userpage/`, "").replace(`/${props.id}`, "");
-
-  useEffect(() => {
-    console.log(activeUserId, userProfileAccess["CanSeeUserEvents"], props.id)
-  }, [activeUserId]);
 
   return (
     <div className="wrapperMenu">
