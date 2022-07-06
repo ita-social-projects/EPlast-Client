@@ -14,6 +14,9 @@ import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
 import styles from "./UserTable.module.css";
 import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
 import OblastsRecord from "../../models/Oblast/OblastsRecord";
+import UserComment from "./UserComment";
+import { ColumnProps, ColumnsType } from "antd/es/table";
+import User from "../../models/UserTable/User";
 
 const setTagColor = (userRoles: string) => {
   let color = "";
@@ -151,7 +154,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
     };
   };
 
-  let columns = [
+  let columns: ColumnsType<User> = [
     {
       title: (
         <Row className="tableHeader">
@@ -176,6 +179,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
       dataIndex: "userSystemId",
       fixed: true,
       width: 60,
+      key: "userSystemId",
     },
     {
       title: (
@@ -200,6 +204,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
+      key: "firstName"
     },
     {
       title: (
@@ -224,6 +229,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
+      key: "lastName"
     },
     {
       title: (
@@ -248,6 +254,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </>
         );
       },
+      key: "birthday"
     },
     {
       title: "Стать",
@@ -276,6 +283,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           );
         }
       },
+      key: "gender"
     },
     {
       title: "Email",
@@ -292,6 +300,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
+      key: "email"
     },
     {
       title: (
@@ -320,6 +329,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           )
         );
       },
+      key: "regionName"
     },
     {
       title: (
@@ -348,6 +358,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           )
         );
       },
+      key: "cityName"
     },
     {
       title: (
@@ -376,6 +387,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           )
         );
       },
+      key: "clubName"
     },
     {
       title: (
@@ -464,6 +476,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           return SortColumnHighlight(8, "");
         }
       },
+      key: "userPlastDegreeName"
     },
     {
       title: (
@@ -488,6 +501,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
+      key: "upuDegree"
     },
     {
       title: "Права доступу",
@@ -542,10 +556,11 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
+      key: "userRoles"
     },
   ]
 
-  let columnsForZgolosheni = [
+  let columnsForZgolosheni: ColumnsType<User> = [
     {
       title: (
         <Row className="tableHeader">
@@ -557,24 +572,26 @@ const ColumnsForUserTable = (props: Props): any[] => {
       ),
       dataIndex: "oblast",
       width: 110,
-      render: (oblast: UkraineOblasts) => {
+      render: (oblast: any) => {
+        let oblastName = OblastsRecord[oblast as UkraineOblasts];
         return SortColumnHighlight(
           10,
           <div className={styles.parentDiv}>
-            <Tag color={"blue"} key={OblastsRecord[oblast]} className={styles.tagText}>
-              <Tooltip placement="topLeft" title={OblastsRecord[oblast]}>
-                {OblastsRecord[oblast]}
+            <Tag color={"blue"} key={oblastName} className={styles.tagText}>
+              <Tooltip placement="topLeft" title={oblastName}>
+                {oblastName}
               </Tooltip>
             </Tag>
           </div>
         );
       },
+      key: "oblast"
     },
     {
       title: "Місце проживання",
       dataIndex: "address",
       width: 170,
-      render: (address: string) => {
+      render: (address: any) => {
         return (
           <div className={styles.divWrapper}>
             <div className={styles.tagText}>
@@ -585,15 +602,17 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
+      key: "address"
     },
     {
       title: "Звідки дізнався про Пласт",
       dataIndex: "referal",
       width: 170,
-      render: (referals: string) => {
+      render: (referals: any) => {
+        let referalsString = referals as string;
         return (
           <div className={styles.parentDiv}>
-            {referals?.split(',').map(referal => {
+            {referalsString?.split(',').map(referal => {
               return (
                 <Tag
                   color="blue"
@@ -610,6 +629,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
+      key: "referal"
     },
   ]
 
@@ -630,10 +650,22 @@ const ColumnsForUserTable = (props: Props): any[] => {
     },
   }
 
+  let commentColumn = {
+    title: "Коментар",
+    dataIndex: "comment",
+    width: 170,
+    render: (comment: any, record: any) => {
+      return (
+        <UserComment userId={record.id} text={comment} canEdit={true}/>
+      );
+    },
+  }
+
   if (props.isZgolosheni) {
-    columns.splice(columns.findIndex(column => column.dataIndex == "email"), 0, phoneNumberColumn);
-    let filtered = columns.filter((column) => !forbiddenKeysForZgolosheni.includes(column.dataIndex));
+    columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
+    let filtered = columns.filter(column => !forbiddenKeysForZgolosheni.includes(column.key?.valueOf() as string));
     columns = filtered.concat(columnsForZgolosheni);
+    columns.push(commentColumn);
   }
 
   return columns;
