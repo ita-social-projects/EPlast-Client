@@ -622,7 +622,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
                   className={styles.referalTag}
                 >
                   <Tooltip placement="leftTop" title={referal}>
-                    {referal}
+                    {referal as any}
                   </Tooltip>
                 </Tag>
               )
