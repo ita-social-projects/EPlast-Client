@@ -27,33 +27,4 @@ export enum UkraineOblasts {
     Zhytomyr
 }
 
-export enum UkraineOblastsWithoutNotSpecified {
-    Cherkasy = UkraineOblasts.Cherkasy,
-    Chernihiv = UkraineOblasts.Chernihiv,
-    Chernivtsi = UkraineOblasts.Chernivtsi,
-    Crimea = UkraineOblasts.Crimea,
-    Dnipropetrovsk = UkraineOblasts.Dnipropetrovsk,
-    Donetsk = UkraineOblasts.Donetsk,
-    IvanoFrankivsk = UkraineOblasts.IvanoFrankivsk,
-    Kharkiv = UkraineOblasts.Kharkiv,
-    Kherson = UkraineOblasts.Kherson,
-    Khmelnytskyi = UkraineOblasts.Khmelnytskyi,
-    Kyiv = UkraineOblasts.Kyiv,
-    Kirovohrad = UkraineOblasts.Kirovohrad,
-    Luhansk = UkraineOblasts.Luhansk,
-    Lviv = UkraineOblasts.Lviv,
-    Mykolaiv = UkraineOblasts.Mykolaiv,
-    Odessa = UkraineOblasts.Odessa,
-    Poltava = UkraineOblasts.Poltava,
-    Rivne = UkraineOblasts.Rivne,
-    Sumy = UkraineOblasts.Sumy,
-    Ternopil = UkraineOblasts.Ternopil,
-    Vinnytsia = UkraineOblasts.Vinnytsia,
-    Volyn = UkraineOblasts.Volyn,
-    Zakarpattia = UkraineOblasts.Zakarpattia,
-    Zaporizhzhia = UkraineOblasts.Zaporizhzhia,
-    Zhytomyr = UkraineOblasts.Zhytomyr,
-}
-
-
 export default UkraineOblasts;
