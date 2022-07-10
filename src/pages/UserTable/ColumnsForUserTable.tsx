@@ -610,9 +610,11 @@ const ColumnsForUserTable = (props: Props): any[] => {
       width: 150,
       render: (referals: any) => {
         let referalsString = referals as string;
+        referalsString = referalsString?.replace("Від друзів, рідних", "{FRIENDS}");
         return (
           <div style={{display: "flex", flexWrap: "wrap"}}>
             {referalsString?.split(',').map(referal => {
+              referal = referal.replace("{FRIENDS}", "Від друзів, рідних");
               return (
                 <Tag
                   color="blue"
