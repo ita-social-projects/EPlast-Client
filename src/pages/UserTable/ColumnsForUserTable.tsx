@@ -631,6 +631,17 @@ const ColumnsForUserTable = (props: Props): any[] => {
       },
       key: "referal"
     },
+    {
+      title: "Коментар",
+      dataIndex: "comment",
+      width: 180,
+      render: (comment: any, record: any) => {
+        return (
+          <UserComment userId={record.id} text={comment} canEdit={true}/>
+        );
+      },
+      key: "comment"
+    }
   ]
 
   let phoneNumberColumn = {
@@ -650,22 +661,13 @@ const ColumnsForUserTable = (props: Props): any[] => {
     },
   }
 
-  let commentColumn = {
-    title: "Коментар",
-    dataIndex: "comment",
-    width: 180,
-    render: (comment: any, record: any) => {
-      return (
-        <UserComment userId={record.id} text={comment} canEdit={true}/>
-      );
-    },
-  }
-
   if (props.isZgolosheni) {
+    // insert phonenumber column right before email
     columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
+
+    // filter columns to display in zgolosheni tab
     let filtered = columns.filter(column => !forbiddenKeysForZgolosheni.includes(column.key?.valueOf() as string));
     columns = filtered.concat(columnsForZgolosheni);
-    columns.push(commentColumn);
   }
 
   return columns;
