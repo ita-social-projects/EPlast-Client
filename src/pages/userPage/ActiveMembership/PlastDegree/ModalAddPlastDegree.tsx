@@ -63,7 +63,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
     <Modal
       visible={props.visibleModal}
       onCancel={handleCancel}
-      title={isUserDataLoaded ? `Прийняти до уладу ${fullName} (${age} р.)` : "Завантаження..."}
+      title={isUserDataLoaded ? `Прийняти до станиці ${fullName} (${age} р.)` : "Завантаження..."}
       footer={null}
     >
       {isUserDataLoaded ? <FormAddPlastDegree
