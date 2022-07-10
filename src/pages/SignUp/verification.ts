@@ -57,7 +57,7 @@ export const checkPhone = (role: object, value: string, callback: any) => {
 };
 
 export const checkPassword = (role: object, value: string, callback: any) => {
-  const reg = /^(?=.*\d)(?=.*[a-zа-яієїґ])(?=.*[A-ZА-ЯІЄЇҐ])(?=.*[^a-zA-ZА-ЯІіЄєЇїҐґ0-9])(?!.*\s).{8,}$/;
+  const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/;
   if (value.length > 0) {
     if (value.length < 8) {
       return callback(minLength(8));
