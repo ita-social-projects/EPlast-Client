@@ -579,7 +579,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           <div className={styles.parentDiv}>
             <Tag color={"blue"} key={oblastName} className={styles.tagText}>
               <Tooltip placement="topLeft" title={oblastName}>
-                {oblastName}
+                {oblastName as any}
               </Tooltip>
             </Tag>
           </div>
