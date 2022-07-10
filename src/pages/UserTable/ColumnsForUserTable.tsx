@@ -259,7 +259,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: "Стать",
       dataIndex: "gender",
-      width: 70,
+      width: 80,
       render: (gender: any) => {
         if (gender === null) {
           return <h4>Не вказано</h4>;
@@ -607,17 +607,17 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: "Звідки дізнався про Пласт",
       dataIndex: "referal",
-      width: 170,
+      width: 150,
       render: (referals: any) => {
         let referalsString = referals as string;
         return (
-          <div className={styles.parentDiv}>
+          <div style={{display: "flex", flexWrap: "wrap"}}>
             {referalsString?.split(',').map(referal => {
               return (
                 <Tag
                   color="blue"
                   key={referal}
-                  className={styles.tagText}
+                  className={styles.referalTag}
                 >
                   <Tooltip placement="leftTop" title={referal}>
                     {referal}
@@ -653,7 +653,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
   let commentColumn = {
     title: "Коментар",
     dataIndex: "comment",
-    width: 170,
+    width: 180,
     render: (comment: any, record: any) => {
       return (
         <UserComment userId={record.id} text={comment} canEdit={true}/>

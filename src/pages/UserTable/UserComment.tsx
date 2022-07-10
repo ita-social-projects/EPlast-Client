@@ -1,8 +1,9 @@
-import { CheckSquareFilled, DeleteFilled, EditFilled, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { CheckOutlined, CheckSquareFilled, DeleteFilled, EditFilled, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Input, Modal, Tooltip } from "antd";
+import TextArea from "antd/lib/input/TextArea";
 import React, { useState } from "react";
 import UserApi from "../../api/UserApi";
-
+import "./UserComment.less";
 interface CommentProperties {
     userId: string;
     text: string;
@@ -44,6 +45,7 @@ const UserComment = (props: CommentProperties) => {
         setLoading(true);
         try {
             await UserApi.deleteComment(props.userId);
+            setText("");
         }
         catch (error) {
             showError(error.message);
@@ -51,7 +53,6 @@ const UserComment = (props: CommentProperties) => {
         finally {
             setEditing(false);
             setLoading(false);
-            setText("");
         }
     }
 
@@ -59,19 +60,35 @@ const UserComment = (props: CommentProperties) => {
         isLoading
             ? <LoadingOutlined/>
             : isEditing
-                ?   <>
-                        <Input value={text} onChange={evt => setText(evt.target.value)}/>
-                        <CheckSquareFilled onClick={handleEdit}/>
-                    </>
+                ?   <div className="commentContainer">
+                        <TextArea value={text} onChange={evt => setText(evt.target.value)} autoSize={{minRows: 2, maxRows: 10}} maxLength={256}/>
+                        <Tooltip title="Зберегти коментар">
+                            <CheckOutlined className="commentIcon" onClick={handleEdit}/>
+                        </Tooltip>
+                    </div>
                 : text 
                     ?   <div className="commentContainer">
-                            {text}
-                            <EditFilled onClick={() => setEditing(true)}/>
-                            <DeleteFilled onClick={handleDelete}/>
+                            <Tooltip title={text}>
+                                <span className="commentText">
+                                    {text}
+                                </span>
+                            </Tooltip>
+                            {props.canEdit ? 
+                            <>
+                                <Tooltip title="Редагувати коментар">
+                                    <EditFilled className="commentIcon" onClick={() => setEditing(true)}/>
+                                </Tooltip>
+                                <Tooltip title="Видалити коментар">
+                                    <DeleteFilled className="commentIcon" onClick={handleDelete}/>
+                                </Tooltip>
+                            </>
+                            : null}
                         </div>
-                    :   <Tooltip title="Додати коментар">
-                            <PlusOutlined onClick={() => setEditing(true)}/>
-                        </Tooltip>
+                    :   props.canEdit
+                            ?   <Tooltip title="Додати коментар">
+                                    <PlusOutlined onClick={() => setEditing(true)}/>
+                                </Tooltip>
+                            : null
     )
 }
 
