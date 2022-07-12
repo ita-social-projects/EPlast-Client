@@ -1,5 +1,6 @@
 import Precaution from "./Precaution";
 import PrecautionUser from "./PrecautionUser";
+import UserPrecautionStatus from "./UserPrecautionStatus";
 import UserPrecautionTableItem from "./UserPrecautionTableItem";
 
 type DropDownProps = {
@@ -18,7 +19,7 @@ type DropDownProps = {
     endDate: Date,
     isActive: boolean,
     reason: string,
-    status: string,
+    status: UserPrecautionStatus,
     reporter: string,
     number: number,
     userId: PrecautionUser,

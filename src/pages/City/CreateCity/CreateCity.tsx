@@ -60,7 +60,7 @@ import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import OblastsRecord from "../../../models/Oblast/OblastsRecord";
+import OblastsRecord, { OblastsWithoutNotSpecified } from "../../../models/Oblast/OblastsRecord";
 import UkraineOblasts from "../../../models/Oblast/UkraineOblasts";
 import TextArea from "antd/lib/input/TextArea";
 import { getGoverningBodiesAdmins } from "../../../api/governingBodiesApi";
@@ -150,18 +150,18 @@ const CreateCity = () => {
         let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.GoverningBodyAdmin && admin.status === true);
         if (user) listOfReceivers.push(user.userId);
       });
-      
+
     getRegionAdministration(regionId)
       .then((response) => {
         let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.OkrugaHead && admin.status === true);
         if (user) listOfReceivers.push(user.userId);
       });
-    
+
     getSuperAdmins()
       .then((response) => {
         response.data.map((user: any) => listOfReceivers.push(user.id));
       });
-    
+
     return listOfReceivers;
   }
 
@@ -387,7 +387,7 @@ const CreateCity = () => {
           <b>Відмінити створення станиці ?</b>{" "}
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         history.goBack();
       },
@@ -470,8 +470,8 @@ const CreateCity = () => {
                       ? regionFollower.logo
                       : CityDefaultLogo
                     : city?.logo
-                    ? city.logo
-                    : CityDefaultLogo
+                      ? city.logo
+                      : CityDefaultLogo
                 }
                 alt="City"
                 className="cityLogo"
@@ -541,17 +541,17 @@ const CreateCity = () => {
                 labelCol={{ span: 24 }}
                 initialValue={
                   isFollowerPath ? regionFollower.level : 1
-                }                              
+                }
               >
                 <Select
-                showSearch
-                optionFilterProp="children"
+                  showSearch
+                  optionFilterProp="children"
                 >
-                {levels.map((item: number) => (
-                  <Select.Option value={item}>
-                  {item}
-                  </Select.Option>
-                ))}
+                  {levels.map((item: number) => (
+                    <Select.Option value={item}>
+                      {item}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col><Col md={11} xs={24}>
@@ -571,15 +571,10 @@ const CreateCity = () => {
                     location.pathname.startsWith(followerPath + "edit")
                   }
                 >
-                  {Object.entries(OblastsRecord)
-                  .sort(([keya, valuea], [keyb, valueb]) => valuea.localeCompare(valueb))
-                  .map(([key, value]) => {
-                    return Number(key) !== 0 ?
-                    <Select.Option key={key} value={Number(key)}>
+                  {OblastsWithoutNotSpecified.map(([key, value]) =>
+                    <Select.Option key={key} value={key}>
                       {value}
                     </Select.Option>
-                    : null
-                  }
                   )}
                 </Select>
               </Form.Item>
@@ -602,15 +597,15 @@ const CreateCity = () => {
                   }
                 >
                   {regions
-                  .sort((a, b) => a.regionName.localeCompare(b.regionName))
-                  .map((item: RegionProfile) => (
-                    <Select.Option
-                      key={item.id}
-                      value={isFollowerPath ? item.id : item.regionName}
-                    >
-                      {item.regionName}
-                    </Select.Option>
-                  ))}
+                    .sort((a, b) => a.regionName.localeCompare(b.regionName))
+                    .map((item: RegionProfile) => (
+                      <Select.Option
+                        key={item.id}
+                        value={isFollowerPath ? item.id : item.regionName}
+                      >
+                        {item.regionName}
+                      </Select.Option>
+                    ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -664,7 +659,7 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-            <Col md={{span: 11, offset: 2}} xs={24}>
+            <Col md={{ span: 11, offset: 2 }} xs={24}>
               <Form.Item
                 name="email"
                 label="Електронна пошта"
@@ -723,7 +718,7 @@ const CreateCity = () => {
             </Col>
             <Col xs={24} sm={12}>
               {location.pathname.startsWith(followerPath + "edit") ||
-              location.pathname.startsWith("/cities/edit/") ? (
+                location.pathname.startsWith("/cities/edit/") ? (
                 <Button
                   htmlType="submit"
                   loading={loadingButton}
