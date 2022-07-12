@@ -42,7 +42,6 @@ import {
   getGoverningBodyAdminsByPage,
   getGoverningBodyLogo,
 } from "../../api/governingBodiesApi";
-import AddDecisionModal from "../DecisionTable/AddDecisionModal";
 import notificationLogic from "../../components/Notifications/Notification";
 import AuthLocalStorage from "../../AuthLocalStorage";
 import userApi from "../../api/UserApi";
@@ -55,6 +54,7 @@ import {
   failEditAction,
 } from "../../components/Notifications/Messages";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import FormAddDecision from "../DecisionTable/FormAddDecision";
 
 const RegionBoard = () => {
   const history = useHistory();
@@ -639,10 +639,10 @@ const RegionBoard = () => {
         setVisibleModal={setVisibleModal}
         onAdd={onAdd}
       />
-      <AddDecisionModal
-        setVisibleModal={setVisibleDecisionModal}
-        visibleModal={visibleDecisionModal}
-        onAdd={handleAdd}
+        <FormAddDecision
+          setModalVisible={setVisibleDecisionModal}
+          modalVisible={visibleDecisionModal}
+          onSubmit={handleAdd}
       />
       <RegionDetailDrawer
         region={region}
