@@ -177,7 +177,7 @@ const AddNewRegionFormPage = () => {
                 </Form.Item>
               </Row>
 
-              <Row justify="center" gutter={2}>
+              <Row justify="center" gutter={[16, 4]}>
                 <Col md={12} xs={24}>
                 <Form.Item
                   label="Назва"
@@ -237,6 +237,8 @@ const AddNewRegionFormPage = () => {
                     labelCol={{ span: 24 }}
                   >
                     <Select
+                      showSearch
+                      optionFilterProp="children"
                       aria-autocomplete="none"
                       placeholder="Оберіть область"
                     >
@@ -246,6 +248,25 @@ const AddNewRegionFormPage = () => {
                         </Select.Option>
                       )}
                     </Select>
+                  </Form.Item>
+                </Col>
+
+                <Col md={12} xs={24}>
+                  <Form.Item
+                    labelCol={{ span: 24 }}
+                    label="Поштовий індекс"
+                    name="postIndex"
+                    rules={descriptionValidation.postIndex}
+                  >
+                    <Input
+                      onChange={(e) => {
+                        form.setFieldsValue({
+                          postIndex: getOnlyNums(e.target.value),
+                        });
+                      }}
+                      autoComplete="off"
+                      maxLength={5}
+                    />
                   </Form.Item>
                 </Col>
 
@@ -290,25 +311,6 @@ const AddNewRegionFormPage = () => {
                   rules={descriptionValidation.officeNumber}
                 >
                   <Input maxLength={6} />
-                </Form.Item>
-              </Col>
-
-                <Col md={12} xs={24}>
-                <Form.Item
-                  labelCol={{ span: 24 }}
-                  label="Поштовий індекс"
-                  name="postIndex"
-                  rules={descriptionValidation.postIndex}
-                >
-                  <Input
-                    onChange={(e) => {
-                      form.setFieldsValue({
-                        postIndex: getOnlyNums(e.target.value),
-                      });
-                    }}
-                    autoComplete="off"
-                    maxLength={5}
-                  />
                 </Form.Item>
               </Col>
 

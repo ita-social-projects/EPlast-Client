@@ -478,9 +478,9 @@ const CreateCity = () => {
               />
             </Upload>
           </Form.Item>
-          <Row justify="center">
+            <Row justify="center" gutter={[16, 4]}>
             {isFollowerPath ? (
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   name="applicant"
                   label="Заявник"
@@ -506,7 +506,7 @@ const CreateCity = () => {
               </Col>
             ) : null}
             {isFollowerPath ? (
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   name="appeal"
                   label="Заява"
@@ -518,7 +518,7 @@ const CreateCity = () => {
                 </Form.Item>
               </Col>
             ) : null}
-            <Col md={11} xs={24}>
+              <Col md={12} xs={24}>
               <Form.Item
                 name="name"
                 label="Назва"
@@ -534,7 +534,7 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Col md={12} xs={24}>
               <Form.Item
                 name="level"
                 label="Рівень"
@@ -554,7 +554,7 @@ const CreateCity = () => {
                   ))}
                 </Select>
               </Form.Item>
-            </Col><Col md={11} xs={24}>
+              </Col><Col md={12} xs={24}>
               <Form.Item
                 name="oblast"
                 label="Область"
@@ -579,7 +579,7 @@ const CreateCity = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Col md={12} xs={24}>
               <Form.Item
                 name="region"
                 label="Округа"
@@ -609,7 +609,7 @@ const CreateCity = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col md={11} xs={24}>
+              <Col md={12} xs={24}>
               <Form.Item
                 name="address"
                 label="Адреса"
@@ -625,7 +625,7 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Col md={12} xs={24}>
               <Form.Item
                 name="phoneNumber"
                 label="Номер телефону"
@@ -643,7 +643,7 @@ const CreateCity = () => {
                 </ReactInputMask>
               </Form.Item>
             </Col>
-            <Col md={11} xs={24}>
+              <Col md={12} xs={24}>
               <Form.Item
                 name="cityURL"
                 label="Посилання"
