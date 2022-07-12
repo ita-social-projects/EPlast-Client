@@ -170,7 +170,7 @@ const RegionEditFormPage = () => {
               </Upload>
             </Form.Item>
 
-              <Row justify="center" gutter={2}>
+              <Row justify="center" gutter={[16, 4]}>
                 <Col md={12} xs={24}>
                 <Form.Item
                   label="Назва"
@@ -239,6 +239,8 @@ const RegionEditFormPage = () => {
                     labelCol={{ span: 24 }}
                   >
                     <Select
+                      showSearch
+                      optionFilterProp="children"
                       aria-autocomplete="none"
                       placeholder="Оберіть область"
                     >
