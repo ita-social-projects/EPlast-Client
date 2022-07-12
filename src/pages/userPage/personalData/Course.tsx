@@ -14,6 +14,7 @@ import AddAchievementsModal from "../Blanks/UserAchievements/AddAchievementsModa
 import { getAllCourse, getAllCourseByUserId } from "../../../api/courseApi";
 import Course from "../../../models/Course/Course";
 import Title from "antd/lib/typography/Title";
+import { debug } from "console";
 
 export default function () {
 
@@ -42,7 +43,8 @@ export default function () {
   };
 
   const fetchData = async () => {
-       const response = await getAllCourseByUserId(activeUserId);
+    debugger
+    const response = await getAllCourseByUserId(activeUserId);
     setallCourses(response.data);
     setDataLoaded(true);
   };
@@ -67,13 +69,12 @@ export default function () {
     <div className="container">
   
     
-      {
+      { 
       allCourses.map((sectitem) =>
         
-         
           <Col>
-
           <Title level={2}>{sectitem.name}</Title>
+          
           
             <p> <strong>{userProfile?.user.firstName} </strong>, пройдіть курс для продовження співпраці з нами   </p>
 
@@ -88,7 +89,23 @@ export default function () {
           </div>    
           </Col>
          ) }
-        { !showAchievementModal ? (
+
+
+
+      { allCourses.length === 0 ? (
+          <Col>
+          <Title level={2}>Vumonline курс</Title>
+            <div className="rowBlock">
+              <a
+                href="https://vumonline.ua/search/?search=%D0%BF%D0%BB%D0%B0%D1%81%D1%82"
+              >
+                <img src={PlastLogo} alt="PlastLogo" />
+              </a>
+          </div>    
+          </Col>
+         ) : null}
+
+        
             <div className="rowBlock">
                   <Button
                     type="primary"
@@ -102,10 +119,10 @@ export default function () {
                   </Button>
              </div>
              
-          ) :  null }
+           
              <br/><br/><br/>
 
-            {showAchievementModal ? (
+            {allCourses.length === 0 ? (
              <div className="rowBlock">
            
            <p > Курс пройдено, сертифікат можна переглянути в  <Link to={urlaim} > <b>Досягненнях</b> </Link> </p><br/>
