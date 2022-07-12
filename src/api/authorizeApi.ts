@@ -25,7 +25,7 @@ export default class AuthorizeApi {
             notificationLogic("error", 'Щось пішло не так');
             break;
           case 409:
-            notificationLogic("error", 'Ваша пошта не підтверджена');
+            notificationLogic("error", 'Підтвердіть реєстрацію, перейшовши за посиланням, вказаним у електронній пошті');
             break;
         }
       });

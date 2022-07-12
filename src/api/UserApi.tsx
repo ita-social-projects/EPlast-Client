@@ -61,6 +61,27 @@ const getUserMenuAccess = async (userid: string) => {
   return response;
 };
 
+const putComment = async (
+  userId: string,
+  text: string
+) => {
+  const response = await axios.put(
+    `${BASE_URL}User/${userId}/comment`, JSON.stringify(text)
+  );
+
+  return response;
+};
+
+const deleteComment = async (
+  userId: string
+) => {
+  const response = await axios.put(
+    `${BASE_URL}User/${userId}/comment`, JSON.stringify("")
+  );
+
+  return response;
+};
+
 const getApprovers = async (userId: string, approverId: string) => {
   const response = await axios.get(
     `${`${BASE_URL}User/approvers/${userId}/${approverId}`}`
@@ -134,4 +155,6 @@ export default {
   updateProfileImage,
   getUserProfileAccess,
   getUserMenuAccess,
+  putComment,
+  deleteComment,
 };

@@ -7,23 +7,22 @@ import {
   Upload,
   Row,
   Col,
-  Modal,
+  Select,
 } from "antd";
 import React, { useState, useEffect } from "react";
-import RegionsApi, { checkIfNameExists } from "../../api/regionsApi";
 import ReactInputMask from "react-input-mask";
 import "./CreateRegion.less";
-import notificationLogic from "../../components/Notifications/Notification";
 import {
   DeleteOutlined,
-  ExclamationCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import { useHistory } from "react-router-dom";
-import Spinner from "../Spinner/Spinner";
 import Title from "antd/lib/typography/Title";
+import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
+import notificationLogic from "../../components/Notifications/Notification";
+import { getRegionById, EditRegion } from "../../api/regionsApi";
+import Spinner from "../Spinner/Spinner";
 import RegionProfile from "../../models/Region/RegionProfile";
 import {
   descriptionValidation,
@@ -35,11 +34,12 @@ import {
   possibleFileExtensions,
   fileIsTooBig,
   successfulEditAction,
+  emptyInput,
 } from "../../components/Notifications/Messages";
-import { showRegionNameExistsModal } from "../../components/Notifications/Modals";
+import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
 
 const RegionEditFormPage = () => {
-  let currentRegion = Number(
+  const currentRegion = Number(
     window.location.hash.substring(1) ||
       window.location.pathname.split("/").pop()
   );
@@ -53,19 +53,19 @@ const RegionEditFormPage = () => {
     new RegionProfile()
   );
 
-  useEffect(() => {
-    getRegion();
-  }, []);
-
   const getRegion = async () => {
     try {
-      const response = await RegionsApi.getRegionById(currentRegion);
+      const response = await getRegionById(currentRegion);
       setChosenRegion(response.data);
       setLogo(response.data.logo);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getRegion();
+  }, []);
 
   const checkFile = (size: number, fileName: string) => {
     const extension = fileName.split(".").reverse()[0].toLowerCase();
@@ -123,11 +123,12 @@ const RegionEditFormPage = () => {
       houseNumber: values.houseNumber,
       officeNumber: values.officeNumber,
       postIndex: values.postIndex,
-      logo: logo,
+      logo,
+      oblast: values.oblast,
       city: values.city,
       isActive: chosenRegion.isActive,
     };
-    await RegionsApi.EditRegion(currentRegion, newRegion);
+    await EditRegion(currentRegion, newRegion);
     form.resetFields();
     notificationLogic("success", successfulEditAction("Дані округи"));
     history.push(`/regions/${currentRegion}`);
@@ -162,15 +163,15 @@ const RegionEditFormPage = () => {
                   <PlusOutlined />
                 )}
                 <img
-                  src={logo ? logo : CityDefaultLogo}
+                    src={logo ?? CityDefaultLogo}
                   alt="Region"
                   className="cityLogo"
                 />
               </Upload>
             </Form.Item>
 
-            <Row justify="center">
-              <Col md={11} xs={24}>
+              <Row justify="center" gutter={2}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   label="Назва"
                   name="regionName"
@@ -180,20 +181,9 @@ const RegionEditFormPage = () => {
                 >
                   <Input value={chosenRegion.regionName} maxLength={51} />
                 </Form.Item>
-              </Col>
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
-                <Form.Item
-                  label="Опис"
-                  name="description"
-                  initialValue={chosenRegion?.description}
-                  labelCol={{ span: 24 }}
-                  rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
-                >
-                  <Input value={chosenRegion?.description} maxLength={1001} />
-                </Form.Item>
-              </Col>
+                </Col>
 
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   name="phoneNumber"
                   label="Номер телефону"
@@ -214,7 +204,7 @@ const RegionEditFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   label="Електронна пошта"
                   name="email"
@@ -226,7 +216,7 @@ const RegionEditFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   label="Посилання"
                   name="link"
@@ -238,7 +228,30 @@ const RegionEditFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Col md={12} xs={24}>
+                  <Form.Item
+                    name="oblast"
+                    rules={[
+                      { required: true, message: emptyInput() }
+                    ]}
+                    label="Область"
+                    initialValue={chosenRegion?.oblast}
+                    labelCol={{ span: 24 }}
+                  >
+                    <Select
+                      aria-autocomplete="none"
+                      placeholder="Оберіть область"
+                    >
+                      {OblastsWithoutNotSpecified.map(([key, value]) =>
+                        <Select.Option key={key} value={key}>
+                          {value}
+                        </Select.Option>
+                      )}
+                    </Select>
+                  </Form.Item>
+                </Col>
+
+                <Col md={12} xs={24}>
                 <Form.Item
                   label="Місто"
                   name="city"
@@ -250,7 +263,7 @@ const RegionEditFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
                   label="Вулиця"
@@ -262,7 +275,7 @@ const RegionEditFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
                   label="Номер будинку"
@@ -274,7 +287,7 @@ const RegionEditFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
                   label="Номер офісу/квартири"
@@ -286,7 +299,7 @@ const RegionEditFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
                   label="Поштовий індекс"
@@ -305,6 +318,18 @@ const RegionEditFormPage = () => {
                     value={chosenRegion.postIndex}
                   />
                 </Form.Item>
+                </Col>
+
+                <Col xs={24}>
+                  <Form.Item
+                    label="Опис"
+                    name="description"
+                    initialValue={chosenRegion?.description}
+                    labelCol={{ span: 24 }}
+                    rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
+                  >
+                    <Input.TextArea rows={3} value={chosenRegion?.description} maxLength={1001} />
+                  </Form.Item>
               </Col>
             </Row>
 

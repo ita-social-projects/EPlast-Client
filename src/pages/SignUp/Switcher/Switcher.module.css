@@ -233,3 +233,28 @@
         margin-top: 15px;
     }
 }
+
+@media(max-width: 350px){
+    .loginText{
+        font-size:9px;
+        margin-top: 8px;
+        margin-left: 5px;
+    }
+
+    .registerText{
+        font-size: 9px;
+        margin-top: 8px;
+        margin-right: 5px;
+    }
+    .orSwitcher{
+        font-size:18px;
+        margin-bottom: 2px;
+    }
+    .loginCircle{
+        transform: scale(0.5);
+    }
+    .loginRectangle{
+        height: 30px;
+        margin-top: 15px;
+    }
+}
