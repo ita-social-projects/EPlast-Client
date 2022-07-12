@@ -559,7 +559,7 @@ const CreateCity = () => {
                 name="oblast"
                 label="Область"
                 labelCol={{ span: 24 }}
-                initialValue={
+                initialValue={ 
                   isFollowerPath ? regionFollower.oblast : city.oblast
                 }
                 rules={[{ required: true, message: emptyInput("область") }]}
