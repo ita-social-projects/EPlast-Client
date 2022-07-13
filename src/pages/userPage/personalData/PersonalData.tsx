@@ -13,6 +13,8 @@ import UserApi from "../../../api/UserApi";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from "../../../components/Notifications/Notification";
 import ScrollToTop from "../../../components/ScrollToTop/ScrollToTop";
+import Course from "./Course";
+import Spinner from "../../Spinner/Spinner";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
@@ -36,14 +38,11 @@ export default function ({
 }: any) {
   const { userId } = useParams<{ userId: string }>();
 
-  useEffect(() => {
-    fetchData();
-  }, [userId]);
 
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserId, setActiveUserId] = useState<string>("");
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
-  const [loading, setLoading] = useState(false);
+  const [dataLoaded, setLoading] = useState(false);
   const [imageBase64, setImageBase64] = useState<string>("");
   const [fullUserProfile, setFullUserProfile] = useState<Data>();
   const [userProfileAccess, setUserProfileAccess] = useState<{
@@ -60,7 +59,6 @@ export default function ({
   };
 
   const fetchData = async () => {
-    setLoading(false);
     let userRoles = UserApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
@@ -101,6 +99,10 @@ export default function ({
     setLoading(true);
   };
 
+  useEffect(() => {
+    if (!dataLoaded) {fetchData();}
+  }, [dataLoaded]);
+
   return (
     <PersonalDataContext.Provider
       value={{
@@ -110,13 +112,14 @@ export default function ({
         activeUserId,
         activeUserProfile,
         userProfileAccess,
-        loading,
+        loading: dataLoaded,
         imageBase64,
         ChangeUserProfile,
         UpdateData,
       }}
     >
       <ScrollToTop />
+      {!dataLoaded ? <Spinner /> :
       <div className="mainContainer">
         <Menu id={userId} />
         {specify === "main" ? (
@@ -147,12 +150,16 @@ export default function ({
           <div className="content">
             <Approvers />
           </div>
+        ): specify === "course" ? (
+          <div className="content">
+            <Course />
+          </div>
         ) : (
           <div className="content">
             <UserFields />
           </div>
         )}
-      </div>
+      </div>}
     </PersonalDataContext.Provider>
   );
 }
