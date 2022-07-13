@@ -8,12 +8,13 @@ import PrecautionStore from "../../../stores/StorePrecaution";
 import "./Filter.less";
 import { createHook } from "react-sweet-state";
 import AddPrecautionModal from "./AddPrecautionModal";
+import { getUserPrecautionStatusStr } from "../Interfaces/UserPrecautionStatus";
 
 const { Content } = Layout;
 
 const PrecautionTable = () => {
   const classes = require("./Table.module.css");
-  
+
   const useStore = createHook(PrecautionStore);
   const [state, actions] = useStore();
 
@@ -96,9 +97,9 @@ const PrecautionTable = () => {
             </div>
           }
           <ClickAwayListener onClickAway={actions.handleClickAway}>
-            <DropDownPrecautionTable/>
-          </ClickAwayListener>        
-          <AddPrecautionModal/>
+            <DropDownPrecautionTable />
+          </ClickAwayListener>
+          <AddPrecautionModal />
         </>
       </Content>
     </Layout>

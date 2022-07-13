@@ -1,6 +1,6 @@
-enum UkraineOblasts {
+export enum UkraineOblasts {
     NotSpecified = 0,
-    Cherkasy,
+    Cherkasy = 1,
     Chernihiv,
     Chernivtsi,
     Crimea,

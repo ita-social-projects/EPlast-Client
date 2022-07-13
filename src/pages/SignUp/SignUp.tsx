@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Form, Input, Button, Modal, Select, DatePicker, Tabs, Space, Spin, Switch, Checkbox } from "antd";
 import styles from "./SignUp.module.css";
 import Switcher from "./Switcher/Switcher";
@@ -17,14 +17,13 @@ import { GenderIdEnum, GenderNameEnum, genderRecords } from "../../models/UserTa
 import moment from "moment";
 import ReactInputMask from "react-input-mask";
 import { SingUpStore } from "../../stores/SingUpStore";
-import { ActiveRegionDataResponse, getActiveRegionsByPage } from "../../api/regionsApi";
-import TabList, { TabRenderMode } from "./TabList";
+import { ActiveRegionDataResponse, getActiveRegionsByPage, getRegions } from "../../api/regionsApi";
 import TabInputList from "./TabInputList";
-import Spinner from "../Spinner/Spinner";
-import OblastsRecord from "../../models/Oblast/OblastsRecord";
 import { SelectValue } from "antd/lib/select";
 import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
 import CheckboxsItem from "./CheckboxsItem";
+import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
+import RegionForAdministration from "../../models/Region/RegionForAdministration";
 
 let authService = new AuthorizeApi();
 
@@ -35,18 +34,16 @@ const SignUp: React.FC = () => {
   const [state, actions] = SingUpStore();
   const [cityLoading, setCityLoading] = useState(false);
   const [regionLoading, setRegionLoading] = useState(false);
-  const [cityTimeout, setCityTimeout] = useState(setTimeout(() => { }, 0));
-  const [regionTimeout, setRegionTimeout] = useState(setTimeout(() => { }, 0));
-  const [hasPlast, setHasntPlast] = useState(false)
+  const [hasPlast, setHasntPlast] = useState(false);
   const [areaSelected, setAreaSelected] = useState(false);
+  const regionSelectRef = useRef(null);
   const history = useHistory();
 
   useEffect(() => {
-
+    actions.resetFormData();
     (async () => {
       const termsData: TermsOfUseModel = await termsApi.getTerms();
       actions.setTerms(termsData);
-
     })();
   }, []);
 
@@ -88,7 +85,7 @@ const SignUp: React.FC = () => {
           && Math.ceil(state.cityPage.total! / state.cityPage.size!) !== state.cityPage.number!) {
           setCityLoading(true);
           const data: ActiveCityDataResponse
-            = (await getActiveCitiesByPage(state.cityPage.number! + 1, state.cityPage.size!, state.cityPage.text, state.formData.oblast)).data;
+            = (await getActiveCitiesByPage(state.cityPage.number! + 1, state.cityPage.size!, undefined, state.formData.oblast)).data;
           const { total, cities: newCities } = data;
           actions.setCityPageInfo({
             total: total,
@@ -98,59 +95,8 @@ const SignUp: React.FC = () => {
           setCityLoading(false);
         }
       },
-      regionScroll: async (event: Event) => {
-        const target = event.target as HTMLDivElement;
-        const currentPosition = target.scrollTop + target.offsetHeight;
-        const fetchPosition = target.scrollHeight - 120;
-        if (regionLoading === false
-          && currentPosition > fetchPosition
-          && Math.ceil(state.regionPage.total! / state.regionPage.size!) !== state.regionPage.number!) {
-          setRegionLoading(true);
-          const data: ActiveRegionDataResponse
-            = (await getActiveRegionsByPage(state.regionPage.number! + 1, state.regionPage.size!, state.regionPage.text, state.formData.oblast)).data;
-          const { total, regions: newRegions } = data;
-          actions.setRegionPageInfo({
-            total: total,
-            number: state.regionPage.number! + 1,
-          });
-          actions.addRegionsRange(newRegions);
-          setRegionLoading(false);
-        }
-      },
       filter: (input: string, option: any) => {
         return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0 || option.value === 0;
-      },
-    },
-    search: {
-      city: (value: string) => {
-        clearTimeout(cityTimeout);
-        setCityLoading(true);
-        const timeout = setTimeout(async () => {
-          const { cities: newCities, total }: ActiveCityDataResponse = (await getActiveCitiesByPage(1, state.cityPage.size!, value)).data;
-          actions.setCityPageInfo({
-            total: total,
-            number: 1,
-            text: value
-          });
-          actions.setCities(newCities);
-          setCityLoading(false);
-        }, 750);
-        setCityTimeout(timeout);
-      },
-      region: (value: string) => {
-        clearTimeout(regionTimeout);
-        setRegionLoading(true);
-        const timeout = setTimeout(async () => {
-          const { regions: newRegions, total }: ActiveRegionDataResponse = (await getActiveRegionsByPage(1, state.regionPage.size!, value)).data;
-          actions.setRegionPageInfo({
-            total: total,
-            number: 1,
-            text: value
-          });
-          actions.setRegions(newRegions);
-          setRegionLoading(false);
-        }, 750);
-        setRegionTimeout(timeout);
       },
     },
     change: {
@@ -159,14 +105,19 @@ const SignUp: React.FC = () => {
         setCityLoading(true);
         setRegionLoading(true);
 
+        form.setFieldsValue({
+          regionId: undefined,
+          cityId: undefined
+        });
+
         const cityPromise = getActiveCitiesByPage(1, state.cityPage.size!, null, Number(value));
-        const regionPromise = getActiveRegionsByPage(1, state.regionPage.size!, null, Number(value));
+        const regionPromise = getRegions(Number(value));
 
         const [cityRes, regionRes] = await Promise.all([cityPromise, regionPromise])
 
         const { cities, total: cityTotal }: ActiveCityDataResponse
           = cityRes.data
-        const { regions, total: regionTotal }: ActiveRegionDataResponse
+        const regions: RegionForAdministration[]
           = regionRes.data
 
         actions.setCities(cities);
@@ -176,10 +127,6 @@ const SignUp: React.FC = () => {
         });
 
         actions.setRegions(regions);
-        actions.setRegionPageInfo({
-          total: regionTotal,
-          number: 1
-        });
 
         setCityLoading(false);
         setRegionLoading(false);
@@ -226,8 +173,10 @@ const SignUp: React.FC = () => {
     ],
     Address: [
       { validator: checkAddress },
+      { required: true, message: emptyInput() }
     ],
     PhoneNumber: [
+      { required: true, message: emptyInput() },
       { validator: checkPhone },
     ],
     FacebookLink: [
@@ -245,33 +194,35 @@ const SignUp: React.FC = () => {
     <div className={styles.mainContainerSignUp} >
       <Switcher page="SignUp" />
       <Form
+        layout="vertical"
         initialValues={state.formData}
         name="SignUpForm"
         form={form}
         onFinish={handler.submit}
       >
-        <Form.Item name="lastName" rules={validator.LastName}>
-          <Input className={styles.MyInput} placeholder="Прізвище" />
+        <Form.Item label="Прізвище" name="lastName" rules={validator.LastName}>
+          <Input placeholder="Введіть прізвище" />
         </Form.Item>
 
-        <Form.Item name="firstName" rules={validator.FirstName}>
-          <Input className={styles.MyInput} placeholder="Ім'я" />
+        <Form.Item label="Ім'я" name="firstName" rules={validator.FirstName}>
+          <Input placeholder="Введіть ім'я" />
         </Form.Item>
 
-        <Form.Item name="fatherName" rules={validator.FatherName}>
-          <Input className={styles.MyInput} placeholder="По батькові" />
+        <Form.Item label="По батькові" name="fatherName" rules={validator.FatherName}>
+          <Input placeholder="Введіть по батькові" />
         </Form.Item>
 
-        <Form.Item name="address" rules={validator.Address}>
-          <Input className={styles.MyInput} placeholder="Місце проживання" />
+        <Form.Item label="Місце проживання" name="address" rules={validator.Address}>
+          <Input placeholder="Введіть місце проживання" />
         </Form.Item>
 
         <Form.Item
           rules={validator.Date}
           name="birthday"
+          label="Дата народження"
         >
           <DatePicker
-            placeholder="Дата народження"
+            placeholder="Оберіть дату народження"
             className={styles.MyDatePicker}
             format="DD.MM.YYYY"
             disabledDate={current => {
@@ -283,10 +234,9 @@ const SignUp: React.FC = () => {
         <Form.Item
           name="genderId"
           initialValue={GenderNameEnum.NotSpecified}
+          label="Стать"
         >
-          <Select
-            className={styles.MySelect}
-            placeholder="Стать">
+          <Select>
             <Select.Option value={GenderIdEnum.UnwillingToChoose}>
               {genderRecords[GenderIdEnum.UnwillingToChoose]}
             </Select.Option>
@@ -302,17 +252,15 @@ const SignUp: React.FC = () => {
         <Form.Item
           name="oblast"
           rules={validator.Oblast}
+          label="Область"
         >
           <Select
             aria-autocomplete="none"
-            showSearch
-            className={styles.MySelect}
             placeholder="Оберіть область"
             onChange={handler.change.oblast}
-            filterOption={handler.select.filter}
           >
-            {Object.entries(OblastsRecord).map(([key, value]) =>
-              <Select.Option key={key} value={Number(key)}>
+            {OblastsWithoutNotSpecified.map(([key, value]) =>
+              <Select.Option key={key} value={key}>
                 {value}
               </Select.Option>
             )}
@@ -326,16 +274,14 @@ const SignUp: React.FC = () => {
             ? <Form.Item
               name="regionId"
               rules={[{ required: true, message: emptyInput() }]}
+              label="Округа"
             >
               <Select
+                ref={regionSelectRef}
                 aria-autocomplete="none"
-                onSearch={handler.search.region}
-                showSearch
                 disabled={!areaSelected}
-                onPopupScroll={(e: any) => handler.select.regionScroll(e)}
-                className={styles.MySelect}
                 placeholder="Оберіть округу"
-                filterOption={handler.select.filter}
+                value={state.formData.regionId}
               >
                 {state.regions.map((apd) => {
                   return (
@@ -350,16 +296,14 @@ const SignUp: React.FC = () => {
             : <Form.Item
               name="cityId"
               rules={[{ required: true, message: emptyInput() }]}
+              label="Станиця"
             >
               <Select
                 aria-autocomplete="none"
-                onSearch={handler.search.city}
-                showSearch
                 disabled={!areaSelected}
                 onPopupScroll={(e: any) => handler.select.cityScroll(e)}
-                className={styles.MySelect}
                 placeholder="Оберіть станицю"
-                filterOption={handler.select.filter}
+                value={state.formData.cityId}
               >
                 {state.cities.map((apd) => {
                   return (
@@ -380,8 +324,7 @@ const SignUp: React.FC = () => {
             },
             input: {
               type: "url",
-              className: styles.MyInput,
-              placeholder: "Facebook сторінка"
+              placeholder: "Введіть посилання на facebook сторінку"
             }
           },
           {
@@ -392,20 +335,18 @@ const SignUp: React.FC = () => {
             },
             input: {
               type: "url",
-              className: styles.MyInput,
-              placeholder: "Twitter сторінка"
+              placeholder: "Введіть посилання на twitter сторінку"
             }
           },
           {
             tabTitle: "Instagram",
             formItem: {
               name: "instagramLink",
-              rules: validator.InstagramLink
+              rules: validator.InstagramLink,
             },
             input: {
               type: "url",
-              className: styles.MyInput,
-              placeholder: "Instagram сторінка"
+              placeholder: "Введіть посилання на instagram сторінку"
             }
           }]
         } />
@@ -413,33 +354,33 @@ const SignUp: React.FC = () => {
         <Form.Item
           name="phoneNumber"
           rules={validator.PhoneNumber}
+          label="Телефон"
         >
           <div className={"ant-form-item-control-input-content"}>
             <ReactInputMask
-              className={`ant-input ${styles.MyInput}`}
+              className={`ant-input`}
               mask="+380(99)-999-99-99"
-              placeholder="Номер телефону"
+              placeholder="Введіть номер телефону"
             />
           </div>
         </Form.Item>
 
-        <Form.Item name="email" rules={validator.Email}>
+        <Form.Item label="Пошта" name="email" rules={validator.Email}>
           <Input
-            className={styles.MyInput}
-            placeholder="Електронна пошта" />
+            placeholder="Введіть електронну пошту" />
         </Form.Item>
 
-        <Form.Item name="password" rules={validator.Password}>
+        <Form.Item name="password" label="Пароль" rules={validator.Password}>
           <Input.Password
             visibilityToggle={true}
-            className={styles.MyInput}
-            placeholder="Пароль"
+            placeholder="Введіть пароль"
           />
         </Form.Item>
 
         <Form.Item
           name="confirmPassword"
           dependencies={["password"]}
+          label="Підтверження пароля"
           rules={[
             {
               required: true,
@@ -457,8 +398,7 @@ const SignUp: React.FC = () => {
         >
           <Input.Password
             visibilityToggle={true}
-            className={styles.MyInput}
-            placeholder="Підтвердити пароль"
+            placeholder="Введіть пароль ще раз"
           />
         </Form.Item>
 

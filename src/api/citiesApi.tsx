@@ -50,7 +50,7 @@ export const getNotActiveCitiesByPage = async (
   name: string | null = null
 ) => {
   return await api
-    .get(`Cities/Profiles/NotActive/${page}`, {page, pageSize, name })
+    .get(`Cities/Profiles/NotActive/${page}`, { page, pageSize, name })
     .catch((error) => {
       throw new Error(error);
     });

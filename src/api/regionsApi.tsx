@@ -200,8 +200,8 @@ export const removeDocument = async (documentId: number) => {
     });
 };
 
-export const getRegions = async () => {
-  return api.get(`Regions/Regions`).catch((error) => {
+export const getRegions = async (oblast?: UkraineOblasts) => {
+  return api.get(`Regions/Regions`, { oblast }).catch((error) => {
     throw new Error(error);
   });
 };
@@ -314,12 +314,11 @@ export interface ActiveRegionDataResponse {
 export const getActiveRegionsByPage = async (
   page: number,
   pageSize: number,
-  regionName: string | null = null,
-  oblast: UkraineOblasts = UkraineOblasts.NotSpecified
+  regionName: string | null = null
 ) => {
   return await api
-    .get(`Regions/Profiles/Active/${page}`, { page, pageSize, regionName
-    //  , oblast 
+    .get(`Regions/Profiles/Active/${page}`, {
+      page, pageSize, regionName
     })
     .catch((error) => {
       throw new Error(error);

@@ -29,4 +29,14 @@ const OblastsRecord: Record<UkraineOblasts, string> = {
     [UkraineOblasts.Zhytomyr]: "Житомирська",
 }
 
+export const Oblasts: Readonly<[UkraineOblasts, string][]> = Object.entries(OblastsRecord)
+    .sort(([key1, value1], [key2, value2]) => value1.localeCompare(value2))
+    .map(([key, value]) => {
+        const tuple: [UkraineOblasts, string] = [Number(key), value];
+        return tuple;
+    });
+
+export const OblastsWithoutNotSpecified: Readonly<[UkraineOblasts, string][]>
+    = Oblasts.filter(([key, value]) => key !== UkraineOblasts.NotSpecified);
+
 export default OblastsRecord;
