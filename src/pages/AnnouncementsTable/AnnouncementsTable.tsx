@@ -236,7 +236,7 @@ const AnnouncementsTable = () => {
                         >
                           <Popconfirm
                             placement="bottom"
-                            title="Відкріпити оголоення"
+                            title="Відкріпити оголошення"
                             icon={null}
                             onConfirm={() => handlePin(item)}
                             okText="Так"
