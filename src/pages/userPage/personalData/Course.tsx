@@ -43,7 +43,6 @@ export default function () {
   };
 
   const fetchData = async () => {
-    debugger
     const response = await getAllCourseByUserId(activeUserId);
     setallCourses(response.data);
     setDataLoaded(true);
@@ -51,11 +50,7 @@ export default function () {
 
   useEffect(() => {
     fetchData();
-    
-   
   }, []);
-
-
   return loading === false ? (
     <div className="kadraWrapper">
       <Skeleton.Avatar
@@ -67,18 +62,12 @@ export default function () {
     </div>
   ) : isDataLoaded === true ? (
     <div className="container">
-  
-    
       { 
       allCourses.map((sectitem) =>
         
           <Col>
           <Title level={2}>{sectitem.name}</Title>
-          
-          
             <p> <strong>{userProfile?.user.firstName} </strong>, пройдіть курс для продовження співпраці з нами   </p>
-
-
             <div className="rowBlock">
            
               <a
@@ -89,8 +78,6 @@ export default function () {
           </div>    
           </Col>
          ) }
-
-
 
       { allCourses.length === 0 ? (
           <Col>
