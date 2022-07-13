@@ -6,6 +6,9 @@ import { DatePicker, Tooltip } from "antd";
 import { SortOrder } from "antd/lib/table/interface";
 import { FormLabelAlign } from "antd/lib/form/interface";
 import "./Filter.less";
+import UserPrecautionStatus, { getUserPrecautionStatusStr, userPrecautionStatuses } from "../Interfaces/UserPrecautionStatus";
+import { ColumnsType } from "antd/es/table";
+import UserPrecautionTableItem from "../Interfaces/UserPrecautionTableItem";
 
 const fetchYears = () => {
   const arrayOfYears = [];
@@ -16,7 +19,7 @@ const fetchYears = () => {
   return arrayOfYears;
 };
 const years = fetchYears();
-const columns = [
+const columns: ColumnsType<UserPrecautionTableItem> = [
   {
     align: "right" as FormLabelAlign,
     title: "№",
@@ -105,25 +108,16 @@ const columns = [
     ellipsis: {
       showTitle: false,
     },
-    filters: [
-      {
-        text: "Прийнято",
-        value: "Прийнято",
-      },
-      {
-        text: "Потверджено",
-        value: "Потверджено",
-      },
-      {
-        text: "Скасовано",
-        value: "Скасовано",
-      },
-    ],
-    render: (status: any) => (
-      <Tooltip placement="topRight" title={status}>
-        {status}
+    filters: userPrecautionStatuses.map(([id, text]) => ({
+      text: text,
+      value: id,
+    })),
+    render: (status: UserPrecautionStatus) => {
+      const statusStr = getUserPrecautionStatusStr(status);
+      return <Tooltip placement="topRight" title={status}>
+        <>{statusStr}</>
       </Tooltip>
-    ),
+    },
   },
 ];
 export default columns;

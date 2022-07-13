@@ -13,6 +13,7 @@ import {
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
 import PrecautionStore from "../../../stores/StorePrecaution";
+import { userPrecautionStatuses } from "../Interfaces/UserPrecautionStatus";
 
 const FormAddPrecaution = () => {
   const useStore = createHook(PrecautionStore);
@@ -24,7 +25,7 @@ const FormAddPrecaution = () => {
     return current && current > moment();
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     actions.fetchDataFormAddPrecaution();
   }, []);
 
@@ -37,7 +38,7 @@ const FormAddPrecaution = () => {
   return (
     <Form
       name="basic"
-      onFinish={(values: any ) => actions.addModalHandleSubmit(values, form)}
+      onFinish={(values: any) => actions.addModalHandleSubmit(values, form)}
       form={form}
       id="addArea"
       style={{ position: "relative" }}
@@ -62,8 +63,8 @@ const FormAddPrecaution = () => {
                 validator: async (_: object, value: number) =>
                   value && !isNaN(value) && value > 0
                     ? (await precautionApi
-                        .checkNumberExisting(value)
-                        .then((response) => response.data === false))
+                      .checkNumberExisting(value)
+                      .then((response) => response.data === false))
                       ? Promise.resolve()
                       : Promise.reject("Цей номер уже зайнятий")
                     : Promise.reject(),
@@ -107,7 +108,6 @@ const FormAddPrecaution = () => {
           >
             <Select
               className={formclasses.selectField}
-              showSearch
               loading={state.loadingPrecautionStatus}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
@@ -234,18 +234,15 @@ const FormAddPrecaution = () => {
           >
             <Select
               className={formclasses.selectField}
-              showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              <Select.Option key="9" value="Прийнято">
-                Прийнято
-              </Select.Option>
-              <Select.Option key="10" value="Потверджено">
-                Потверджено
-              </Select.Option>
-              <Select.Option key="11" value="Скасовано">
-                Скасовано
-              </Select.Option>
+              {
+                userPrecautionStatuses.map(([id, text]) => (
+                  <Select.Option key={id} value={id}>
+                    {text}
+                  </Select.Option>
+                ))
+              }
             </Select>
           </Form.Item>
         </Col>
@@ -272,7 +269,7 @@ const FormAddPrecaution = () => {
           </Form.Item>
         </Col>
       </Row>
-    </Form>
+    </Form >
   );
 };
 

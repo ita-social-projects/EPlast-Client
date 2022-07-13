@@ -187,7 +187,7 @@ const PrivateLayout = ({ children }: any) => {
             ) : (
               <> </>
             )}
-
+            {userAccesses["directory"] ? (
             <SubMenu key="sub1" icon={<BookOutlined />} title="Довідник">
               {userAccesses["userTable"] ? (
                 <Menu.Item
@@ -315,7 +315,9 @@ const PrivateLayout = ({ children }: any) => {
               ) : (
                 <> </>
               )}
-            </SubMenu>
+            </SubMenu>) : (
+                <> </>
+              )}
             {userAnnualReportAccess?.CanViewReportsPage &&
             userStatisticsAccess?.CanCityStatisticsFormReport ? (
               <SubMenu

@@ -37,7 +37,6 @@ const SignUp: React.FC = () => {
   const [hasPlast, setHasntPlast] = useState(false);
   const [areaSelected, setAreaSelected] = useState(false);
   const regionSelectRef = useRef(null);
-  const citySelectRef = useRef(null);
   const history = useHistory();
 
   useEffect(() => {
