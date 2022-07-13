@@ -14,13 +14,14 @@ import {
 } from "../../../models/GllobalValidations/DescriptionValidation";
 import { createHook } from "react-sweet-state";
 import PrecautionStore from "../../../stores/StorePrecaution";
+import { userPrecautionStatuses } from "../Interfaces/UserPrecautionStatus";
 moment.locale("uk-ua");
 
 const FormEditPrecaution = () => {
   const useStore = createHook(PrecautionStore);
   const [state, actions] = useStore();
 
-  const [form] = Form.useForm(); 
+  const [form] = Form.useForm();
   const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {
@@ -123,7 +124,6 @@ const FormEditPrecaution = () => {
               >
                 <Select
                   className={formclasses.selectField}
-                  showSearch
                   onSelect={actions.editModalSetPrecautionChange}
                   loading={state.editModalLoadingPrecautionStatus}
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
@@ -257,18 +257,15 @@ const FormEditPrecaution = () => {
               >
                 <Select
                   className={formclasses.selectField}
-                  showSearch
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
-                  <Select.Option key="9" value="Прийнято">
-                    Прийнято
-                  </Select.Option>
-                  <Select.Option key="10" value="Потверджено">
-                    Потверджено
-                  </Select.Option>
-                  <Select.Option key="11" value="Скасовано">
-                    Скасовано
-                  </Select.Option>
+                  {
+                    userPrecautionStatuses.map(([id, text]) => (
+                      <Select.Option key={id} value={id}>
+                        {text}
+                      </Select.Option>
+                    ))
+                  }
                 </Select>
               </Form.Item>
             </Col>

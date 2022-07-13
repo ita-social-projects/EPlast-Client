@@ -13,6 +13,8 @@ import AuthLocalStorage from '../AuthLocalStorage';
 import deleteConfirm from "../../src/pages/Precaution/PrecautionTable/DeleteConfirm";
 import User from "../../src/models/UserTable/User";
 import Precaution from '../../src/pages/Precaution/Interfaces/Precaution';
+import UserPrecautionEdit from '../pages/Precaution/Interfaces/UserPrecautionEdit';
+import UserPrecautionStatus from '../pages/Precaution/Interfaces/UserPrecautionStatus';
 
 let user: any;
 let curToken = AuthLocalStorage.getToken() as string;
@@ -34,7 +36,7 @@ const EmptyUserPrecautionTableItem: UserPrecautionTableItem = {
   userName: "",
   reporter: "",
   reason: "",
-  status: "",
+  status: null,
   date: new Date(),
   endDate: new Date(),
   isActive: false,
@@ -81,7 +83,7 @@ type State = {
 
 type Actions = typeof actions;
 
-const initialState = {
+const initialState: State = {
   pageX: 0,
   pageY: 0,
   userId: 0,
@@ -110,7 +112,7 @@ const initialState = {
       userName: "",
       reporter: "",
       reason: "",
-      status: "",
+      status: null,
       date: new Date(),
       endDate: new Date(),
       isActive: false,
@@ -131,7 +133,7 @@ const initialState = {
       name: "",
     },
     precautionId: 0,
-    status: "",
+    status: null,
     userId: "",
     reporter: "",
     reason: "",
@@ -321,7 +323,7 @@ const actions = {
       endDate: Date,
       isActive: boolean,
       reason: string,
-      status: string,
+      status: UserPrecautionStatus,
       reporter: string,
       number: number,
       user: any,
@@ -379,7 +381,15 @@ const actions = {
   FormAddPrecaution:
     (newPrecaution: UserPrecaution, form: any): Action<State> =>
       async ({ dispatch, setState }) => {
-        await precautionApi.addUserPrecaution(newPrecaution);
+        await precautionApi.addUserPrecaution({
+          precautionId: newPrecaution.precautionId,
+          reporter: newPrecaution.reporter,
+          reason: newPrecaution.reason,
+          status: newPrecaution.status!,
+          number: newPrecaution.number,
+          date: newPrecaution.date,
+          userId: newPrecaution.userId
+        });
         setState({
           visibleModal: false
         });
@@ -563,16 +573,12 @@ const actions = {
   editModalHandleFinish:
     (editedUserPrecaution: any, form: any): Action<State> =>
       async ({ setState, getState, dispatch }) => {
-        const newPrecaution: UserPrecaution = {
+        const newPrecaution: UserPrecautionEdit = {
           id: getState().userPrecaution.id,
           precautionId: getState().editModalPrecaution.id,
-          precaution: getState().editModalPrecaution,
-          user: getState().editModalUser,
           userId: getState().editModalUser.id,
           status: editedUserPrecaution.status,
           date: editedUserPrecaution.date,
-          endDate: getState().userPrecaution.endDate,
-          isActive: editedUserPrecaution.status === "Скасовано" ? false : true,
           reporter: editedUserPrecaution.reporter,
           reason: editedUserPrecaution.reason,
           number: editedUserPrecaution.number,
@@ -583,19 +589,19 @@ const actions = {
           showEditModal: false
         })
         form.resetFields();
-
+        const updatedUserPrecaution = (await precautionApi.getUserPrecautionById(newPrecaution.id)).data;
         dispatch(actions.handleEditPrecautionTable(
-          newPrecaution.id,
-          newPrecaution.precaution,
-          newPrecaution.date,
-          newPrecaution.endDate,
-          newPrecaution.isActive,
-          newPrecaution.reason,
-          newPrecaution.status,
-          newPrecaution.reporter,
-          newPrecaution.number,
-          newPrecaution.user,
-          newPrecaution.user.id
+          updatedUserPrecaution.id,
+          updatedUserPrecaution.precaution,
+          updatedUserPrecaution.date,
+          updatedUserPrecaution.endDate,
+          updatedUserPrecaution.isActive,
+          updatedUserPrecaution.reason,
+          updatedUserPrecaution.status,
+          updatedUserPrecaution.reporter,
+          updatedUserPrecaution.number,
+          updatedUserPrecaution.user,
+          updatedUserPrecaution.user.id
         ));
       },
 

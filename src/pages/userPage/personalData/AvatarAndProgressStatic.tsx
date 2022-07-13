@@ -16,6 +16,7 @@ import UserPrecaution from "../../Precaution/Interfaces/UserPrecaution";
 import User from "../../../models/UserTable/User";
 import moment from "moment";
 import { PersonalDataContext } from "./PersonalData";
+import UserPrecautionStatus from "../../Precaution/Interfaces/UserPrecautionStatus";
 
 const { Title } = Typography;
 const nameMaxLength = 55;
@@ -111,7 +112,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       precautionId: 0,
       userId: "",
       reporter: "",
-      status: "",
+      status: null,
       reason: "",
       number: 0,
       date: new Date(),
@@ -280,7 +281,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       ))}
       {showPrecautions &&
         UserPrecaution.map((dist) =>
-          dist.status !== "Скасовано" ? (
+          dist.status !== UserPrecautionStatus.Cancelled && dist.isActive ? (
             <div className="precautions">
               <Tooltip title={dist?.reason}>
                 <h2>
@@ -293,7 +294,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
               </Tooltip>
             </div>
           ) : (
-            ""
+            <></>
           )
         )}
     </div>
