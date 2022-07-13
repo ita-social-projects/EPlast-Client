@@ -129,6 +129,10 @@ const CityFollowers = () => {
     getFollowers();
   }, []);
 
+  const canSeeProfiles = canEdit ||
+    activeUserRoles.includes(Roles.Supporter) ||
+    activeUserRoles.includes(Roles.PlastMember)
+
   return (
     <Layout.Content>
       <Title level={2}>Зголошені до станиці</Title>
@@ -145,30 +149,28 @@ const CityFollowers = () => {
                   (canEdit && isLoadingPlus) || (isLoadingMemberId !== follower.id &&
                     !isLoadingPlus)
                     ? [
-                        <PlusOutlined
-                          onClick={() => {
-                            setSelectedFollowerUID(follower.userId);
-                            setVisibleAddModalDegree(true);
-                          }}
-                        />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(follower)}
-                        />,
-                      ]
+                      <PlusOutlined
+                        onClick={() => {
+                          setSelectedFollowerUID(follower.userId);
+                          setVisibleAddModalDegree(true);
+                        }}
+                      />,
+                      <CloseOutlined
+                        onClick={() => seeDeleteModal(follower)}
+                      />,
+                    ]
                     : follower.userId === activeUserID
-                    ? [<CloseOutlined onClick={() => seeSkipModal(follower)} />]
-                    : undefined
+                      ? [<CloseOutlined onClick={() => seeSkipModal(follower)} />]
+                      : undefined
                 }
               >
                 <div
                   onClick={() =>
-                    canEdit ||
-                    activeUserRoles.includes(Roles.Supporter) ||
-                    activeUserRoles.includes(Roles.PlastMember)
+                    canSeeProfiles
                       ? history.push(`/userpage/main/${follower.userId}`)
                       : undefined
                   }
-                  className="cityMember"
+                  className={`cityMember ${canSeeProfiles || "notAccess"}`}
                 >
                   {photosLoading ? (
                     <Skeleton.Avatar active size={86}></Skeleton.Avatar>
