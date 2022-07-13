@@ -11,7 +11,6 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
   let { url } = useRouteMatch();
   const {activeUserId, userProfileAccess } = useContext(PersonalDataContext);
   const history = useHistory();
-  
   url = url.replace(`/userpage/`, "").replace(`/${props.id}`, "");
 
   return (
@@ -67,7 +66,16 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
             Бланки
           </Menu.Item>) : (
                 <> </>
-              )} 
+              )}  
+        <Menu.Item
+          className="menuItem"
+          key="coursse"
+          onClick={() => history.push(`/userpage/course/${props.id}`)}
+        >
+          Курс
+        </Menu.Item>
+
+          
           {(userProfileAccess["CanSeeUserApproversPage"] 
             || props.id !== activeUserId) ? (      
           <Menu.Item
@@ -79,6 +87,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           </Menu.Item>) : (
             <> </>
           )}
+
       </Menu>
     </div>
   );
