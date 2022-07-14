@@ -86,8 +86,7 @@ export class DropdownItemCreator {
     const editCityItem: EditUserCityItem = new EditUserCityItem();
     const editClubItem: EditUserClubItem = new EditUserClubItem();
     const editUserRole: EditUserRoleHandler = new EditUserRoleHandler();
-    const changeUserDegreeItem: ChangeUserDegreeItem = new ChangeUserDegreeItem();
-    const addUserDegree: AddUserDegree = new AddUserDegree();
+    const addDegreeeItem: AddUserDegreeItem = new AddUserDegreeItem();
     const editGoverningBodyItem: EditUserGoverningBodyItem = new EditUserGoverningBodyItem();
     const deleteGoverningBodyItem: DeleteUserGoverningBodyItem = new DeleteUserGoverningBodyItem();
 
@@ -103,8 +102,7 @@ export class DropdownItemCreator {
       .setNext(editRegionItem)
       .setNext(editGoverningBodyItem)
       .setNext(deleteGoverningBodyItem)
-      .setNext(changeUserDegreeItem)
-      .setNext(addUserDegree)
+      .setNext(addDegreeeItem)
       .setNext(editUserRole);
     return checkProfileItem;
   }
@@ -238,7 +236,7 @@ class EditUserRegionItem extends DropdownItem {
     selectedUserAdminRoles: Array<AdminRole>,
     selectedUserNonAdminRoles: Array<NonAdminRole>
   ): void {
-    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingRegionAdministration();
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingRights();
 
     if (
       DropdownItem.checker.check(
@@ -275,7 +273,7 @@ class EditUserCityItem extends DropdownItem {
     selectedUserAdminRoles: Array<AdminRole>,
     selectedUserNonAdminRoles: Array<NonAdminRole>
   ): void {
-    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingCityAdministration();
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingRights();
 
     if (
       DropdownItem.checker.check(
@@ -311,7 +309,7 @@ class EditUserClubItem extends DropdownItem {
     selectedUserAdminRoles: Array<AdminRole>,
     selectedUserNonAdminRoles: Array<NonAdminRole>
   ): void {
-    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingKurinAdministration();
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingRights();
 
     if (
       DropdownItem.checker.check(
@@ -347,7 +345,7 @@ class EditUserGoverningBodyItem extends DropdownItem {
     selectedUserAdminRoles: Array<AdminRole>,
     selectedUserNonAdminRoles: Array<NonAdminRole>
   ): void {
-    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingGoverningBodyAdministration();
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForSettingGoverningBodiesMembers();
 
     if (
       DropdownItem.checker.check(
@@ -446,8 +444,8 @@ class EditUserRoleHandler extends DropdownItem {
   }
 }
 
-//Змінити ступінь
-class ChangeUserDegreeItem extends DropdownItem {
+//Додати ступінь
+class AddUserDegreeItem extends DropdownItem {
   public handle(
     currentUser: any,
     currentUserAdminRoles: Array<AdminRole>,
@@ -455,43 +453,7 @@ class ChangeUserDegreeItem extends DropdownItem {
     selectedUserAdminRoles: Array<AdminRole>,
     selectedUserNonAdminRoles: Array<NonAdminRole>
   ): void {
-    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForChangeUserDegree();
-
-    if (
-      DropdownItem.checker.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        [Place.Region, Place.City]
-      )
-    ) {
-      DropdownItem.handlersResults.set(DropdownFunc.ChangeDegree, true);
-    } else {
-      DropdownItem.handlersResults.set(DropdownFunc.ChangeDegree, false);
-    }
-
-    super.handle(
-      currentUser,
-      currentUserAdminRoles,
-      selectedUser,
-      selectedUserAdminRoles,
-      selectedUserNonAdminRoles
-    );
-  }
-}
-
-//Прийняти до станиці
-class AddUserDegree extends DropdownItem {
-  public handle(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>
-  ): void {
-    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForAddingUserDegree();
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForAddingDegree();
 
     if (
       DropdownItem.checker.check(
@@ -527,106 +489,74 @@ class AddUserDegree extends DropdownItem {
 class CheckCreator {
   private checkId: IdsSameCheck = new IdsSameCheck();
   private adminRightsCompare: AdminRightsCompareCheck = new AdminRightsCompareCheck();
-  private currentUserIsAdminForSelectedUser: CurrentUserIsAdminForSelectedUserCheck = new CurrentUserIsAdminForSelectedUserCheck();
-  private currentUserCanDeleteSelectedUser: CurrentUserCanDeleteSelectedUserCheck = new CurrentUserCanDeleteSelectedUserCheck();
-  private currentUserCanChangeStateOfSelectedUser: CurrentUserCanChangeStateOfSelectedUserCheck = new CurrentUserCanChangeStateOfSelectedUserCheck();
-  private currentUserCanChangeDegreeOfSelectedUser: CurrentUserCanChangeDegreeOfSelectedUser = new CurrentUserCanChangeDegreeOfSelectedUser();
-  private currentUserCanEditGoverningBodyProvid: CurrentUserCanEditGoverningBodyProvid = new CurrentUserCanEditGoverningBodyProvid();
-  private currentUserCanEditCityAdministration: CurrentUserCanEditCityAdministration = new CurrentUserCanEditCityAdministration();
-  private currentUserCanEditRegionAdministration: CurrentUserCanEditRegionAdministration = new CurrentUserCanEditRegionAdministration();
-  private currentUserCanEditKurinAdministration: CurrentUserCanEditKurinAdministration = new CurrentUserCanEditKurinAdministration();
-
+  private userHeadAdmin: CurrUserIsHeadAdminCheck = new CurrUserIsHeadAdminCheck();
+  private userGovAdmin: CurrUserIsGovAdminCheck = new CurrUserIsGovAdminCheck();
   private selectedUserGovAdmin: SelectedUserIsGovAdminCheck = new SelectedUserIsGovAdminCheck();
-  private selectedUserIsPlastMemberCheck: SelectedUserIsPlastMemberCheck = new SelectedUserIsPlastMemberCheck();
-  private selectedUserIsNotRegisteredUser: SelectedUserIsNotRegisteredUser = new SelectedUserIsNotRegisteredUser();
-
-  private selectedUserIsRegisteredCheck: SelectedUserIsRegisteredCheck = new SelectedUserIsRegisteredCheck();
-  private selectedUserIsInPlace: SelectedUserIsInPlace = new SelectedUserIsInPlace();
+  private userPlastMember: SelectedUserIsPlastMemberCheck = new SelectedUserIsPlastMemberCheck();
+  private userRegistered: SelectedUserIsRegisteredCheck = new SelectedUserIsRegisteredCheck();
+  private hasPlace: SelectedUserHasPlace = new SelectedUserHasPlace();
+  private placesId: CurrUserIsAdminForSelectedUserCheck = new CurrUserIsAdminForSelectedUserCheck();
   private falseCheck: FinalFalseCheck = new FinalFalseCheck();
 
   public rebuildChainForDeleting(): ICheck {
     this.checkId
       .setNext(this.adminRightsCompare)
-      ?.setNext(this.currentUserCanDeleteSelectedUser)
+      ?.setNext(this.userHeadAdmin)
+      ?.setNext(this.userGovAdmin)
+      ?.setNext(this.falseCheck)
       ?.setNext(null);
 
     return this.checkId;
+  }
+
+  public rebuildChainForResettingPreviousState(): ICheck {
+    this.adminRightsCompare
+      .setNext(this.userHeadAdmin)
+      ?.setNext(this.userGovAdmin)
+      ?.setNext(null);
+
+    return this.adminRightsCompare;
   }
 
   public rebuildChainForChangingUserCurrentState(): ICheck {
     this.checkId
-      .setNext(this.selectedUserIsNotRegisteredUser)
-      ?.setNext(this.adminRightsCompare)
-      ?.setNext(this.currentUserIsAdminForSelectedUser)
-      ?.setNext(this.currentUserCanChangeStateOfSelectedUser)
+      .setNext(this.adminRightsCompare)
+      ?.setNext(this.userHeadAdmin)
+      ?.setNext(this.userGovAdmin)
+      ?.setNext(this.placesId)
       ?.setNext(null);
 
     return this.checkId;
   }
 
-  public rebuildChainForChangeUserDegree(): ICheck {
+  public rebuildChainForAddingDegree(): ICheck {
     this.checkId
-      .setNext(this.selectedUserIsNotRegisteredUser)
-      ?.setNext(this.adminRightsCompare)
-      ?.setNext(this.currentUserIsAdminForSelectedUser)
-      ?.setNext(this.currentUserCanChangeDegreeOfSelectedUser)
+      .setNext(this.adminRightsCompare)
+      ?.setNext(this.userHeadAdmin)
+      ?.setNext(this.userGovAdmin)
+      ?.setNext(this.placesId)
       ?.setNext(null);
 
     return this.checkId;
   }
 
-  public rebuildChainForAddingUserDegree(): ICheck {
+  public rebuildChainForSettingRights(): ICheck {
     this.checkId
-      .setNext(this.selectedUserIsRegisteredCheck)
-      ?.setNext(this.adminRightsCompare)
-      ?.setNext(this.currentUserIsAdminForSelectedUser)
-      ?.setNext(this.currentUserCanChangeDegreeOfSelectedUser)
+      .setNext(this.adminRightsCompare)
+      ?.setNext(this.hasPlace)
+      ?.setNext(this.userHeadAdmin)
+      ?.setNext(this.userGovAdmin)
+      ?.setNext(this.placesId)
       ?.setNext(null);
 
     return this.checkId;
   }
 
-  public rebuildChainForSettingGoverningBodyAdministration(): ICheck {
+  public rebuildChainForSettingGoverningBodiesMembers(): ICheck {
     this.checkId
-      .setNext(this.selectedUserIsNotRegisteredUser)
-      ?.setNext(this.adminRightsCompare)
-      ?.setNext(this.selectedUserIsPlastMemberCheck)
-      ?.setNext(this.currentUserIsAdminForSelectedUser)
-      ?.setNext(this.currentUserCanEditGoverningBodyProvid)
-      ?.setNext(null);
-
-    return this.checkId;
-  }
-
-  public rebuildChainForSettingCityAdministration(): ICheck {
-    this.checkId
-      .setNext(this.selectedUserIsNotRegisteredUser)
-      ?.setNext(this.adminRightsCompare)
-      ?.setNext(this.currentUserIsAdminForSelectedUser)
-      ?.setNext(this.currentUserCanEditCityAdministration)
-      ?.setNext(null);
-
-    return this.checkId;
-  }
-
-  public rebuildChainForSettingRegionAdministration(): ICheck {
-    this.checkId
-      .setNext(this.selectedUserIsNotRegisteredUser)
-      ?.setNext(this.adminRightsCompare)
-      ?.setNext(this.currentUserIsAdminForSelectedUser)
-      ?.setNext(this.currentUserCanEditRegionAdministration)
-      ?.setNext(null);
-
-    return this.checkId;
-  }
-
-  public rebuildChainForSettingKurinAdministration(): ICheck {
-    this.checkId
-      .setNext(this.selectedUserIsNotRegisteredUser)
-      ?.setNext(this.adminRightsCompare)
-      ?.setNext(this.selectedUserIsPlastMemberCheck)
-      ?.setNext(this.currentUserIsAdminForSelectedUser)
-      ?.setNext(this.currentUserCanEditKurinAdministration)
+      .setNext(this.adminRightsCompare)
+      ?.setNext(this.userPlastMember)
+      ?.setNext(this.userGovAdmin)
       ?.setNext(null);
 
     return this.checkId;
@@ -634,8 +564,7 @@ class CheckCreator {
 
   public rebuildChainForDeleteGoverningBodiesAdmins(): ICheck {
     this.checkId
-      .setNext(this.selectedUserIsNotRegisteredUser)
-      ?.setNext(this.adminRightsCompare)
+      .setNext(this.adminRightsCompare)
       ?.setNext(this.selectedUserGovAdmin)
       ?.setNext(null);
 
@@ -690,22 +619,6 @@ abstract class Check implements ICheck {
       ) ?? true
     );
   }
-
-  protected checkIfUserHasRights(
-    currUserRoles: Array<AdminRole>,
-    arr: Array<AdminRole>
-  ): boolean {
-    return currUserRoles.some((x) => arr.includes(x)); //checks if user has at least one of listed rights
-  }
-
-  protected checkIdsAreEqual(firstId: number, secondId: number) {
-    return firstId != null &&
-      firstId != undefined &&
-      secondId != null &&
-      secondId != undefined
-      ? firstId === secondId
-      : false;
-  }
 }
 
 //Checks if selected user is not the current user
@@ -734,7 +647,9 @@ class IdsSameCheck extends Check {
   }
 }
 
-class CurrentUserCanDeleteSelectedUserCheck extends Check {
+//Checks if current user is HeadAdmin,
+//which has access to everything
+class CurrUserIsHeadAdminCheck extends Check {
   public check(
     currentUser: any,
     currentUserAdminRoles: Array<AdminRole>,
@@ -743,12 +658,9 @@ class CurrentUserCanDeleteSelectedUserCheck extends Check {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.Admin,
-        AdminRole.GoverningBodyAdmin,
-      ])
-    ) {
+    if (currentUserAdminRoles.includes(AdminRole.Admin)) {
+      return true;
+    } else {
       return super.check(
         currentUser,
         currentUserAdminRoles,
@@ -757,13 +669,13 @@ class CurrentUserCanDeleteSelectedUserCheck extends Check {
         selectedUserNonAdminRoles,
         places
       );
-    } else {
-      return false;
     }
   }
 }
 
-class CurrentUserCanChangeStateOfSelectedUserCheck extends Check {
+//Checks if current user is Governing body Admin,
+//which has access to everything except doing sth with HeadAdmin
+class CurrUserIsGovAdminCheck extends Check {
   public check(
     currentUser: any,
     currentUserAdminRoles: Array<AdminRole>,
@@ -772,61 +684,9 @@ class CurrentUserCanChangeStateOfSelectedUserCheck extends Check {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.Admin,
-        AdminRole.GoverningBodyAdmin,
-        AdminRole.OkrugaHead,
-        AdminRole.OkrugaHeadDeputy,
-        AdminRole.OkrugaReferentUPS,
-        AdminRole.OkrugaReferentUSP,
-        AdminRole.OkrugaReferentOfActiveMembership,
-        AdminRole.CityHead,
-        AdminRole.CityHeadDeputy,
-        AdminRole.CityReferentUPS,
-        AdminRole.CityReferentUSP,
-        AdminRole.CityReferentOfActiveMembership,
-      ])
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
+    if (currentUserAdminRoles.includes(AdminRole.GoverningBodyAdmin)) {
+      return true;
     } else {
-      return false;
-    }
-  }
-}
-
-class CurrentUserCanChangeDegreeOfSelectedUser extends Check {
-  public check(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>,
-    places: Array<Place>
-  ): boolean {
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.Admin,
-        AdminRole.GoverningBodyAdmin,
-        AdminRole.OkrugaHead,
-        AdminRole.OkrugaHeadDeputy,
-        AdminRole.OkrugaReferentUPS,
-        AdminRole.OkrugaReferentUSP,
-        AdminRole.OkrugaReferentOfActiveMembership,
-        AdminRole.CityHead,
-        AdminRole.CityHeadDeputy,
-        AdminRole.CityReferentUPS,
-        AdminRole.CityReferentUSP,
-        AdminRole.CityReferentOfActiveMembership,
-      ])
-    ) {
       return super.check(
         currentUser,
         currentUserAdminRoles,
@@ -835,270 +695,6 @@ class CurrentUserCanChangeDegreeOfSelectedUser extends Check {
         selectedUserNonAdminRoles,
         places
       );
-    } else {
-      return false;
-    }
-  }
-}
-
-//Checks if selected user is in one of the
-//listed places in the array
-class SelectedUserIsInPlace extends Check {
-  public check(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>,
-    places: Array<Place>
-  ): boolean {
-    let chainContinues: boolean = false;
-    places.forEach((place) => {
-      switch (place) {
-        case Place.Region:
-          chainContinues = chainContinues || selectedUser.regionId !== null;
-          break;
-        case Place.City:
-          chainContinues = chainContinues || selectedUser.cityId !== null;
-          break;
-        case Place.Club:
-          chainContinues = chainContinues || selectedUser.clubId !== null;
-          break;
-        case Place.GoverningBody:
-          chainContinues =
-            chainContinues || selectedUser.governingBodyId !== null;
-          break;
-        default:
-          chainContinues = false;
-      }
-    });
-
-    return chainContinues
-      ? super.check(
-          currentUser,
-          currentUserAdminRoles,
-          selectedUser,
-          selectedUserAdminRoles,
-          selectedUserNonAdminRoles,
-          places
-        )
-      : false;
-  }
-}
-
-class CurrentUserCanEditRegionAdministration extends Check {
-  public check(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>,
-    places: Array<Place>
-  ): boolean {
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.Admin,
-        AdminRole.GoverningBodyAdmin,
-        AdminRole.OkrugaHead,
-        AdminRole.OkrugaHeadDeputy,
-        AdminRole.OkrugaReferentUPS,
-        AdminRole.OkrugaReferentUSP,
-        AdminRole.OkrugaReferentOfActiveMembership,
-      ])
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    } else {
-      return false;
-    }
-  }
-}
-
-class CurrentUserIsAdminForSelectedUserCheck extends Check {
-  public check(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>,
-    places: Array<Place>
-  ): boolean {
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.Admin,
-        AdminRole.GoverningBodyAdmin,
-      ])
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    }
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.OkrugaHead,
-        AdminRole.OkrugaHeadDeputy,
-        AdminRole.OkrugaReferentUPS,
-        AdminRole.OkrugaReferentUSP,
-        AdminRole.OkrugaReferentOfActiveMembership,
-      ]) &&
-      this.checkIdsAreEqual(currentUser.regionId, selectedUser.regionId)
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    }
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.CityHead,
-        AdminRole.CityHeadDeputy,
-        AdminRole.CityReferentUPS,
-        AdminRole.CityReferentUSP,
-        AdminRole.CityReferentOfActiveMembership,
-      ]) &&
-      this.checkIdsAreEqual(currentUser.cityId, selectedUser.cityId)
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    }
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.KurinHead,
-        AdminRole.KurinHeadDeputy,
-      ]) &&
-      this.checkIdsAreEqual(currentUser.clubId, selectedUser.clubId)
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    } else {
-      return false;
-    }
-  }
-}
-
-class CurrentUserCanEditCityAdministration extends Check {
-  public check(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>,
-    places: Array<Place>
-  ): boolean {
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.Admin,
-        AdminRole.GoverningBodyAdmin,
-        AdminRole.OkrugaHead,
-        AdminRole.OkrugaHeadDeputy,
-        AdminRole.OkrugaReferentUPS,
-        AdminRole.OkrugaReferentUSP,
-        AdminRole.OkrugaReferentOfActiveMembership,
-        AdminRole.CityHead,
-        AdminRole.CityHeadDeputy,
-        AdminRole.CityReferentUPS,
-        AdminRole.CityReferentUSP,
-        AdminRole.CityReferentOfActiveMembership,
-      ])
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    } else {
-      return false;
-    }
-  }
-}
-
-class CurrentUserCanEditKurinAdministration extends Check {
-  public check(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>,
-    places: Array<Place>
-  ): boolean {
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.Admin,
-        AdminRole.GoverningBodyAdmin,
-        AdminRole.KurinHead,
-        AdminRole.KurinHeadDeputy,
-      ])
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    } else {
-      return false;
-    }
-  }
-}
-
-class CurrentUserCanEditGoverningBodyProvid extends Check {
-  public check(
-    currentUser: any,
-    currentUserAdminRoles: Array<AdminRole>,
-    selectedUser: any,
-    selectedUserAdminRoles: Array<AdminRole>,
-    selectedUserNonAdminRoles: Array<NonAdminRole>,
-    places: Array<Place>
-  ): boolean {
-    if (
-      this.checkIfUserHasRights(currentUserAdminRoles, [
-        AdminRole.Admin,
-        AdminRole.GoverningBodyAdmin,
-        AdminRole.GoverningBodyHead,
-      ])
-    ) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    } else {
-      return false;
     }
   }
 }
@@ -1114,14 +710,7 @@ class SelectedUserIsPlastMemberCheck extends Check {
     places: Array<Place>
   ): boolean {
     if (selectedUserNonAdminRoles.includes(NonAdminRole.PlastMember)) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
+      return true;
     } else {
       return false;
     }
@@ -1139,14 +728,7 @@ class SelectedUserIsRegisteredCheck extends Check {
     places: Array<Place>
   ): boolean {
     if (selectedUserNonAdminRoles.includes(NonAdminRole.RegisteredUser)) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
+      return true;
     } else {
       return false;
     }
@@ -1183,19 +765,10 @@ class AdminRightsCompareCheck extends Check {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    if (selectedUserAdminRoles.length == 0) {
-      return super.check(
-        currentUser,
-        currentUserAdminRoles,
-        selectedUser,
-        selectedUserAdminRoles,
-        selectedUserNonAdminRoles,
-        places
-      );
-    }
     if (
-      selectedUserAdminRoles.length > 0 &&
-      currentUserAdminRoles[0] < selectedUserAdminRoles[0]
+      selectedUserAdminRoles.length > 0
+        ? currentUserAdminRoles[0] < selectedUserAdminRoles[0]
+        : true
     ) {
       return super.check(
         currentUser,
@@ -1211,7 +784,9 @@ class AdminRightsCompareCheck extends Check {
   }
 }
 
-class SelectedUserIsNotRegisteredUser extends Check {
+//Checks if selected user is in one of the
+//listed places in the array
+class SelectedUserHasPlace extends Check {
   public check(
     currentUser: any,
     currentUserAdminRoles: Array<AdminRole>,
@@ -1220,18 +795,130 @@ class SelectedUserIsNotRegisteredUser extends Check {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    if (!selectedUserNonAdminRoles.includes(NonAdminRole.RegisteredUser)) {
-      return super.check(
+    let chainContinues: boolean = false;
+    places.forEach((place) => {
+      switch (place) {
+        case Place.Region:
+          chainContinues = chainContinues || selectedUser.regionId !== null;
+          break;
+        case Place.City:
+          chainContinues = chainContinues || selectedUser.cityId !== null;
+          break;
+        case Place.Club:
+          chainContinues = chainContinues || selectedUser.clubId !== null;
+          break;
+        case Place.GoverningBody:
+          chainContinues =
+            chainContinues || selectedUser.governingBodyId !== null;
+          break;
+        default:
+          chainContinues = false;
+      }
+    });
+
+    return chainContinues
+      ? super.check(
         currentUser,
         currentUserAdminRoles,
         selectedUser,
         selectedUserAdminRoles,
         selectedUserNonAdminRoles,
         places
-      );
-    } else {
-      return false;
-    }
+      )
+      : false;
+  }
+}
+
+//Checks if current user is in the same place as selected and
+//if he has rights in this place to edit selected
+class CurrUserIsAdminForSelectedUserCheck extends Check {
+  public check(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>,
+    places: Array<Place>
+  ): boolean {
+    let chainContinues: boolean = false;
+    places.forEach((place) => {
+      switch (place) {
+        case Place.Region:
+          chainContinues =
+            chainContinues ||
+            (this.checkIfUserHasRights(currentUserAdminRoles, [
+              AdminRole.OkrugaHead,
+              AdminRole.OkrugaHeadDeputy,
+              AdminRole.OkrugaReferentUPS,
+              AdminRole.OkrugaReferentUSP,
+              AdminRole.OkrugaReferentOfActiveMembership,
+            ]) &&
+              this.idsAreEqual(currentUser.regionId, selectedUser.regionId));
+          break;
+        case Place.City:
+          chainContinues =
+            chainContinues ||
+            (this.checkIfUserHasRights(currentUserAdminRoles, [
+              AdminRole.CityHead,
+              AdminRole.CityHeadDeputy,
+              AdminRole.CityReferentUPS,
+              AdminRole.CityReferentUSP,
+              AdminRole.CityReferentOfActiveMembership,
+            ]) &&
+              this.idsAreEqual(currentUser.cityId, selectedUser.cityId));
+          break;
+        case Place.Club:
+          chainContinues =
+            chainContinues ||
+            (this.checkIfUserHasRights(currentUserAdminRoles, [
+              AdminRole.KurinHead,
+              AdminRole.KurinHeadDeputy,
+            ]) &&
+              this.idsAreEqual(currentUser.clubId, selectedUser.clubId));
+          break;
+        case Place.GoverningBody:
+          chainContinues =
+            chainContinues ||
+            (this.checkIfUserHasRights(currentUserAdminRoles, [
+              AdminRole.GoverningBodyAdmin,
+              AdminRole.GoverningBodyHead,
+            ]) &&
+              this.idsAreEqual(
+                currentUser.governingBodyId,
+                selectedUser.governingBodyId
+              ));
+          break;
+        default:
+          chainContinues = false;
+      }
+    });
+
+    return chainContinues
+      ? super.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        places
+      )
+      : false;
+  }
+
+  private idsAreEqual(firstId: number, secondId: number) {
+    return firstId != null &&
+      firstId != undefined &&
+      secondId != null &&
+      secondId != undefined
+      ? firstId === secondId
+      : false;
+  }
+
+  private checkIfUserHasRights(
+    currUser: Array<AdminRole>,
+    arr: Array<AdminRole>
+  ): boolean {
+    return currUser.some((x) => arr.includes(x)); //checks if user has at least one of listed rights
   }
 }
 

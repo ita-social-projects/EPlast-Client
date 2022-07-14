@@ -532,12 +532,8 @@ const Club = () => {
       content: (
         <div className={classes.Style}>
           <b>
-            Призначити  {newAdmin.user.firstName} {newAdmin.user.lastName} на посаду?
-          </b>{" "}
-          <b>
-            Адмін  {existingAdmin?.user.firstName} {existingAdmin?.user.lastName} втратить свою посаду.
-          </b>{" "}
-          .
+            Дані будуть внесені у колишні діловодства куреня, оскільки час правління вже закінчився.
+          </b>
         </div>
       ),
       onCancel() { },
@@ -982,7 +978,7 @@ const Club = () => {
                 onClick={() => {
                   if (userAccesses.EditClub) history.push(`/user/table?club=${club.id}`);
                   else history.push(`/clubs/members/${club.id}`);
-                  }
+                }
                 }
               >
                 Більше
@@ -1222,7 +1218,8 @@ const Club = () => {
                 className="clubInfoButton"
                 onClick={() => {
                   if (userAccesses.EditClub) history.push(`/user/table?tab=registered&club=${club.id}`)
-                  else history.push(`/clubs/followers/${club.id}`)}
+                  else history.push(`/clubs/followers/${club.id}`)
+                }
                 }
               >
                 Більше
