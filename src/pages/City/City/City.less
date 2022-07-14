@@ -5,7 +5,7 @@ h4.ant-typography {
     color: #3c5438;
 }
 
-.status{
+.status {
     margin-right: -20px;
     width: 220px;
     margin-top: -15px;
@@ -44,7 +44,7 @@ h4.ant-typography {
                 height: auto;
                 max-height: 360px;
             }
-            
+
             .mainMap {
                 display: block;
                 width: 100%;
@@ -52,11 +52,11 @@ h4.ant-typography {
                 border: none;
                 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
                 transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-              }
-              
-              .mainMap:hover {
+            }
+
+            .mainMap:hover {
                 box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-              }
+            }
         }
 
         .cityInfo {
@@ -108,11 +108,13 @@ h4.ant-typography {
             .cityInfoIcon {
                 font-size: 28px;
             }
-            .cityInfoIconDelete{
+
+            .cityInfoIconDelete {
                 font-size: 28px;
                 color: #910202;
             }
-            .cityInfoIconDelete :hover{
+
+            .cityInfoIconDelete :hover {
                 color: #690606;
                 cursor: pointer;
             }
@@ -143,11 +145,16 @@ h4.ant-typography {
                 .approveIcon :hover {
                     color: #536150;
                     font-size: 28px;
+                    cursor: pointer;
                 }
             }
 
             .cityMemberItem :hover {
                 text-decoration: underline;
+            }
+
+            .cityMemberItem.notAccess :hover {
+                text-decoration: none;
             }
 
             .cityDocumentItem {
@@ -165,6 +172,7 @@ h4.ant-typography {
                     -webkit-box-orient: vertical;
                 }
             }
+
             .userName {
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -174,8 +182,10 @@ h4.ant-typography {
                 margin: 0px;
             }
         }
+
         .cityItems1 {
             margin: auto !important;
+
             .cityMemberItem {
                 cursor: pointer;
 
@@ -204,17 +214,21 @@ h4.ant-typography {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-      
-    .cityMember :hover{
+
+    .cityMember :hover {
         cursor: pointer;
     }
-      
+
+    .cityMember.notAccess :hover {
+        cursor: default;
+    }
+
     .detailsCard {
         margin: 15px;
         width: 242px;
         text-align: center;
 
-        
+
         .detailsMeta {
             margin-top: 10px;
 
@@ -226,7 +240,7 @@ h4.ant-typography {
             }
         }
     }
-    
+
     .backButton {
         width: 180px;
         background-color: #3c5438;
