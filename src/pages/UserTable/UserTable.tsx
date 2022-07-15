@@ -630,6 +630,7 @@ const UsersTable = () => {
             setFilter: setFilter,
             setPage: setPage,
             filterRole: filter,
+            isZgolosheni: currentTabName === "registered"
           })}
           dataSource={users}
           onRow={(record) => {

@@ -71,6 +71,13 @@
   overflow: hidden;
 }
 
+.referalTag {
+  max-width: 100%;  
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin: 2px;
+}
+
 .parentDiv {  
   display: flex;
   align-items: center; 

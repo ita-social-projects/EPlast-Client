@@ -8,20 +8,20 @@ import {
   Col,
   Row,
   Modal,
+  Select,
 } from "antd";
 import React, { useState } from "react";
 import "./CreateRegion.less";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-import notificationLogic from "../../components/Notifications/Notification";
 import { RcCustomRequestOptions } from "antd/es/upload/interface";
 import {
   DeleteOutlined,
-  ExclamationCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import ReactInputMask from "react-input-mask";
 import Title from "antd/lib/typography/Title";
+import notificationLogic from "../../components/Notifications/Notification";
+import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import {
   descriptionValidation,
   getOnlyNums,
@@ -34,11 +34,12 @@ import {
   successfulDeleteAction,
   successfulCreateAction,
   failCreateAction,
+  emptyInput,
 } from "../../components/Notifications/Messages";
-import { checkIfNameExists, createRegion } from "../../api/regionsApi";
+import { createRegion } from "../../api/regionsApi";
 import Spinner from "../Spinner/Spinner";
 import RegionProfile from "../../models/Region/RegionProfile";
-import { showRegionNameExistsModal } from "../../components/Notifications/Modals";
+import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
 
 const classes = require("../Club/Club/Modal.module.css");
 
@@ -60,7 +61,8 @@ const AddNewRegionFormPage = () => {
         phoneNumber: values.phoneNumber,
         email: values.email,
         link: values.link === "" ? null : values.link,
-        logo: logo,
+        logo,
+        oblast: values.oblast,
         street: values.street,
         houseNumber: values.houseNumber,
         officeNumber: values.officeNumber,
@@ -123,7 +125,7 @@ const AddNewRegionFormPage = () => {
           <b>Відмінити створення округи ?</b>{" "}
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         history.goBack();
       },
@@ -152,29 +154,31 @@ const AddNewRegionFormPage = () => {
             }}
             form={form}
           >
-            <Form.Item name="logo">
-              <Upload
-                name="avatar"
-                listType="picture-card"
-                showUploadList={false}
-                accept=".jpeg,.jpg,.png"
-                customRequest={handleUpload}
-              >
-                {currentPhoto ? (
-                  <DeleteOutlined onClick={removePhoto} />
-                ) : (
-                  <PlusOutlined />
-                )}
-                <img
-                  src={logo ? logo : CityDefaultLogo}
-                  alt="Region"
-                  className="cityLogo"
-                />
-              </Upload>
-            </Form.Item>
+              <Row justify="center">
+                <Form.Item name="logo">
+                  <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    showUploadList={false}
+                    accept=".jpeg,.jpg,.png"
+                    customRequest={handleUpload}
+                  >
+                    {currentPhoto ? (
+                      <DeleteOutlined onClick={removePhoto} />
+                    ) : (
+                      <PlusOutlined />
+                    )}
+                    <img
+                      src={logo ?? CityDefaultLogo}
+                      alt="Region"
+                      className="cityLogo"
+                    />
+                  </Upload>
+                </Form.Item>
+              </Row>
 
-            <Row justify="center">
-              <Col md={11} xs={24}>
+              <Row justify="center" gutter={[16, 4]}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   label="Назва"
                   name="regionName"
@@ -183,19 +187,9 @@ const AddNewRegionFormPage = () => {
                 >
                   <Input maxLength={51} />
                 </Form.Item>
-              </Col>
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
-                <Form.Item
-                  label="Опис"
-                  name="description"
-                  labelCol={{ span: 24 }}
-                  rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
-                >
-                  <Input maxLength={1001} />
-                </Form.Item>
-              </Col>
+                </Col>
 
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   name="phoneNumber"
                   label="Номер телефону"
@@ -211,7 +205,7 @@ const AddNewRegionFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   label="Електронна пошта"
                   name="email"
@@ -222,7 +216,7 @@ const AddNewRegionFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   label="Посилання"
                   name="link"
@@ -233,7 +227,50 @@ const AddNewRegionFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Col md={12} xs={24}>
+                  <Form.Item
+                    name="oblast"
+                    rules={[
+                      { required: true, message: emptyInput() }
+                    ]}
+                    label="Область"
+                    labelCol={{ span: 24 }}
+                  >
+                    <Select
+                      showSearch
+                      optionFilterProp="children"
+                      aria-autocomplete="none"
+                      placeholder="Оберіть область"
+                    >
+                      {OblastsWithoutNotSpecified.map(([key, value]) =>
+                        <Select.Option key={key} value={key}>
+                          {value}
+                        </Select.Option>
+                      )}
+                    </Select>
+                  </Form.Item>
+                </Col>
+
+                <Col md={12} xs={24}>
+                  <Form.Item
+                    labelCol={{ span: 24 }}
+                    label="Поштовий індекс"
+                    name="postIndex"
+                    rules={descriptionValidation.postIndex}
+                  >
+                    <Input
+                      onChange={(e) => {
+                        form.setFieldsValue({
+                          postIndex: getOnlyNums(e.target.value),
+                        });
+                      }}
+                      autoComplete="off"
+                      maxLength={5}
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col md={12} xs={24}>
                 <Form.Item
                   label="Місто"
                   name="city"
@@ -244,7 +281,7 @@ const AddNewRegionFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
                   label="Вулиця"
@@ -255,7 +292,7 @@ const AddNewRegionFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
                   label="Номер будинку"
@@ -266,7 +303,7 @@ const AddNewRegionFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={11} xs={24}>
+                <Col md={12} xs={24}>
                 <Form.Item
                   labelCol={{ span: 24 }}
                   label="Номер офісу/квартири"
@@ -277,24 +314,16 @@ const AddNewRegionFormPage = () => {
                 </Form.Item>
               </Col>
 
-              <Col md={{ span: 11, offset: 2 }} xs={24}>
-                <Form.Item
-                  labelCol={{ span: 24 }}
-                  label="Поштовий індекс"
-                  name="postIndex"
-                  rules={descriptionValidation.postIndex}
-                >
-                  <Input
-                    onChange={(e) => {
-                      form.setFieldsValue({
-                        postIndex: getOnlyNums(e.target.value),
-                      });
-                    }}
-                    autoComplete="off"
-                    maxLength={5}
-                  />
-                </Form.Item>
-              </Col>
+                <Col xs={24}>
+                  <Form.Item
+                    label="Опис"
+                    name="description"
+                    labelCol={{ span: 24 }}
+                    rules={descriptionValidation.DescriptionNotOnlyWhiteSpaces}
+                  >
+                    <Input.TextArea rows={3} maxLength={1001} />
+                  </Form.Item>
+                </Col>
             </Row>
 
             <Row className="cityButtons" justify="center" gutter={[0, 6]}>
