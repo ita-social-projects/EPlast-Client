@@ -125,14 +125,13 @@ const SortedCities = ({ switcher }: Props) => {
   }, []);
 
   useEffect(() => {
-    switcher ? getNotActiveCities(page) : getActiveCities(page);
-  }, [page, pageSize, searchedData]);
-
-  useEffect(() => {
-    if (cities.length !== 0) {
-      switcher ? getNotActiveCities() : getActiveCities();
+    if (switcher) {
+      getNotActiveCities(page);
     }
-  }, [switcher]);
+    else {
+      getActiveCities(page);
+    }
+  }, [page, pageSize, searchedData, switcher]);
 
   const IsAdminOrGBAdmin: boolean =
     activeUserRoles.includes(Roles.Admin) ||
