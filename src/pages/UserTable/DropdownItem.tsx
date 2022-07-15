@@ -818,13 +818,13 @@ class SelectedUserHasPlace extends Check {
 
     return chainContinues
       ? super.check(
-          currentUser,
-          currentUserAdminRoles,
-          selectedUser,
-          selectedUserAdminRoles,
-          selectedUserNonAdminRoles,
-          places
-        )
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        places
+      )
       : false;
   }
 }
@@ -895,13 +895,13 @@ class CurrUserIsAdminForSelectedUserCheck extends Check {
 
     return chainContinues
       ? super.check(
-          currentUser,
-          currentUserAdminRoles,
-          selectedUser,
-          selectedUserAdminRoles,
-          selectedUserNonAdminRoles,
-          places
-        )
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        places
+      )
       : false;
   }
 

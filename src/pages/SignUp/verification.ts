@@ -23,10 +23,10 @@ export const checkNameSurName = (
   value: string,
   callback: any
 ) => {
-  const reg = /^[а-яА-ЯІіЄєЇїҐґ' ]{1,25}((\s+|-))*$/;
+  const reg = /^[а-яА-ЯІіЄєЇїҐґ' ]{1,20}((\s+|-))*$/;
   if (value.length !== 0 && reg.test(value) === false) {
     return callback(
-      shouldContain("тільки кириличні літери та бути коротшим за 25 символів")
+      shouldContain("тільки кириличні літери та бути коротшим за 20 символів")
     );
   }
   return callback();
