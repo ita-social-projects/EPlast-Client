@@ -6,6 +6,7 @@ import {
   EditOutlined,
   PlusCircleOutlined,
   MailOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import classes from "./UserTable.module.css";
 import userDeleteCofirm from "./UserDeleteConfirm";
@@ -25,6 +26,7 @@ import { DropdownFunc } from "../../models/UserTable/DropdownFunc";
 import ChangeUserGoverningBodyModal from "./ChangeUserGoverningBodyModal";
 import DeleteGoverningBodyAdminModal from "./DeleteGoverningBodyAdminModal";
 import AcceptUserToCityModal from "./AcceptUserToCityModal";
+import DeleteCityFollowerModal from "./DeleteCityFollowerModal";
 
 const authService = new AuthorizeApi();
 
@@ -72,6 +74,7 @@ const DropDown = (props: Props) => {
   const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
     false
   );
+  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(false);
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [, setGoverningBodyHead] = useState<boolean>(true);
@@ -283,6 +286,9 @@ const DropDown = (props: Props) => {
       case "11":
         await setShowDeleteGoverningBodyAdminModal(true);
         break;
+      case "12":
+        await setShowDeleteCityFollower(true);
+        break;
       default:
         break;
     }
@@ -394,6 +400,14 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
+          {inActiveTab === false && canAddDegree ? (
+            <Menu.Item key="12">
+              <CloseOutlined />
+              Відхилити зголошення
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
 
           <ChangeUserRoleModal
             record={record}
@@ -447,6 +461,13 @@ const DropDown = (props: Props) => {
             showModal={showAcceptToCityModal}
             user={selectedUser}
             setShowModal={setShowAcceptToCityModal}
+            onChange={onChange}
+          />
+          <DeleteCityFollowerModal
+            record={record}
+            showModal={showDeleteCityFollower}
+            user={selectedUser}
+            setShowModal={setShowDeleteCityFollower}
             onChange={onChange}
           />
         </Menu>

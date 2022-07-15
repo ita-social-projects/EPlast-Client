@@ -481,6 +481,7 @@ const UsersTable = () => {
     });
     setUpdatedUser([...filteredData]);
     setUsers([...filteredData]);
+    fetchData();
   };
 
   const handlePageChange = (page: number) => {
