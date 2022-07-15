@@ -119,15 +119,14 @@ const SortedRegions = ({ switcher }: Props) => {
   }, []);
 
   useEffect(() => {
-    switcher ? getNotActiveRegions(page) : getActiveRegions(page);
-  }, [page, pageSize, searchedData]);
-
-  useEffect(() => {
-    if (regions.length !== 0) {
-      switcher ? getNotActiveRegions() : getActiveRegions();
-      setCanCreate(switcher ? false : activeCanCreate);
+    if (switcher) {
+      getNotActiveRegions(page);
     }
-  }, [switcher]);
+    else {
+      getActiveRegions(page);
+    }
+    setCanCreate(switcher ? false : activeCanCreate);
+  }, [page, pageSize, searchedData, switcher]);
 
   return (
     <Layout.Content className="cities">
