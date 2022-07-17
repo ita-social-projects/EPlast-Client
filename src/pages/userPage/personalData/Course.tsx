@@ -26,7 +26,7 @@ export default function () {
   const [visibleListModal, setvisibleListModal] = useState(false);
   const [showAchievementModal, setshowAchievementModal] = useState(false);
   const [isDataLoaded, setDataLoaded] = useState<boolean>(false);
-  
+
   const [allCourses, setallCourses] = useState<Course[]>([]);
   const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
   const [userToken, setUserToken] = useState<any>([
@@ -34,8 +34,6 @@ export default function () {
       nameid: "",
     },
   ]);
-
-
 
   const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
@@ -48,15 +46,7 @@ export default function () {
     loading,
   } = useContext(PersonalDataContext);
 
-
   const urlaim = `/userpage/blank/${activeUserId}`;
-
-  const showUploadWindow = async () => {
-    setvisibleAchievementModal(true);
-  };
-  const showListCertificates = async () => {
-    setvisibleListModal(true);
-  };
 
   const fetchData = async () => {
     const token = AuthLocalStorage.getToken() as string;
@@ -72,7 +62,6 @@ export default function () {
     fetchData();
   }, []);
 
-
   return loading === false ? (
     <div className="kadraWrapper">
       <Skeleton.Avatar
@@ -84,63 +73,55 @@ export default function () {
     </div>
   ) : isDataLoaded === true ? (
     <div className="container">
-  
-    
-      { 
-      allCourses.map((sectitem) =>
-        
+      {
+        allCourses.map((sectitem) =>
           <Col>
-          <Title level={2}>{sectitem.name}</Title>
-        
+            <Title level={2}>{sectitem.name}</Title>
             <p> <strong>{userProfile?.user.firstName} </strong>, пройдіть курс для продовження співпраці з нами   </p>
-
             <div className="rowBlock">
-           
               <a
                 href={sectitem.link}
               >
                 <img src={PlastLogo} alt="PlastLogo" />
               </a>
-          </div>    
+            </div>
           </Col>
-         ) }
+        )}
 
-
-
-      { allCourses.length === 0 ? (
-          <Col>
+      {allCourses.length === 0 ? (
+        <Col>
           <Title level={2}>Vumonline курс</Title>
-            <div className="rowBlock">
-              <a
-                href="https://vumonline.ua/search/?search=%D0%BF%D0%BB%D0%B0%D1%81%D1%82"
-              >
-                <img src={PlastLogo} alt="PlastLogo" />
-              </a>
-          </div>    
-          </Col>
-         ) : null}
+          <div className="rowBlock">
+            <a
+              href="https://vumonline.ua/search/?search=%D0%BF%D0%BB%D0%B0%D1%81%D1%82"
+            >
+              <img src={PlastLogo} alt="PlastLogo" />
+            </a>
+          </div>
+        </Col>
+      ) : null}
 
-        
-            <div className="rowBlock">
-                  <Button
-                    type="primary"
-                    
-                    className="buttonaddcertificate"
-                    onClick={() => showUploadWindow()
-                    
-                    }
-                  >
-                    Додати сертифікат
-                  </Button>
-             </div>
-             <br/><br/><br/>
 
-            {allCourses.length === 0 ? (
-                  <Col>
-           
-           <p > Курс пройдено, сертифікат можна переглянути в   <div className="Link"  onClick={() => showListCertificates()}> <b>Досягненнях</b> </div>  </p><br/>
-           </Col>
-           ) : null}
+      <div className="rowBlock">
+        <Button
+          type="primary"
+          className="buttonaddcertificate"
+          onClick={() => setvisibleAchievementModal(true)}
+        >
+          Додати сертифікат
+        </Button>
+      </div>
+      <br /><br /><br />
+
+      {allCourses.length === 0 ? (
+        <Col>
+
+          <p > Курс пройдено, сертифікат можна переглянути в
+            <div className="Link" onClick={() => setvisibleListModal(true)}>
+              <b>Досягненнях</b> </div>  </p>
+          <br />
+        </Col>
+      ) : null}
 
       <ListOfAchievementsModal
         userToken={userToken}
@@ -161,20 +142,16 @@ export default function () {
         }
         setAchievementDoc={setAchievementDoc}
       />
-
-
-
-
-             <AddAchievementsModal
-             userId={activeUserId}
-             visibleModal={visibleAchievementModal}
-             setVisibleModal={setvisibleAchievementModal}
-             showModal={showAchievementModal}
-             setshowModal={setshowAchievementModal}
-            />
+      <AddAchievementsModal
+        userId={activeUserId}
+        visibleModal={visibleAchievementModal}
+        setVisibleModal={setvisibleAchievementModal}
+        showModal={showAchievementModal}
+        setshowModal={setshowAchievementModal}
+      />
 
     </div>
-  )  : (
+  ) : (
     <> </>
   );
 }
