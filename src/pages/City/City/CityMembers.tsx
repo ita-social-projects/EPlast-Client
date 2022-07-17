@@ -150,6 +150,10 @@ const CityMembers = () => {
     getMembers();
   }, []);
 
+  const canSeeProfiles = canEdit ||
+    activeUserRoles.includes(Roles.Supporter) ||
+    activeUserRoles.includes(Roles.PlastMember)
+
   return (
     <Layout.Content>
       <Title level={2}>Члени станиці</Title>
@@ -164,26 +168,24 @@ const CityMembers = () => {
                 className="detailsCard"
                 actions={
                   canEdit &&
-                  (member?.user.id !== head?.user.id ||
-                    !activeUserRoles.includes(Roles.CityHeadDeputy))
+                    (member?.user.id !== head?.user.id ||
+                      !activeUserRoles.includes(Roles.CityHeadDeputy))
                     ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(member)}
-                        />,
-                      ]
+                      <SettingOutlined onClick={() => showModal(member)} />,
+                      <CloseOutlined
+                        onClick={() => seeDeleteModal(member)}
+                      />,
+                    ]
                     : undefined
                 }
               >
                 <div
                   onClick={() =>
-                    canEdit ||
-                    activeUserRoles.includes(Roles.Supporter) ||
-                    activeUserRoles.includes(Roles.PlastMember)
+                    canSeeProfiles
                       ? history.push(`/userpage/main/${member.userId}`)
                       : undefined
                   }
-                  className="cityMember"
+                  className={`cityMember ${canSeeProfiles || "notAccess"}`}
                 >
                   {photosLoading ? (
                     <Skeleton.Avatar active size={86}></Skeleton.Avatar>

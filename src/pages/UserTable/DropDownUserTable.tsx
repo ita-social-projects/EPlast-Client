@@ -101,8 +101,8 @@ const DropDown = (props: Props) => {
   const [canChangeUserAccess, setCanChangeUserAccess] = useState<boolean>(
     false
   );
+  const [canChangeDegree, setCanChangeDegree] = useState<boolean>(false);
   const [canAddDegree, setCanAddDegree] = useState<boolean>(false);
-
   const [chainOfAccessibility, setChainOfAccessibility] = useState<
     IDropdownItem
   >();
@@ -234,6 +234,8 @@ const DropDown = (props: Props) => {
 
     setCanChangeUserAccess(result?.get(DropdownFunc.EditRole) ?? false);
 
+    setCanChangeDegree(result?.get(DropdownFunc.ChangeDegree) ?? false);
+
     setCanAddDegree(result?.get(DropdownFunc.AddDegree) ?? false);
 
     setSuperAdmin(currentUserAdminRoles.includes(AdminRole.Admin));
@@ -270,7 +272,7 @@ const DropDown = (props: Props) => {
         await setVisibleModalDegree(true);
         break;
       case "8":
-        await adminApi.putExpiredRole(record);
+        await setVisibleModalDegree(true);
         break;
       case "9":
         await authService.resendEmailForRegistering(record);
@@ -351,10 +353,19 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canAddDegree ? (
+          {inActiveTab === false && canChangeDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
-              Прийняти до уладу
+              Змінити ступінь
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+
+          {inActiveTab === false && canAddDegree ? (
+            <Menu.Item key="8">
+              <PlusCircleOutlined />
+              Додати до уладу
             </Menu.Item>
           ) : (
             <> </>

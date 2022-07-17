@@ -116,9 +116,8 @@ export default function () {
       {allCourses.length === 0 ? (
         <Col>
 
-          <p > Курс пройдено, сертифікат можна переглянути в
-            <div className="Link" onClick={() => setvisibleListModal(true)}>
-              <b>Досягненнях</b> </div>  </p>
+          <p > Курс пройдено, сертифікат можна переглянути в <div className="Link" onClick={() => setvisibleListModal(true)}>
+              <b> Досягненнях</b> </div>  </p>
           <br />
         </Col>
       ) : null}

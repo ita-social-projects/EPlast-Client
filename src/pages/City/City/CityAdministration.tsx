@@ -145,6 +145,10 @@ const CityAdministration = () => {
     fetchData();
   }, [reload]);
 
+  const canSeeProfiles = canEdit ||
+    activeUserRoles.includes(Roles.Supporter) ||
+    activeUserRoles.includes(Roles.PlastMember)
+
   return (
     <Layout.Content>
       <Title level={2}>Провід станиці</Title>
@@ -164,26 +168,24 @@ const CityAdministration = () => {
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={
                   userCityAccesses["EditCity"] &&
-                  (userCityAccesses["AddCityHead"] ||
-                    member.adminType.adminTypeName !== Roles.CityHead)
+                    (userCityAccesses["AddCityHead"] ||
+                      member.adminType.adminTypeName !== Roles.CityHead)
                     ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(member)}
-                        />,
-                      ]
+                      <SettingOutlined onClick={() => showModal(member)} />,
+                      <CloseOutlined
+                        onClick={() => seeDeleteModal(member)}
+                      />,
+                    ]
                     : undefined
                 }
               >
                 <div
                   onClick={() =>
-                    canEdit ||
-                    activeUserRoles.includes(Roles.Supporter) ||
-                    activeUserRoles.includes(Roles.PlastMember)
+                    canSeeProfiles
                       ? history.push(`/userpage/main/${member.userId}`)
                       : undefined
                   }
-                  className="cityMember"
+                  className={`cityMember ${canSeeProfiles || "notAccess"}`}
                 >
                   <div>
                     {photosLoading ? (

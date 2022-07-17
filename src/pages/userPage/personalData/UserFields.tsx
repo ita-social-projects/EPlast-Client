@@ -106,7 +106,7 @@ export default function () {
           </div>
 
           <div className="rowBlock">
-            <Form.Item label="По-батькові" className="formItem">
+            <Form.Item label="По батькові" className="formItem">
               {userProfile?.user.fatherName !== null &&
               userProfile?.user.fatherName !== "" ? (
                 <Input
@@ -542,7 +542,7 @@ export default function () {
           </div>
 
           <div className="shortRowBlock">
-            <Form.Item label="По-батькові" className="shortFormItem">
+            <Form.Item label="По батькові" className="shortFormItem">
               {userProfile?.shortUser.fatherName !== null &&
               userProfile?.shortUser.fatherName !== "" ? (
                 <Input

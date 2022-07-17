@@ -1,9 +1,10 @@
 import { Button, Col, DatePicker, Form, Input, Row, Select } from "antd";
-import React, { useEffect , useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 import {
   checkRoleNameExists,
- getUsersForGoverningBodyAdminForm } from "../../../api/governingBodiesApi";
+  getUsersForGoverningBodyAdminForm,
+} from "../../../api/governingBodiesApi";
 import {
   dataCantBeFetched,
   emptyInput,
@@ -11,7 +12,6 @@ import {
 } from "../../../components/Notifications/Messages";
 import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 import notificationLogic from "../../../components/Notifications/Notification";
-
 
 type Props = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -90,6 +90,7 @@ const AddRegionBoardMainAdminForm = ({
         name="user"
         rules={[
           {
+            required: true,
             message: <div className="formItemExplain">{emptyInput()}</div>,
           },
         ]}

@@ -659,7 +659,7 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-            <Col md={{ span: 11, offset: 2 }} xs={24}>
+              <Col md={12} xs={24}>
               <Form.Item
                 name="email"
                 label="Електронна пошта"

@@ -209,7 +209,7 @@ const AnnouncementsTable = () => {
                   <div className={classes.metaWrapper}>
                     <div>
                       <Tooltip
-                        title="Натисніть щоб показати більше дій"
+                        title="Натисніть, щоб показати більше дій"
                         placement="topRight"
                       >
                         <Dropdown
@@ -231,12 +231,12 @@ const AnnouncementsTable = () => {
                     {item.isPined ? (
                       <div>
                         <Tooltip
-                          title="Натисніть щоб відкріпити оголошення"
+                          title="Натисніть, щоб відкріпити оголошення"
                           placement="topRight"
                         >
                           <Popconfirm
                             placement="bottom"
-                            title="Відкріпити оголоення"
+                            title="Відкріпити оголошення"
                             icon={null}
                             onConfirm={() => handlePin(item)}
                             okText="Так"
@@ -251,7 +251,7 @@ const AnnouncementsTable = () => {
                     ) : (
                       <div>
                         <Tooltip
-                          title="Натисніть щоб закріпити оголошення"
+                          title="Натисніть, щоб закріпити оголошення"
                           placement="topRight"
                         >
                           <PushpinOutlined
