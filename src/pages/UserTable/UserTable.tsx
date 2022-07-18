@@ -74,7 +74,6 @@ const UsersTable = () => {
   const clubList = useRef<Array<Club>>([]);
   const [isQueryLoaded, setQueryLoaded] = useState(false);
 
-  const [isInactive, setIsInactive] = useState(false);
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
   const [user, setUser] = useState<UserTable>();
@@ -343,7 +342,7 @@ const UsersTable = () => {
         Degrees: dynamicDegrees,
         Tab: currentTabName,
         SortKey: sortKey,
-        FilterRoles: registeredUsers ?? filter,
+        FilterRoles: filter,
         SearchData: searchData,
       });
 
@@ -686,7 +685,7 @@ const UsersTable = () => {
           record={recordObj}
           pageX={x}
           pageY={y}
-          inActiveTab={isInactive}
+          inActiveTab={currentTabName === "confirmed"}
           onDelete={handleDelete}
           onChange={handleChange}
           selectedUser={user}

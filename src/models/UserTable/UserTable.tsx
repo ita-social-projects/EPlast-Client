@@ -23,6 +23,8 @@ export default class UserTable {
   userRoles: string;
   upuDegree: string;
   comment: string;
+  isCityFollower: boolean;
+  isClubFollower: boolean;
 
   constructor() {
     this.id = "";
@@ -45,5 +47,7 @@ export default class UserTable {
     this.userRoles = "";
     this.upuDegree = "";
     this.comment = "";
+    this.isCityFollower = false;
+    this.isClubFollower = false;
   }
 }

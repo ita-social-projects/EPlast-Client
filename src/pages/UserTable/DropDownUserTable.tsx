@@ -106,6 +106,7 @@ const DropDown = (props: Props) => {
   );
   const [canChangeDegree, setCanChangeDegree] = useState<boolean>(false);
   const [canAddDegree, setCanAddDegree] = useState<boolean>(false);
+  const [canRemoveFollowers, setCanRemoveFollowers] = useState<boolean>(false);
   const [chainOfAccessibility, setChainOfAccessibility] = useState<
     IDropdownItem
   >();
@@ -240,6 +241,7 @@ const DropDown = (props: Props) => {
     setCanChangeDegree(result?.get(DropdownFunc.ChangeDegree) ?? false);
 
     setCanAddDegree(result?.get(DropdownFunc.AddDegree) ?? false);
+    setCanRemoveFollowers(result?.get(DropdownFunc.DeleteFollower) ?? false);
 
     setSuperAdmin(currentUserAdminRoles.includes(AdminRole.Admin));
     setGoverningBodyHead(
@@ -314,7 +316,7 @@ const DropDown = (props: Props) => {
             display: showDropdown ? "block" : "none",
           }}
         >
-          {inActiveTab === false && canViewProfile ? (
+          {canViewProfile ? (
             <Menu.Item key="1">
               <FileSearchOutlined />
               Переглянути профіль
@@ -322,7 +324,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canDelete ? (
+          {canDelete ? (
             <Menu.Item key="2">
               <DeleteOutlined />
               Видалити
@@ -330,7 +332,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeRegionAdministration ? (
+          {inActiveTab && canChangeRegionAdministration ? (
             <Menu.Item key="3">
               <EditOutlined />
               Провід округи
@@ -338,7 +340,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeCityAdministration ? (
+          {inActiveTab && canChangeCityAdministration ? (
             <Menu.Item key="4">
               <EditOutlined />
               Провід станиці
@@ -346,7 +348,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeClubAdministration ? (
+          {inActiveTab && canChangeClubAdministration ? (
             <Menu.Item key="5">
               <EditOutlined />
               Провід куреня
@@ -354,7 +356,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeUserAccess ? (
+          {inActiveTab && canChangeUserAccess ? (
             <Menu.Item key="6">
               <EditOutlined />
               Поточний стан користувача
@@ -362,7 +364,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeDegree ? (
+          {!canAddDegree && canChangeDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
               Змінити ступінь
@@ -371,7 +373,7 @@ const DropDown = (props: Props) => {
             <> </>
           )}
 
-          {inActiveTab === false && canAddDegree ? (
+          {!canChangeDegree && canAddDegree ? (
             <Menu.Item key="8">
               <PlusCircleOutlined />
               Додати до уладу
@@ -379,7 +381,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && superAdmin ? (
+          {superAdmin ? (
             <Menu.Item key="9">
               <MailOutlined />
               Активувати
@@ -387,7 +389,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeGoverningBodyAdministration ? (
+          {canChangeGoverningBodyAdministration ? (
             <Menu.Item key="10">
               <EditOutlined />
               Провід Пласту
@@ -395,7 +397,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canDeleteGoverningBodyAdministration ? (
+          {canDeleteGoverningBodyAdministration ? (
             <Menu.Item key="11">
               <EditOutlined />
               Відмінити роль Адміна
@@ -403,7 +405,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canAddDegree ? (
+          {canRemoveFollowers ? (
             <Menu.Item key="12">
               <CloseOutlined />
               Відхилити зголошення
@@ -454,7 +456,7 @@ const DropDown = (props: Props) => {
             onChange={onChange}
           />
           <ModalAddPlastDegree
-            handleAddDegree={() => {}}
+            handleAddDegree={() => onChange("", "")} // forcefully updating the table on exit
             userId={record}
             visibleModal={visibleModalDegree}
             setVisibleModal={setVisibleModalDegree}

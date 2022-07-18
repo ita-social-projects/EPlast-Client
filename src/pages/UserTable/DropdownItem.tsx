@@ -87,6 +87,7 @@ export class DropdownItemCreator {
     const editClubItem: EditUserClubItem = new EditUserClubItem();
     const editUserRole: EditUserRoleHandler = new EditUserRoleHandler();
     const addDegreeeItem: AddUserDegreeItem = new AddUserDegreeItem();
+    const removeCityFollowerItem: RemoveCityFollowerItem = new RemoveCityFollowerItem();
     const editGoverningBodyItem: EditUserGoverningBodyItem = new EditUserGoverningBodyItem();
     const deleteGoverningBodyItem: DeleteUserGoverningBodyItem = new DeleteUserGoverningBodyItem();
 
@@ -102,6 +103,7 @@ export class DropdownItemCreator {
       .setNext(editRegionItem)
       .setNext(editGoverningBodyItem)
       .setNext(deleteGoverningBodyItem)
+      .setNext(removeCityFollowerItem)
       .setNext(addDegreeeItem)
       .setNext(editUserRole);
     return checkProfileItem;
@@ -480,6 +482,41 @@ class AddUserDegreeItem extends DropdownItem {
   }
 }
 
+class RemoveCityFollowerItem extends DropdownItem {
+  public handle(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>
+  ): void {
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForRemovingAFollower();
+
+    if (
+      DropdownItem.checker.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        [Place.City, Place.Club]
+      )
+    ) {
+      DropdownItem.handlersResults.set(DropdownFunc.DeleteFollower, true);
+    } else {
+      DropdownItem.handlersResults.set(DropdownFunc.DeleteFollower, false);
+    }
+
+    super.handle(
+      currentUser,
+      currentUserAdminRoles,
+      selectedUser,
+      selectedUserAdminRoles,
+      selectedUserNonAdminRoles
+    );
+  }
+}
+
 //-------------------------------------------------------------------------------------------------------------------------------
 
 //Builds CoR for each of the dropdown items
@@ -535,6 +572,18 @@ class CheckCreator {
       ?.setNext(this.userHeadAdmin)
       ?.setNext(this.userGovAdmin)
       ?.setNext(this.placesId)
+      ?.setNext(null);
+
+    return this.checkId;
+  }
+
+  public rebuildChainForRemovingAFollower(): ICheck {
+    this.checkId
+      .setNext(this.hasPlace)
+      ?.setNext(this.placesId)
+      ?.setNext(this.adminRightsCompare)
+      ?.setNext(this.userHeadAdmin)
+      ?.setNext(this.userGovAdmin)
       ?.setNext(null);
 
     return this.checkId;
