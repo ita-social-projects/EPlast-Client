@@ -83,6 +83,7 @@ const UsersTable = () => {
   const { Search } = Input;
   const location = useLocation();
   const queryParams = useRef<any>({});
+  const [selectedRow, setSelectedRow] = useState<number>(-1)
 
   useEffect(() => {
     initializePage();
@@ -470,6 +471,7 @@ const UsersTable = () => {
 
   const handleClickAway = () => {
     setShowDropdown(false);
+    setSelectedRow(-1);
   };
 
   const handleChange = (id: string, userRole: string) => {
@@ -620,6 +622,7 @@ const UsersTable = () => {
         }}
       >
         <Table
+          rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
           loading={!loading}
           className={classes.table}
           bordered
@@ -634,7 +637,7 @@ const UsersTable = () => {
             isZgolosheni: currentTabName === "registered"
           })}
           dataSource={users}
-          onRow={(record) => {
+          onRow={(record, index) => {
             return {
               onDoubleClick: () => {
                 if (record.id && canView)
@@ -651,6 +654,7 @@ const UsersTable = () => {
                   setX(event.pageX);
                   setY(event.pageY);
                   setShowDropdown(true);
+                  setSelectedRow(index as number);
                 }
               },
             };

@@ -303,7 +303,10 @@ const DropDown = (props: Props) => {
           className={classes.menu}
           onClick={handleItemClick}
           style={{
-            top: pageY,
+            top: 
+              window.innerHeight - (pageY + 340) < 0
+                ? window.innerHeight - 350
+                : pageY,
             left:
               window.innerWidth - (pageX + 223) < 0
                 ? window.innerWidth - 266
