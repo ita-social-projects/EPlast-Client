@@ -23,7 +23,7 @@
     "antd": "^4.3.4",
     "antd-img-crop": "^3.16.0",
     "antd-mask-input": "^0.1.13",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bizcharts": "^4.0.15",
     "craco-less": "^1.17.0",
     "formik": "^2.1.4",
