@@ -1207,6 +1207,7 @@ const City = () => {
           setVisibleModal={setVisibleAddModalDegree}
           userId={selectedFollowerUID as string}
           handleAddDegree={handleAddDegree}
+          isEditing={false}
         ></ModalAddPlastDegree>
       ) : null}
 

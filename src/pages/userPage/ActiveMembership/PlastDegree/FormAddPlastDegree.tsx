@@ -15,6 +15,7 @@ import notificationLogic from "../../../../components/Notifications/Notification
 import CityProfile from "../../../../models/City/CityProfile";
 import {
   addFollowerWithId,
+  getAllFollowers,
   getCities,
   toggleMemberStatus,
 } from "../../../../api/citiesApi";
@@ -33,6 +34,7 @@ type FormAddPlastDegreeProps = {
   userId: string;
   cancel: boolean;
   isModalVisible: boolean;
+  isEditing: boolean;
 };
 
 const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
@@ -40,6 +42,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
   const [isDegreeSelectVisible, setDegreeSelectVisible] = useState(false);
   const [isCitySelectVisible, setCitySelectVisible] = useState(true);
+  const [isDateSelectionActive, setDateSelectionActive] = useState(true);
 
   const [filtredDegrees, setFiltredDegrees] = useState<Array<PlastDegree>>([]);
   const [cities, setCities] = useState<CityProfile[]>([]);
@@ -52,22 +55,52 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
   const handleFinish = async (info: any) => {
     setLoading(true);
+
     info.plastDegree = filtredDegrees.find((item) => item.name === "Пластприят")?.id ?? info.plastDegree;
     const degreeName = filtredDegrees.find((item) => item.id === info.plastDegree)?.name;
 
+    const cityDefault = cities.find((x) => x.name == info.userCity)?.id;
+
+    let degreeChanged =
+      !(info.plastUlad === props.currentUserDegree?.plastDegree.name ||
+      info.plastDegree === props.currentUserDegree?.plastDegree.name)
+    
     const userPlastDegreePost: UserPlastDegreePost = {
       plastDegreeId: info.plastDegree,
       dateStart: info.datepickerStart._d,
       userId: props.userId,
     };
 
-    const cityDefault = cities.find((x) => x.name == info.userCity)?.id;
+    if (!props.isEditing) {
+      let follower;
 
-    const newCityFollower: CityMember = (
-      await addFollowerWithId(cityDefault as number, props.userId)
-    ).data;
-    await toggleMemberStatus(newCityFollower.id);
-    await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
+      if (!disabled) {
+        follower = (
+          await addFollowerWithId(cityDefault as number, props.userId)
+        ).data;
+      }
+      else {
+        let followers: CityMember[] = (
+          await getAllFollowers(cityDefault as number)
+        ).data.followers;
+        follower = followers.find((member) => member.userId === props.userId)
+      }
+
+      await toggleMemberStatus(follower.id);
+    }
+
+    if (degreeChanged) { 
+      await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
+
+      await NotificationBoxApi.createNotifications(
+        [props.userId],
+        `Вам було надано ступінь ${degreeName} в `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/userpage/activeMembership/${props.userId}`,
+        `Дійсному членстві`
+      );
+    }
+
     props.handleAddDegree();
     form.resetFields();
     props.resetAvailablePlastDegree();
@@ -75,13 +108,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     if (UpdateData) {
       await UpdateData();
     }
-    await NotificationBoxApi.createNotifications(
-      [props.userId],
-      `Вам було надано ступінь ${degreeName} в `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/userpage/activeMembership/${props.userId}`,
-      `Дійсному членстві`
-    );
+    
     notificationLogic("success", successfulAddDegree());
     props.setVisibleModal(false);
   };
@@ -104,6 +131,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         props.plastDegrees.filter((item) => item.name.includes("сеніор"))
       );
     }
+
+    setDateSelectionActive(true);
   };
 
   const disabledDate = (current: any) => {
@@ -117,14 +146,17 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     const response = await getCities();
     setCities(response.data);
     const userInfo = await UserApi.getById(props.userId);
+
     if (userInfo.data.user.city) {
       setDisabled(true);
     }
+
     form.setFieldsValue({
       userCity: userInfo.data.user.city,
       plastUlad: props.currentUserDegree ? getDegreeCategory(props.currentUserDegree.plastDegree.name) : undefined,
       datepickerStart: props.currentUserDegree ? moment(props.currentUserDegree.dateStart) : undefined
     });
+
     if (sortDegrees(form.getFieldValue("plastUlad"))) {
       form.setFieldsValue({
         plastDegree: props.currentUserDegree ? props.currentUserDegree.plastDegree.name : undefined,
@@ -132,6 +164,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       setDegreeSelectVisible(true);
     }
     setFormReady(true);
+    if (props.currentUserDegree) setDateSelectionActive(false);
   };
 
   useEffect(() => {
@@ -219,6 +252,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         >
           <Select
             placeholder="Оберіть ступінь"
+            onChange={() => {setDateSelectionActive(true)}}
           >
             {sortDegrees(form.getFieldValue("plastUlad"))?.map((apd) => {
               return (
@@ -254,13 +288,19 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         <DatePicker
           format="DD.MM.YYYY"
           className={classes.selectField}
+          disabled={!isDateSelectionActive}
           disabledDate={disabledDate}
-          placeholder="Дата надання ступеню"
+          placeholder="Дата надання ступіню"
         />
       </Form.Item>
       <Form.Item>
-        <Button className={classes.cardButton} type="primary" htmlType="submit" loading={loading}>
-          Додати
+        <Button className={classes.cardButton} type="primary" htmlType="submit" loading={loading} disabled={props.isEditing && !isDateSelectionActive}>
+          {props.isEditing
+            ? "Змінити ступінь"
+            : isDateSelectionActive
+              ? "Додати"
+              : "Додати без зміни ступіня"
+          }
         </Button>
       </Form.Item>
     </Form>
