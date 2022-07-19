@@ -80,7 +80,7 @@ stages:
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: Replace tokens in **/*
             inputs:
-              rootDirectory: $(Pipeline.Workspace)/prod/manifests
+              rootDirectory: $(Pipeline.Workspace)/manifests/prod
               targetFiles: '**/*.yml'
               keepToken: true
               tokenPrefix: ___
