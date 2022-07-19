@@ -164,19 +164,18 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </Col>
         </Row>
       ),
-      render: (id: any) => {
+      render: (text, record, index) => {
         return SortColumnHighlight(
           1,
           <div className={styles.divWrapper}>
             <div className={styles.tagText}>
-              <Tooltip placement="top" title={id}>
-                {id}
+              <Tooltip placement="top" title={index}>
+                {(index + 1) as any}
               </Tooltip>
             </div>
           </div>
         );
       },
-      dataIndex: "userSystemId",
       fixed: true,
       width: 60,
       key: "userSystemId",
