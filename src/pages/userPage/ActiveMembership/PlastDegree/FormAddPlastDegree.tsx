@@ -10,6 +10,7 @@ import NotificationBoxApi from "../../../../api/NotificationBoxApi";
 import {
   emptyInput,
   successfulAddDegree,
+  successfulAddUserToCity,
 } from "../../../../components/Notifications/Messages";
 import notificationLogic from "../../../../components/Notifications/Notification";
 import CityProfile from "../../../../models/City/CityProfile";
@@ -87,6 +88,13 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       }
 
       await toggleMemberStatus(follower.id);
+      await NotificationBoxApi.createNotifications(
+        [props.userId],
+        `Вітаємо! Вас було прийнято до станиці `,
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        `/cities/${cityDefault}`,
+        info.userCity
+      );
     }
 
     if (degreeChanged) { 
@@ -94,7 +102,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
       await NotificationBoxApi.createNotifications(
         [props.userId],
-        `Вам було надано ступінь ${degreeName} в `,
+        `Вам було надано ступінь "${degreeName}" в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${props.userId}`,
         `Дійсному членстві`
@@ -109,8 +117,10 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       await UpdateData();
     }
     
-    notificationLogic("success", successfulAddDegree());
     props.setVisibleModal(false);
+
+    if (degreeChanged && props.isEditing) notificationLogic("success", successfulAddDegree());
+    if (!props.isEditing) notificationLogic("success", successfulAddUserToCity(info.userCity));
   };
 
   const handleOnChange = async (value: any) => {
