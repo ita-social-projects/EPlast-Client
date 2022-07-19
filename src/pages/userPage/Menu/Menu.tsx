@@ -67,14 +67,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           </Menu.Item>) : (
             null
               )}  
-        <Menu.Item
-          className="menuItem"
-          key="coursse"
-          onClick={() => history.push(`/userpage/course/${props.id}`)}
-        >
-          Курс
-        </Menu.Item>
-
+        
           
           {(userProfileAccess["CanSeeUserApproversPage"] 
             || props.id !== activeUserId) ? (      
@@ -87,6 +80,13 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           </Menu.Item>) : (
             null
           )}
+          <Menu.Item
+            className="menuItem"
+            key="coursse"
+            onClick={() => history.push(`/userpage/course/${props.id}`)}
+          >
+            Курс
+          </Menu.Item>
 
       </Menu>
     </div>
