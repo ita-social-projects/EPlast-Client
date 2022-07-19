@@ -102,200 +102,260 @@ const PrivateLayout = ({ children }: any) => {
 
             {userAccesses?.decisions
               ? (
-              <Menu.Item
-                key="0"
-                icon={<SolutionOutlined />}
-                onClick={() => {
-                  setCollapsed(true);
-                  history.push("/decisions");
-                }}
-                title=""
-              >
-                  <a href="/decisions" onClick={() => setCollapsed(true)}>Рішення</a>
-              </Menu.Item>
+                <Menu.Item
+                  key="decisions"
+                  icon={<SolutionOutlined />}
+                >
+                  <a // 'a' tag is used to make possible to open item in new tab
+                    href="/decisions"
+                    onClick={(e) => {
+                      e.preventDefault(); // To prevent page reload on item clicking
+                      setCollapsed(true);
+                      history.push("/decisions"); 
+                    }}>
+                    Рішення
+                  </a>
+                </Menu.Item>
               )
               : null
             }
 
             {userAccesses?.announcements
               ? (
-              <Menu.Item
-                key="announcements"
-                icon={<InsertRowAboveOutlined />}
-                onClick={() => {
-                  setCollapsed(true);
-                  history.push("/announcements/1");
-                }}
-                title=""
-              >
-                Дошка оголошень
-              </Menu.Item>
+                <Menu.Item
+                  key="announcements"
+                  icon={<InsertRowAboveOutlined />}
+                >
+                  <a
+                    href="/announcements/1"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(true);
+                      history.push("/announcements/1");
+                    }}>
+                    Дошка оголошень
+                  </a>
+                </Menu.Item>
               )
               : null
             }
 
             {userAccesses?.regionBoard
               ? (
-              <Menu.Item
-                key="1"
-                icon={<BankOutlined />}
-                onClick={() => {
-                  setCollapsed(true);
-                  history.push("/regionsBoard");
-                }}
-                title=""
-              >
-                Крайовий Провід Пласту
-              </Menu.Item>
+                <Menu.Item
+                  key="regionsBoard"
+                  icon={<BankOutlined />}
+                >
+                  <a
+                    href="/regionsBoard"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(true);
+                      history.push("/regionsBoard");
+                    }}
+                  >
+                    Крайовий Провід Пласту
+                  </a>
+                </Menu.Item>
               )
               : null
             }
 
             {userAccesses?.directory
               ? (
-            <SubMenu key="sub1" icon={<BookOutlined />} title="Довідник">
+                <SubMenu key="sub1" icon={<BookOutlined />} title="Довідник">
 
                   {userAccesses.userTable
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/user/table");
-                  }}
-                  key="2"
-                >
-                  Таблиця користувачів
-                </Menu.Item>
+                      <Menu.Item
+                        key="usertable"
+                      >
+                        <a
+                          href="/user/table"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/user/table");
+                          }}
+                        >
+                          Таблиця користувачів
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
                   {userAccesses.regions || currentUser?.region
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/regions/page/1");
-                  }}
-                  key="3"
-                >
-                  Округи
-                </Menu.Item>
+                      <Menu.Item
+                        key="regions"
+                      >
+                        <a
+                          href="/regions/page/1"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/regions/page/1");
+                          }}
+                        >
+                          Округи
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
-              <Menu.Item
-                onClick={() => {
-                      setCollapsed(true);
-                  history.push("/cities/page/1");
-                }}
-                key="4"
-              >
-                Станиці
-              </Menu.Item>
+                  <Menu.Item
+                    key="cities"
+                  >
+                    <a
+                      href="/cities/page/1"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCollapsed(true);
+                        history.push("/cities/page/1");
+                      }}
+                    >
+                      Станиці
+                    </a>
+                  </Menu.Item>
 
                   {userAccesses.clubs
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/clubs/page/1");
-                  }}
-                  key="5"
-                >
-                  Курені
-                </Menu.Item>
+                      <Menu.Item
+                        key="clubs"
+                      >
+                        <a
+                          href="/clubs/page/1"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/clubs/page/1");
+                          }}
+                        >
+                          Курені
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
                   {userAccesses.events
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/events/types");
-                  }}
-                  key="6"
-                >
-                  Події
-                </Menu.Item>
+                      <Menu.Item
+                        key="events"
+                      >
+                        <a
+                          href="/events/types"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/events/types");
+                          }}
+                        >
+                          Події 
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
                   {userAccesses.distinctions
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/distinctions");
-                  }}
-                  key="7"
-                >
-                  Відзначення
-                </Menu.Item>
+                      <Menu.Item
+                        key="distinctions"
+                      >
+                        <a
+                          href="/distinctions"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/distinctions");
+                          }}
+                        >
+                          Відзначення
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
                   {userAccesses.precaution
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/precautions");
-                  }}
-                  key="15"
-                >
-                  Перестороги
-                </Menu.Item>
+                      <Menu.Item
+                        key="precautions"
+                      >
+                        <a
+                          href="/precautions"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/precautions");
+                          }}
+                        >
+                          Перестороги
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
                   {userAccesses.kadra
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/kadra");
-                  }}
-                  key="8"
-                >
-                  Кадра виховників
-                </Menu.Item>
+                      <Menu.Item
+                        key="kadra"
+                      >
+                        <a
+                          href="/kadra"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/kadra");
+                          }}
+                        >
+                          Кадра виховників
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
                   {userAccesses.renewals
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/renewals");
-                  }}
-                  key="18"
-                >
-                  Відновлення статусу
-                </Menu.Item>
+                      <Menu.Item
+                        key="renewals"
+                      >
+                        <a
+                          href="/renewals"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/renewals");
+                          }}
+                        >
+                          Відновлення статусу
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
                   {userAccesses.legislation
                     ? (
-                <Menu.Item
-                  onClick={() => {
-                          setCollapsed(true);
-                    history.push("/legislation");
-                  }}
-                  key="14"
-                >
-                  Репозитарій
-                </Menu.Item>
+                      <Menu.Item
+                        key="legislation"
+                      >
+                        <a
+                          href="/legislation"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/legislation");
+                          }}
+                        >
+                          Репозитарій
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
@@ -307,122 +367,153 @@ const PrivateLayout = ({ children }: any) => {
             {userAnnualReportAccess?.CanViewReportsPage
               && userAnnualReportAccess?.CanCityStatisticsFormReport
               ? (
-              <SubMenu
-                key="sub2"
-                icon={<SnippetsOutlined />}
-                title="Звітування та Статистика"
-              >
-
+                <SubMenu
+                  key="sub2"
+                  icon={<SnippetsOutlined />}
+                  title="Звітування та Статистика"
+                >
                   {userAnnualReportAccess?.CanViewRegionReportsTable
                     ? (
-                  <Menu.Item
-                    icon={<FileTextOutlined />}
-                    onClick={() => {
-                      setCollapsed(true);
-                      history.push(`/annualreport/table/region`);
-                    }}
-                    key="9"
-                  >
-                    Річні звіти
-                  </Menu.Item>
+                      <Menu.Item
+                        icon={<FileTextOutlined />}
+                        key="annualreportregion"
+                      >
+                        <a
+                          href="/annualreport/table/region"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/annualreport/table/region");
+                          }}
+                        >
+                          Річні звіти округ
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
                   {userAnnualReportAccess?.CanViewCityReportsTable
                     ? (
-                    <Menu.Item
-                      icon={<FileTextOutlined />}
-                      onClick={() => {
-                        setCollapsed(true);
-                        history.push(`/annualreport/table/city`);
-                      }}
-                      key="9"
-                    >
-                      Річні звіти
-                    </Menu.Item>
+                      <Menu.Item
+                        icon={<FileTextOutlined />}
+                        key="annualreportcity"
+                      >
+                        <a
+                          href="/annualreport/table/city"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/annualreport/table/city");
+                          }}
+                        >
+                          Річні звіти станиць
+                        </a>
+                      </Menu.Item>
                     )
                     : null
                   }
 
-                <SubMenu
-                  key="sub2.1"
-                  icon={<PieChartOutlined />}
-                  title="Статистика"
-                >
-
-                  <Menu.Item
-                    icon={<BarChartOutlined />}
-                    onClick={() => {
-                      setCollapsed(true);
-                      history.push("/statistics/cities");
-                    }}
-                    key="10"
+                  <SubMenu
+                    key="sub2.1"
+                    icon={<PieChartOutlined />}
+                    title="Статистика"
                   >
-                    Статистика станиць
-                  </Menu.Item>
 
-                  <Menu.Item
-                    icon={<BarChartOutlined />}
-                    onClick={() => {
-                      setCollapsed(true);
-                      history.push("/statistics/regions");
-                    }}
-                    key="11"
-                  >
-                    Статистика округ
-                  </Menu.Item>
+                    <Menu.Item
+                      icon={<BarChartOutlined />}
+                      key="statisticscities"
+                    >
+                      <a
+                        href="/statistics/cities"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCollapsed(true);
+                          history.push("/statistics/cities");
+                        }}
+                      >
+                        Статистика станиць
+                      </a>
+                    </Menu.Item>
 
+                    <Menu.Item
+                      icon={<BarChartOutlined />}
+                      key="statisticsregions"
+                    >
+                      <a
+                        href="/statistics/regions"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCollapsed(true);
+                          history.push("/statistics/regions");
+                        }}
+                      >
+                        Статистика округ
+                      </a>
+                    </Menu.Item>
+
+                  </SubMenu>
                 </SubMenu>
-
-              </SubMenu>
               )
               : userAnnualReportAccess?.CanViewClubReportsTable
                 ? (
-              <Menu.Item
-                icon={<FileTextOutlined />}
-                onClick={() => {
-                  setCollapsed(true);
-                  history.push(`/annualreport/table/hovel`);
-                }}
-                key="16"
-              >
-                Річні звіти
-              </Menu.Item>
+                  <Menu.Item
+                    icon={<FileTextOutlined />}
+                    key="annualreporthovel"
+                  >
+                    <a
+                      href="/annualreport/table/hovel"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCollapsed(true);
+                        history.push("/annualreport/table/hovel");
+                      }}
+                    >
+                      Річні звіти куренів
+                    </a>
+                  </Menu.Item>
                 )
                 : null
             }
 
             {userAccesses?.aboutBase
               ? (
-              <Menu.Item
-                onClick={() => {
-                    setCollapsed(true);
-                  history.push("/aboutBase");
-                }}
-                key="17"
-                title=""
-              >
-                <QuestionOutlined />
-                Про Базу
-              </Menu.Item>
+                <Menu.Item
+                  key="aboutBase"
+                >
+                  <a
+                    href="/aboutBase"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(true);
+                      history.push("/aboutBase");
+                    }}
+                  >
+                    <QuestionOutlined />
+                    Про Базу
+                  </a>
+                </Menu.Item>
               )
               : null
             }
 
             {userAccesses?.terms
               ? (
-              <Menu.Item
-                onClick={() => {
-                    setCollapsed(true);
+                <Menu.Item
+                  key="terms"
+                >
+                  <a
+                    href="/terms"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(true);
                   history.push("/terms");
-                }}
-                key="18"
-                title=""
-              >
-                <AlignLeftOutlined />
-                Політика конфіденційності
-              </Menu.Item>
+                    }}
+                  >
+                    <AlignLeftOutlined />
+                    Політика конфіденційності
+                  </a>
+                </Menu.Item>
               )
               : null
             }
@@ -430,7 +521,7 @@ const PrivateLayout = ({ children }: any) => {
           </Menu>
 
         </Sider>
-      </div>
+      </div> 
 
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }} key="content">
