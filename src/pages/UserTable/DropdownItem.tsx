@@ -86,6 +86,7 @@ export class DropdownItemCreator {
     const editCityItem: EditUserCityItem = new EditUserCityItem();
     const editClubItem: EditUserClubItem = new EditUserClubItem();
     const editUserRole: EditUserRoleHandler = new EditUserRoleHandler();
+    const removeCityFollowerItem: RemoveCityFollowerItem = new RemoveCityFollowerItem();
     const changeUserDegreeItem: ChangeUserDegreeItem = new ChangeUserDegreeItem();
     const addUserDegree: AddUserDegree = new AddUserDegree();
     const editGoverningBodyItem: EditUserGoverningBodyItem = new EditUserGoverningBodyItem();
@@ -103,6 +104,7 @@ export class DropdownItemCreator {
       .setNext(editRegionItem)
       .setNext(editGoverningBodyItem)
       .setNext(deleteGoverningBodyItem)
+      .setNext(removeCityFollowerItem)
       .setNext(changeUserDegreeItem)
       .setNext(addUserDegree)
       .setNext(editUserRole);
@@ -518,6 +520,41 @@ class AddUserDegree extends DropdownItem {
   }
 }
 
+class RemoveCityFollowerItem extends DropdownItem {
+  public handle(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>
+  ): void {
+    DropdownItem.checker = DropdownItem.checkCreator.rebuildChainForRemovingAFollower();
+
+    if (
+      DropdownItem.checker.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        [Place.City, Place.Club]
+      )
+    ) {
+      DropdownItem.handlersResults.set(DropdownFunc.DeleteFollower, true);
+    } else {
+      DropdownItem.handlersResults.set(DropdownFunc.DeleteFollower, false);
+    }
+
+    super.handle(
+      currentUser,
+      currentUserAdminRoles,
+      selectedUser,
+      selectedUserAdminRoles,
+      selectedUserNonAdminRoles
+    );
+  }
+}
+
 //-------------------------------------------------------------------------------------------------------------------------------
 
 //Builds CoR for each of the dropdown items
@@ -544,6 +581,9 @@ class CheckCreator {
   private selectedUserIsInPlace: SelectedUserIsInPlace = new SelectedUserIsInPlace();
   private falseCheck: FinalFalseCheck = new FinalFalseCheck();
 
+  private followerCheck: SelectedUserIsAFollowerCheck = new SelectedUserIsAFollowerCheck();
+  private notAFollowerCheck: SelectedUserIsNotAFollowerCheck = new SelectedUserIsNotAFollowerCheck();
+
   public rebuildChainForDeleting(): ICheck {
     this.checkId
       .setNext(this.adminRightsCompare)
@@ -566,7 +606,7 @@ class CheckCreator {
 
   public rebuildChainForChangeUserDegree(): ICheck {
     this.checkId
-      .setNext(this.selectedUserIsNotRegisteredUser)
+      .setNext(this.notAFollowerCheck)
       ?.setNext(this.adminRightsCompare)
       ?.setNext(this.currentUserIsAdminForSelectedUser)
       ?.setNext(this.currentUserCanChangeDegreeOfSelectedUser)
@@ -577,7 +617,7 @@ class CheckCreator {
 
   public rebuildChainForAddingUserDegree(): ICheck {
     this.checkId
-      .setNext(this.selectedUserIsRegisteredCheck)
+      .setNext(this.followerCheck)
       ?.setNext(this.adminRightsCompare)
       ?.setNext(this.currentUserIsAdminForSelectedUser)
       ?.setNext(this.currentUserCanChangeDegreeOfSelectedUser)
@@ -598,6 +638,17 @@ class CheckCreator {
     return this.checkId;
   }
 
+  public rebuildChainForRemovingAFollower(): ICheck {
+    this.checkId
+      .setNext(this.selectedUserIsInPlace)
+      ?.setNext(this.followerCheck)
+      ?.setNext(this.adminRightsCompare)
+      ?.setNext(this.currentUserIsAdminForSelectedUser)
+      ?.setNext(null);
+
+    return this.checkId;
+  }
+  
   public rebuildChainForSettingCityAdministration(): ICheck {
     this.checkId
       .setNext(this.selectedUserIsNotRegisteredUser)
@@ -920,6 +971,46 @@ class CurrentUserCanEditRegionAdministration extends Check {
   }
 }
 
+//Checks if selected user is a follower in a City or a Club
+class SelectedUserIsAFollowerCheck extends Check {
+  public check(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>,
+    places: Array<Place>
+  ): boolean {
+    return (
+      selectedUser.isCityFollower ||
+      selectedUser.isClubFollower ||
+      selectedUser.cityId === null ||
+      selectedUser.regionId === null
+    );
+  }
+}
+
+//Inverted version of the previous check
+class SelectedUserIsNotAFollowerCheck extends SelectedUserIsAFollowerCheck {
+  public check(
+    currentUser: any,
+    currentUserAdminRoles: Array<AdminRole>,
+    selectedUser: any,
+    selectedUserAdminRoles: Array<AdminRole>,
+    selectedUserNonAdminRoles: Array<NonAdminRole>,
+    places: Array<Place>
+  ): boolean {
+    return !super.check(
+      currentUser,
+      currentUserAdminRoles,
+      selectedUser,
+      selectedUserAdminRoles,
+      selectedUserNonAdminRoles,
+      places);
+  }
+}
+
+//Checks if selected user is Governing body Admin,
 class CurrentUserIsAdminForSelectedUserCheck extends Check {
   public check(
     currentUser: any,

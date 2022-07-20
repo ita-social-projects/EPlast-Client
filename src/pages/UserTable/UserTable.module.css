@@ -101,3 +101,9 @@
   margin-top: 0.7em;
   margin-bottom: 0.2em;
 }
+
+.selectedRow {
+  background-color: #f4f8f1;
+  box-shadow: 0 0 10px #f4f8f1;
+  color: #3D5438;
+}

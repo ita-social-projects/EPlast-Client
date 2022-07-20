@@ -7,7 +7,6 @@ import {
   RollbackOutlined,
   AlignLeftOutlined,
   QuestionOutlined,
-
   SolutionOutlined,
   SnippetsOutlined,
   PieChartOutlined,
@@ -15,16 +14,12 @@ import {
   BarChartOutlined,
   InsertRowAboveOutlined,
 } from "@ant-design/icons";
-
-import jwt from "jwt-decode";
 import classes from "./PrivateLayout.module.css";
 import AuthLocalStorage from "../../AuthLocalStorage";
-import { Roles } from "../../models/Roles/Roles";
 import useOnClickOutside from "./useOneClickOutside";
 import { User } from "../../pages/userPage/Interface/Interface";
 import UserApi from "../../api/UserApi";
 import IUserAnnualReportAccess from "../../models/UserAccess/IUserAccess";
-import IUserStatisticsAccess from "../../models/UserAccess/IUserAccess";
 import AnnualReportApi from "../../api/AnnualReportApi";
 import StatisticsApi from "../../api/StatisticsApi";
 
@@ -32,92 +27,53 @@ const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const PrivateLayout = ({ children }: any) => {
-  const [collapsed, setCollapsed] = useState(true);
   const history = useHistory();
-  const [id, setId] = useState<string>("");
-  const [onlyRegistered, setOnlyRegistered] = useState(false);
-  const [activeUserProfile, setActiveUserProfile] = useState<User>();
-  const [plastMember, setPlastMember] = useState(false);
-  const [reload, setReload] = useState<boolean>(false);
   const ref = useRef(null);
-  const [userAnnualReportAccess, setUserAnnualReportAccess] = useState<
-    IUserAnnualReportAccess
-  >();
-  const [userStatisticsAccess, setUserStatisticsAccess] = useState<
-    IUserStatisticsAccess
-  >();
-  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
-    {}
-  );
 
-  const handleClickOutside = () => {
-    setCollapsed(true);
-  };
-  useOnClickOutside(ref, handleClickOutside);
+  const [collapsed, setCollapsed] = useState(true);
+  const [imageBase64, setImageBase64] = useState<string>();
+  const [currentUser, setCurrentUser] = useState<User>();
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>();
+  const [userAnnualReportAccess, setUserAnnualReportAccess] = useState<IUserAnnualReportAccess>();
+
+  useOnClickOutside(ref, () => setCollapsed(true));
 
   const onCollapse = (collValue: boolean) => {
-    setReload(!reload);
     setCollapsed(collValue);
   };
 
-  const handleClickAway = () => {
-    setCollapsed(true);
-  };
-
-  const getUserAccessesForMenu = async () => {
-    let user: any = jwt(AuthLocalStorage.getToken() as string);
-    await UserApi.getUserMenuAccess(user.nameid).then((response) => {
-      setUserAccesses(response.data);
-    });
-  };
-
-  const [imageBase64, setImageBase64] = useState<string>();
   const fetchData = async () => {
     const token = AuthLocalStorage.getToken() as string;
-    getUserAccessesForMenu();
+
     if (token == null) {
-      const str = window.location.pathname;
-      if (str !== "/signin") {
-        localStorage.setItem("pathName", str);
+      if (window.location.pathname !== "/signin") {
+        history.push("/signin");
       }
-      history.push("/signin");
     } else {
-      const user: any = jwt(token);
-      await UserApi.getById(user.nameid).then(async (response) => {
-        await UserApi.getImage(response.data?.user.imagePath).then(
-          (response: { data: any }) => {
-            setImageBase64(response.data);
-          }
-        );
-        setId(response.data.user.id);
+      const user = await UserApi.getActiveUserProfile();
+
+      const imagePromise = UserApi.getImage(user.imagePath);
+      const menuAccessPromise = UserApi.getUserMenuAccess(user.id);
+      const annualReportAccessPromise = AnnualReportApi.getUserAnnualReportAccess(user.id);
+      const statisticsAccessPromise = StatisticsApi.getUserStatisticsAccess(user.id);
+
+      setCurrentUser(user);
+      setImageBase64((await imagePromise).data);
+      setUserAccesses((await menuAccessPromise).data);
+      setUserAnnualReportAccess({
+        ...(await annualReportAccessPromise).data,
+        ...(await statisticsAccessPromise).data
       });
     }
   };
 
-  const fetchUser = async () => {
-    let roles = UserApi.getActiveUserRoles();
-    setOnlyRegistered(roles.includes(Roles.RegisteredUser));
-    setPlastMember(roles.includes(Roles.PlastMember));
-    let userProfile = await UserApi.getActiveUserProfile();
-    setActiveUserProfile(userProfile);
-    setUserAnnualReportAccess(
-      await (
-        await AnnualReportApi.getUserAnnualReportAccess(
-          UserApi.getActiveUserId()
-        )
-      ).data
-    );
-    setUserStatisticsAccess(
-      await (
-        await StatisticsApi.getUserStatisticsAccess(UserApi.getActiveUserId())
-      ).data
-    );
-  };
-
   useEffect(() => {
-    fetchData();
-    fetchUser();
-  }, [reload]);
+    if (!collapsed) {
+      fetchData();
+    }
+  }, [collapsed]);
+
+  useEffect(() => { fetchData(); }, []);
 
   return (
     <Layout style={{ minHeight: "calc(100vh-64px-82px)" }}>
@@ -132,7 +88,7 @@ const PrivateLayout = ({ children }: any) => {
           collapsedWidth="0"
         >
           <div className={classes.profilePhoto}>
-            <Link to={`/userpage/main/${id}`}>
+            <Link to={`/userpage/main/${currentUser?.id}`}>
               <Avatar
                 size={64}
                 src={imageBase64}
@@ -141,288 +97,432 @@ const PrivateLayout = ({ children }: any) => {
               />
             </Link>
           </div>
+
           <Menu theme="dark" mode="inline" className={classes.leftMenu}>
-            {userAccesses["decisions"] ? (
-              <Menu.Item
-                key="0"
-                icon={<SolutionOutlined />}
-                onClick={() => {
-                  handleClickAway();
-                  history.push("/decisions");
-                }}
-                title=""
-              >
-                Рішення
-              </Menu.Item>
-            ) : (
-              <> </>
-            )}
-            {userAccesses["announcements"] ? (
-              <Menu.Item
-                key="announcements"
-                icon={<InsertRowAboveOutlined />}
-                onClick={() => {
-                  handleClickAway();
-                  history.push("/announcements/1");
-                }}
-                title=""
-              >
-                Дошка оголошень
-              </Menu.Item>
-            ) : (
-              <> </>
-            )}
-            {userAccesses["regionBoard"] ? (
-              <Menu.Item
-                key="1"
-                icon={<BankOutlined />}
-                onClick={() => {
-                  handleClickAway();
-                  history.push("/regionsBoard");
-                }}
-                title=""
-              >
-                Крайовий Провід Пласту
-              </Menu.Item>
-            ) : (
-              <> </>
-            )}
-            {userAccesses["directory"] ? (
-            <SubMenu key="sub1" icon={<BookOutlined />} title="Довідник">
-              {userAccesses["userTable"] ? (
+
+            {userAccesses?.decisions
+              ? (
                 <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/user/table");
-                  }}
-                  key="2"
+                  key="decisions"
+                  icon={<SolutionOutlined />}
                 >
-                  Таблиця користувачів
+                  <a // 'a' tag is used to make possible to open item in new tab
+                    href="/decisions"
+                    onClick={(e) => {
+                      e.preventDefault(); // To prevent page reload on item clicking
+                      setCollapsed(true);
+                      history.push("/decisions"); 
+                    }}>
+                    Рішення
+                  </a>
                 </Menu.Item>
-              ) : (
-                <> </>
-              )}
-              {userAccesses["regions"] || activeUserProfile?.region ? (
+              )
+              : null
+            }
+
+            {userAccesses?.announcements
+              ? (
                 <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/regions/page/1");
-                  }}
-                  key="3"
+                  key="announcements"
+                  icon={<InsertRowAboveOutlined />}
                 >
-                  Округи
+                  <a
+                    href="/announcements/1"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(true);
+                      history.push("/announcements/1");
+                    }}>
+                    Дошка оголошень
+                  </a>
                 </Menu.Item>
-              ) : (
-                <> </>
-              )}
-              <Menu.Item
-                onClick={() => {
-                  handleClickAway();
-                  history.push("/cities/page/1");
-                }}
-                key="4"
-              >
-                Станиці
-              </Menu.Item>
-              {userAccesses["clubs"] ? (
+              )
+              : null
+            }
+
+            {userAccesses?.regionBoard
+              ? (
                 <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/clubs/page/1");
-                  }}
-                  key="5"
+                  key="regionsBoard"
+                  icon={<BankOutlined />}
                 >
-                  Курені
+                  <a
+                    href="/regionsBoard"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(true);
+                      history.push("/regionsBoard");
+                    }}
+                  >
+                    Крайовий Провід Пласту
+                  </a>
                 </Menu.Item>
-              ) : (
-                <> </>
-              )}
-              {userAccesses["events"] ? (
-                <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/events/types");
-                  }}
-                  key="6"
+              )
+              : null
+            }
+
+            {userAccesses?.directory
+              ? (
+                <SubMenu key="sub1" icon={<BookOutlined />} title="Довідник">
+
+                  {userAccesses.userTable
+                    ? (
+                      <Menu.Item
+                        key="usertable"
+                      >
+                        <a
+                          href="/user/table"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/user/table");
+                          }}
+                        >
+                          Таблиця користувачів
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  {userAccesses.regions || currentUser?.region
+                    ? (
+                      <Menu.Item
+                        key="regions"
+                      >
+                        <a
+                          href="/regions/page/1"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/regions/page/1");
+                          }}
+                        >
+                          Округи
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  <Menu.Item
+                    key="cities"
+                  >
+                    <a
+                      href="/cities/page/1"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCollapsed(true);
+                        history.push("/cities/page/1");
+                      }}
+                    >
+                      Станиці
+                    </a>
+                  </Menu.Item>
+
+                  {userAccesses.clubs
+                    ? (
+                      <Menu.Item
+                        key="clubs"
+                      >
+                        <a
+                          href="/clubs/page/1"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/clubs/page/1");
+                          }}
+                        >
+                          Курені
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  {userAccesses.events
+                    ? (
+                      <Menu.Item
+                        key="events"
+                      >
+                        <a
+                          href="/events/types"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/events/types");
+                          }}
+                        >
+                          Події 
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  {userAccesses.distinctions
+                    ? (
+                      <Menu.Item
+                        key="distinctions"
+                      >
+                        <a
+                          href="/distinctions"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/distinctions");
+                          }}
+                        >
+                          Відзначення
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  {userAccesses.precaution
+                    ? (
+                      <Menu.Item
+                        key="precautions"
+                      >
+                        <a
+                          href="/precautions"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/precautions");
+                          }}
+                        >
+                          Перестороги
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  {userAccesses.kadra
+                    ? (
+                      <Menu.Item
+                        key="kadra"
+                      >
+                        <a
+                          href="/kadra"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/kadra");
+                          }}
+                        >
+                          Кадра виховників
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  {userAccesses.renewals
+                    ? (
+                      <Menu.Item
+                        key="renewals"
+                      >
+                        <a
+                          href="/renewals"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/renewals");
+                          }}
+                        >
+                          Відновлення статусу
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  {userAccesses.legislation
+                    ? (
+                      <Menu.Item
+                        key="legislation"
+                      >
+                        <a
+                          href="/legislation"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/legislation");
+                          }}
+                        >
+                          Репозитарій
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                </SubMenu>)
+              : null
+            }
+
+            {userAnnualReportAccess?.CanViewReportsPage
+              && userAnnualReportAccess?.CanCityStatisticsFormReport
+              ? (
+                <SubMenu
+                  key="sub2"
+                  icon={<SnippetsOutlined />}
+                  title="Звітування та Статистика"
                 >
-                  Події
-                </Menu.Item>
-              ) : (
-                <> </>
-              )}
-              {userAccesses["distinctions"] ? (
-                <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/distinctions");
-                  }}
-                  key="7"
-                >
-                  Відзначення
-                </Menu.Item>
-              ) : (
-                <> </>
-              )}
-              {userAccesses["precaution"] ? (
-                <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/precautions");
-                  }}
-                  key="15"
-                >
-                  Перестороги
-                </Menu.Item>
-              ) : (
-                <> </>
-              )}
-              {userAccesses["kadra"] ? (
-                <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/kadra");
-                  }}
-                  key="8"
-                >
-                  Кадра виховників
-                </Menu.Item>
-              ) : (
-                <> </>
-              )}
-              {userAccesses["renewals"] ? (
-                <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/renewals");
-                  }}
-                  key="18"
-                >
-                  Відновлення статусу
-                </Menu.Item>
-              ) : (
-                <> </>
-              )}
-              {userAccesses["legislation"] ? (
-                <Menu.Item
-                  onClick={() => {
-                    handleClickAway();
-                    history.push("/legislation");
-                  }}
-                  key="14"
-                >
-                  Репозитарій
-                </Menu.Item>
-              ) : (
-                <> </>
-              )}
-            </SubMenu>) : (
-                <> </>
-              )}
-            {userAnnualReportAccess?.CanViewReportsPage &&
-            userStatisticsAccess?.CanCityStatisticsFormReport ? (
-              <SubMenu
-                key="sub2"
-                icon={<SnippetsOutlined />}
-                title="Звітування та Статистика"
-              >
-                {(userAnnualReportAccess?.CanViewRegionReportsTable && (
+                  {userAnnualReportAccess?.CanViewRegionReportsTable
+                    ? (
+                      <Menu.Item
+                        icon={<FileTextOutlined />}
+                        key="annualreportregion"
+                      >
+                        <a
+                          href="/annualreport/table/region"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/annualreport/table/region");
+                          }}
+                        >
+                          Річні звіти округ
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  {userAnnualReportAccess?.CanViewCityReportsTable
+                    ? (
+                      <Menu.Item
+                        icon={<FileTextOutlined />}
+                        key="annualreportcity"
+                      >
+                        <a
+                          href="/annualreport/table/city"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCollapsed(true);
+                            history.push("/annualreport/table/city");
+                          }}
+                        >
+                          Річні звіти станиць
+                        </a>
+                      </Menu.Item>
+                    )
+                    : null
+                  }
+
+                  <SubMenu
+                    key="sub2.1"
+                    icon={<PieChartOutlined />}
+                    title="Статистика"
+                  >
+
+                    <Menu.Item
+                      icon={<BarChartOutlined />}
+                      key="statisticscities"
+                    >
+                      <a
+                        href="/statistics/cities"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCollapsed(true);
+                          history.push("/statistics/cities");
+                        }}
+                      >
+                        Статистика станиць
+                      </a>
+                    </Menu.Item>
+
+                    <Menu.Item
+                      icon={<BarChartOutlined />}
+                      key="statisticsregions"
+                    >
+                      <a
+                        href="/statistics/regions"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCollapsed(true);
+                          history.push("/statistics/regions");
+                        }}
+                      >
+                        Статистика округ
+                      </a>
+                    </Menu.Item>
+
+                  </SubMenu>
+                </SubMenu>
+              )
+              : userAnnualReportAccess?.CanViewClubReportsTable
+                ? (
                   <Menu.Item
                     icon={<FileTextOutlined />}
-                    onClick={() => {
-                      handleClickAway();
-                      history.push(`/annualreport/table/region`);
-                    }}
-                    key="9"
+                    key="annualreporthovel"
                   >
-                    Річні звіти
-                  </Menu.Item>
-                )) ||
-                  (userAnnualReportAccess?.CanViewCityReportsTable && (
-                    <Menu.Item
-                      icon={<FileTextOutlined />}
-                      onClick={() => {
-                        handleClickAway();
-                        history.push(`/annualreport/table/city`);
+                    <a
+                      href="/annualreport/table/hovel"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCollapsed(true);
+                        history.push("/annualreport/table/hovel");
                       }}
-                      key="9"
                     >
-                      Річні звіти
-                    </Menu.Item>
-                  ))}
-                <SubMenu
-                  key="sub2.1"
-                  icon={<PieChartOutlined />}
-                  title="Статистика"
+                      Річні звіти куренів
+                    </a>
+                  </Menu.Item>
+                )
+                : null
+            }
+
+            {userAccesses?.aboutBase
+              ? (
+                <Menu.Item
+                  key="aboutBase"
                 >
-                  <Menu.Item
-                    icon={<BarChartOutlined />}
-                    onClick={() => {
-                      handleClickAway();
-                      history.push("/statistics/cities");
+                  <a
+                    href="/aboutBase"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(true);
+                      history.push("/aboutBase");
                     }}
-                    key="10"
                   >
-                    Статистика станиць
-                  </Menu.Item>
-                  <Menu.Item
-                    icon={<BarChartOutlined />}
-                    onClick={() => {
-                      handleClickAway();
-                      history.push("/statistics/regions");
-                    }}
-                    key="11"
-                  >
-                    Статистика округ
-                  </Menu.Item>
-                </SubMenu>
-              </SubMenu>
-            ) : userAnnualReportAccess?.CanViewClubReportsTable ? (
-              <Menu.Item
-                icon={<FileTextOutlined />}
-                onClick={() => {
-                  handleClickAway();
-                  history.push(`/annualreport/table/hovel`);
-                }}
-                key="16"
-              >
-                Річні звіти
-              </Menu.Item>
-            ) : (
-              <> </>
-            )}
-            {userAccesses["aboutBase"] ? (
-              <Menu.Item
-                onClick={() => {
-                  handleClickAway();
-                  history.push("/aboutBase");
-                }}
-                key="17"
-                title=""
-              >
-                <QuestionOutlined />
-                Про Базу
-              </Menu.Item>
-            ) : (
-              <> </>
-            )}
-            {userAccesses["terms"] ? (
-              <Menu.Item
-                onClick={() => {
-                  handleClickAway();
+                    <QuestionOutlined />
+                    Про Базу
+                  </a>
+                </Menu.Item>
+              )
+              : null
+            }
+
+            {userAccesses?.terms
+              ? (
+                <Menu.Item
+                  key="terms"
+                >
+                  <a
+                    href="/terms"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCollapsed(true);
                   history.push("/terms");
-                }}
-                key="18"
-                title=""
-              >
-                <AlignLeftOutlined />
-                Політика конфіденційності
-              </Menu.Item>
-            ) : (
-              <> </>
-            )}
+                    }}
+                  >
+                    <AlignLeftOutlined />
+                    Політика конфіденційності
+                  </a>
+                </Menu.Item>
+              )
+              : null
+            }
+
           </Menu>
+
         </Sider>
-      </div>
+      </div> 
+
       <Layout className="site-layout">
         <Content style={{ margin: "0 16px" }} key="content">
           <div
@@ -433,16 +533,18 @@ const PrivateLayout = ({ children }: any) => {
           </div>
         </Content>
       </Layout>
+
       <div>
         <Button
           icon={<RollbackOutlined />}
           className={classes.backButton}
-          size={"large"}
+          size="large"
           onClick={() => history.goBack()}
           type="primary"
           style={{}}
-        ></Button>
+        />
       </div>
+
     </Layout>
   );
 };
