@@ -35,7 +35,7 @@ type FormAddPlastDegreeProps = {
   userId: string;
   cancel: boolean;
   isModalVisible: boolean;
-  isEditing: boolean;
+  isChangingUserDegree: boolean;
 };
 
 const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
@@ -72,7 +72,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       userId: props.userId,
     };
 
-    if (!props.isEditing) {
+    if (!props.isChangingUserDegree) {
       let follower;
 
       if (!disabled) {
@@ -119,8 +119,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     
     props.setVisibleModal(false);
 
-    if (degreeChanged && props.isEditing) notificationLogic("success", successfulAddDegree());
-    if (!props.isEditing) notificationLogic("success", successfulAddUserToCity(info.userCity));
+    if (degreeChanged && props.isChangingUserDegree) notificationLogic("success", successfulAddDegree());
+    if (!props.isChangingUserDegree) notificationLogic("success", successfulAddUserToCity(info.userCity));
   };
 
   const handleOnChange = async (value: any) => {
@@ -304,8 +304,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         />
       </Form.Item>
       <Form.Item>
-        <Button className={classes.cardButton} type="primary" htmlType="submit" loading={loading} disabled={props.isEditing && !isDateSelectionActive}>
-          {props.isEditing
+        <Button className={classes.cardButton} type="primary" htmlType="submit" loading={loading} disabled={props.isChangingUserDegree && !isDateSelectionActive}>
+          {props.isChangingUserDegree
             ? "Змінити ступінь"
             : isDateSelectionActive
               ? "Додати"

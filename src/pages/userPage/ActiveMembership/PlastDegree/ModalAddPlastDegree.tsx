@@ -14,7 +14,7 @@ type ModalAddPlastDegreeProps = {
   isCityAdmin?: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
   handleAddDegree: () => void;
-  isEditing: boolean;
+  isChangingUserDegree: boolean;
 };
 
 const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
@@ -66,7 +66,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
       onCancel={handleCancel}
       title={
         isUserDataLoaded
-          ? props.isEditing
+          ? props.isChangingUserDegree
             ? `Змінити ступінь користувача ${fullName} (${age} р.)`
             : `Прийняти до уладу ${fullName} (${age} р.)`
           : "Завантаження..."}
@@ -81,7 +81,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
         resetAvailablePlastDegree={fetchData}
         cancel={cancel}
         isModalVisible={props.visibleModal}
-        isEditing={props.isEditing}
+        isChangingUserDegree={props.isChangingUserDegree}
       /> : <LoadingOutlined style={{fontSize: 24}}/> }
     </Modal>
   );
