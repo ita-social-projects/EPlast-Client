@@ -74,7 +74,6 @@ const UsersTable = () => {
   const clubList = useRef<Array<Club>>([]);
   const [isQueryLoaded, setQueryLoaded] = useState(false);
 
-  const [isInactive, setIsInactive] = useState(false);
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
   const [user, setUser] = useState<UserTable>();
@@ -83,6 +82,7 @@ const UsersTable = () => {
   const { Search } = Input;
   const location = useLocation();
   const queryParams = useRef<any>({});
+  const [selectedRow, setSelectedRow] = useState<number>(-1)
 
   useEffect(() => {
     initializePage();
@@ -326,13 +326,6 @@ const UsersTable = () => {
     if (!(currentTabName && isQueryLoaded)) return;
 
     try {
-      let registeredUsers;
-
-      if (currentTabName === "registered") {
-        registeredUsers = new Array<string>();
-        registeredUsers.push(Roles.RegisteredUser);
-      }
-
       const response = await getUsersForTableByPage({
         Page: page,
         PageSize: pageSize,
@@ -342,7 +335,7 @@ const UsersTable = () => {
         Degrees: dynamicDegrees,
         Tab: currentTabName,
         SortKey: sortKey,
-        FilterRoles: registeredUsers ?? filter,
+        FilterRoles: filter,
         SearchData: searchData,
       });
 
@@ -470,6 +463,7 @@ const UsersTable = () => {
 
   const handleClickAway = () => {
     setShowDropdown(false);
+    setSelectedRow(-1);
   };
 
   const handleChange = (id: string, userRole: string) => {
@@ -481,6 +475,7 @@ const UsersTable = () => {
     });
     setUpdatedUser([...filteredData]);
     setUsers([...filteredData]);
+    fetchData();
   };
 
   const handlePageChange = (page: number) => {
@@ -619,6 +614,7 @@ const UsersTable = () => {
         }}
       >
         <Table
+          rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
           loading={!loading}
           className={classes.table}
           bordered
@@ -633,7 +629,7 @@ const UsersTable = () => {
             isZgolosheni: currentTabName === "registered"
           })}
           dataSource={users}
-          onRow={(record) => {
+          onRow={(record, index) => {
             return {
               onDoubleClick: () => {
                 if (record.id && canView)
@@ -650,6 +646,7 @@ const UsersTable = () => {
                   setX(event.pageX);
                   setY(event.pageY);
                   setShowDropdown(true);
+                  setSelectedRow(index as number);
                 }
               },
             };
@@ -681,7 +678,7 @@ const UsersTable = () => {
           record={recordObj}
           pageX={x}
           pageY={y}
-          inActiveTab={isInactive}
+          inActiveTab={currentTabName === "confirmed"}
           onDelete={handleDelete}
           onChange={handleChange}
           selectedUser={user}
