@@ -460,6 +460,7 @@ const DropDown = (props: Props) => {
             userId={record}
             visibleModal={visibleModalDegree}
             setVisibleModal={setVisibleModalDegree}
+            isChangingUserDegree={false}
           />
           <AcceptUserToCityModal
             record={record}
