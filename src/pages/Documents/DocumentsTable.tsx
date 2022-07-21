@@ -62,6 +62,28 @@ const DocumentsTable: React.FC = () => {
     plastMember: roles.includes(Roles.PlastMember),
   }
 
+  const canEdit = (
+    accesser.canEdit ||
+    accesser.regionAdm ||
+    accesser.regionAdmDep ||
+    accesser.cityAdm ||
+    accesser.cityAdmDep ||
+    accesser.clubAdm ||
+    accesser.clubAdmDep
+  )
+
+  const canView = (
+    accesser.canEdit ||
+    accesser.regionAdm ||
+    accesser.regionAdmDep ||
+    accesser.cityAdm ||
+    accesser.cityAdmDep ||
+    accesser.clubAdm ||
+    accesser.clubAdmDep ||
+    accesser.supporter ||
+    accesser.plastMember
+  )
+
   const handler = {
     add: {
       documentsModal: async () => {
@@ -112,28 +134,14 @@ const DocumentsTable: React.FC = () => {
         <h1 className={classes.titleTable}>Репозитарій</h1>
         <>
           <div className={classes.searchContainer}>
-            {accesser.canEdit ||
-              accesser.regionAdm ||
-              accesser.regionAdmDep ||
-              accesser.cityAdm ||
-              accesser.cityAdmDep ||
-              accesser.clubAdm ||
-              accesser.clubAdmDep ? (
+            {canEdit ? (
               <Button type="primary" onClick={handler.click.addBtn}>
                 Додати документ
               </Button>
             ) : (
               <> </>
             )}
-            {accesser.canEdit ||
-              accesser.regionAdm ||
-              accesser.regionAdmDep ||
-              accesser.cityAdm ||
-              accesser.cityAdmDep ||
-              accesser.clubAdm ||
-              accesser.clubAdmDep ||
-              accesser.supporter ||
-              accesser.plastMember ? (
+            {canView ? (
               <Search
                 enterButton
                 placeholder="Пошук"
@@ -146,68 +154,54 @@ const DocumentsTable: React.FC = () => {
             )}
           </div>
 
-          {accesser.canEdit ||
-            accesser.regionAdm ||
-            accesser.regionAdmDep ||
-            accesser.cityAdm ||
-            accesser.cityAdmDep ||
-            accesser.clubAdm ||
-            accesser.clubAdmDep ||
-            accesser.supporter ||
-            accesser.plastMember ? (
-            <Card
+          <Card
               style={{ width: "100%" }}
-              tabList={state.tabList}
+              tabList={canView ? state.tabList : undefined}
               activeTabKey={state.status}
-              onTabChange={handler.change.tabCard}
+              onTabChange={canView ? handler.change.tabCard : undefined}
+            >
+          
+          <Table
+            loading={loading}
+            className={classes.table}
+            dataSource={state.data}
+            scroll={{ x: 1300 }}
+            columns={columns}
+            bordered
+            rowKey="id"
+            onRow={(record) => {
+              return {
+                onClick: () => {
+                  setShowDropdown(false);
+                },
+                onContextMenu: (event) => {
+                  event.preventDefault();
+                  setShowDropdown(true);
+                  actions.setXY(event.pageX, event.pageY);
+                  actions.setRecord(record.id);
+                },
+              };
+            }}
+            onChange={(pagination) => {
+              if (pagination) {
+                window.scrollTo({
+                  left: 0,
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            pagination={{
+              current: state.page,
+              pageSize: state.pageSize,
+              total: state.count,
+              showLessItems: true,
+              responsive: true,
+              showSizeChanger: true,
+              onChange: handler.change.table,
+            }}
             />
-          ) : (
-            <Card style={{ width: "100%" }} activeTabKey={state.status} />
-          )}
-          {loading ? (
-            <Spinner />
-          ) : (
-            <Table
-              className={classes.table}
-              dataSource={state.data}
-              scroll={{ x: 1300 }}
-              columns={columns}
-              bordered
-              rowKey="id"
-              onRow={(record) => {
-                return {
-                  onClick: () => {
-                    setShowDropdown(false);
-                  },
-                  onContextMenu: (event) => {
-                    event.preventDefault();
-                    setShowDropdown(true);
-                    actions.setXY(event.pageX, event.pageY);
-                    actions.setRecord(record.id);
-                  },
-                };
-              }}
-              onChange={(pagination) => {
-                if (pagination) {
-                  window.scrollTo({
-                    left: 0,
-                    top: 0,
-                    behavior: "smooth",
-                  });
-                }
-              }}
-              pagination={{
-                current: state.page,
-                pageSize: state.pageSize,
-                total: state.count,
-                showLessItems: true,
-                responsive: true,
-                showSizeChanger: true,
-                onChange: handler.change.table,
-              }}
-            />
-          )}
-
+            
           <ClickAwayListener onClickAway={handler.click.away}>
             <DropDown
               showDropdown={showDropdown}
@@ -222,6 +216,7 @@ const DocumentsTable: React.FC = () => {
             visibleModal={visibleModal}
             onAdd={handler.add.documentsModal}
           />
+          </Card>
         </>
       </Content>
     </Layout>
