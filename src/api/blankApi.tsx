@@ -5,9 +5,9 @@ export const addDocument = async (userId: string, data: any) => {
     throw new Error(error);
   });
 };
-export const addAchievementDocuments = async (userId: string, data: any) => {
+export const addAchievementDocuments = async (data: any) => {
   return api
-    .post(`Blanks/AddAchievementDocumet/${userId}`, data)
+    .post(`Blanks/AddAchievementDocumet`, data)
     .catch((error) => {
       throw new Error(error);
     });
@@ -52,9 +52,9 @@ export const removeDocument = async (documentId: number) => {
       throw new Error(error);
     });
 };
-export const removeAchievementDocument = async (documentId: number) => {
+export const removeAchievementDocument = async (documentId: number,courseId: number | undefined , userId: string) => {
   return api
-    .remove(`Blanks/RemoveAchievementDocument/${documentId}`, documentId)
+    .remove(`Blanks/RemoveAchievementDocument/${documentId}/${courseId}/${userId}`, documentId)
     .catch((error) => {
       throw new Error(error);
     });

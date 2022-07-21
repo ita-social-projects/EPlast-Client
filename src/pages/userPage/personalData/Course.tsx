@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Col, Skeleton } from "antd";
+import { Button, Col, Modal, Skeleton } from "antd";
 import { useParams } from "react-router-dom";
 import jwt from "jwt-decode";
 import Title from "antd/lib/typography/Title";
@@ -19,9 +19,12 @@ export default function () {
   const [visibleListModal, setvisibleListModal] = useState(false);
   const [showAchievementModal, setshowAchievementModal] = useState(false);
   const [isDataLoaded, setDataLoaded] = useState<boolean>(false);
-
+  
+  const [courseId, setcourseId] = useState<number>();
   const [allCourses, setallCourses] = useState<Course[]>([]);
   const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
+
+  const [visible, setVisible] = useState<boolean>(false);
   let userToken: { nameid: string } = { nameid: "" };
 
   const { userId } = useParams<{ userId: string }>();
@@ -34,16 +37,20 @@ export default function () {
 
   const fetchData = async () => {
     userToken = jwt(AuthLocalStorage.getToken() ?? "");
-
     const coursesPromise = getAllCourseByUserId(activeUserId);
     const achievementsPromise = getAllAchievementDocumentsByUserId(activeUserId);
-
     setAchievementDoc((await achievementsPromise).data);
     setallCourses((await coursesPromise).data);
-
     setDataLoaded(true);
   };
+  const addCertificate = async (courseid : number) => {
+    setcourseId(courseid);
+    setvisibleAchievementModal(true);
 
+  };
+  const handleClose = async () => {
+    setVisible(false);
+  };
   useEffect(() => {
     if (!isDataLoaded) fetchData();
   }, []);
@@ -64,7 +71,7 @@ export default function () {
         <div className="container">
           {
             allCourses.map((sectitem) =>
-              <Col>
+              <Col key={sectitem.id}>
                 <Title level={2} title={sectitem.name} />
                 <p>
                   <strong>{userProfile?.user.firstName}</strong>, пройдіть курс для продовження співпраці з нами
@@ -74,6 +81,14 @@ export default function () {
                     <img src={PlastLogo} alt="PlastLogo" />
                   </a>
                 </div>
+             
+            <Button
+              type="primary"
+              className="buttonaddcertificate"
+              onClick={() => addCertificate(sectitem.id)}
+            >
+              Додати сертифікат
+            </Button>
               </Col>
             )}
 
@@ -93,16 +108,16 @@ export default function () {
           }
           {/* END WARN */}
 
+        {/*          
           <div className="rowBlock">
             <Button
               type="primary"
               className="buttonaddcertificate"
-              onClick={() => setvisibleAchievementModal(true)}
+              onClick={() => setVisible(true)}
             >
-              Додати сертифікат
+              Додати курс
             </Button>
-          </div>
-
+          </div> */}
 
           {!allCourses.length
             ? (
@@ -116,7 +131,15 @@ export default function () {
             )
             : null
           }
-
+      <Modal
+        title="Додати Курс"
+        visible={visible}
+        onCancel={handleClose}
+        footer={null}
+      >
+        лінк назва
+      </Modal>
+      
           <ListOfAchievementsModal
             userToken={userToken}
             visibleModal={visibleListModal}
@@ -139,6 +162,7 @@ export default function () {
 
           <AddAchievementsModal
             userId={activeUserId}
+            courseId={courseId}
             visibleModal={visibleAchievementModal}
             setVisibleModal={setvisibleAchievementModal}
             showModal={showAchievementModal}

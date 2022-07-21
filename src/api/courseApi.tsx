@@ -8,6 +8,6 @@ export const getAllCourse = async () => {
     return api.get(`Courses/${id}`);
   };
 
-  export const ChangeStatusCourseByUserId = async (id:string) => {
-    return api.put(`Courses/${id}`);
+  export const ChangeStatusCourseByUserId = async (id:string,courseid:number | undefined) => {
+    return api.put(`Courses/${id}/${courseid}`);
   };

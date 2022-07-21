@@ -23,6 +23,7 @@ interface Props {
   setVisibleModal: (visibleModal: boolean) => void;
   setshowModal: (showModal: boolean) => void;
   userId: string;
+  courseId:number | undefined;
 }
 const AddAchievementsModal = (props: Props) => {
   const [form] = Form.useForm();
@@ -40,6 +41,7 @@ const AddAchievementsModal = (props: Props) => {
             blobName: base64,
             fileName: info.file.name,
             userId: props.userId,
+            courseId: props.courseId
           };
           files.push(newDocument);
           setFiles([...files]);
@@ -80,10 +82,10 @@ const AddAchievementsModal = (props: Props) => {
   const handleSubmit = async () => {
     setButtonLoading(true);
     setLoading(true);
-    await addAchievementDocuments(props.userId, files);
+    await addAchievementDocuments( files);
     props.setVisibleModal(false);
     props.setshowModal(true);
-    await ChangeStatusCourseByUserId(props.userId);
+    await ChangeStatusCourseByUserId(props.userId,props.courseId);
     form.resetFields();
     removeFile();
     setDisabled(true);
