@@ -20,7 +20,9 @@ export default function () {
   const [showAchievementModal, setshowAchievementModal] = useState(false);
   const [isDataLoaded, setDataLoaded] = useState<boolean>(false);
   
-  const [courseId, setcourseId] = useState<number>();
+  const [courseId, setcourseId] = useState<number>(0);
+
+
   const [allCourses, setallCourses] = useState<Course[]>([]);
   const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
 

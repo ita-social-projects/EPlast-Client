@@ -52,7 +52,7 @@ export const removeDocument = async (documentId: number) => {
       throw new Error(error);
     });
 };
-export const removeAchievementDocument = async (documentId: number,courseId: number | undefined , userId: string) => {
+export const removeAchievementDocument = async (documentId: number,courseId: number , userId: string) => {
   return api
     .remove(`Blanks/RemoveAchievementDocument/${documentId}/${courseId}/${userId}`, documentId)
     .catch((error) => {

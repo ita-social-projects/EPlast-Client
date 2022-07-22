@@ -23,7 +23,7 @@ interface Props {
   setVisibleModal: (visibleModal: boolean) => void;
   setshowModal: (showModal: boolean) => void;
   userId: string;
-  courseId:number | undefined;
+  courseId:number;
 }
 const AddAchievementsModal = (props: Props) => {
   const [form] = Form.useForm();

@@ -53,7 +53,7 @@ const ListOfAchievementsModal = (props: Props) => {
     setAchievements([]);
   };
 
-  const deleteFIle = async (documentId: number, courseid: number | undefined, userId: string, fileName: string) => {
+  const deleteFIle = async (documentId: number, courseid: number , userId: string, fileName: string) => {
     await removeAchievementDocument(documentId,courseid ,userId);
     notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
     setAchievements(achievements.filter((d) => d.id !== documentId));
