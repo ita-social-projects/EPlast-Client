@@ -143,15 +143,13 @@ const SortedClubs = ({ switcher }: Props) => {
   }, []);
 
   useEffect(() => {
-    switcher ? getNotActiveClubs(page) : getActiveClubs(page);
-  }, [page, pageSize, searchedData]);
-
-  useEffect(() => {
-    if (clubs.length !== 0) {
-      switcher ? getNotActiveClubs() : getActiveClubs();
-      setCanCreate(switcher ? false : activeCanCreate);
+    if (switcher) {
+      getNotActiveClubs(page);
     }
-  }, [switcher]);
+    else {
+      getActiveClubs(page);
+    }
+  }, [page, pageSize, searchedData, switcher]);
 
   return (
     <Layout.Content className="cities">

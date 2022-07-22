@@ -174,9 +174,9 @@ export const addFollowerWithId = async (cityId: number, userId: string) => {
     });
 };
 
-export const removeFollower = async (followerId: number) => {
+export const removeFollower = async (followerId: number, comment: string = "") => {
   return api
-    .remove(`Cities/RemoveFollower/${followerId}`, followerId)
+    .post(`Cities/RemoveFollower/${followerId}`, JSON.stringify(comment))
     .catch((error) => {
       throw new Error(error);
     });

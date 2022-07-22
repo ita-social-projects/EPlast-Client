@@ -146,6 +146,10 @@ export const successfulAddDegree = () => {
   return `Ступінь було успішно додано`;
 };
 
+export const successfulAddUserToCity = (cityName: string) => {
+  return `Користувача було успішно додано до станиці ${cityName}`;
+};
+
 export const successfulDeleteDegree = () => {
   return `На жаль ступеня було позбавлено`;
 };
