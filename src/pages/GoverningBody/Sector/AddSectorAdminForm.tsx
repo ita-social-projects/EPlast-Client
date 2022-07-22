@@ -211,7 +211,7 @@ const AddSectorAdminForm = (props: any) => {
             o.isInDeputyRole ? (
               <Select.Option key={o.id} value={JSON.stringify(o)}>
                 <div className={classes.formOption}>
-                  {o.firstName + " " + o.lastName}
+                  {o.firstName} {o.lastName} <br /> {o.email}
                   <Tooltip title="Уже є адміністратором">
                     <InfoCircleOutlined />
                   </Tooltip>
@@ -219,7 +219,7 @@ const AddSectorAdminForm = (props: any) => {
               </Select.Option>
             ) : (
               <Select.Option key={o.id} value={JSON.stringify(o)}>
-                {o.firstName + " " + o.lastName}
+                {o.firstName} {o.lastName} <br /> {o.email}
               </Select.Option>
             )
           )}
