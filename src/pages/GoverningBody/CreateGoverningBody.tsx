@@ -155,7 +155,7 @@ const CreateGoverningBody = () => {
       .then((data) => {
         governingBody.id = data;
         notificationLogic("success", successfulCreateAction("Керівний орган"));
-        history.replace(`/regionsBoard/governingBodies/${governingBody.id}`);
+        history.replace(`/regionalBoard/governingBodies/${governingBody.id}`);
       })
       .catch(() => {
         getGoverningBodyNames();

@@ -1,32 +1,38 @@
-import { HomeOutlined } from "@ant-design/icons";
-import { Breadcrumb } from "antd";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Breadcrumb as AntdBreadcrumb, Typography } from "antd";
+import { withRouter } from "react-router-dom";
+import { HomeOutlined } from "@ant-design/icons";
+import routes from "../../Routes";
 
-interface Props {
-  current?: string;
-  first?: any;
-  second?: any;
-  second_name?: string;
-  third?: any;
-  third_name?: string;
-}
-const Crumb = ({
-  current,
-  first,
-  second,
-  second_name,
-  third,
-  third_name,
-}: Props) => {
+const Breadcrumb = (props: any) => {
+  //   const pathnames = pathname.split("/").filter((x: string) => x);
+  const crumbs = routes
+    // Get all routes that contain the current one.
+    .filter(({ path }) => props.match.path.includes(path))
+    // Swap out any dynamic routes with their param values.
+    // E.g. "/pizza/:pizzaId" will become "/pizza/1"
+    .map(({ path, ...rest }) => ({
+      path: Object.keys(props.match.params).length
+        ? Object.keys(props.match.params).reduce(
+            (path, param) =>
+              path.replace(`:${param}`, props.match.params[param]),
+            path
+          )
+        : path,
+      ...rest,
+    }));
   return (
-    <Breadcrumb>
-      <Breadcrumb.Item href={first}>
+    <AntdBreadcrumb>
+      <AntdBreadcrumb.Item href={"/"}>
         <HomeOutlined />
-      </Breadcrumb.Item>
-      <Breadcrumb.Item href={second}>{second_name}</Breadcrumb.Item>
-      <Breadcrumb.Item>{current}</Breadcrumb.Item>
-    </Breadcrumb>
+      </AntdBreadcrumb.Item>
+      {crumbs.map(({ name, path }, key: number) => (
+        <AntdBreadcrumb.Item key={key} href={path}>
+          {name}
+        </AntdBreadcrumb.Item>
+      ))}
+    </AntdBreadcrumb>
   );
 };
-export default Crumb;
+
+export default withRouter(Breadcrumb);

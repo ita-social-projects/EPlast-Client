@@ -74,7 +74,7 @@ const Sectors = () => {
                   <div
                     onClick={() =>
                       history.push(
-                        `/regionsBoard/governingBodies/${governingBodyId}/sectors/${sector.id}`
+                        `/regionalBoard/governingBodies/${governingBodyId}/sectors/${sector.id}`
                       )
                     }
                   >

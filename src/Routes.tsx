@@ -71,32 +71,32 @@ export default [
     Component: UserProfile,
   },
   {
-    path: "/regionsBoard",
+    path: "/regionalBoard",
     name: "Крайовий Провід Пласту",
     Component: RegionBoard,
   },
   {
-    path: "/regionsBoard/new",
+    path: "/regionalBoard/new",
     name: "Створити керівний орган",
     Component: CreateGoverningBody,
   },
   {
-    path: "/regionsBoard/edit",
+    path: "/regionalBoard/edit",
     name: "Редагувати Провід Пласту",
     Component: RegionBoardEdit,
   },
   {
-    path: "/regionsBoard/governingBodies",
+    path: "/regionalBoard/governingBodies",
     name: "Керівні органи",
     Component: RegionBoardAdministration,
   },
   {
-    path: "/regionsBoard/administrations",
+    path: "/regionalBoard/administrations",
     name: "Адміністрація Крайового Проводу",
     Component: RegionBoardMainAdministration,
   },
   {
-    path: "/regionsBoard/documents/:id",
+    path: "/regionalBoard/documents/:id",
     name: "Документообіг Крайового Проводу",
     Component: RegionBoardDocuments,
   },
@@ -117,17 +117,17 @@ export default [
     Component: CreateGoverningBody,
   },
   {
-    path: "/regionsBoard/governingBodies/:governingBodyId",
+    path: "/regionalBoard/governingBodies/:governingBodyId",
     name: "Керівний орган",
     Component: GoverningBody,
   },
   {
-    path: "/regionsBoard/governingBodies/:governingBodyId/sectors",
+    path: "/regionalBoard/governingBodies/:governingBodyId/sectors",
     name: "Напрями Керівного Органу",
     Component: GoverningBodySectors,
   },
   {
-    path: "/regionsBoard/governingBodies/:governingBodyId/sectors/:sectorId",
+    path: "/regionalBoard/governingBodies/:governingBodyId/sectors/:sectorId",
     name: "Напрям Керівного Органу",
     Component: GoverningBodySector,
   },
@@ -173,6 +173,11 @@ export default [
     Component: Regions,
   },
   {
+    path: "/regions",
+    name: "Округи",
+    Component: Regions,
+  },
+  {
     path: "/regions/:id",
     name: "Округа",
     Component: ActionRegion,
@@ -194,6 +199,11 @@ export default [
   },
   {
     path: "/cities/page/:p",
+    name: "Станиці",
+    Component: ActionCities,
+  },
+  {
+    path: "/cities",
     name: "Станиці",
     Component: ActionCities,
   },
@@ -243,6 +253,11 @@ export default [
   },
   {
     path: "/clubs/page/:p",
+    name: "Курені",
+    Component: ActionClubs,
+  },
+  {
+    path: "/clubs",
     name: "Курені",
     Component: ActionClubs,
   },

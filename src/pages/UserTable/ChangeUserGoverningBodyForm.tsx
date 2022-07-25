@@ -154,7 +154,7 @@ const ChangeUserRoleForm = ({
         [admin.userId],
         `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/regionsBoard/governingBodies/${admin.governingBodyId}`,
+        `/regionalBoard/governingBodies/${admin.governingBodyId}`,
         `цьому керівному органі`
       );
     }

@@ -42,7 +42,6 @@ import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import Spinner from "../../Spinner/Spinner";
 import SectorDetailDrawer from "./SectorDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
-import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AuthLocalStorage from "../../../AuthLocalStorage";
@@ -60,7 +59,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
-import NewBreadcrumbs from "../../../components/Breadcrumb/NewBreadcrumbs";
+import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
 
 const classes = require("../Announcement/Announcement.module.css");
 
@@ -98,7 +97,7 @@ const Sector = () => {
       "success",
       successfulDeleteAction("Напрям керівного органу")
     );
-    history.push(`/regionsBoard/governingBodies/${governingBodyId}`);
+    history.push(`/regionalBoard/governingBodies/${governingBodyId}`);
   };
 
   const setPhotos = async (members: SectorAdmin[], logo: string) => {
@@ -313,7 +312,7 @@ const Sector = () => {
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <NewBreadcrumbs />
+            <Breadcrumb />
             <Title level={3}>Напрям Керівного Органу {sector.name}</Title>
             <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>

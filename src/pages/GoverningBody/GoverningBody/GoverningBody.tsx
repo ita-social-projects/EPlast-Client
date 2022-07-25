@@ -44,7 +44,6 @@ import SectorProfile from "../../../models/GoverningBody/Sector/SectorProfile";
 import Spinner from "../../Spinner/Spinner";
 import GoverningBodyDetailDrawer from "../GoverningBodyDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
-import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import { successfulDeleteAction } from "../../../components/Notifications/Messages";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddGoverningBodiesSecretaryForm from "../AddAdministratorModal/AddGoverningBodiesSecretaryForm";
@@ -66,7 +65,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
-import NewBreadcrumbs from "../../../components/Breadcrumb/NewBreadcrumbs";
+import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
 
 const classes = require("../Announcement/Announcement.module.css");
 
@@ -358,7 +357,7 @@ const GoverningBody = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
             <div>
-              <NewBreadcrumbs />
+              <Breadcrumb />
             </div>
             <Title level={3}>
               Керівний Орган {governingBody.governingBodyName}
@@ -682,7 +681,7 @@ const GoverningBody = () => {
               <a
                 onClick={() =>
                   history.push(
-                    `/regionsBoard/governingBodies/${governingBody.id}/sectors`
+                    `/regionalBoard/governingBodies/${governingBody.id}/sectors`
                   )
                 }
               >
@@ -741,7 +740,7 @@ const GoverningBody = () => {
                 className="governingBodyInfoButton"
                 onClick={() =>
                   history.push(
-                    `/regionsBoard/governingBodies/${governingBody.id}/sectors`
+                    `/regionalBoard/governingBodies/${governingBody.id}/sectors`
                   )
                 }
               >

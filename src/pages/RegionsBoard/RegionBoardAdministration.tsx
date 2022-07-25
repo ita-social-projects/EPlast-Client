@@ -76,7 +76,7 @@ const RegionBoardAdministration = () => {
                   <div
                     onClick={() =>
                       history.push(
-                        `/regionsBoard/governingBodies/${governingBody.id}`
+                        `/regionalBoard/governingBodies/${governingBody.id}`
                       )
                     }
                   >
