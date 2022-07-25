@@ -28,6 +28,7 @@ const DecisionTable = () => {
   const [roles, setRoles] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
   const count = data[0]?.count ?? 0;
   const rolesUrl: string = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
@@ -90,9 +91,14 @@ const DecisionTable = () => {
     }
   };
 
+  const resetContextMenu = () => {
+    setShowDropdown(false);
+    setSelectedRow(-1);
+  }
+
   return (<Layout>
     <Content
-      onClick={() => setShowDropdown(false)}
+      onClick={() => resetContextMenu()}
     >
       <h1 className={classes.titleTable}>Рішення керівних органів</h1>
       <div className={classes.searchContainer}>
@@ -120,16 +126,17 @@ const DecisionTable = () => {
       </div>
       {dataLoaded
         ? <Table
+          rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
           className={classes.table}
           dataSource={data}
           scroll={{ x: 1300 }}
           columns={columns}
           bordered
           rowKey="id"
-          onRow={(record: Decision) => {
+          onRow={(record: Decision, index) => {
             return {
               onClick: () => {
-                setShowDropdown(false);
+                resetContextMenu();
               },
               onContextMenu: (event) => {
                 event.preventDefault();
@@ -138,6 +145,7 @@ const DecisionTable = () => {
                 setRecordObj(record.id);
                 setX(event.pageX);
                 setY(event.pageY);
+                setSelectedRow(index as number);
               },
             };
           }}
@@ -165,7 +173,7 @@ const DecisionTable = () => {
           }}
         />
         : <Spinner />}
-      <ClickAwayListener onClickAway={() => setShowDropdown(false)}>
+      <ClickAwayListener onClickAway={() => resetContextMenu()}>
         <DropDown
           showDropdown={showDropdown}
           record={recordObj}
