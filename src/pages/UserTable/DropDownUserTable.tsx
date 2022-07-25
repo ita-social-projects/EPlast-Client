@@ -113,6 +113,7 @@ const DropDown = (props: Props) => {
 
   const selfRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState<[number, number]>([0, 0]);
+  const [sizeCalculated, setSizeCalculated] = useState<boolean>(false);
 
   //Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
   //I have no idea what's going on here
@@ -255,6 +256,7 @@ const DropDown = (props: Props) => {
   useEffect(() => {
     fetchUser().then(() => {
       setDimensions([selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number]);
+      setSizeCalculated(true);
     });
   }, [selectedUser]);
 
@@ -309,19 +311,18 @@ const DropDown = (props: Props) => {
       className={classes.menu}
       style={{
         top: 
-          window.innerHeight - (pageY + dimensions[1]) < 0
-            ? window.innerHeight - dimensions[1] - 10
+          window.innerHeight - (pageY + dimensions[1]) <= 0
+            ? window.innerHeight - dimensions[1] - 30
             : pageY,
         left:
-          window.innerWidth - (pageX + dimensions[0]) < 0
-            ? window.innerWidth - dimensions[0]
+          window.innerWidth - (pageX + dimensions[0]) <= 0
+            ? window.innerWidth - dimensions[0] - 30
             : pageX,
-        display: showDropdown ? "block" : "none",
+        display: showDropdown && sizeCalculated ? "block" : "none",
       }}>
       {canView ? (
         <Menu
           theme="dark"
-          //className={classes.menu}
           onClick={handleItemClick}
         >
           {canViewProfile ? (
