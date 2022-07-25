@@ -4,6 +4,7 @@ import AuthLocalStorage from "../AuthLocalStorage";
 import CityDefaultLogo from "../assets/images/default_city_image.jpg";
 import jwt_decode from "jwt-decode";
 import api from "./api";
+import { ApproveType } from "../pages/userPage/Interface/Interface";
 
 const getById = async (id: string | undefined) => {
   const response = await axios.get(`${`${BASE_URL}User/`}${id}`);
@@ -98,11 +99,10 @@ const deleteApprove = async (confirmedId: number) => {
 };
 const approveUser = async (
   userId: string,
-  isClubAdmin: boolean,
-  isCityAdmin: boolean
+  approveType: ApproveType
 ) => {
   const response = await axios.post(
-    `${`${BASE_URL}User/approveUser/${userId}/${isClubAdmin}/${isCityAdmin}`}`
+    `${`${BASE_URL}User/approveUser/${userId}/${approveType}`}`
   );
 
   return response;

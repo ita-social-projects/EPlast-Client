@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Card, Avatar, Tooltip, Spin, Skeleton } from "antd";
 import "./Approvers.less";
 import AddUser from "../../../assets/images/user_add.png";
-import { ApproversData } from "../Interface/Interface";
+import { ApproversData, ApproveType } from "../Interface/Interface";
 import jwt from "jwt-decode";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import userApi from "../../../api/UserApi";
@@ -23,6 +23,7 @@ import DeleteApproveButton from "./DeleteApproveButton";
 import { Roles } from "../../../models/Roles/Roles";
 import AvatarAndProgressStatic from "../personalData/AvatarAndProgressStatic";
 import { PersonalDataContext } from "../personalData/PersonalData";
+import ApproversCard from "./ApproversCard";
 
 const Assignments = () => {
   const history = useHistory();
@@ -41,7 +42,6 @@ const Assignments = () => {
   const {
     userProfile,
     activeUserRoles,
-    UpdateData,
     loading,
     userProfileAccess,
   } = useContext(PersonalDataContext);
@@ -96,9 +96,9 @@ const Assignments = () => {
     return greeting;
   };
 
-  const deleteApprove = async (event: number) => {
+  const deleteApprove = async (id: number) => {
     await userApi
-      .deleteApprove(event)
+      .deleteApprove(id)
       .then(() => {
         notificationLogic("success", successfulDeleteAction("Поручення"));
       })
@@ -118,16 +118,15 @@ const Assignments = () => {
 
   const approveClick = async (
     userId: string,
-    isClubAdmin: boolean = false,
-    isCityAdmin: boolean = false
+    approveType: ApproveType
   ) => {
-    isCityAdmin
+    approveType === ApproveType.City
       ? setApproveAsCityHeadLoading(true)
-      : isClubAdmin
-      ? setApproveAsHovelHeadLoading(true)
-      : setApproveAsMemberLoading(true);
+      : approveType === ApproveType.Club
+        ? setApproveAsHovelHeadLoading(true)
+        : setApproveAsMemberLoading(true);
     await userApi
-      .approveUser(userId, isClubAdmin, isCityAdmin)
+      .approveUser(userId, approveType)
       .then(() => {
         notificationLogic("success", successfulCreateAction("Поручення"));
       })
@@ -144,11 +143,11 @@ const Assignments = () => {
       "Переглянути користувача"
     );
     await fetchData();
-    isCityAdmin
+    approveType === ApproveType.City
       ? setApproveAsCityHeadLoading(false)
-      : isClubAdmin
-      ? setApproveAsHovelHeadLoading(false)
-      : setApproveAsMemberLoading(false);
+      : approveType === ApproveType.Club
+        ? setApproveAsHovelHeadLoading(false)
+        : setApproveAsMemberLoading(false);
   };
 
   const { Meta } = Card;
@@ -186,478 +185,61 @@ const Assignments = () => {
         </StickyContainer>
       </div>
       <div className="approversContentApprovers">
-        <h1 className="approversCard">Поручення дійсних членів</h1>
-        <div className="approversCard">
-          {data?.confirmedUsers.map((p) => {
-            if (
-              p.approver.userID == data?.currentUserId ||
-              activeUserRoles.includes(Roles.Admin) ||
-              activeUserRoles.includes(Roles.GoverningBodyHead)
-            ) {
-              return (
-                <div key={p.id}>
-                  <Card
-                    key={p.id}
-                    hoverable
-                    className="cardStyles"
-                    cover={
-                      <Avatar
-                        alt="example"
-                        src={p.approver.user.imagePath}
-                        className="avatar"
-                      />
-                    }
-                  >
-                    <Tooltip
-                      title={
-                        p.approver.user.firstName +
-                        " " +
-                        p.approver.user.lastName
-                      }
-                    >
-                      <Link
-                        to={"/userpage/main/" + p.approver.userID}
-                        onClick={() =>
-                          history.push(`/userpage/main/${p.approver.userID}`)
-                        }
-                      >
-                        <Meta
-                          title={
-                            p.approver.user.firstName +
-                            " " +
-                            p.approver.user.lastName
-                          }
-                          className="titleText"
-                        />
-                      </Link>
-                    </Tooltip>
-                    <Meta
-                      title={moment
-                        .utc(p.confirmDate)
-                        .local()
-                        .format("DD.MM.YYYY")}
-                      className="title-not-link"
-                    />
-                    {!userProfile?.isUserPlastun && (
-                      <DeleteApproveButton
-                        approverId={p.id}
-                        deleteApprove={deleteApprove}
-                      />
-                    )}
-                  </Card>
-                </div>
-              );
-            } else {
-              return (
-                <div key={p.id}>
-                  <Card
-                    key={p.id}
-                    hoverable
-                    className="cardStyles"
-                    cover={
-                      <Avatar
-                        alt="example"
-                        src={p.approver.user.imagePath}
-                        className="avatar"
-                      />
-                    }
-                  >
-                    <Tooltip
-                      title={
-                        p.approver.user.firstName +
-                        " " +
-                        p.approver.user.lastName
-                      }
-                    >
-                      <Link
-                        to={"/userpage/main/" + p.approver.userID}
-                        onClick={() =>
-                          history.push(`/userpage/main/${p.approver.userID}`)
-                        }
-                      >
-                        <Meta
-                          title={
-                            p.approver.user.firstName +
-                            " " +
-                            p.approver.user.lastName
-                          }
-                          className="titleText"
-                        />
-                      </Link>
-                    </Tooltip>
 
-                    <Meta
-                      title={moment
-                        .utc(p.confirmDate)
-                        .local()
-                        .format("DD.MM.YYYY")}
-                      className="title-not-link"
-                    />
-                    <p className="cardP" />
-                  </Card>
-                </div>
-              );
-            }
-          })}
-          <div>
-            {data?.canApprovePlastMember &&
-            userProfileAccess["CanApproveUser"] ? (
-              <div>
-                <Tooltip
-                  title="Поручитися за користувача"
-                  placement="rightBottom"
-                >
-                  <Spin spinning={approveAsMemberLoading}>
-                    <Link to="#" onClick={() => approveClick(data?.user.id)}>
-                      <Card
-                        hoverable
-                        className="cardStyles"
-                        cover={
-                          <Avatar
-                            src={AddUser}
-                            alt="example"
-                            size={166}
-                            className="avatarEmpty"
-                            shape="square"
-                          />
-                        }
-                      >
-                        <p className="cardP" />
-                        <p className="cardP" />
-                      </Card>
-                    </Link>
-                  </Spin>
-                </Tooltip>
-              </div>
-            ) : (
-              <div
-                hidden={
-                  data?.confirmedUsers.length != 0 ||
-                  (data?.canApprove &&
-                    AccessToManage(
-                      activeUserRoles.filter(
-                        (r) =>
-                          r != Roles.Supporter &&
-                          r != Roles.RegisteredUser &&
-                          activeUserRoles.includes(Roles.Admin)
-                      )
-                    ))
-                }
-              >
-                <br />
-                <br />
-                На жаль, поруки відсутні
-                <br />
-                <br />
-              </div>
-            )}
-          </div>
-        </div>
-        <h1 className="approversCard">Поручення куреня УСП/УПС</h1>
-        <div className="approversCard">
-          {data?.clubApprover != null ? (
-            <div>
-              {data.clubApprover.approver.userID == data.currentUserId ||
-              activeUserRoles.includes(Roles.Admin) ? (
-                <Card
-                  hoverable
-                  className="cardStyles"
-                  cover={
-                    <Avatar
-                      src={data.clubApprover.approver.user.imagePath}
-                      alt="example"
-                      className="avatar"
-                    />
-                  }
-                >
-                  <Tooltip
-                    title={
-                      data.clubApprover.approver.user.firstName +
-                      " " +
-                      data.clubApprover.approver.user.lastName
-                    }
-                  >
-                    <Link
-                      to={"/userpage/main/" + data.clubApprover.approver.userID}
-                      onClick={() =>
-                        history.push(
-                          `/userpage/main/${data.clubApprover.approver.userID}`
-                        )
-                      }
-                    >
-                      <Meta
-                        title={
-                          data.clubApprover.approver.user.firstName +
-                          " " +
-                          data.clubApprover.approver.user.lastName
-                        }
-                        className="titleText"
-                      />
-                    </Link>
-                  </Tooltip>
-                  <Meta
-                    title={moment
-                      .utc(data.clubApprover.confirmDate)
-                      .local()
-                      .format("DD.MM.YYYY")}
-                    className="title-not-link"
-                  />
-                  {!userProfile?.isUserPlastun && (
-                    <DeleteApproveButton
-                      approverId={data.clubApprover.id}
-                      deleteApprove={deleteApprove}
-                    />
-                  )}
-                </Card>
-              ) : (
-                <Card
-                  hoverable
-                  className="cardStyles"
-                  cover={
-                    <Avatar
-                      src={data.clubApprover.approver.user.imagePath}
-                      alt="example"
-                      className="avatar"
-                    />
-                  }
-                >
-                  <Tooltip
-                    title={
-                      data.clubApprover.approver.user.firstName +
-                      " " +
-                      data.clubApprover.approver.user.lastName
-                    }
-                  >
-                    <Link
-                      to={"/userpage/main/" + data.clubApprover.approver.userID}
-                      onClick={() =>
-                        history.push(
-                          `/userpage/main/${data.clubApprover.approver.userID}`
-                        )
-                      }
-                    >
-                      <Meta
-                        title={
-                          data.clubApprover.approver.user.firstName +
-                          " " +
-                          data.clubApprover.approver.user.lastName
-                        }
-                        className="titleText"
-                      />
-                    </Link>
-                  </Tooltip>
-                  <Meta
-                    title={moment
-                      .utc(data.clubApprover.confirmDate)
-                      .local()
-                      .format("DD.MM.YYYY")}
-                    className="title-not-link"
-                  />
-                </Card>
-              )}
-            </div>
-          ) : userProfileAccess["CanApproveAsClubHead"] ? (
-            <div>
-              <Tooltip
-                title="Поручитися за користувача"
-                placement="rightBottom"
-              >
-                <Spin spinning={approveAsHovelHeadLoading}>
-                  <Link
-                    to="#"
-                    onClick={() =>
-                      approveClick(
-                        data?.user.id,
-                        activeUserRoles.includes(Roles.KurinHead) ||
-                          activeUserRoles.includes(Roles.Admin),
-                        false
-                      )
-                    }
-                  >
-                    <Card
-                      hoverable
-                      className="cardStyles"
-                      cover={
-                        <Avatar
-                          src={AddUser}
-                          alt="example"
-                          size={166}
-                          className="avatarEmpty"
-                          shape="square"
-                        />
-                      }
-                    >
-                      <p className="cardP" />
-                      <p className="cardP" />
-                    </Card>
-                  </Link>
-                </Spin>
-              </Tooltip>
-            </div>
-          ) : (
-            <div>
-              <br />
-              <br />
-              На жаль, поруки відсутні
-              <br />
-              <br />
-            </div>
-          )}
-        </div>
+        <ApproversCard
+          title="Поручення дійсних членів"
+          data={data!}
+          confirmedUsers={data?.confirmedUsers || []}
+          activeUserRoles={activeUserRoles}
+          approveType={ApproveType.PlastMember}
+          onDeleteApprove={deleteApprove}
+          approveAsMemberLoading={approveAsMemberLoading}
+          onApproveClick={approveClick}
+          canApprove={
+            userProfile!.isUserPlastun === false &&
+            data!.canApprovePlastMember &&
+            userProfileAccess["CanApproveUser"]}
+          canDelete={activeUserRoles.includes(Roles.Admin)
+            || activeUserRoles.includes(Roles.GoverningBodyAdmin)}
+        />
 
-        <h1 className="approversCard">
-          Поручення Голови осередку/Осередкового УСП/УПС
-        </h1>
-        <div>
-          {data?.cityApprover != null ? (
-            <div>
-              {data.cityApprover.approver.userID == data.currentUserId ||
-              activeUserRoles.includes(Roles.Admin) ? (
-                <Card
-                  hoverable
-                  className="cardStyles"
-                  cover={
-                    <Avatar
-                      src={data.cityApprover.approver.user.imagePath}
-                      alt="example"
-                      className="avatar"
-                    />
-                  }
-                >
-                  <Tooltip
-                    title={
-                      data.cityApprover.approver.user.firstName +
-                      " " +
-                      data.cityApprover.approver.user.lastName
-                    }
-                  >
-                    <Link
-                      to={"/userpage/main/" + data.cityApprover.approver.userID}
-                      onClick={() =>
-                        history.push(
-                          `/userpage/main/${data.cityApprover.approver.userID}`
-                        )
-                      }
-                    >
-                      <Meta
-                        title={
-                          data.cityApprover.approver.user.firstName +
-                          " " +
-                          data.cityApprover.approver.user.lastName
-                        }
-                        className="titleText"
-                      />
-                    </Link>
-                  </Tooltip>
-                  <Meta
-                    title={moment
-                      .utc(data.cityApprover.confirmDate)
-                      .local()
-                      .format("DD.MM.YYYY")}
-                    className="title-not-link"
-                  />
-                  {!userProfile?.isUserPlastun && loadingApprovers && (
-                    <DeleteApproveButton
-                      approverId={data.cityApprover.id}
-                      deleteApprove={deleteApprove}
-                    />
-                  )}
-                </Card>
-              ) : (
-                <Card
-                  hoverable
-                  className="cardStyles"
-                  cover={
-                    <Avatar
-                      src={data.cityApprover.approver.user.imagePath}
-                      alt="example"
-                      className="avatar"
-                    />
-                  }
-                >
-                  <Tooltip
-                    title={
-                      data.cityApprover.approver.user.firstName +
-                      " " +
-                      data.cityApprover.approver.user.lastName
-                    }
-                  >
-                    <Link
-                      to={"/userpage/main/" + data.cityApprover.approver.userID}
-                      onClick={() =>
-                        history.push(
-                          `/userpage/main/${data.cityApprover.approver.userID}`
-                        )
-                      }
-                    >
-                      <Meta
-                        title={
-                          data.cityApprover.approver.user.firstName +
-                          " " +
-                          data.cityApprover.approver.user.lastName
-                        }
-                        className="titleText"
-                      />
-                    </Link>
-                  </Tooltip>
-                  <Meta
-                    title={moment
-                      .utc(data.cityApprover.confirmDate)
-                      .local()
-                      .format("DD.MM.YYYY")}
-                    className="title-not-link"
-                  />
-                </Card>
-              )}
-            </div>
-          ) : data?.cityApprover == null &&
-            userProfileAccess["CanApproveAsCityHead"] ? (
-            <div>
-              <Tooltip
-                title="Поручитися за користувача"
-                placement="rightBottom"
-              >
-                <Spin spinning={approveAsCityHeadLoading}>
-                  <Link
-                    to="#"
-                    onClick={() =>
-                      approveClick(
-                        data?.user.id,
-                        false,
-                        userProfileAccess["CanApproveAsCityHead"]
-                      )
-                    }
-                  >
-                    <Card
-                      hoverable
-                      className="cardStyles"
-                      cover={
-                        <Avatar
-                          src={AddUser}
-                          alt="example"
-                          size={168}
-                          className="avatarEmpty"
-                          shape="square"
-                        />
-                      }
-                    >
-                      <p className="cardP" />
-                      <p className="cardP" />
-                    </Card>
-                  </Link>
-                </Spin>
-              </Tooltip>
-            </div>
-          ) : (
-            <div>
-              <br />
-              <br />
-              На жаль, поруки відсутні
-              <br />
-              <br />
-            </div>
-          )}
-        </div>
+        <ApproversCard
+          title="Поручення куреня УСП/УПС"
+          data={data!}
+          confirmedUsers={!data?.clubApprover ? [] : [data.clubApprover]}
+          activeUserRoles={activeUserRoles}
+          approveType={ApproveType.Club}
+          onDeleteApprove={deleteApprove}
+          approveAsMemberLoading={approveAsMemberLoading}
+          onApproveClick={approveClick}
+          canApprove={
+            userProfile!.isUserPlastun === false &&
+            data?.clubApprover == null &&
+            userProfileAccess["CanApproveAsClubHead"]}
+          canDelete={
+            data?.clubApprover?.approver?.userID == data?.currentUserId ||
+            activeUserRoles.includes(Roles.Admin) ||
+            activeUserRoles.includes(Roles.GoverningBodyAdmin)}
+        />
+
+        <ApproversCard
+          title="Поручення Голови осередку/Осередкового УСП/УПС"
+          data={data!}
+          confirmedUsers={!data?.cityApprover ? [] : [data.cityApprover]}
+          activeUserRoles={activeUserRoles}
+          approveType={ApproveType.City}
+          onDeleteApprove={deleteApprove}
+          approveAsMemberLoading={approveAsMemberLoading}
+          onApproveClick={approveClick}
+          canApprove={
+            userProfile!.isUserPlastun === false &&
+            data?.cityApprover == null &&
+            userProfileAccess["CanApproveAsCityHead"]}
+          canDelete={userProfile?.isUserPlastun ||
+            data?.cityApprover?.approver?.userID == data?.currentUserId ||
+            activeUserRoles.includes(Roles.Admin) ||
+            activeUserRoles.includes(Roles.GoverningBodyAdmin)}
+        />
       </div>
     </div>
   );
