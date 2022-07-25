@@ -123,12 +123,12 @@ export default [
   },
   {
     path: "/regionalBoard/governingBodies/:governingBodyId/sectors",
-    name: "Напрями Керівного Органу",
+    name: "Напрями",
     Component: GoverningBodySectors,
   },
   {
     path: "/regionalBoard/governingBodies/:governingBodyId/sectors/:sectorId",
-    name: "Напрям Керівного Органу",
+    name: "Напрям",
     Component: GoverningBodySector,
   },
   {

@@ -57,7 +57,6 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
-import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   successfulDeleteAction,
@@ -635,7 +634,7 @@ const City = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <div>
-              <Breadcrumb />
+              <Breadcrumb currentLocationName={city.name} />
               {isActiveCity ? null : (
                 <Tag className="status" color={"red"}>
                   Заархівовано

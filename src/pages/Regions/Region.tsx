@@ -645,7 +645,7 @@ const Region = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <div>
-              <Breadcrumb />
+              <Breadcrumb currentLocationName={region.regionName} />
               {isActiveRegion ? null : (
                 <Tag className="status" color={"red"}>
                   Заархівовано

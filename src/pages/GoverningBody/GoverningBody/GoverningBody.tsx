@@ -357,7 +357,9 @@ const GoverningBody = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
             <div>
-              <Breadcrumb />
+              <Breadcrumb
+                currentLocationName={governingBody.governingBodyName}
+              />
             </div>
             <Title level={3}>
               Керівний Орган {governingBody.governingBodyName}

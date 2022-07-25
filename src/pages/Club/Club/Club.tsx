@@ -697,7 +697,7 @@ const Club = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="clubCard">
             <div>
-              <Breadcrumb />
+              <Breadcrumb currentLocationName={club.name} />
               {isActiveClub ? null : (
                 <Tag className="status" color="red">
                   Заархівовано

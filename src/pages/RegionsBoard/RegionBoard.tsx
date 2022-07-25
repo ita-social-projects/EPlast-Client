@@ -299,7 +299,7 @@ const RegionBoard = () => {
         <Col xl={14} sm={24} xs={24}>
           <Card hoverable className="regionBoardCard">
             <div>
-              <Breadcrumb />
+              <Breadcrumb currentLocationName={region.regionName} />
             </div>
             <Title level={2}>{region.regionName}</Title>
             <Row className="regionBoardPhotos" gutter={[0, 12]}>
