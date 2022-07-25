@@ -47,6 +47,7 @@ const UserRenewalTable = () => {
   const [updateTable, setUpdateTable] = useState<boolean>(false);
   const [x, setX] = useState<number>(0);
   const [y, setY] = useState<number>(0);
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
 
   const getRenewals = async () => {
     setLoading(true);
@@ -100,6 +101,7 @@ const UserRenewalTable = () => {
 
   const handleClickAway = () => {
     setShowDropdown(false);
+    setSelectedRow(-1);
   };
 
   const handleConfirm = () => {
@@ -130,14 +132,15 @@ const UserRenewalTable = () => {
               Кількість запитів: {subtotal} / {total}
             </Title>
             <Table
+              rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
               className={classes.table}
               dataSource={userRenewals}
               columns={columns}
               scroll={{ x: 1300 }}
-              onRow={(record) => {
+              onRow={(record, index) => {
                 return {
                   onClick: () => {
-                    setShowDropdown(false);
+                    handleClickAway();
                   },
                   onContextMenu: (event) => {
                     event.preventDefault();
@@ -148,6 +151,7 @@ const UserRenewalTable = () => {
                     setIsRecordActive(record.approved);
                     setX(event.pageX);
                     setY(event.pageY);
+                    setSelectedRow(index as number);
                   },
                 };
               }}
