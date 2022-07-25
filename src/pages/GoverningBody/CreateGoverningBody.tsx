@@ -52,8 +52,8 @@ const CreateGoverningBody = () => {
   const getGoverningBodyNames = async () => {
     let governingBodies = (await getGoverningBodiesList()) as any[];
     if (+id) {
-      let currentName = (await getGoverningBodyById(+id))
-        .governingBodyViewModel.governingBodyName;
+      let currentName = (await getGoverningBodyById(+id)).governingBodyViewModel
+        .governingBodyName;
       setGoverningBodyNames(
         governingBodies
           .map((x) => x.governingBodyName)
@@ -109,8 +109,7 @@ const CreateGoverningBody = () => {
   const getGoverningBody = async () => {
     try {
       setLoading(true);
-      let response = (await getGoverningBodyById(+id))
-        .governingBodyViewModel;
+      let response = (await getGoverningBodyById(+id)).governingBodyViewModel;
       if (response.logo !== null && response.logo !== "") {
         const logo = await getGoverningBodyLogo(response.logo);
         response.logo = logo.data;
@@ -156,7 +155,7 @@ const CreateGoverningBody = () => {
       .then((data) => {
         governingBody.id = data;
         notificationLogic("success", successfulCreateAction("Керівний орган"));
-        history.replace(`/governingBodies/${governingBody.id}`);
+        history.replace(`/regionsBoard/governingBodies/${governingBody.id}`);
       })
       .catch(() => {
         getGoverningBodyNames();

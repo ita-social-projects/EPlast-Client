@@ -66,12 +66,13 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
+import NewBreadcrumbs from "../../../components/Breadcrumb/NewBreadcrumbs";
 
 const classes = require("../Announcement/Announcement.module.css");
 
 const GoverningBody = () => {
   const history = useHistory();
-  const { id }: any = useParams();
+  const { governingBodyId }: any = useParams();
   const { url } = useRouteMatch();
   const [loading, setLoading] = useState(false);
   const [governingBody, setGoverningBody] = useState<GoverningBodyProfile>(
@@ -249,7 +250,7 @@ const GoverningBody = () => {
   const getGoverningBody = async () => {
     setLoading(true);
     try {
-      const response = await getGoverningBodyById(+id);
+      const response = await getGoverningBodyById(+governingBodyId);
       const governingBodyViewModel = response.governingBodyViewModel;
       const admins = [
         governingBodyViewModel.head,
@@ -301,7 +302,7 @@ const GoverningBody = () => {
         +sectorId
       );
       newAnnouncementNotification(gvbId, sectorId);
-    } else if (+id === gvbId) {
+    } else if (+governingBodyId === gvbId) {
       const announcementId = (
         await addAnnouncement(title, text, images, isPined, +gvbId)
       ).data;
@@ -332,7 +333,7 @@ const GoverningBody = () => {
     if (governingBody.governingBodyName.length != 0) {
       PsevdonimCreator.setPseudonimLocation(
         `governingBodies/${governingBody.governingBodyName}`,
-        `governingBodies/${id}`
+        `governingBodies/${governingBodyId}`
       );
     }
   }, [governingBody]);
@@ -357,12 +358,7 @@ const GoverningBody = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
             <div>
-              <Crumb
-                current={governingBody.governingBodyName}
-                first="/"
-                second={url.replace(`/${id}`, "")}
-                second_name="Керівні органи"
-              />
+              <NewBreadcrumbs />
             </div>
             <Title level={3}>
               Керівний Орган {governingBody.governingBodyName}
@@ -685,7 +681,9 @@ const GoverningBody = () => {
               Напрями{" "}
               <a
                 onClick={() =>
-                  history.push(`/governingBodies/${governingBody.id}/sectors`)
+                  history.push(
+                    `/regionsBoard/governingBodies/${governingBody.id}/sectors`
+                  )
                 }
               >
                 {sectors.length !== 0 ? (
@@ -710,7 +708,9 @@ const GoverningBody = () => {
                     sm={8}
                   >
                     <div
-                      onClick={() => history.push(`${id}/sectors/${sector.id}`)}
+                      onClick={() =>
+                        history.push(`${governingBodyId}/sectors/${sector.id}`)
+                      }
                     >
                       {sectorsPhotosLoading ? (
                         <Skeleton.Avatar active size={64} />
@@ -733,14 +733,16 @@ const GoverningBody = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => history.push(id + "/sectors/new")}
+                  onClick={() => history.push(governingBodyId + "/sectors/new")}
                 />
               ) : null}
               <Button
                 type="primary"
                 className="governingBodyInfoButton"
                 onClick={() =>
-                  history.push(`/governingBodies/${governingBody.id}/sectors`)
+                  history.push(
+                    `/regionsBoard/governingBodies/${governingBody.id}/sectors`
+                  )
                 }
               >
                 Більше
@@ -830,7 +832,7 @@ const GoverningBody = () => {
         visibleDrawer={visibleDrawer}
       />
       <AddAnnouncementModal
-        governingBodyId={+id}
+        governingBodyId={+governingBodyId}
         setVisibleModal={setVisibleAddModal}
         visibleModal={visibleAddModal}
         onAdd={onAnnouncementAdd}
@@ -847,12 +849,12 @@ const GoverningBody = () => {
           admins={admins}
           setAdmins={setAdmins}
           setGoverningBodyHead={setGoverningBodyHead}
-          governingBodyId={+id}
+          governingBodyId={+governingBodyId}
         />
       </Modal>
       {userAccesses["ManipulateDocument"] ? (
         <AddDocumentModal
-          governingBodyId={+id}
+          governingBodyId={+governingBodyId}
           document={document}
           setDocument={setDocument}
           visibleModal={visibleModal}

@@ -60,6 +60,7 @@ import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import PicturesWall, {
   AnnouncementGallery,
 } from "../Announcement/PicturesWallModal";
+import NewBreadcrumbs from "../../../components/Breadcrumb/NewBreadcrumbs";
 
 const classes = require("../Announcement/Announcement.module.css");
 
@@ -97,7 +98,7 @@ const Sector = () => {
       "success",
       successfulDeleteAction("Напрям керівного органу")
     );
-    history.push(`/governingBodies/${governingBodyId}`);
+    history.push(`/regionsBoard/governingBodies/${governingBodyId}`);
   };
 
   const setPhotos = async (members: SectorAdmin[], logo: string) => {
@@ -312,14 +313,7 @@ const Sector = () => {
       <Row gutter={[0, 48]}>
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
-            <div>
-              <Crumb
-                current={sector.name}
-                first="/"
-                second={url.replace(`/${sectorId}`, "")}
-                second_name="Напрями керівних органів"
-              />
-            </div>
+            <NewBreadcrumbs />
             <Title level={3}>Напрям Керівного Органу {sector.name}</Title>
             <Row className="governingBodyPhotos" gutter={[0, 12]}>
               <Col md={13} sm={24} xs={24}>

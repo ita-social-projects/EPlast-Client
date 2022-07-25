@@ -55,6 +55,7 @@ import {
 } from "../../components/Notifications/Messages";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import FormAddDecision from "../DecisionTable/FormAddDecision";
+import NewBreadcrumbs from "../../components/Breadcrumb/NewBreadcrumbs";
 
 const RegionBoard = () => {
   const history = useHistory();
@@ -277,7 +278,6 @@ const RegionBoard = () => {
     setVisibleAddMainAdminModal(false);
   };
 
-
   const getGoverningBodiesAdmins = async () => {
     try {
       setPhotosLoading(true);
@@ -304,7 +304,7 @@ const RegionBoard = () => {
         <Col xl={14} sm={24} xs={24}>
           <Card hoverable className="regionBoardCard">
             <div>
-              <Crumb first="/" second_name="Крайовий Провід Пласту" />
+              <NewBreadcrumbs />
             </div>
             <Title level={2}>{region.regionName}</Title>
             <Row className="regionBoardPhotos" gutter={[0, 12]}>
@@ -511,7 +511,9 @@ const RegionBoard = () => {
                   >
                     <div
                       onClick={() =>
-                        history.push(`/governingBodies/${governingBody.id}`)
+                        history.push(
+                          `/regionsBoard/governingBodies/${governingBody.id}`
+                        )
                       }
                     >
                       {gbPhotosAreLoading ? (
@@ -639,10 +641,10 @@ const RegionBoard = () => {
         setVisibleModal={setVisibleModal}
         onAdd={onAdd}
       />
-        <FormAddDecision
-          setModalVisible={setVisibleDecisionModal}
-          modalVisible={visibleDecisionModal}
-          onSubmit={handleAdd}
+      <FormAddDecision
+        setModalVisible={setVisibleDecisionModal}
+        modalVisible={visibleDecisionModal}
+        onSubmit={handleAdd}
       />
       <RegionDetailDrawer
         region={region}

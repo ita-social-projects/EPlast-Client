@@ -95,7 +95,7 @@ const SectorAdministration = () => {
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${governingBodyId}/sectors/${sectorId}`,
+      `/regionsBoard/governingBodies/${governingBodyId}/sectors/${sectorId}`,
       sectorName
     );
   };
