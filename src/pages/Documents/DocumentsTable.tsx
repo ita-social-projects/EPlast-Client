@@ -120,7 +120,7 @@ const DocumentsTable: React.FC = () => {
     },
     click: {
       addBtn: () => setVisibleModal(true),
-      away: () => setShowDropdown(false)
+      away: () => actions.hideDropdown()
     }
   }
 
@@ -128,7 +128,7 @@ const DocumentsTable: React.FC = () => {
     <Layout>
       <Content
         onClick={() => {
-          setShowDropdown(false);
+          actions.hideDropdown();
         }}
       >
         <h1 className={classes.titleTable}>Репозитарій</h1>
@@ -155,13 +155,14 @@ const DocumentsTable: React.FC = () => {
           </div>
 
           <Card
-              style={{ width: "100%" }}
+              style={{ width: "100%", position: "static" }}
               tabList={canView ? state.tabList : undefined}
               activeTabKey={state.status}
               onTabChange={canView ? handler.change.tabCard : undefined}
             >
           
           <Table
+            rowClassName={(record, index) => index === state.selectedRow ? classes.selectedRow : ""}
             loading={loading}
             className={classes.table}
             dataSource={state.data}
@@ -169,14 +170,14 @@ const DocumentsTable: React.FC = () => {
             columns={columns}
             bordered
             rowKey="id"
-            onRow={(record) => {
+            onRow={(record, index) => {
               return {
                 onClick: () => {
-                  setShowDropdown(false);
+                  actions.hideDropdown()
                 },
                 onContextMenu: (event) => {
                   event.preventDefault();
-                  setShowDropdown(true);
+                  actions.showDropdown(index as number)
                   actions.setXY(event.pageX, event.pageY);
                   actions.setRecord(record.id);
                 },
@@ -201,10 +202,10 @@ const DocumentsTable: React.FC = () => {
               onChange: handler.change.table,
             }}
             />
-            
+
           <ClickAwayListener onClickAway={handler.click.away}>
             <DropDown
-              showDropdown={showDropdown}
+              showDropdown={state.isDropdownVisible}
               record={state.recordId}
               pageX={state.x}
               pageY={state.y}

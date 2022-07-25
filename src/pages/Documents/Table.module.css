@@ -60,6 +60,8 @@
    justify-content:space-between
 }
 
-.documentsCard .ant-card-body {
-  height: 0%;
+.selectedRow {
+  background-color: #f4f8f1;
+  box-shadow: 0 0 10px #f4f8f1;
+  color: #3D5438;
 }
