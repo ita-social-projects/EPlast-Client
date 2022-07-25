@@ -12,7 +12,6 @@ import classes from "./UserTable.module.css";
 import userDeleteCofirm from "./UserDeleteConfirm";
 import ChangeUserRoleModal from "./ChangeUserRoleModal";
 import ChangeUserCityModal from "./ChangeUserCityModal";
-import adminApi from "../../api/adminApi";
 import ModalAddPlastDegree from "../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import ChangeUserRegionModal from "./ChangeUserRegionModal";
 import ChangeUserClubModal from "./ChangeUserClubModal";
@@ -27,8 +26,6 @@ import ChangeUserGoverningBodyModal from "./ChangeUserGoverningBodyModal";
 import DeleteGoverningBodyAdminModal from "./DeleteGoverningBodyAdminModal";
 import AcceptUserToCityModal from "./AcceptUserToCityModal";
 import DeleteCityFollowerModal from "./DeleteCityFollowerModal";
-import { RefObject } from "@fullcalendar/core";
-import ReactDOM, { findDOMNode } from "react-dom";
 
 const authService = new AuthorizeApi();
 
