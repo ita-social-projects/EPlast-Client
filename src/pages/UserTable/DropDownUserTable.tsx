@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Menu } from "antd";
 import {
   FileSearchOutlined,
@@ -27,6 +27,8 @@ import ChangeUserGoverningBodyModal from "./ChangeUserGoverningBodyModal";
 import DeleteGoverningBodyAdminModal from "./DeleteGoverningBodyAdminModal";
 import AcceptUserToCityModal from "./AcceptUserToCityModal";
 import DeleteCityFollowerModal from "./DeleteCityFollowerModal";
+import { RefObject } from "@fullcalendar/core";
+import ReactDOM, { findDOMNode } from "react-dom";
 
 const authService = new AuthorizeApi();
 
@@ -111,6 +113,9 @@ const DropDown = (props: Props) => {
   const [chainOfAccessibility, setChainOfAccessibility] = useState<
     IDropdownItem
   >();
+
+  const selfRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState<[number, number]>([0, 0]);
 
   //Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
   //I have no idea what's going on here
@@ -251,7 +256,9 @@ const DropDown = (props: Props) => {
   };
 
   useEffect(() => {
-    fetchUser();
+    fetchUser().then(() => {
+      setDimensions([selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number]);
+    });
   }, [selectedUser]);
 
   const handleItemClick = async (item: any) => {
@@ -300,23 +307,25 @@ const DropDown = (props: Props) => {
   };
 
   return (
-    <>
+    <div
+      ref={selfRef}
+      className={classes.menu}
+      style={{
+        top: 
+          window.innerHeight - (pageY + dimensions[1]) < 0
+            ? window.innerHeight - dimensions[1] - 10
+            : pageY,
+        left:
+          window.innerWidth - (pageX + dimensions[0]) < 0
+            ? window.innerWidth - dimensions[0]
+            : pageX,
+        display: showDropdown ? "block" : "none",
+      }}>
       {canView ? (
         <Menu
           theme="dark"
-          className={classes.menu}
+          //className={classes.menu}
           onClick={handleItemClick}
-          style={{
-            top: 
-              window.innerHeight - (pageY + 340) < 0
-                ? window.innerHeight - 350
-                : pageY,
-            left:
-              window.innerWidth - (pageX + 223) < 0
-                ? window.innerWidth - 266
-                : pageX,
-            display: showDropdown ? "block" : "none",
-          }}
         >
           {canViewProfile ? (
             <Menu.Item key="1">
@@ -483,7 +492,7 @@ const DropDown = (props: Props) => {
           />
         </Menu>
       ) : null}
-    </>
+    </div>
   );
 };
 
