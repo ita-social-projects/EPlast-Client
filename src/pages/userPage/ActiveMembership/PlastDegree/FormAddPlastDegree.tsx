@@ -63,8 +63,9 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     const cityDefault = cities.find((x) => x.name == info.userCity)?.id;
 
     let degreeChanged =
-      !(info.plastUlad === props.currentUserDegree?.plastDegree.name ||
-      info.plastDegree === props.currentUserDegree?.plastDegree.name)
+      (!props.currentUserDegree?.plastDegree || 
+        info.plastUlad !== props.currentUserDegree?.plastDegree.name ||
+        info.plastDegree !== props.currentUserDegree?.plastDegree.name)
     
     const userPlastDegreePost: UserPlastDegreePost = {
       plastDegreeId: info.plastDegree,
@@ -75,6 +76,10 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     if (!props.isChangingUserDegree) {
       let follower;
 
+      // if the city select is not disabled,
+      // meaning that the user is not a follower in any city
+      // we make them a follower of the chosen city first
+      // and then approve them
       if (!disabled) {
         follower = (
           await addFollowerWithId(cityDefault as number, props.userId)
