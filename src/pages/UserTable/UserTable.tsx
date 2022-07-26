@@ -456,9 +456,9 @@ const UsersTable = () => {
   };
 
   const handleDelete = (id: string) => {
-    fetchData();
     const filteredData = users.filter((d: any) => d.id !== id);
     setUsers([...filteredData]);
+    fetchData();
   };
 
   const handleClickAway = () => {

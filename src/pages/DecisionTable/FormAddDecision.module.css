@@ -1,7 +1,7 @@
 .cardButton {
   display: flex;
   width: 100%;
-  justify-content:flex-end;
+  justify-content: flex-end;
   float: right;
 }
 
@@ -11,13 +11,11 @@ margin-right: 8px;
 
 .formField {
   max-width: 370px;
-  display: flex;
 }
 
 .selectField {
   max-width: 370px;
   min-width: 370px;
-  position: absolute;
 }
 
 @media(max-width: 400px) {
@@ -28,8 +26,6 @@ margin-right: 8px;
   .selectField {
     max-width: 100%;
     min-width: 100%;
-    display: flex;
-    position: absolute;
   }
 }
 .buttons {

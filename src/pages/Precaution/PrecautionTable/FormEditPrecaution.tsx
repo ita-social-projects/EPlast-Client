@@ -25,7 +25,7 @@ const FormEditPrecaution = () => {
   const dateFormat = "DD.MM.YYYY";
 
   useEffect(() => {
-    actions.setShowDropdown(false);
+    actions.setShowDropdown(false, -1);
     actions.setEditModalLoading(true);
     form.resetFields();
     actions.editModalFetchData();

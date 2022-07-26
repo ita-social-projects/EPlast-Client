@@ -21,6 +21,7 @@ import UserApi from "../../../api/UserApi";
 import IUserAnnualReportAccess from "../../../models/UserAccess/IUserAccess";
 import AnnualReportApi from "../../../api/AnnualReportApi";
 import { ReportType } from "../../../models/AnnualReport/ReportType";
+import classes from "./TableStyles.module.css";
 
 interface props {
   columns: any;
@@ -71,6 +72,7 @@ export const RegionAnnualReportTable = ({
   >(false);
   const [isLoading, setIsLoading] = useState(false);
   const [authReport, setAuthReport] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
   const history = useHistory();
 
   useEffect(() => {
@@ -105,6 +107,7 @@ export const RegionAnnualReportTable = ({
     setShowUnconfirmedRegionDropdown(false);
     setShowConfirmedRegionDropdown(false);
     setShowSavedRegionDropdown(false);
+    setSelectedRow(-1);
   };
 
   const showDropdown = (annualReportStatus: number) => {
@@ -248,6 +251,7 @@ export const RegionAnnualReportTable = ({
         ) : null}
       </div>
       <Table
+        rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
         {...{ loading: isLoading }}
         locale={{
           emptyText: (
@@ -281,7 +285,7 @@ export const RegionAnnualReportTable = ({
             };
           else return { ...item, idView: <>{item.id}</> };
         })}
-        onRow={(regionRecord) => {
+        onRow={(regionRecord, index) => {
           return {
             onDoubleClick: (event) => {
               if (
@@ -314,6 +318,7 @@ export const RegionAnnualReportTable = ({
                 ).data
               );
               showDropdown(regionRecord.status);
+              setSelectedRow(index as number);
             },
           };
         }}
