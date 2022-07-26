@@ -91,7 +91,10 @@ const DropDown = (props: Props) => {
         className={classes.menu}
         theme="dark"
         style={{
-          top: pageY,
+          top: 
+            window.innerHeight - (pageY + 144) < 0
+              ? window.innerHeight - 154
+              : pageY,
           left:
             window.innerWidth - (pageX + 194) < 0
               ? window.innerWidth - 275
