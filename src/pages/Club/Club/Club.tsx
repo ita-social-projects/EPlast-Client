@@ -291,10 +291,7 @@ const Club = () => {
         title: "Ви впевнені, що хочете доєднатися до даного куреня??",
         content: (
           <div className={classes.Style}>
-            <b>
-              Ви втратите свою попередню посаду.
-            </b>{" "}
-
+            <b>Ви втратите свою попередню посаду.</b>{" "}
           </div>
         ),
         icon: <ExclamationCircleOutlined />,
@@ -342,7 +339,6 @@ const Club = () => {
       okType: "primary",
       maskClosable: true,
     });
-
   }
   const getClub = async () => {
     setLoading(true);
@@ -444,14 +440,14 @@ const Club = () => {
           закінчується{" "}
           <b>
             {moment(existingAdmin.endDate).local().format("DD.MM.YYYY") ===
-              "Invalid date"
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
         if (newAdmin.id === 0) {
           addClubAdmin(newAdmin);
@@ -478,14 +474,14 @@ const Club = () => {
           є Головою Куреня, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-              "Invalid date"
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   };
 
@@ -500,14 +496,14 @@ const Club = () => {
           вже має таку роль, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-              "Invalid date"
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   };
 
@@ -522,21 +518,25 @@ const Club = () => {
           не є членом Пласту.
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   };
 
-  const showConfirmAddNewHead = (newAdmin: ClubAdmin, existingAdmin?: ClubAdmin) => {
+  const showConfirmAddNewHead = (
+    newAdmin: ClubAdmin,
+    existingAdmin?: ClubAdmin
+  ) => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
         <div className={classes.Style}>
           <b>
-            Дані будуть внесені у колишні діловодства куреня, оскільки час правління вже закінчився.
+            Дані будуть внесені у колишні діловодства куреня, оскільки час
+            правління вже закінчився.
           </b>
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       async onOk() {
         await addClubAdmin(newAdmin);
         admins.push(newAdmin);
@@ -547,24 +547,30 @@ const Club = () => {
 
   const showImpossibleAddManager = async (admin?: ClubAdmin) => {
     return Modal.warning({
-      title: "Неможливо додати нового адміна, оскільки в цей період займає посаду адмін: ",
+      title:
+        "Неможливо додати нового адміна, оскільки в цей період займає посаду адмін: ",
       content: (
         <div className={classes.Style}>
           <b>
             {admin?.user.firstName} {admin?.user.lastName}
           </b>{" "}
-          час правління поточного адміна  {" "}
+          час правління поточного адміна{" "}
           <b>
             {moment.utc(admin?.endDate).local().format("DD.MM.YYYY") ===
-              "Invalid date"
+            "Invalid date"
               ? "ще не скоро"
-              : `${moment.utc(admin?.startDate).local().format("DD.MM.YYYY")}  -  ${moment.utc(admin?.endDate).local().format("DD.MM.YYYY")}`
-            }
+              : `${moment
+                  .utc(admin?.startDate)
+                  .local()
+                  .format("DD.MM.YYYY")}  -  ${moment
+                  .utc(admin?.endDate)
+                  .local()
+                  .format("DD.MM.YYYY")}`}
           </b>
           .
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   };
 
@@ -590,15 +596,18 @@ const Club = () => {
           showDisableModal(head);
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
-        }
-        else if (existingAdmin !== undefined && admin.endDate !== undefined &&
-          (existStartDate > newAdminStartDate && existEndDate < newAdminEndDate
-            || existEndDate > newAdminEndDate && existStartDate < newAdminStartDate
-            || existEndDate > newAdminEndDate && newAdminEndDate > existStartDate)) {
-
+        } else if (
+          existingAdmin !== undefined &&
+          admin.endDate !== undefined &&
+          ((existStartDate > newAdminStartDate &&
+            existEndDate < newAdminEndDate) ||
+            (existEndDate > newAdminEndDate &&
+              existStartDate < newAdminStartDate) ||
+            (existEndDate > newAdminEndDate &&
+              newAdminEndDate > existStartDate))
+        ) {
           showImpossibleAddManager(existingAdmin);
-        }
-        else if (
+        } else if (
           admin.adminType.adminTypeName === "Голова КПР" ||
           admin.adminType.adminTypeName === "Член КПР" ||
           admin.adminType.adminTypeName === Roles.KurinHead ||
@@ -748,9 +757,9 @@ const Club = () => {
                             .utc(club.head.startDate)
                             .local()
                             .format("DD.MM.YYYY")} - ${moment
-                              .utc(club.head.endDate)
-                              .local()
-                              .format("DD.MM.YYYY")}`}
+                            .utc(club.head.endDate)
+                            .local()
+                            .format("DD.MM.YYYY")}`}
                         </div>
                       )}
                     </Paragraph>
@@ -783,9 +792,9 @@ const Club = () => {
                             .utc(club.headDeputy.startDate)
                             .local()
                             .format("DD.MM.YYYY")} - ${moment
-                              .utc(club.headDeputy.endDate)
-                              .local()
-                              .format("DD.MM.YYYY")}`}
+                            .utc(club.headDeputy.endDate)
+                            .local()
+                            .format("DD.MM.YYYY")}`}
                         </div>
                       )}
                     </Paragraph>
@@ -798,9 +807,9 @@ const Club = () => {
               </Col>
               <Col md={{ span: 10, offset: 1 }} sm={24} xs={24}>
                 {club.slogan ||
-                  club.clubURL ||
-                  club.email ||
-                  club.phoneNumber ? (
+                club.clubURL ||
+                club.email ||
+                club.phoneNumber ? (
                   <div>
                     {club.slogan ? (
                       club.slogan?.length > sloganMaxLength ? (
@@ -976,10 +985,10 @@ const Club = () => {
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => {
-                  if (userAccesses.EditClub) history.push(`/user/table?club=${club.id}`);
+                  if (userAccesses.EditClub)
+                    history.push(`/user/table?club=${club.id}`);
                   else history.push(`/clubs/members/${club.id}`);
-                }
-                }
+                }}
               >
                 Більше
               </Button>
@@ -1058,8 +1067,8 @@ const Club = () => {
               <a
                 onClick={() =>
                   userAccesses.IsAdmin ||
-                    (userAccesses.DownloadDocument &&
-                      club.name === activeUserClub)
+                  (userAccesses.DownloadDocument &&
+                    club.name === activeUserClub)
                     ? history.push(`/clubs/documents/${club.id}`)
                     : undefined
                 }
@@ -1095,8 +1104,8 @@ const Club = () => {
             </Row>
             <div className="clubMoreButton">
               {userAccesses.IsAdmin ||
-                (userAccesses.DownloadDocument &&
-                  club.name === activeUserClub) ? (
+              (userAccesses.DownloadDocument &&
+                club.name === activeUserClub) ? (
                 <Button
                   type="primary"
                   className="clubInfoButton"
@@ -1180,11 +1189,8 @@ const Club = () => {
                         <p className="userName">{followers.user.lastName}</p>
                       </div>
                       {(userAccesses.EditClub && isLoadingPlus) ||
-                        (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
-                        <Tooltip
-                          placement="bottom"
-                          title="Додати до членів"
-                        >
+                      (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
+                        <Tooltip placement="bottom" title="Додати до членів">
                           <PlusOutlined
                             className="approveIcon"
                             onClick={async () =>
@@ -1217,10 +1223,10 @@ const Club = () => {
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => {
-                  if (userAccesses.EditClub) history.push(`/user/table?tab=registered&club=${club.id}`)
-                  else history.push(`/clubs/followers/${club.id}`)
-                }
-                }
+                  if (userAccesses.EditClub)
+                    history.push(`/user/table?tab=registered&club=${club.id}`);
+                  else history.push(`/clubs/followers/${club.id}`);
+                }}
               >
                 Більше
               </Button>
