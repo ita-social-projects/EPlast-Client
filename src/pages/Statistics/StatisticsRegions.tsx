@@ -644,6 +644,9 @@ const StatisticsCities = () => {
                       setDataFromRow(regionRecord);
                       setOnClickRow(index);
                     },
+                    onContextMenu: (event) => {
+                      event.preventDefault();
+                    },
                   };
                 }}
                 pagination={{

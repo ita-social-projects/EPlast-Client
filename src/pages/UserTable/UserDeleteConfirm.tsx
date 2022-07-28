@@ -4,6 +4,7 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import adminApi from "../../api/adminApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import {
+  failDeleteUser,
   successfulDeleteAction,
   tryAgain,
 } from "../../components/Notifications/Messages";
@@ -22,15 +23,21 @@ const UserDeleteConfirm = (id: string, onDelete: any) => {
           .deleteUser(id)
           .then((response) => {
             notificationLogic("success", successfulDeleteAction("Користувача"));
+            onDelete(id);
           })
           .catch((error) => {
-            if (error.response?.status === 400) {
-              notificationLogic("error", tryAgain);
+            switch (error.response?.status)
+            {
+              case 400:
+                notificationLogic("error", tryAgain);
+                break;
+              case 500:
+                notificationLogic("error", failDeleteUser);
+                break;
             }
           });
       };
       remove();
-      onDelete(id);
     },
   });
 };

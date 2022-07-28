@@ -60,7 +60,8 @@ const DropDown = (props: Props) => {
   } = props;
 
   const [showEditModal, setShowEditModal] = useState(false);
-  const [visibleModalDegree, setVisibleModalDegree] = useState<boolean>(false);
+  const [visibleAddDegree, setVisibleAddDegree] = useState<boolean>(false);
+  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(false);
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
@@ -260,6 +261,7 @@ const DropDown = (props: Props) => {
         break;
       case "2":
         await userDeleteCofirm(record, onDelete);
+        onChange("", "")
         break;
       case "3":
         await setShowRegionModal(true);
@@ -274,10 +276,10 @@ const DropDown = (props: Props) => {
         await setShowEditModal(true);
         break;
       case "7":
-        await setVisibleModalDegree(true);
+        await setVisibleChangeDegree(true);
         break;
       case "8":
-        await setVisibleModalDegree(true);
+        await setVisibleAddDegree(true);
         break;
       case "9":
         await authService.resendEmailForRegistering(record);
@@ -458,9 +460,12 @@ const DropDown = (props: Props) => {
           <ModalAddPlastDegree
             handleAddDegree={() => onChange("", "")} // forcefully updating the table on exit
             userId={record}
-            visibleModal={visibleModalDegree}
-            setVisibleModal={setVisibleModalDegree}
-            isChangingUserDegree={false}
+            visibleModal={visibleAddDegree || visibleChangeDegree}
+            setVisibleModal={(bool) => {
+              setVisibleAddDegree(bool);
+              setVisibleChangeDegree(bool);
+            }}
+            isChangingUserDegree={visibleChangeDegree}
           />
           <AcceptUserToCityModal
             record={record}

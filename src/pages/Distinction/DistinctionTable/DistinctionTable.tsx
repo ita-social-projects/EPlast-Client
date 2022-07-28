@@ -61,6 +61,7 @@ const DistinctionTable = () => {
       date: new Date(),
     },
   ]);
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
 
   const getUserAccessesForDistinctions = async () => {
     let user: any = jwt(AuthLocalStorage.getToken() as string);
@@ -114,6 +115,7 @@ const DistinctionTable = () => {
 
   const handleClickAway = () => {
     setShowDropdown(false);
+    setSelectedRow(-1);
   };
 
   const CreateDeleteNotification = (id: number) => {
@@ -247,11 +249,12 @@ const DistinctionTable = () => {
           </Row>
           <div>
             <Table
+              rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : null}
               className={classes.table}
               dataSource={distinctions}
               columns={columns}
               scroll={{ x: 1300 }}
-              onRow={(record) => {
+              onRow={(record, index) => {
                 return {
                   onClick: () => {
                     setShowDropdown(false);
@@ -263,6 +266,7 @@ const DistinctionTable = () => {
                     setUserId(record.userId);
                     setX(event.pageX);
                     setY(event.pageY);
+                    setSelectedRow(index as number);
                   },
                 };
               }}

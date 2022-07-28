@@ -29,6 +29,7 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
   const [firstPage, setFirstPage] = useState(1);
   const [lastElement, setLastElement] = useState(1);
   const [sortKey, setSortKey] = useState<number>(1);
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
 
   const createNotifications = async (userId: string) => {
     await NotificationBoxApi.createNotifications(
@@ -64,6 +65,7 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
 
   const handleClickAway = () => {
     setShowDropdown(false);
+    setSelectedRow(-1);
   };
 
   const fetchData = async () => {
@@ -128,6 +130,7 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
           }}
         >
           <Table
+            rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : null}
             className={classes.table}
             columns={columns({
               sortKey: sortKey,
@@ -135,7 +138,7 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
             })}
             dataSource={data}
             scroll={{ x: 1300 }}
-            onRow={(record: KadraTableInfo) => {
+            onRow={(record: KadraTableInfo, index) => {
               return {
                 onClick: () => {
                   setShowDropdown(false);
@@ -146,6 +149,7 @@ export const KVTable = ({ current, searchData, searchPage }: props) => {
                   setRecordObj(record);
                   setX(event.pageX);
                   setY(event.pageY - 200);
+                  setSelectedRow(index as number);
                 },
               };
             }}
