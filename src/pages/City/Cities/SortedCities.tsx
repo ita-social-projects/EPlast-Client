@@ -88,6 +88,7 @@ const SortedCities = ({ switcher }: Props) => {
 
   const handleSizeChange = (page: number, pageSize: number = 10) => {
     setPageSize(pageSize);
+    handleChange(1);
   };
 
   const handleSearch = (event: any) => {
