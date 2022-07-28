@@ -1142,6 +1142,7 @@ const Region = () => {
         visible={visible}
         onCancel={handleClose}
         footer={null}
+        width={700}
       >
         <AddNewSecretaryForm
           onAdd={handleOk}

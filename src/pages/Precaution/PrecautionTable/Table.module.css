@@ -63,10 +63,16 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: auto;
-  }
+}
   
-  .tagText {
+.tagText {
     max-width: 100%;  
     text-overflow: ellipsis;
     overflow: hidden;
-  }
+}
+
+.selectedRow {
+    background-color: #f4f8f1;
+    box-shadow: 0 0 10px #f4f8f1;
+    color: #3D5438;
+}

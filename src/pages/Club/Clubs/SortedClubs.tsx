@@ -97,6 +97,7 @@ const SortedClubs = ({ switcher }: Props) => {
 
   const handleSizeChange = (pageSize: number = 10) => {
     setPageSize(pageSize);
+    handleChange(1);
   };
 
   const handleSearch = (event: any) => {

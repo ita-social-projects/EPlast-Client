@@ -34,7 +34,7 @@ const PrecautionTable = () => {
     <Layout>
       <Content
         onClick={() => {
-          actions.setShowDropdown(false);
+          actions.setShowDropdown(false, -1);
         }}
       >
         <h1 className={classes.titleTable}>Перестороги</h1>
@@ -62,18 +62,19 @@ const PrecautionTable = () => {
           {
             <div>
               <Table
+                rowClassName={(record, index) => index === state.selectedRow ? classes.selectedRow : null}
                 className={classes.table}
                 dataSource={state.tableData.userPrecautions}
                 columns={columns}
                 scroll={{ x: 1300 }}
-                onRow={(record) => {
+                onRow={(record, index) => {
                   return {
                     onClick: () => {
-                      actions.setShowDropdown(false);
+                      actions.setShowDropdown(false, -1);
                     },
                     onContextMenu: (event) => {
                       event.preventDefault();
-                      actions.setShowDropdown(true);
+                      actions.setShowDropdown(true, index as number);
                       actions.setRecordObj(record);
                       actions.setUserId(record.userId);
                       actions.setPageX(event.pageX);

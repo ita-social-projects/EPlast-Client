@@ -51,7 +51,10 @@ const DropDown: React.FC<DropDownProps> = ({ record, pageX, pageY, showDropdown,
       onClick={handleItemClick}
       className={classes.menu}
       style={{
-        top: pageY,
+        top: 
+          window.innerHeight - (pageY + 96) < 0
+              ? window.innerHeight - 106
+              : pageY,
         left:
           window.innerWidth - (pageX + 184) < 0
             ? window.innerWidth - 227
