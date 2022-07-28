@@ -12,7 +12,6 @@ import classes from "./UserTable.module.css";
 import userDeleteCofirm from "./UserDeleteConfirm";
 import ChangeUserRoleModal from "./ChangeUserRoleModal";
 import ChangeUserCityModal from "./ChangeUserCityModal";
-import adminApi from "../../api/adminApi";
 import ModalAddPlastDegree from "../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import ChangeUserRegionModal from "./ChangeUserRegionModal";
 import ChangeUserClubModal from "./ChangeUserClubModal";
@@ -112,41 +111,41 @@ const DropDown = (props: Props) => {
     IDropdownItem
   >();
 
-  //Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
-  //I have no idea what's going on here
+  // Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
+  // I have no idea what's going on here
   function getEnumKeyByEnumValue<T extends { [index: string]: string }>(
     myEnum: T,
     enumValue: string
   ): keyof T | null {
-    let keys = Object.keys(myEnum).filter((x) => myEnum[x] == enumValue);
+    const keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
     return keys.length > 0 ? keys[0] : null;
   }
 
-  //Takes only those roles, which can access User Table and
-  //writes them in array in descending order (as in AdminRole enum)
+  // Takes only those roles, which can access User Table and
+  // writes them in array in descending order (as in AdminRole enum)
   const setUserAdminRoles = (allUserRoles: Array<string>): Array<AdminRole> => {
-    //All possible AdminRole keys are converted to string array
+    // All possible AdminRole keys are converted to string array
     const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
     for (var key in AdminRole) {
       allAdminRolesAsEnumKeys.push(AdminRole[key]);
     }
 
-    //Current user roles as strings (values) are converted to corresponding
-    //Roles enum keys, which are also saved as array of string
+    // Current user roles as strings (values) are converted to corresponding
+    // Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
     allUserRoles?.forEach((role) => {
-      let result = getEnumKeyByEnumValue(Roles, role);
+      const result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
       }
     });
 
-    //Intersection of possible Admin roles and current admin roles
+    // Intersection of possible Admin roles and current admin roles
     const userAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(
       (role) => userRolesAsEnumKeys.includes(role)
     );
 
-    //Roles are converted  to AdminRole enum
+    // Roles are converted  to AdminRole enum
     const currentUserAdminRoles = new Array<AdminRole>();
     userAdminRolesAsEnumKeys.forEach((role) => {
       currentUserAdminRoles.push(AdminRole[role as keyof typeof AdminRole]);
@@ -155,32 +154,32 @@ const DropDown = (props: Props) => {
     return currentUserAdminRoles;
   };
 
-  //Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
+  // Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
   const setUserNonAdminRoles = (
     allUserRoles: Array<string>
   ): Array<NonAdminRole> => {
-    //All possible NonAdminRole keys are converted to string array
+    // All possible NonAdminRole keys are converted to string array
     const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
     for (var key in NonAdminRole) {
       allAdminRolesAsEnumKeys.push(NonAdminRole[key]);
     }
 
-    //Current user roles as strings (values) are converted to corresponding
-    //Roles enum keys, which are also saved as array of string
+    // Current user roles as strings (values) are converted to corresponding
+    // Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
     allUserRoles?.forEach((role) => {
-      let result = getEnumKeyByEnumValue(Roles, role);
+      const result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
       }
     });
 
-    //Intersection of possible NonAdmin roles and current admin roles
+    // Intersection of possible NonAdmin roles and current admin roles
     const userNonAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(
       (role) => userRolesAsEnumKeys.includes(role)
     );
 
-    //Roles are converted to NonAdminRole enum
+    // Roles are converted to NonAdminRole enum
     const userNonAdminRoles = new Array<NonAdminRole>();
     userNonAdminRolesAsEnumKeys.forEach((role) => {
       userNonAdminRoles.push(NonAdminRole[role as keyof typeof NonAdminRole]);
@@ -217,7 +216,7 @@ const DropDown = (props: Props) => {
       | undefined
       | null = await lookThroughChain();
 
-    //To make changes in user access for context menu look in DropdownItem.tsx
+    // To make changes in user access for context menu look in DropdownItem.tsx
 
     setCanViewProfile(result?.get(DropdownFunc.CheckProfile) ?? false);
 
@@ -296,193 +295,194 @@ const DropDown = (props: Props) => {
       default:
         break;
     }
-    item.key = "0";
   };
 
   return (
     <>
-      {canView ? (
-        <Menu
-          theme="dark"
-          className={classes.menu}
-          onClick={handleItemClick}
-          style={{
-            top: 
-              window.innerHeight - (pageY + 340) < 0
-                ? window.innerHeight - 350
-                : pageY,
-            left:
-              window.innerWidth - (pageX + 223) < 0
-                ? window.innerWidth - 266
-                : pageX,
-            display: showDropdown ? "block" : "none",
-          }}
-        >
-          {canViewProfile ? (
-            <Menu.Item key="1">
-              <FileSearchOutlined />
-              Переглянути профіль
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {canDelete ? (
-            <Menu.Item key="2">
-              <DeleteOutlined />
-              Видалити
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {inActiveTab && canChangeRegionAdministration ? (
-            <Menu.Item key="3">
-              <EditOutlined />
-              Провід округи
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {inActiveTab && canChangeCityAdministration ? (
-            <Menu.Item key="4">
-              <EditOutlined />
-              Провід станиці
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {inActiveTab && canChangeClubAdministration ? (
-            <Menu.Item key="5">
-              <EditOutlined />
-              Провід куреня
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {inActiveTab && canChangeUserAccess ? (
-            <Menu.Item key="6">
-              <EditOutlined />
-              Поточний стан користувача
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {!canAddDegree && canChangeDegree ? (
-            <Menu.Item key="7">
-              <PlusCircleOutlined />
-              Змінити ступінь
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-
-          {!canChangeDegree && canAddDegree ? (
-            <Menu.Item key="8">
-              <PlusCircleOutlined />
-              Додати до уладу
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {superAdmin ? (
-            <Menu.Item key="9">
-              <MailOutlined />
-              Активувати
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {canChangeGoverningBodyAdministration ? (
-            <Menu.Item key="10">
-              <EditOutlined />
-              Провід Пласту
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {canDeleteGoverningBodyAdministration ? (
-            <Menu.Item key="11">
-              <EditOutlined />
-              Відмінити роль Адміна
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-          {canRemoveFollowers ? (
-            <Menu.Item key="12">
-              <CloseOutlined />
-              Відхилити зголошення
-            </Menu.Item>
-          ) : (
-            <> </>
-          )}
-
-          <ChangeUserRoleModal
-            record={record}
-            showModal={showEditModal}
-            setShowModal={setShowEditModal}
-            onChange={onChange}
-            user={selectedUser}
-          />
-          <ChangeUserCityModal
-            record={record}
-            showModal={showCityModal}
-            setShowModal={setShowCityModal}
-            user={selectedUser}
-            onChange={onChange}
-          />
-          <ChangeUserRegionModal
-            record={record}
-            showModal={showRegionModal}
-            setShowModal={setShowRegionModal}
-            onChange={onChange}
-            user={selectedUser}
-          />
-          <ChangeUserClubModal
-            record={record}
-            showModal={showClubModal}
-            user={selectedUser}
-            setShowModal={setShowClubModal}
-            onChange={onChange}
-          />
-          <ChangeUserGoverningBodyModal
-            record={record}
-            showModal={showGoverningBodyModal}
-            user={selectedUser}
-            setShowModal={setShowGoverningBodyModal}
-            onChange={onChange}
-          />
-          <DeleteGoverningBodyAdminModal
-            user={selectedUser}
-            showModal={showDeleteGoverningBodyAdminModal}
-            setShowModal={setShowDeleteGoverningBodyAdminModal}
-            onChange={onChange}
-          />
-          <ModalAddPlastDegree
-            handleAddDegree={() => onChange("", "")} // forcefully updating the table on exit
-            userId={record}
-            visibleModal={visibleAddDegree || visibleChangeDegree}
-            setVisibleModal={(bool) => {
-              setVisibleAddDegree(bool);
-              setVisibleChangeDegree(bool);
+      {canView
+        ? (
+          <Menu
+            theme="dark"
+            className={classes.menu}
+            onClick={handleItemClick}
+            style={{
+              top:
+                window.innerHeight - (pageY + 340) < 0
+                  ? window.innerHeight - 350
+                  : pageY,
+              left:
+                window.innerWidth - (pageX + 223) < 0
+                  ? window.innerWidth - 266
+                  : pageX,
+              display: showDropdown ? "block" : "none",
             }}
-            isChangingUserDegree={visibleChangeDegree}
-          />
-          <AcceptUserToCityModal
-            record={record}
-            showModal={showAcceptToCityModal}
-            user={selectedUser}
-            setShowModal={setShowAcceptToCityModal}
-            onChange={onChange}
-          />
-          <DeleteCityFollowerModal
-            record={record}
-            showModal={showDeleteCityFollower}
-            user={selectedUser}
-            setShowModal={setShowDeleteCityFollower}
-            onChange={onChange}
-          />
-        </Menu>
-      ) : null}
+          >
+            {canViewProfile
+              ? (
+                <Menu.Item key="1">
+                  <FileSearchOutlined />
+                  Переглянути профіль
+                </Menu.Item>
+              )
+              : null}
+            {canDelete
+              ? (
+                <Menu.Item key="2">
+                  <DeleteOutlined />
+                  Видалити
+                </Menu.Item>
+              )
+              : null}
+            {inActiveTab && canChangeRegionAdministration
+              ? (
+                <Menu.Item key="3">
+                  <EditOutlined />
+                  Провід округи
+                </Menu.Item>
+              )
+              : null}
+            {inActiveTab && canChangeCityAdministration
+              ? (
+                <Menu.Item key="4">
+                  <EditOutlined />
+                  Провід станиці
+                </Menu.Item>
+              )
+              : null}
+            {inActiveTab && canChangeClubAdministration
+              ? (
+                <Menu.Item key="5">
+                  <EditOutlined />
+                  Провід куреня
+                </Menu.Item>
+              )
+              : null}
+            {inActiveTab && canChangeUserAccess
+              ? (
+                <Menu.Item key="6">
+                  <EditOutlined />
+                  Поточний стан користувача
+                </Menu.Item>
+              )
+              : null}
+            {!canAddDegree && canChangeDegree
+              ? (
+                <Menu.Item key="7">
+                  <PlusCircleOutlined />
+                  Змінити ступінь
+                </Menu.Item>
+              )
+              : null}
+
+            {!canChangeDegree && canAddDegree
+              ? (
+                <Menu.Item key="8">
+                  <PlusCircleOutlined />
+                  Додати до уладу
+                </Menu.Item>
+              )
+              : null}
+            {superAdmin
+              ? (
+                <Menu.Item key="9">
+                  <MailOutlined />
+                  Активувати
+                </Menu.Item>
+              )
+              : null}
+            {canChangeGoverningBodyAdministration
+              ? (
+                <Menu.Item key="10">
+                  <EditOutlined />
+                  Провід Пласту
+                </Menu.Item>
+              )
+              : null}
+            {canDeleteGoverningBodyAdministration
+              ? (
+                <Menu.Item key="11">
+                  <EditOutlined />
+                  Відмінити роль Адміна
+                </Menu.Item>
+              )
+              : null}
+            {canRemoveFollowers
+              ? (
+                <Menu.Item key="12">
+                  <CloseOutlined />
+                  Відхилити зголошення
+                </Menu.Item>
+              )
+              : null
+            }
+
+            <ChangeUserRoleModal
+              record={record}
+              showModal={showEditModal}
+              setShowModal={setShowEditModal}
+              onChange={onChange}
+              user={selectedUser}
+            />
+            <ChangeUserCityModal
+              record={record}
+              showModal={showCityModal}
+              setShowModal={setShowCityModal}
+              user={selectedUser}
+              onChange={onChange}
+            />
+            <ChangeUserRegionModal
+              record={record}
+              showModal={showRegionModal}
+              setShowModal={setShowRegionModal}
+              onChange={onChange}
+              user={selectedUser}
+            />
+            <ChangeUserClubModal
+              record={record}
+              showModal={showClubModal}
+              user={selectedUser}
+              setShowModal={setShowClubModal}
+              onChange={onChange}
+            />
+            <ChangeUserGoverningBodyModal
+              record={record}
+              showModal={showGoverningBodyModal}
+              user={selectedUser}
+              setShowModal={setShowGoverningBodyModal}
+              onChange={onChange}
+            />
+            <DeleteGoverningBodyAdminModal
+              user={selectedUser}
+              showModal={showDeleteGoverningBodyAdminModal}
+              setShowModal={setShowDeleteGoverningBodyAdminModal}
+              onChange={onChange}
+            />
+            <ModalAddPlastDegree
+              handleAddDegree={() => onChange("", "")} // forcefully updating the table on exit
+              userId={record}
+              visibleModal={visibleAddDegree || visibleChangeDegree}
+              setVisibleModal={(bool) => {
+                setVisibleAddDegree(bool);
+                setVisibleChangeDegree(bool);
+              }}
+              isChangingUserDegree={visibleChangeDegree}
+            />
+            <AcceptUserToCityModal
+              record={record}
+              showModal={showAcceptToCityModal}
+              user={selectedUser}
+              setShowModal={setShowAcceptToCityModal}
+              onChange={onChange}
+            />
+            <DeleteCityFollowerModal
+              record={record}
+              showModal={showDeleteCityFollower}
+              user={selectedUser}
+              setShowModal={setShowDeleteCityFollower}
+              onChange={onChange}
+            />
+          </Menu>
+        ) : null}
     </>
   );
 };
