@@ -65,7 +65,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       [admin.userId],
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}`,
+      `/regionalBoard/governingBodies/${props.governingBodyId}`,
       `цьому керівному органі`
     );
   };
@@ -78,7 +78,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       [admin.userId],
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}`,
+      `/regionalBoard/governingBodies/${props.governingBodyId}`,
       `цьому керівному органі`
     );
   };

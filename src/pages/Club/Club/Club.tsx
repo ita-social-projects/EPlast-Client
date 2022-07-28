@@ -68,10 +68,10 @@ import {
   failArchiveAction,
   failApproveAction,
 } from "../../../components/Notifications/Messages";
-import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
+import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
 
 const sloganMaxLength = 38;
 
@@ -697,12 +697,7 @@ const Club = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="clubCard">
             <div>
-              <Crumb
-                current={club.name}
-                first="/"
-                second={url.replace(`/${id}`, "/page/1")}
-                second_name="Курені"
-              />
+              <Breadcrumb currentLocationName={club.name} />
               {isActiveClub ? null : (
                 <Tag className="status" color="red">
                   Заархівовано

@@ -26,8 +26,8 @@ const SortedRegions = ({ switcher }: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [canCreate, setCanCreate] = useState<boolean>(false);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
-  const { p } = useParams();
-  const [page, setPage] = useState(p);
+  const { p = 1 } = useParams();
+  const [page, setPage] = useState(+p);
 
   const setPhotos = async (regions: any[]) => {
     for await (const region of regions) {
@@ -39,7 +39,7 @@ const SortedRegions = ({ switcher }: Props) => {
     setPhotosLoading(false);
   };
 
-  const getActiveRegions = async (page: number = 1) => {
+  const getActiveRegions = async (page: number) => {
     setLoading(true);
 
     try {
@@ -59,7 +59,7 @@ const SortedRegions = ({ switcher }: Props) => {
     }
   };
 
-  const getNotActiveRegions = async (page: number = 1) => {
+  const getNotActiveRegions = async (page: number) => {
     setLoading(true);
     try {
       const response = await getNotActiveRegionsByPage(
@@ -114,16 +114,10 @@ const SortedRegions = ({ switcher }: Props) => {
     }
     return null;
   };
-
-  useEffect(() => {
-    setPage(+p);
-  }, []);
-
   useEffect(() => {
     if (switcher) {
       getNotActiveRegions(page);
-    }
-    else {
+    } else {
       getActiveRegions(page);
     }
     setCanCreate(switcher ? false : activeCanCreate);
