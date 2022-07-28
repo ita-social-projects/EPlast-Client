@@ -3,6 +3,13 @@ import notificationLogic from "../components/Notifications/Notification";
 import FacebookData from "../pages/SignIn/FacebookDataInterface";
 import AuthLocalStorage from "../AuthLocalStorage";
 import Api from "./api";
+import { AxiosResponse } from "axios";
+
+export interface RegisterDataResponse409 {
+  error: string
+  isEmailConfirmed: boolean
+  registeredExpire: Date
+}
 
 export default class AuthorizeApi {
   static isSignedIn(): boolean {
@@ -32,18 +39,17 @@ export default class AuthorizeApi {
     return response;
   };
 
+
+
+
   register = async (data: any) => {
+
+
     const response = await Api.post("Auth/signup", data)
-      .then((response) => {
-        notificationLogic("success", "Вам на пошту прийшов лист з підтвердженням");
-      })
-      .catch((error) => {
-        if (error.response.status === 400) {
-          notificationLogic("error", "Щось пішло не так");
-        }
-      });
     return response;
   };
+
+
 
   forgotPassword = async (data: any) => {
     const response = await Api.post("Password/forgotPassword", data)
