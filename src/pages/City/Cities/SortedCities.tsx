@@ -125,16 +125,17 @@ const SortedCities = ({ switcher }: Props) => {
   }, []);
 
   useEffect(() => {
-    switcher ? getNotActiveCities(page) : getActiveCities(page);
-  }, [page, pageSize, searchedData]);
-
-  useEffect(() => {
-    if (cities.length !== 0) {
-      switcher ? getNotActiveCities() : getActiveCities();
+    if (switcher) {
+      getNotActiveCities(page);
     }
-  }, [switcher]);
+    else {
+      getActiveCities(page);
+    }
+  }, [page, pageSize, searchedData, switcher]);
 
-  const IsAdminOrGBAdmin: boolean = activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.GoverningBodyAdmin);
+  const IsAdminOrGBAdmin: boolean =
+    activeUserRoles.includes(Roles.Admin) ||
+    activeUserRoles.includes(Roles.GoverningBodyAdmin);
 
   return (
     <Layout.Content className="cities">
@@ -158,12 +159,10 @@ const SortedCities = ({ switcher }: Props) => {
       ) : (
         <div>
           <div className="cityWrapper">
-              {switcher
-                ? null
-                : IsAdminOrGBAdmin
-                  && page === 1
-                  && searchedData.length === 0
-                  ? (<Card
+            {switcher ? null : IsAdminOrGBAdmin &&
+              page === 1 &&
+              searchedData.length === 0 ? (
+              <Card
                 hoverable
                 className="cardStyles addCity"
                 cover={<img src={Add} alt="AddCity" />}
@@ -173,9 +172,9 @@ const SortedCities = ({ switcher }: Props) => {
                   className="titleText"
                   title="Створити нову станицю"
                 />
-                  </Card>)
-                  : page === 1 && searchedData.length === 0
-                    ? (<Card
+              </Card>
+            ) : page === 1 && searchedData.length === 0 ? (
+              <Card
                 hoverable
                 className="cardStyles addCity"
                 cover={<img src={Add} alt="AddRegionFollower" />}
@@ -189,9 +188,8 @@ const SortedCities = ({ switcher }: Props) => {
                     </div>
                   }
                 />
-                    </Card>)
-                    : null
-              }
+              </Card>
+            ) : null}
 
             {cities.length === 0 ? (
               <div>

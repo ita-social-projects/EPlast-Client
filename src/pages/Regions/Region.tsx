@@ -808,9 +808,7 @@ const Region = () => {
                     <Button
                       type="primary"
                       className="cityInfoButton"
-                      onClick={() =>
-                        history.push(`/annualreport/table/region`)
-                      }
+                      onClick={() => history.push(`/annualreport/table/region`)}
                     >
                       Річні звіти
                     </Button>
@@ -838,7 +836,8 @@ const Region = () => {
                           />
                         </Tooltip>
                       </Col>
-                        {(activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.GoverningBodyAdmin)) ? (
+                      {activeUserRoles.includes(Roles.Admin) ||
+                      activeUserRoles.includes(Roles.GoverningBodyAdmin) ? (
                         isActiveRegion ? (
                           <Col offset={1}>
                             <Tooltip title="Заархівувати округу">
@@ -1148,6 +1147,7 @@ const Region = () => {
         visible={visible}
         onCancel={handleClose}
         footer={null}
+        width={700}
       >
         <AddNewSecretaryForm
           onAdd={handleOk}

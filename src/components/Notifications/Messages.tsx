@@ -146,6 +146,10 @@ export const successfulAddDegree = () => {
   return `Ступінь було успішно додано`;
 };
 
+export const successfulAddUserToCity = (cityName: string) => {
+  return `Користувача було успішно додано до станиці ${cityName}`;
+};
+
 export const successfulDeleteDegree = () => {
   return `На жаль ступеня було позбавлено`;
 };
@@ -169,6 +173,8 @@ export const failEditAction = (name: string) => {
 export const failDeleteAction = (name: string) => {
   return `Не вдалося видалити ${name}`;
 };
+
+export const failDeleteUser = `Не вдалося видалити користувача, бо в системі міститься пов'язана з ним важлива інформація.`;
 
 export const failUpdateAction = (name: string) => {
   return `Не вдалося оновити ${name}`;

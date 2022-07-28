@@ -590,7 +590,9 @@ const City = () => {
   };
 
   const handleAddDegree = async () => {
-    const memberId = followers.find((item) => item.userId === selectedFollowerUID)?.id;
+    const memberId = followers.find(
+      (item) => item.userId === selectedFollowerUID
+    )?.id;
     setIsLoadingMemberId(memberId ?? NaN);
 
     setFollowers(followers.filter((f) => f.id !== memberId));
@@ -615,6 +617,11 @@ const City = () => {
       );
     }
   }, [city]);
+
+  const canSeeOtherProfiles =
+    userAccesses["EditCity"] ||
+    activeUserRoles.includes(Roles.Supporter) ||
+    activeUserRoles.includes(Roles.PlastMember);
 
   return loading ? (
     <Spinner />
@@ -860,16 +867,16 @@ const City = () => {
               {members.length !== 0 ? (
                 members.slice(0, membersToShow).map((member) => (
                   <Col
-                    className="cityMemberItem"
+                    className={`cityMemberItem ${
+                      canSeeOtherProfiles || "notAccess"
+                    }`}
                     key={member.id}
                     xs={12}
                     sm={8}
                   >
                     <div
                       onClick={() =>
-                        userAccesses["EditCity"] ||
-                        activeUserRoles.includes(Roles.Supporter) ||
-                        activeUserRoles.includes(Roles.PlastMember)
+                        canSeeOtherProfiles
                           ? history.push(`/userpage/main/${member.userId}`)
                           : undefined
                       }
@@ -893,9 +900,10 @@ const City = () => {
                 type="primary"
                 className="cityInfoButton"
                 onClick={() => {
-                  if (userAccesses["EditCity"]) history.push(`/user/table?city=${city.id}`);
+                  if (userAccesses["EditCity"])
+                    history.push(`/user/table?city=${city.id}`);
                   else history.push(`/cities/members/${city.id}`);
-                  }}
+                }}
               >
                 Більше
               </Button>
@@ -928,12 +936,17 @@ const City = () => {
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
                 admins.slice(0, adminsToShow).map((admin) => (
-                  <Col className="cityMemberItem" key={admin.id} xs={12} sm={8}>
+                  <Col
+                    className={`cityMemberItem ${
+                      canSeeOtherProfiles || "notAccess"
+                    }`}
+                    key={admin.id}
+                    xs={12}
+                    sm={8}
+                  >
                     <div
                       onClick={() =>
-                        userAccesses["EditCity"] ||
-                        activeUserRoles.includes(Roles.Supporter) ||
-                        activeUserRoles.includes(Roles.PlastMember)
+                        canSeeOtherProfiles
                           ? history.push(`/userpage/main/${admin.userId}`)
                           : undefined
                       }
@@ -1049,7 +1062,7 @@ const City = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>
-            Зголошені станиці{" "}
+              Зголошені до станиці{" "}
               <a onClick={() => history.push(`/cities/followers/${city.id}`)}>
                 {followersCount !== 0 ? (
                   <Badge
@@ -1063,7 +1076,9 @@ const City = () => {
               {isActiveCity ? (
                 canJoin ? (
                   <Col
-                    className="cityMemberItem"
+                    className={`cityMemberItem ${
+                      canSeeOtherProfiles || "notAccess"
+                    }`}
                     xs={12}
                     sm={8}
                     onClick={() => showJoinModal()}
@@ -1086,7 +1101,9 @@ const City = () => {
                   .slice(0, canJoin ? followersToShow : followersToShowOnAdd)
                   .map((followers) => (
                     <Col
-                      className="cityMemberItem"
+                      className={`cityMemberItem ${
+                        canSeeOtherProfiles || "notAccess"
+                      }`}
                       xs={12}
                       sm={8}
                       key={followers.id}
@@ -1094,9 +1111,7 @@ const City = () => {
                       <div>
                         <div
                           onClick={() =>
-                            userAccesses["EditCity"] ||
-                            activeUserRoles.includes(Roles.Supporter) ||
-                            activeUserRoles.includes(Roles.PlastMember)
+                            canSeeOtherProfiles
                               ? history.push(
                                   `/userpage/main/${followers.userId}`
                                 )
@@ -1154,9 +1169,10 @@ const City = () => {
                 type="primary"
                 className="cityInfoButton"
                 onClick={() => {
-                  if (userAccesses["EditCity"]) history.push(`/user/table?tab=registered&city=${city.id}`);
+                  if (userAccesses["EditCity"])
+                    history.push(`/user/table?tab=registered&city=${city.id}`);
                   else history.push(`/cities/followers/${city.id}`);
-               }}
+                }}
               >
                 Більше
               </Button>
@@ -1205,6 +1221,7 @@ const City = () => {
           setVisibleModal={setVisibleAddModalDegree}
           userId={selectedFollowerUID as string}
           handleAddDegree={handleAddDegree}
+          isChangingUserDegree={false}
         ></ModalAddPlastDegree>
       ) : null}
 

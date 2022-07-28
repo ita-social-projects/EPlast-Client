@@ -121,8 +121,6 @@ const AddDocumentModal = (props: Props) => {
       sectorId: props.sectorId,
     };
 
-    console.log(newDocument);
-
     await addDocument(props.sectorId, newDocument);
     props.onAdd(newDocument);
     props.setVisibleModal(false);

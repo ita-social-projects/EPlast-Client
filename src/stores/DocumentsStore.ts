@@ -5,6 +5,9 @@ import { DocumentPost } from "../models/Documents/DocumentPost";
 import DocumentsTableInfo from "../models/Documents/DocumentsTableInfo";
 
 type DocumentState = {
+    isDropdownVisible: boolean
+    selectedRow: number
+
     recordId: number
     data: DocumentsTableInfo[]
     page: number
@@ -22,6 +25,9 @@ type DocumentState = {
 };
 
 const initialState: DocumentState = {
+    isDropdownVisible: false,
+    selectedRow: -1,
+
     recordId: 0,
     data: [],
     page: 1,
@@ -123,6 +129,18 @@ const actions = {
             recordId: id
         })
     },
+    showDropdown: (rowIdx: number): Action<DocumentState> => async ({ setState }) => {
+        setState({
+            isDropdownVisible: true,
+            selectedRow: rowIdx,
+        })
+    },
+    hideDropdown: (): Action<DocumentState> => async ({ setState }) => {
+        setState({
+            isDropdownVisible: false,
+            selectedRow: -1,
+        })
+    }
 };
 
 type Actions = typeof actions;

@@ -32,7 +32,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         >
           Дійсне членство
         </Menu.Item>) : (
-          <> </>
+            null
         )}
          {(userProfileAccess["CanSeeUserSecretariesPage"]
           || props.id !== activeUserId) ? (
@@ -43,7 +43,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
         >
           Діловодства
         </Menu.Item>) : (
-          <> </>
+            null
         )}
          {(userProfileAccess["CanSeeUserEvents"]
           || props.id !== activeUserId) ? (
@@ -54,7 +54,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           >
             Події
           </Menu.Item>) : (
-                <> </>
+            null
               )}  
           {(userProfileAccess["CanSeeUserBlankPage"]
             || props.id !== activeUserId) ? (      
@@ -65,16 +65,9 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           >
             Бланки
           </Menu.Item>) : (
-                <> </>
+            null
               )}  
-        <Menu.Item
-          className="menuItem"
-          key="coursse"
-          onClick={() => history.push(`/userpage/course/${props.id}`)}
-        >
-          Курс
-        </Menu.Item>
-
+        
           
           {(userProfileAccess["CanSeeUserApproversPage"] 
             || props.id !== activeUserId) ? (      
@@ -85,8 +78,15 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           >
             Поручення
           </Menu.Item>) : (
-            <> </>
+            null
           )}
+          <Menu.Item
+            className="menuItem"
+            key="coursse"
+            onClick={() => history.push(`/userpage/course/${props.id}`)}
+          >
+            Курс
+          </Menu.Item>
 
       </Menu>
     </div>
