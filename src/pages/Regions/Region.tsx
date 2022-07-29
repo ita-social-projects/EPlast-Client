@@ -61,12 +61,12 @@ import {
   successfulUnarchiveAction,
   failArchiveAction,
 } from "../../components/Notifications/Messages";
-import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
 import { Roles } from "../../models/Roles/Roles";
 import RegionFollower from "../../models/Region/RegionFollower";
 import RegionAdmin from "../../models/Region/RegionAdmin";
 import AuthLocalStorage from "../../AuthLocalStorage";
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 
 const Region = () => {
   const history = useHistory();
@@ -645,12 +645,7 @@ const Region = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <div>
-              <Crumb
-                current={region.regionName}
-                first="/"
-                second={url.replace(`/${id}`, "/page/1")}
-                second_name="Округи"
-              />
+              <Breadcrumb currentLocationName={region.regionName} />
               {isActiveRegion ? null : (
                 <Tag className="status" color={"red"}>
                   Заархівовано
