@@ -63,6 +63,7 @@ import TermsEdit from "./pages/Terms/TermsEdit";
 import AnnouncementsTable from "./pages/AnnouncementsTable/AnnouncementsTable";
 import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainAdministration";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
+import RegionFollowers from "./pages/Regions/RegionFollowers";
 
 export default [
   {
@@ -166,7 +167,6 @@ export default [
     name: "Члени округи",
     Component: RegionMembers,
   },
-
   {
     path: "/regions/page/:p",
     name: "Округи",
@@ -218,11 +218,20 @@ export default [
     Component: CreateCity,
   },
   {
-    path: "/regions/follower/edit/:id",
+    path: "/regions/follower/new",
     name: "Подати заявку на створення станиці",
     Component: CreateCity,
   },
-
+  {
+    path: "/regions/follower/edit/:id",
+    name: "",
+    Component: CreateCity,
+  },
+  {
+    path: "/regions/followers/:id",
+    name: "Заяви на створення станиці",
+    Component: RegionFollowers,
+  },
   {
     path: "/cities/members/:id",
     name: "Члени станиці",
