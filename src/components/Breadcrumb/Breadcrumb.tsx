@@ -11,7 +11,6 @@ type Props = RouteComponentProps & {
 };
 
 const Breadcrumb = ({ match, currentLocationName }: Props) => {
-  //   const pathnames = pathname.split("/").filter((x: string) => x);
   const crumbs = routes
     // Get all routes that contain the current one.
     .filter(({ path }) => match.path.includes(path))
