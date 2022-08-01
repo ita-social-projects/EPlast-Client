@@ -15,7 +15,6 @@ import {
   FileTextOutlined,
   EditOutlined,
   PlusSquareFilled,
-  FileDoneOutlined,
   LockOutlined,
 } from "@ant-design/icons";
 import jwt from "jwt-decode";
@@ -30,7 +29,6 @@ import Spinner from "../Spinner/Spinner";
 import AddDocumentModal from "./AddDocModal";
 import CityDocument from "../../models/City/CityDocument";
 import RegionDetailDrawer from "./RegionsBoardDetailDrawer";
-import Crumb from "../../components/Breadcrumb/Breadcrumb";
 import decisionsApi, {
   Decision,
   statusTypeGetParser,
@@ -49,12 +47,10 @@ import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import AddRegionBoardMainAdminModal from "./AddMainAdministratorModal/AddRegionBoardMainAdminModal";
 import GoverningBodyUser from "../../models/GoverningBody/GoverningBodyUser";
 import AdminType from "../../models/Admin/AdminType";
-import {
-  dataCantBeFetched,
-  failEditAction,
-} from "../../components/Notifications/Messages";
+import { failEditAction } from "../../components/Notifications/Messages";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import FormAddDecision from "../DecisionTable/FormAddDecision";
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 
 const RegionBoard = () => {
   const history = useHistory();
@@ -238,7 +234,7 @@ const RegionBoard = () => {
       userId,
       `${message}: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/regionsBoard/administrations`,
+      `/regionalBoard/administrations`,
       `Переглянути`
     );
   };
@@ -277,7 +273,6 @@ const RegionBoard = () => {
     setVisibleAddMainAdminModal(false);
   };
 
-
   const getGoverningBodiesAdmins = async () => {
     try {
       setPhotosLoading(true);
@@ -304,7 +299,7 @@ const RegionBoard = () => {
         <Col xl={14} sm={24} xs={24}>
           <Card hoverable className="regionBoardCard">
             <div>
-              <Crumb first="/" second_name="Крайовий Провід Пласту" />
+              <Breadcrumb currentLocationName={region.regionName} />
             </div>
             <Title level={2}>{region.regionName}</Title>
             <Row className="regionBoardPhotos" gutter={[0, 12]}>
@@ -404,7 +399,7 @@ const RegionBoard = () => {
                         <Tooltip title="Редагувати Крайовий Провід Пласту">
                           <EditOutlined
                             className="regionBoardInfoIcon"
-                            onClick={() => history.push(`/regionsBoard/edit`)}
+                            onClick={() => history.push(`/regionalBoard/edit`)}
                           />
                         </Tooltip>
                       </Col>
@@ -419,7 +414,7 @@ const RegionBoard = () => {
           <Card hoverable className="regionBoardCard">
             <Title level={4}>
               Адміністрація Крайового Проводу{" "}
-              <a onClick={() => history.push(`/regionsBoard/administrations`)}>
+              <a onClick={() => history.push(`/regionalBoard/administrations`)}>
                 {adminsCount !== 0 ? (
                   <Badge
                     count={adminsCount}
@@ -475,7 +470,7 @@ const RegionBoard = () => {
               <Button
                 type="primary"
                 className="regionBoardInfoButton"
-                onClick={() => history.push(`/regionsBoard/administrations`)}
+                onClick={() => history.push(`/regionalBoard/administrations`)}
               >
                 Більше
               </Button>
@@ -491,7 +486,7 @@ const RegionBoard = () => {
           <Card hoverable className="regionBoardCard">
             <Title level={4}>
               Керівні органи{" "}
-              <a onClick={() => history.push(`/regionsBoard/governingBodies`)}>
+              <a onClick={() => history.push(`/regionalBoard/governingBodies`)}>
                 {governingBodies.length !== 0 ? (
                   <Badge
                     count={orgsCount}
@@ -511,7 +506,9 @@ const RegionBoard = () => {
                   >
                     <div
                       onClick={() =>
-                        history.push(`/governingBodies/${governingBody.id}`)
+                        history.push(
+                          `/regionalBoard/governingBodies/${governingBody.id}`
+                        )
                       }
                     >
                       {gbPhotosAreLoading ? (
@@ -541,13 +538,13 @@ const RegionBoard = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => history.push(`/regionsBoard/new`)}
+                  onClick={() => history.push(`/regionalBoard/new`)}
                 />
               ) : null}
               <Button
                 type="primary"
                 className="regionBoardInfoButton"
-                onClick={() => history.push(`/regionsBoard/governingBodies`)}
+                onClick={() => history.push(`/regionalBoard/governingBodies`)}
               >
                 Більше
               </Button>
@@ -577,7 +574,7 @@ const RegionBoard = () => {
               <a
                 onClick={() =>
                   userAccesses["ViewDocument"]
-                    ? history.push("/regionsBoard/documents/" + region.id)
+                    ? history.push("/regionalBoard/documents/" + region.id)
                     : undefined
                 }
               >
@@ -614,7 +611,7 @@ const RegionBoard = () => {
                   type="primary"
                   className="regionBoardInfoButton"
                   onClick={() =>
-                    history.push(`/regionsBoard/documents/${region.id}`)
+                    history.push(`/regionalBoard/documents/${region.id}`)
                   }
                 >
                   Більше
@@ -639,10 +636,10 @@ const RegionBoard = () => {
         setVisibleModal={setVisibleModal}
         onAdd={onAdd}
       />
-        <FormAddDecision
-          setModalVisible={setVisibleDecisionModal}
-          modalVisible={visibleDecisionModal}
-          onSubmit={handleAdd}
+      <FormAddDecision
+        setModalVisible={setVisibleDecisionModal}
+        modalVisible={visibleDecisionModal}
+        onSubmit={handleAdd}
       />
       <RegionDetailDrawer
         region={region}
