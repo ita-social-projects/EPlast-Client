@@ -469,7 +469,6 @@ class ChangeUserDegreeItem extends DropdownItem {
         [Place.Region, Place.City]
       )
     ) {
-      console.log("You can change user degree!");
       DropdownItem.handlersResults.set(DropdownFunc.ChangeDegree, true);
     } else {
       DropdownItem.handlersResults.set(DropdownFunc.ChangeDegree, false);
