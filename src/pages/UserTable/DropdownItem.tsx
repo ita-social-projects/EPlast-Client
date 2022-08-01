@@ -469,6 +469,7 @@ class ChangeUserDegreeItem extends DropdownItem {
         [Place.Region, Place.City]
       )
     ) {
+      console.log("You can change user degree!");
       DropdownItem.handlersResults.set(DropdownFunc.ChangeDegree, true);
     } else {
       DropdownItem.handlersResults.set(DropdownFunc.ChangeDegree, false);
@@ -648,7 +649,7 @@ class CheckCreator {
 
     return this.checkId;
   }
-  
+
   public rebuildChainForSettingCityAdministration(): ICheck {
     this.checkId
       .setNext(this.selectedUserIsNotRegisteredUser)
@@ -981,17 +982,28 @@ class SelectedUserIsAFollowerCheck extends Check {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    return (
+    if (
       selectedUser.isCityFollower ||
       selectedUser.isClubFollower ||
       selectedUser.cityId === null ||
       selectedUser.regionId === null
-    );
+    ) {
+      return super.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        places
+      );
+    } else {
+      return false;
+    }
   }
 }
 
 //Inverted version of the previous check
-class SelectedUserIsNotAFollowerCheck extends SelectedUserIsAFollowerCheck {
+class SelectedUserIsNotAFollowerCheck extends Check {
   public check(
     currentUser: any,
     currentUserAdminRoles: Array<AdminRole>,
@@ -1000,13 +1012,23 @@ class SelectedUserIsNotAFollowerCheck extends SelectedUserIsAFollowerCheck {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    return !super.check(
-      currentUser,
-      currentUserAdminRoles,
-      selectedUser,
-      selectedUserAdminRoles,
-      selectedUserNonAdminRoles,
-      places);
+    if (
+      !selectedUser.isCityFollower &&
+      !selectedUser.isClubFollower &&
+      selectedUser.cityId !== null &&
+      selectedUser.regionId !== null
+    ) {
+      return super.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        places
+      );
+    } else {
+      return false;
+    }
   }
 }
 
