@@ -1,32 +1,58 @@
-import { HomeOutlined } from "@ant-design/icons";
-import { Breadcrumb } from "antd";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Breadcrumb as AntdBreadcrumb, Typography } from "antd";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { HomeOutlined } from "@ant-design/icons";
+import routes from "../../Routes";
 
-interface Props {
-  current?: string;
-  first?: any;
-  second?: any;
-  second_name?: string;
-  third?: any;
-  third_name?: string;
-}
-const Crumb = ({
-  current,
-  first,
-  second,
-  second_name,
-  third,
-  third_name,
-}: Props) => {
+const { Text } = Typography;
+
+type Props = RouteComponentProps & {
+  currentLocationName?: string;
+};
+
+const Breadcrumb = ({ match, currentLocationName }: Props) => {
+  //   const pathnames = pathname.split("/").filter((x: string) => x);
+  const crumbs = routes
+    // Get all routes that contain the current one.
+    .filter(({ path }) => match.path.includes(path))
+    // Swap out any dynamic routes with their param values.
+    // E.g. "/pizza/:pizzaId" will become "/pizza/1"
+    .map(({ path, ...rest }) => ({
+      path: Object.keys(match.params).length
+        ? Object.keys(match.params).reduce(
+            (path, param) =>
+              path.replace(
+                `:${param}`,
+                match.params[param as keyof typeof match.params]
+              ),
+            path
+          )
+        : path,
+      ...rest,
+    }));
   return (
-    <Breadcrumb>
-      <Breadcrumb.Item href={first}>
+    <AntdBreadcrumb>
+      <AntdBreadcrumb.Item href={"/"}>
         <HomeOutlined />
-      </Breadcrumb.Item>
-      <Breadcrumb.Item href={second}>{second_name}</Breadcrumb.Item>
-      <Breadcrumb.Item>{current}</Breadcrumb.Item>
-    </Breadcrumb>
+      </AntdBreadcrumb.Item>
+      {crumbs.map(({ name, path }, key: number) =>
+        currentLocationName !== undefined && key === crumbs.length - 1 ? (
+          <AntdBreadcrumb.Item key={key}>
+            <Text
+              style={crumbs.length > 4 ? { maxWidth: 170 } : undefined}
+              ellipsis={true}
+            >
+              {currentLocationName}
+            </Text>
+          </AntdBreadcrumb.Item>
+        ) : (
+          <AntdBreadcrumb.Item key={key} href={path}>
+            {name}
+          </AntdBreadcrumb.Item>
+        )
+      )}
+    </AntdBreadcrumb>
   );
 };
-export default Crumb;
+
+export default withRouter(Breadcrumb);

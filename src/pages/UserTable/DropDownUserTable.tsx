@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Menu } from "antd";
 import {
   FileSearchOutlined,
@@ -12,7 +12,6 @@ import classes from "./UserTable.module.css";
 import userDeleteCofirm from "./UserDeleteConfirm";
 import ChangeUserRoleModal from "./ChangeUserRoleModal";
 import ChangeUserCityModal from "./ChangeUserCityModal";
-import adminApi from "../../api/adminApi";
 import ModalAddPlastDegree from "../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import ChangeUserRegionModal from "./ChangeUserRegionModal";
 import ChangeUserClubModal from "./ChangeUserClubModal";
@@ -112,41 +111,45 @@ const DropDown = (props: Props) => {
     IDropdownItem
   >();
 
-  //Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
-  //I have no idea what's going on here
+  const selfRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState<[number, number]>([0, 0]);
+  const [sizeCalculated, setSizeCalculated] = useState<boolean>(false);
+
+  // Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
+  // I have no idea what's going on here
   function getEnumKeyByEnumValue<T extends { [index: string]: string }>(
     myEnum: T,
     enumValue: string
   ): keyof T | null {
-    let keys = Object.keys(myEnum).filter((x) => myEnum[x] == enumValue);
+    const keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
     return keys.length > 0 ? keys[0] : null;
   }
 
-  //Takes only those roles, which can access User Table and
-  //writes them in array in descending order (as in AdminRole enum)
+  // Takes only those roles, which can access User Table and
+  // writes them in array in descending order (as in AdminRole enum)
   const setUserAdminRoles = (allUserRoles: Array<string>): Array<AdminRole> => {
-    //All possible AdminRole keys are converted to string array
+    // All possible AdminRole keys are converted to string array
     const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
     for (var key in AdminRole) {
       allAdminRolesAsEnumKeys.push(AdminRole[key]);
     }
 
-    //Current user roles as strings (values) are converted to corresponding
-    //Roles enum keys, which are also saved as array of string
+    // Current user roles as strings (values) are converted to corresponding
+    // Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
     allUserRoles?.forEach((role) => {
-      let result = getEnumKeyByEnumValue(Roles, role);
+      const result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
       }
     });
 
-    //Intersection of possible Admin roles and current admin roles
+    // Intersection of possible Admin roles and current admin roles
     const userAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(
       (role) => userRolesAsEnumKeys.includes(role)
     );
 
-    //Roles are converted  to AdminRole enum
+    // Roles are converted  to AdminRole enum
     const currentUserAdminRoles = new Array<AdminRole>();
     userAdminRolesAsEnumKeys.forEach((role) => {
       currentUserAdminRoles.push(AdminRole[role as keyof typeof AdminRole]);
@@ -155,32 +158,32 @@ const DropDown = (props: Props) => {
     return currentUserAdminRoles;
   };
 
-  //Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
+  // Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
   const setUserNonAdminRoles = (
     allUserRoles: Array<string>
   ): Array<NonAdminRole> => {
-    //All possible NonAdminRole keys are converted to string array
+    // All possible NonAdminRole keys are converted to string array
     const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
     for (var key in NonAdminRole) {
       allAdminRolesAsEnumKeys.push(NonAdminRole[key]);
     }
 
-    //Current user roles as strings (values) are converted to corresponding
-    //Roles enum keys, which are also saved as array of string
+    // Current user roles as strings (values) are converted to corresponding
+    // Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
     allUserRoles?.forEach((role) => {
-      let result = getEnumKeyByEnumValue(Roles, role);
+      const result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
       }
     });
 
-    //Intersection of possible NonAdmin roles and current admin roles
+    // Intersection of possible NonAdmin roles and current admin roles
     const userNonAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(
       (role) => userRolesAsEnumKeys.includes(role)
     );
 
-    //Roles are converted to NonAdminRole enum
+    // Roles are converted to NonAdminRole enum
     const userNonAdminRoles = new Array<NonAdminRole>();
     userNonAdminRolesAsEnumKeys.forEach((role) => {
       userNonAdminRoles.push(NonAdminRole[role as keyof typeof NonAdminRole]);
@@ -217,7 +220,7 @@ const DropDown = (props: Props) => {
       | undefined
       | null = await lookThroughChain();
 
-    //To make changes in user access for context menu look in DropdownItem.tsx
+    // To make changes in user access for context menu look in DropdownItem.tsx
 
     setCanViewProfile(result?.get(DropdownFunc.CheckProfile) ?? false);
 
@@ -251,7 +254,10 @@ const DropDown = (props: Props) => {
   };
 
   useEffect(() => {
-    fetchUser();
+    fetchUser().then(() => {
+      setDimensions([selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number]);
+      setSizeCalculated(true);
+    });
   }, [selectedUser]);
 
   const handleItemClick = async (item: any) => {
@@ -296,27 +302,27 @@ const DropDown = (props: Props) => {
       default:
         break;
     }
-    item.key = "0";
   };
 
   return (
-    <>
+    <div
+      ref={selfRef}
+      className={classes.menu}
+      style={{
+        top: 
+          window.innerHeight - (pageY + dimensions[1]) <= 0
+            ? window.innerHeight - dimensions[1] - 30
+            : pageY,
+        left:
+          window.innerWidth - (pageX + dimensions[0]) <= 0
+            ? window.innerWidth - dimensions[0] - 30
+            : pageX,
+        display: showDropdown && sizeCalculated ? "block" : "none",
+      }}>
       {canView ? (
         <Menu
           theme="dark"
-          className={classes.menu}
           onClick={handleItemClick}
-          style={{
-            top: 
-              window.innerHeight - (pageY + 340) < 0
-                ? window.innerHeight - 350
-                : pageY,
-            left:
-              window.innerWidth - (pageX + 223) < 0
-                ? window.innerWidth - 266
-                : pageX,
-            display: showDropdown ? "block" : "none",
-          }}
         >
           {canViewProfile ? (
             <Menu.Item key="1">
@@ -483,7 +489,7 @@ const DropDown = (props: Props) => {
           />
         </Menu>
       ) : null}
-    </>
+    </div>
   );
 };
 

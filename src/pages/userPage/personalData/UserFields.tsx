@@ -34,24 +34,28 @@ export default function () {
     <div className="container">
       <Form name="basic" className="formContainer">
         <div className="wrapperContainer">
-          {activeUserProfile?.gender.name === null && (
-            <Alert
+
+            {activeUserId === userId && activeUserProfile?.gender.name === null
+              ? <Alert
               className="alertWrapper"
               message="Попередження"
               description="Заповніть обов'язкові поля профілю українською мовою"
               type="warning"
               showIcon
             />
-          )}
-          {activeUserProfile?.city === null && (
-            <Alert
+              : null
+            }
+
+            {activeUserId === userId && activeUserProfile?.city === null
+              ? <Alert
               className="alertWrapper"
               message="Попередження"
               description="Оберіть станицю та доєднайтеся до неї"
               type="warning"
               showIcon
             />
-          )}
+              : null
+            }
 
           <div className="avatarWrapperUserFields">
             <StickyContainer className="kadraWrapper">
@@ -81,7 +85,7 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="Ім`я" className="formItem">
               {userProfile?.user.firstName !== null &&
-              userProfile?.user.firstName !== "" ? (
+                  userProfile?.user.firstName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -93,7 +97,7 @@ export default function () {
             </Form.Item>
             <Form.Item label="Прізвище" className="formItem">
               {userProfile?.user.lastName !== null &&
-              userProfile?.user.lastName !== "" ? (
+                  userProfile?.user.lastName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -108,7 +112,7 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="По батькові" className="formItem">
               {userProfile?.user.fatherName !== null &&
-              userProfile?.user.fatherName !== "" ? (
+                  userProfile?.user.fatherName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -120,7 +124,7 @@ export default function () {
             </Form.Item>
             <Form.Item label="Стать" className="formItem">
               {userProfile?.user.gender.name !== null &&
-              userProfile?.user.gender.name !== "" ? (
+                  userProfile?.user.gender.name !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -135,7 +139,7 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="Псевдо" className="formItem">
               {userProfile?.user.pseudo !== null &&
-              userProfile?.user.pseudo !== "" ? (
+                  userProfile?.user.pseudo !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -147,7 +151,7 @@ export default function () {
             </Form.Item>
             <Form.Item label="Пошта" className="formItem">
               {userProfile?.user.email !== null &&
-              userProfile?.user.email !== "" ? (
+                  userProfile?.user.email !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -162,7 +166,7 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="Дата народження" className="formItem">
               {userProfile?.user.birthday !== null &&
-              userProfile?.user.birthday.toString() !==
+                  userProfile?.user.birthday.toString() !==
                 "0001-01-01T00:00:00" ? (
                 <Input
                   readOnly
@@ -178,7 +182,7 @@ export default function () {
             </Form.Item>
             <Form.Item label="Номер телефону" className="formItem">
               {userProfile?.user.phoneNumber !== null &&
-              userProfile?.user.phoneNumber !== "" ? (
+                  userProfile?.user.phoneNumber !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -193,7 +197,7 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="Національність" className="formItem">
               {userProfile?.user.nationality.name !== null &&
-              userProfile?.user.nationality.name !== "" ? (
+                  userProfile?.user.nationality.name !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -205,7 +209,7 @@ export default function () {
             </Form.Item>
             <Form.Item label="Віровизнання" className="formItem">
               {userProfile?.user.religion.name !== null &&
-              userProfile?.user.religion.name !== "" ? (
+                  userProfile?.user.religion.name !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -220,7 +224,7 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="Навчальний заклад" className="formItem">
               {userProfile?.user.education.placeOfStudy !== null &&
-              userProfile?.user.education.placeOfStudy !== "" ? (
+                  userProfile?.user.education.placeOfStudy !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -232,7 +236,7 @@ export default function () {
             </Form.Item>
             <Form.Item label="Спеціальність" className="formItem">
               {userProfile?.user.education.speciality !== null &&
-              userProfile?.user.education.speciality !== "" ? (
+                  userProfile?.user.education.speciality !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -247,7 +251,7 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="Навчальний ступінь" className="formItem">
               {userProfile?.user.degree.name !== null &&
-              userProfile?.user.degree.name !== "" ? (
+                  userProfile?.user.degree.name !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -259,7 +263,7 @@ export default function () {
             </Form.Item>
             <Form.Item label="Місце праці" className="formItem">
               {userProfile?.user.work.placeOfwork !== null &&
-              userProfile?.user.work.placeOfwork !== "" ? (
+                  userProfile?.user.work.placeOfwork !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -274,7 +278,7 @@ export default function () {
           <div className="rowBlock">
             <Form.Item label="Посада" className="formItem">
               {userProfile?.user.work.position !== null &&
-              userProfile?.user.work.position !== "" ? (
+                  userProfile?.user.work.position !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -286,7 +290,7 @@ export default function () {
             </Form.Item>
             <Form.Item label="Адреса проживання" className="formItem">
               {userProfile?.user.address !== null &&
-              userProfile?.user.address !== "" ? (
+                  userProfile?.user.address !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -304,7 +308,7 @@ export default function () {
               className="formItem"
             >
               {userProfile?.user.publicPoliticalActivity !== null &&
-              userProfile?.user.publicPoliticalActivity !== "" ? (
+                  userProfile?.user.publicPoliticalActivity !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -405,7 +409,7 @@ export default function () {
 
           <div className="links">
             {userProfile?.user.facebookLink !== null &&
-            userProfile?.user.facebookLink !== "" ? (
+                userProfile?.user.facebookLink !== "" ? (
               <a
                 href={
                   "https://www.facebook.com/" + userProfile?.user.facebookLink
@@ -415,7 +419,7 @@ export default function () {
               </a>
             ) : null}
             {userProfile?.user.twitterLink !== null &&
-            userProfile?.user.twitterLink !== "" ? (
+                userProfile?.user.twitterLink !== "" ? (
               <a
                 href={
                   "https://www.twitter.com/" + userProfile?.user.twitterLink
@@ -425,7 +429,7 @@ export default function () {
               </a>
             ) : null}
             {userProfile?.user.instagramLink !== null &&
-            userProfile?.user.instagramLink !== "" ? (
+                userProfile?.user.instagramLink !== "" ? (
               <a
                 href={
                   "https://www.instagram.com/" + userProfile?.user.instagramLink
@@ -435,11 +439,11 @@ export default function () {
               </a>
             ) : null}
             {userProfile?.user.facebookLink === null ||
-            (userProfile?.user.facebookLink === "" &&
-              userProfile?.user.twitterLink === null) ||
-            (userProfile?.user.twitterLink === "" &&
-              userProfile?.user.instagramLink === null) ||
-            userProfile?.user.instagramLink === "" ? (
+                (userProfile?.user.facebookLink === "" &&
+                  userProfile?.user.twitterLink === null) ||
+                (userProfile?.user.twitterLink === "" &&
+                  userProfile?.user.instagramLink === null) ||
+                userProfile?.user.instagramLink === "" ? (
               <Form.Item className="formItem"></Form.Item>
             ) : null}
           </div>
@@ -514,7 +518,7 @@ export default function () {
           <div className="shortRowBlock">
             <Form.Item label="Прізвище" className="shortFormItem">
               {userProfile?.shortUser.lastName !== null &&
-              userProfile?.shortUser.lastName !== "" ? (
+                    userProfile?.shortUser.lastName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -529,7 +533,7 @@ export default function () {
           <div className="shortRowBlock">
             <Form.Item label="Ім`я" className="shortFormItem">
               {userProfile?.shortUser.firstName !== null &&
-              userProfile?.shortUser.firstName !== "" ? (
+                    userProfile?.shortUser.firstName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -544,7 +548,7 @@ export default function () {
           <div className="shortRowBlock">
             <Form.Item label="По батькові" className="shortFormItem">
               {userProfile?.shortUser.fatherName !== null &&
-              userProfile?.shortUser.fatherName !== "" ? (
+                    userProfile?.shortUser.fatherName !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -559,7 +563,7 @@ export default function () {
           <div className="shortRowBlock">
             <Form.Item label="Псевдо" className="shortFormItem">
               {userProfile?.shortUser.pseudo !== null &&
-              userProfile?.shortUser.pseudo !== "" ? (
+                    userProfile?.shortUser.pseudo !== "" ? (
                 <Input
                   readOnly
                   className="dataInput"
@@ -586,7 +590,7 @@ export default function () {
           </div>
           <div className="links">
             {userProfile?.shortUser.facebookLink !== null &&
-            userProfile?.shortUser.facebookLink !== "" ? (
+                  userProfile?.shortUser.facebookLink !== "" ? (
               <a
                 href={
                   "https://www.facebook.com/" +
@@ -597,7 +601,7 @@ export default function () {
               </a>
             ) : null}
             {userProfile?.shortUser.twitterLink !== null &&
-            userProfile?.shortUser.twitterLink !== "" ? (
+                  userProfile?.shortUser.twitterLink !== "" ? (
               <a
                 href={
                   "https://www.twitter.com/" +
@@ -608,7 +612,7 @@ export default function () {
               </a>
             ) : null}
             {userProfile?.shortUser.instagramLink !== null &&
-            userProfile?.shortUser.instagramLink !== "" ? (
+                  userProfile?.shortUser.instagramLink !== "" ? (
               <a
                 href={
                   "https://www.instagram.com/" +
