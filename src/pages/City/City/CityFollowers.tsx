@@ -216,6 +216,7 @@ const CityFollowers = () => {
           setVisibleModal={setVisibleAddModalDegree}
           userId={selectedFollowerUID as string}
           handleAddDegree={handleAddDegree}
+          isChangingUserDegree={false}
         ></ModalAddPlastDegree>
       ) : null}
     </Layout.Content>

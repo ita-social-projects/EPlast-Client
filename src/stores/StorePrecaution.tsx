@@ -51,6 +51,7 @@ type State = {
   loadingPrecautionStatus: boolean,
   showDropdown: boolean,
   visibleModal: boolean,
+  selectedRow: number,
 
   searchedData: string,
   statusSorter: any[],
@@ -91,6 +92,7 @@ const initialState: State = {
   loadingPrecautionStatus: false,
   showDropdown: false,
   visibleModal: false,
+  selectedRow: -1,
 
   searchedData: "",
   statusSorter: [],
@@ -254,15 +256,17 @@ const actions = {
     (): Action<State> =>
       ({ setState }) => {
         setState({
-          showDropdown: false
+          showDropdown: false,
+          selectedRow: -1
         });
       },
 
   setShowDropdown:
-    (status: boolean): Action<State> =>
+    (status: boolean, recordIndex: number): Action<State> =>
       ({ setState }) => {
         setState({
-          showDropdown: status
+          showDropdown: status,
+          selectedRow: recordIndex
         });
       },
 

@@ -459,6 +459,7 @@ const ActiveMembership = () => {
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         handleAddDegree={handleAddDegree}
+        isChangingUserDegree={true}
       />
       <ModalChangeUserDates
         userId={userId}

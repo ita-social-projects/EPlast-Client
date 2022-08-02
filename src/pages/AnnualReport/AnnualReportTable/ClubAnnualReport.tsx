@@ -32,6 +32,7 @@ import ClubAnnualReportLayout from "../../../models/PDF/AnnualReport/ClubAnnualR
 import { fonts } from "../../../models/PDF/fonts";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfVFS from "../../../assets/VFS/vfs";
+import classes from "./TableStyles.module.css";
 
 pdfMake.vfs = pdfVFS;
 pdfMake.fonts = fonts;
@@ -70,6 +71,7 @@ export const ClubAnnualReportTable = ({
   const [showSavedDropdown, setShowSavedDropdown] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [authReport, setAuthReport] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
 
   useEffect(() => {
     if (currentSearchedData != searchedData) {
@@ -110,6 +112,7 @@ export const ClubAnnualReportTable = ({
     setShowUnconfirmedDropdown(false);
     setShowConfirmedDropdown(false);
     setShowSavedDropdown(false);
+    setSelectedRow(-1);
   };
 
   const showDropdown = (annualReportStatus: number) => {
@@ -265,6 +268,7 @@ export const ClubAnnualReportTable = ({
         ) : null}
       </div>
       <Table
+        rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
         {...{ loading: isLoading }}
         locale={{
           emptyText: (
@@ -298,7 +302,7 @@ export const ClubAnnualReportTable = ({
             };
           else return { ...item, idView: <>{item.id}</> };
         })}
-        onRow={(record) => {
+        onRow={(record, index) => {
           return {
             onDoubleClick: (event) => {
               if (
@@ -329,6 +333,7 @@ export const ClubAnnualReportTable = ({
                 ).data
               );
               showDropdown(record.status);
+              setSelectedRow(index as number);
             },
           };
         }}

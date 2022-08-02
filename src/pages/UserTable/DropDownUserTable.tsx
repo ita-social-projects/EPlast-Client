@@ -6,6 +6,7 @@ import {
   EditOutlined,
   PlusCircleOutlined,
   MailOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import classes from "./UserTable.module.css";
 import userDeleteCofirm from "./UserDeleteConfirm";
@@ -25,6 +26,7 @@ import { DropdownFunc } from "../../models/UserTable/DropdownFunc";
 import ChangeUserGoverningBodyModal from "./ChangeUserGoverningBodyModal";
 import DeleteGoverningBodyAdminModal from "./DeleteGoverningBodyAdminModal";
 import AcceptUserToCityModal from "./AcceptUserToCityModal";
+import DeleteCityFollowerModal from "./DeleteCityFollowerModal";
 
 const authService = new AuthorizeApi();
 
@@ -58,7 +60,8 @@ const DropDown = (props: Props) => {
   } = props;
 
   const [showEditModal, setShowEditModal] = useState(false);
-  const [visibleModalDegree, setVisibleModalDegree] = useState<boolean>(false);
+  const [visibleAddDegree, setVisibleAddDegree] = useState<boolean>(false);
+  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(false);
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
@@ -72,6 +75,7 @@ const DropDown = (props: Props) => {
   const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
     false
   );
+  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(false);
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [, setGoverningBodyHead] = useState<boolean>(true);
@@ -103,6 +107,7 @@ const DropDown = (props: Props) => {
   );
   const [canChangeDegree, setCanChangeDegree] = useState<boolean>(false);
   const [canAddDegree, setCanAddDegree] = useState<boolean>(false);
+  const [canRemoveFollowers, setCanRemoveFollowers] = useState<boolean>(false);
   const [chainOfAccessibility, setChainOfAccessibility] = useState<
     IDropdownItem
   >();
@@ -237,6 +242,7 @@ const DropDown = (props: Props) => {
     setCanChangeDegree(result?.get(DropdownFunc.ChangeDegree) ?? false);
 
     setCanAddDegree(result?.get(DropdownFunc.AddDegree) ?? false);
+    setCanRemoveFollowers(result?.get(DropdownFunc.DeleteFollower) ?? false);
 
     setSuperAdmin(currentUserAdminRoles.includes(AdminRole.Admin));
     setGoverningBodyHead(
@@ -255,6 +261,7 @@ const DropDown = (props: Props) => {
         break;
       case "2":
         await userDeleteCofirm(record, onDelete);
+        onChange("", "")
         break;
       case "3":
         await setShowRegionModal(true);
@@ -269,10 +276,10 @@ const DropDown = (props: Props) => {
         await setShowEditModal(true);
         break;
       case "7":
-        await setVisibleModalDegree(true);
+        await setVisibleChangeDegree(true);
         break;
       case "8":
-        await setVisibleModalDegree(true);
+        await setVisibleAddDegree(true);
         break;
       case "9":
         await authService.resendEmailForRegistering(record);
@@ -282,6 +289,9 @@ const DropDown = (props: Props) => {
         break;
       case "11":
         await setShowDeleteGoverningBodyAdminModal(true);
+        break;
+      case "12":
+        await setShowDeleteCityFollower(true);
         break;
       default:
         break;
@@ -297,7 +307,10 @@ const DropDown = (props: Props) => {
           className={classes.menu}
           onClick={handleItemClick}
           style={{
-            top: pageY,
+            top: 
+              window.innerHeight - (pageY + 340) < 0
+                ? window.innerHeight - 350
+                : pageY,
             left:
               window.innerWidth - (pageX + 223) < 0
                 ? window.innerWidth - 266
@@ -305,7 +318,7 @@ const DropDown = (props: Props) => {
             display: showDropdown ? "block" : "none",
           }}
         >
-          {inActiveTab === false && canViewProfile ? (
+          {canViewProfile ? (
             <Menu.Item key="1">
               <FileSearchOutlined />
               Переглянути профіль
@@ -313,7 +326,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canDelete ? (
+          {canDelete ? (
             <Menu.Item key="2">
               <DeleteOutlined />
               Видалити
@@ -321,7 +334,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeRegionAdministration ? (
+          {inActiveTab && canChangeRegionAdministration ? (
             <Menu.Item key="3">
               <EditOutlined />
               Провід округи
@@ -329,7 +342,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeCityAdministration ? (
+          {inActiveTab && canChangeCityAdministration ? (
             <Menu.Item key="4">
               <EditOutlined />
               Провід станиці
@@ -337,7 +350,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeClubAdministration ? (
+          {inActiveTab && canChangeClubAdministration ? (
             <Menu.Item key="5">
               <EditOutlined />
               Провід куреня
@@ -345,7 +358,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeUserAccess ? (
+          {inActiveTab && canChangeUserAccess ? (
             <Menu.Item key="6">
               <EditOutlined />
               Поточний стан користувача
@@ -353,7 +366,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeDegree ? (
+          {!canAddDegree && canChangeDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
               Змінити ступінь
@@ -362,7 +375,7 @@ const DropDown = (props: Props) => {
             <> </>
           )}
 
-          {inActiveTab === false && canAddDegree ? (
+          {!canChangeDegree && canAddDegree ? (
             <Menu.Item key="8">
               <PlusCircleOutlined />
               Додати до уладу
@@ -370,7 +383,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && superAdmin ? (
+          {superAdmin ? (
             <Menu.Item key="9">
               <MailOutlined />
               Активувати
@@ -378,7 +391,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canChangeGoverningBodyAdministration ? (
+          {canChangeGoverningBodyAdministration ? (
             <Menu.Item key="10">
               <EditOutlined />
               Провід Пласту
@@ -386,10 +399,18 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {inActiveTab === false && canDeleteGoverningBodyAdministration ? (
+          {canDeleteGoverningBodyAdministration ? (
             <Menu.Item key="11">
               <EditOutlined />
               Відмінити роль Адміна
+            </Menu.Item>
+          ) : (
+            <> </>
+          )}
+          {canRemoveFollowers ? (
+            <Menu.Item key="12">
+              <CloseOutlined />
+              Відхилити зголошення
             </Menu.Item>
           ) : (
             <> </>
@@ -437,16 +458,27 @@ const DropDown = (props: Props) => {
             onChange={onChange}
           />
           <ModalAddPlastDegree
-            handleAddDegree={() => {}}
+            handleAddDegree={() => onChange("", "")} // forcefully updating the table on exit
             userId={record}
-            visibleModal={visibleModalDegree}
-            setVisibleModal={setVisibleModalDegree}
+            visibleModal={visibleAddDegree || visibleChangeDegree}
+            setVisibleModal={(bool) => {
+              setVisibleAddDegree(bool);
+              setVisibleChangeDegree(bool);
+            }}
+            isChangingUserDegree={visibleChangeDegree}
           />
           <AcceptUserToCityModal
             record={record}
             showModal={showAcceptToCityModal}
             user={selectedUser}
             setShowModal={setShowAcceptToCityModal}
+            onChange={onChange}
+          />
+          <DeleteCityFollowerModal
+            record={record}
+            showModal={showDeleteCityFollower}
+            user={selectedUser}
+            setShowModal={setShowDeleteCityFollower}
             onChange={onChange}
           />
         </Menu>

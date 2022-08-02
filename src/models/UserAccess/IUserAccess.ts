@@ -12,9 +12,6 @@ export default interface IUserAnnualReportAccess {
   CanEditReport: boolean;
   CanChangeReportStatus: boolean;
   CanDeleteReport: boolean;
-}
-export default interface IUserStatisticsAccess {
-  IsAdmin: boolean;
   CanCityStatisticsChooseCity: boolean;
   CanCityStatisticsChooseYears: boolean;
   CanCityStatisticsChooseIndicators: boolean;

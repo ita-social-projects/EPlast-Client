@@ -28,7 +28,10 @@ const DropDown = () => {
         selectable={false}
         className={classes.menu}
         style={{
-          top: state.pageY,
+          top: 
+            window.innerHeight - (state.pageY + 144) < 0
+              ? window.innerHeight - 154
+              : state.pageY,
           left:
             window.innerWidth - (state.pageX + 194) < 0
               ? window.innerWidth - 237
