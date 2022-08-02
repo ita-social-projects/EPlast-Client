@@ -52,9 +52,9 @@ export const removeDocument = async (documentId: number) => {
       throw new Error(error);
     });
 };
-export const removeAchievementDocument = async (documentId: number,courseId: number , userId: string) => {
+export const removeAchievementDocument = async (documentId: number, userId: string) => {
   return api
-    .remove(`Blanks/RemoveAchievementDocument/${documentId}/${courseId}/${userId}`, documentId)
+    .remove(`Blanks/RemoveAchievementDocument/${documentId}/${userId}`, documentId)
     .catch((error) => {
       throw new Error(error);
     });

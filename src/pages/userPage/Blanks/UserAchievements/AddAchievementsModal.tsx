@@ -13,7 +13,6 @@ import {
   fileIsTooBig,
   successfulDeleteAction,
 } from "../../../../components/Notifications/Messages";
-import { ChangeStatusCourseByUserId } from "../../../../api/courseApi";
 
 const { Dragger } = Upload;
 
@@ -23,7 +22,7 @@ interface Props {
   setVisibleModal: (visibleModal: boolean) => void;
   setshowModal: (showModal: boolean) => void;
   userId: string;
-  courseId:number;
+  courseId:number | null;
 }
 const AddAchievementsModal = (props: Props) => {
   const [form] = Form.useForm();
@@ -82,10 +81,9 @@ const AddAchievementsModal = (props: Props) => {
   const handleSubmit = async () => {
     setButtonLoading(true);
     setLoading(true);
-    await addAchievementDocuments( files);
+    await addAchievementDocuments(files);
     props.setVisibleModal(false);
     props.setshowModal(true);
-    await ChangeStatusCourseByUserId(props.userId,props.courseId);
     form.resetFields();
     removeFile();
     setDisabled(true);

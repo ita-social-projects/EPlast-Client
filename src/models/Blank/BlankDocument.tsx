@@ -3,7 +3,7 @@ export default class BlankDocument {
   blobName: string;
   fileName: string;
   userId: string;
-  courseId: number;
+  courseId: number | null;
 
   constructor() {
     this.id = 0;

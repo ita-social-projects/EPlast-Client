@@ -12,7 +12,7 @@ import ListOfAchievementsModal from "../Blanks/UserAchievements/ListOfAchievemen
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import { getAllAchievementDocumentsByUserId } from "../../../api/blankApi";
 import AuthLocalStorage from "../../../AuthLocalStorage";
-
+import classes from "../Blanks/Blanks.module.css";
 export default function () {
 
   const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
@@ -41,6 +41,7 @@ export default function () {
     userToken = jwt(AuthLocalStorage.getToken() ?? "");
     const coursesPromise = getAllCourseByUserId(activeUserId);
     const achievementsPromise = getAllAchievementDocumentsByUserId(activeUserId);
+
     setAchievementDoc((await achievementsPromise).data);
     setallCourses((await coursesPromise).data);
     setDataLoaded(true);
@@ -48,7 +49,6 @@ export default function () {
   const addCertificate = async (courseid : number) => {
     setcourseId(courseid);
     setvisibleAchievementModal(true);
-
   };
   const handleClose = async () => {
     setVisible(false);
@@ -70,9 +70,14 @@ export default function () {
     )
     : isDataLoaded
       ? (
-        <div className="container">
+        <div className={classes.wrapper2}>
+          
           {
+           
             allCourses.map((sectitem) =>
+        
+            (sectitem.isFinishedByUser === false) ?
+            (
               <Col key={sectitem.id}>
                 <Title level={2} title={sectitem.name} />
                 <p>
@@ -92,22 +97,22 @@ export default function () {
               Додати сертифікат
             </Button>
               </Col>
-            )}
-
-          {/* WARN: this is a hardcoded block, which will be shown only if there are no courses stored in DB */}
-          {!allCourses.length
-            ? (
-              <Col>
-                <Title level={2}>VumOnline курс</Title>
-                <div className="rowBlock">
-                  <a href="https://vumonline.ua/search/?search=%D0%BF%D0%BB%D0%B0%D1%81%D1%82" >
-                    <img src={PlastLogo} alt="PlastLogo" />
-                  </a>
-                </div>
+            ) :
+            (
+              <Col style={{ marginTop: "64px" }}>
+                    <Title level={2}> {sectitem.name}</Title>
+                <p>
+                  Курс {sectitem.name} пройдено, сертифікат можна переглянути в <Button type="link" className="Link" onClick={() => setvisibleListModal(true)}>
+                    <b> Досягненнях</b>
+                  </Button>
+                </p>
               </Col>
             )
-            : null
+            )
           }
+
+          {/* WARN: this is a hardcoded block, which will be shown only if there are no courses stored in DB */}
+         
           {/* END WARN */}
 
         {/*          
@@ -121,18 +126,7 @@ export default function () {
             </Button>
           </div> */}
 
-          {!allCourses.length
-            ? (
-              <Col style={{ marginTop: "64px" }}>
-                <p>
-                  Курс пройдено, сертифікат можна переглянути в <Button type="link" className="Link" onClick={() => setvisibleListModal(true)}>
-                    <b> Досягненнях</b>
-                  </Button>
-                </p>
-              </Col>
-            )
-            : null
-          }
+     
       <Modal
         title="Додати Курс"
         visible={visible}

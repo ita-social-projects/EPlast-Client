@@ -53,8 +53,9 @@ const ListOfAchievementsModal = (props: Props) => {
     setAchievements([]);
   };
 
-  const deleteFIle = async (documentId: number, courseid: number , userId: string, fileName: string) => {
-    await removeAchievementDocument(documentId,courseid ,userId);
+  const deleteFIle = async (documentId: number,  userId: string, fileName: string) => {
+   console.log("delete");
+    await removeAchievementDocument(documentId ,userId);
     notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
     setAchievements(achievements.filter((d) => d.id !== documentId));
     props.setAchievementDoc(
@@ -130,7 +131,7 @@ const ListOfAchievementsModal = (props: Props) => {
                           title="Видалити цей документ?"
                           placement="right"
                           icon={false}
-                          onConfirm={() => deleteFIle(item.id,item.courseId,item.userId, item.fileName)}
+                          onConfirm={() => deleteFIle(item.id,item.userId, item.fileName)}
                           okText="Так"
                           cancelText="Ні"
                         >
@@ -152,7 +153,7 @@ const ListOfAchievementsModal = (props: Props) => {
                           title="Видалити цей документ?"
                           placement="right"
                           icon={false}
-                          onConfirm={() => deleteFIle(item.id,item.courseId,item.userId, item.fileName)}
+                          onConfirm={() => deleteFIle(item.id,item.userId, item.fileName)}
                           okText="Так"
                           cancelText="Ні"
                         >
