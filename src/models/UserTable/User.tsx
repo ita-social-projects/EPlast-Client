@@ -10,6 +10,7 @@ export default class User {
   pseudo?: string;
   email: string;
   emailConfirmed: boolean;
+  userRoles: string;
 
   constructor() {
     this.id = "";
@@ -21,5 +22,6 @@ export default class User {
     this.pseudo = "";
     this.email = "";
     this.emailConfirmed = false;
+    this.userRoles = "";
   }
 }

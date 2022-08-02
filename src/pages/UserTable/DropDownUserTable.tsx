@@ -256,7 +256,11 @@ const DropDown = (props: Props) => {
   useEffect(() => {
     fetchUser().then(() => {
       setDimensions([selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number]);
-      setSizeCalculated(true);
+      console.log(pageY);
+      console.log(document.body.clientHeight);
+      console.log(window.innerHeight);
+      console.log(window.scrollY);
+      console.log(window);
     });
   }, [selectedUser]);
 
@@ -310,14 +314,14 @@ const DropDown = (props: Props) => {
       className={classes.menu}
       style={{
         top: 
-          window.innerHeight - (pageY + dimensions[1]) <= 0
-            ? window.innerHeight - dimensions[1] - 30
+          (pageY + dimensions[1]) > document.body.scrollHeight
+            ? document.body.scrollHeight - dimensions[1] - 100
             : pageY,
         left:
           window.innerWidth - (pageX + dimensions[0]) <= 0
-            ? window.innerWidth - dimensions[0] - 30
+            ? window.innerWidth - dimensions[0]
             : pageX,
-        display: showDropdown && sizeCalculated ? "block" : "none",
+        display: showDropdown ? "block" : "none",
       }}>
       {canView ? (
         <Menu
