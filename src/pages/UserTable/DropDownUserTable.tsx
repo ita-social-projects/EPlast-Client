@@ -265,7 +265,6 @@ const DropDown = (props: Props) => {
 
   const calculatePosition = (width: number, height: number) => {
     let footer = document.getElementsByClassName("ant-layout-footer Footer_footerContainer__gKNSx").item(0);
-    let rect = footer?.getBoundingClientRect();
 
     let y = pageY + height + offsetTop >= document.body.scrollHeight - (footer?.clientHeight as number)
       ? document.body.scrollHeight - offsetTop - (footer?.clientHeight as number) - height - 10
@@ -274,14 +273,6 @@ const DropDown = (props: Props) => {
     let x = pageX + width + offsetLeft >= document.body.clientWidth
     ? document.body.clientWidth - width - offsetLeft - 10
     : pageX;
-
-    console.log(height);
-    console.log(pageY + dimensions[1] + offsetTop)
-    console.log(rect)
-    console.log(pageY)
-    console.log(pageX)
-    console.log(document.body.scrollHeight)
-    console.log(window.scrollY);
 
     setPosition([x, y]);
   }
