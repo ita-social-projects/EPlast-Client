@@ -86,6 +86,7 @@ const UsersTable = () => {
   const queryParams = useRef<any>({});
   const [selectedRow, setSelectedRow] = useState<number>(-1)
   const tableBody = useRef<HTMLDivElement>(null);
+  const layout = useRef<any>(null);
 
   useEffect(() => {
     initializePage();
@@ -691,6 +692,8 @@ const UsersTable = () => {
           />
           <ClickAwayListener onClickAway={handleClickAway}>
           <DropDownUserTable
+            offsetTop={tableBody.current?.offsetTop as number}
+            offsetLeft={tableBody.current?.offsetLeft as number}
             showDropdown={showDropdown}
             record={recordObj}
             pageX={x}

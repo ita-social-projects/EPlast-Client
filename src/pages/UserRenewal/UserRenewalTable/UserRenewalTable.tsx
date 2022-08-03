@@ -40,6 +40,7 @@ const UserRenewalTable = (props: Properties) => {
       requestDate: new Date(),
       email: "",
       approved: false,
+      comment: "",
     },
   ]);
   const [loading, setLoading] = useState<boolean>(false);

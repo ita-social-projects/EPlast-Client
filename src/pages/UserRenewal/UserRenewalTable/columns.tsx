@@ -4,6 +4,7 @@ import { SortOrder } from "antd/lib/table/interface";
 import { Tag, Tooltip } from "antd";
 import moment from "moment";
 import React from "react";
+import UserComment from "../../UserTable/UserComment";
 
 const fetchYears = () => {
   const arrayOfYears = [];
@@ -104,5 +105,14 @@ const columns = [
       );
     },
   },
+  {
+    title: "Коментар",
+    dataIndex: "comment",
+    render: (comment: string) => {
+      return (
+        <UserComment userId={""} canEdit={false} text={comment}/>
+      )
+    }
+  }
 ];
 export default columns;
