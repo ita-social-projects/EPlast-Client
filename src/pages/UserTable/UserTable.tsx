@@ -38,7 +38,6 @@ import { Roles } from "../../models/Roles/Roles";
 import { useLocation } from "react-router-dom";
 import queryString from "querystring";
 import UserRenewalTable from "../UserRenewal/UserRenewalTable/UserRenewalTable";
-import { ColumnsType } from "antd/lib/table";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -86,7 +85,6 @@ const UsersTable = () => {
   const queryParams = useRef<any>({});
   const [selectedRow, setSelectedRow] = useState<number>(-1)
   const tableBody = useRef<HTMLDivElement>(null);
-  const layout = useRef<any>(null);
 
   useEffect(() => {
     initializePage();

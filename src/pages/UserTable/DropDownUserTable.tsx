@@ -116,8 +116,10 @@ const DropDown = (props: Props) => {
   >();
 
   const selfRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState<[number, number]>([0, 0]);
   const [position, setPosition] = useState<[number, number]>([pageX, pageY]);
+
+  // footer HTML info for position calculation
+  var footer = document.getElementsByClassName("ant-layout-footer").item(0);
 
   // Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
   // I have no idea what's going on here
@@ -261,11 +263,9 @@ const DropDown = (props: Props) => {
     fetchUser().then(() => {
       calculatePosition(selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number);
     });
-  }, [selectedUser]);
+  }, [selectedUser, pageX]);
 
   const calculatePosition = (width: number, height: number) => {
-    let footer = document.getElementsByClassName("ant-layout-footer Footer_footerContainer__gKNSx").item(0);
-
     let y = pageY + height + offsetTop >= document.body.scrollHeight - (footer?.clientHeight as number)
       ? document.body.scrollHeight - offsetTop - (footer?.clientHeight as number) - height - 10
       : pageY;
