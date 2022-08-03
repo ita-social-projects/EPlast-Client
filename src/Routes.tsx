@@ -63,6 +63,7 @@ import TermsEdit from "./pages/Terms/TermsEdit";
 import AnnouncementsTable from "./pages/AnnouncementsTable/AnnouncementsTable";
 import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainAdministration";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
+import RegionFollowers from "./pages/Regions/RegionFollowers";
 
 export default [
   {
@@ -122,6 +123,11 @@ export default [
     Component: GoverningBody,
   },
   {
+    path: "/regionalBoard/governingBodies/:governingBodyId/sectors/new",
+    name: "Створення напряму Керівного Органу",
+    Component: CreateGoverningBodySector,
+  },
+  {
     path: "/regionalBoard/governingBodies/:governingBodyId/sectors",
     name: "Напрями",
     Component: GoverningBodySectors,
@@ -130,11 +136,6 @@ export default [
     path: "/regionalBoard/governingBodies/:governingBodyId/sectors/:sectorId",
     name: "Напрям",
     Component: GoverningBodySector,
-  },
-  {
-    path: "/governingBodies/:governingBodyId/sectors/new",
-    name: "Створення напряму Керівного Органу",
-    Component: CreateGoverningBodySector,
   },
   {
     path: "/governingBodies/announcements/:id/:p",
@@ -166,11 +167,15 @@ export default [
     name: "Члени округи",
     Component: RegionMembers,
   },
-
   {
     path: "/regions/page/:p",
     name: "Округи",
     Component: Regions,
+  },
+  {
+    path: "/regions/new",
+    name: "Створити округу",
+    Component: AddNewRegionFormPage,
   },
   {
     path: "/regions",
@@ -181,11 +186,6 @@ export default [
     path: "/regions/:id",
     name: "Округа",
     Component: ActionRegion,
-  },
-  {
-    path: "/regions/new",
-    name: "Створити округу",
-    Component: AddNewRegionFormPage,
   },
   {
     path: "/region/administration/:id",
@@ -217,14 +217,21 @@ export default [
     name: "Редагувати станицю",
     Component: CreateCity,
   },
-
-  //Wrong! URL MUST BE CHANGED!
   {
-    path: "/regions/follower/edit/:id",
+    path: "/regions/follower/new",
     name: "Подати заявку на створення станиці",
     Component: CreateCity,
   },
-
+  {
+    path: "/regions/follower/edit/:id",
+    name: "",
+    Component: CreateCity,
+  },
+  {
+    path: "/regions/followers/:id",
+    name: "Заяви на створення станиці",
+    Component: RegionFollowers,
+  },
   {
     path: "/cities/members/:id",
     name: "Члени станиці",
