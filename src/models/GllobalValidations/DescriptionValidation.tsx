@@ -203,8 +203,8 @@ export const descriptionValidation = {
         value == undefined || String(value).length == 0
           ? Promise.resolve()
           : String(value).length == 5
-          ? Promise.resolve()
-          : Promise.reject("Довжина поштового індексу - 5 символів!"),
+            ? Promise.resolve()
+            : Promise.reject("Довжина поштового індексу - 5 символів!"),
     },
   ],
   Required: {
@@ -367,18 +367,28 @@ export const descriptionValidation = {
       message: emptyInput(),
     },
     {
-      max: 1000,
-      message: maxLength(1000),
-    },
-    {
-      validator: (rule: any, value: any, callback: any) => {
-        if (value !== "<p><br></p>") {
-          callback();
+      validator: (rule: any, value: string, callback: any) => {
+        const regex = /^(<p>(\s*|<br>)<\/p>)/;
+        if (regex.test(value)) {
+          callback(inputOnlyWhiteSpaces());
         } else {
-          callback(emptyInput());
+          callback();
         }
       },
     },
+    {
+      validator: (rule: any, value: string, callback: any) => {
+        if (value === "<p><br></p>") {
+          callback(emptyInput());
+        } else {
+          callback();
+        }
+      },
+    },
+    {
+      max: 1000,
+      message: maxLength(1000),
+    }
   ],
 };
 
@@ -389,10 +399,10 @@ export const sameNameValidator = (org: string, array: string[]) => {
       value == undefined || String(value).length == 0
         ? Promise.resolve()
         : (foundString = array.find(
-            (x) => x.trim().toLowerCase() === String(value).trim().toLowerCase()
-          )) === undefined
-        ? Promise.resolve()
-        : Promise.reject(
+          (x) => x.trim().toLowerCase() === String(value).trim().toLowerCase()
+        )) === undefined
+          ? Promise.resolve()
+          : Promise.reject(
             org + ' з назвою "' + String(foundString).trim() + '" вже існує'
           ),
   };
