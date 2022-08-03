@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { Menu } from "antd";
 import {
   FileSearchOutlined,
@@ -41,6 +41,8 @@ interface Props {
   selectedUserRoles: Array<string>;
   currentUser: any;
   canView: boolean;
+  offsetTop: number;
+  offsetLeft: number;
 }
 
 const DropDown = (props: Props) => {
@@ -56,6 +58,8 @@ const DropDown = (props: Props) => {
     selectedUserRoles,
     currentUser,
     canView,
+    offsetTop,
+    offsetLeft,
   } = props;
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -113,7 +117,7 @@ const DropDown = (props: Props) => {
 
   const selfRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState<[number, number]>([0, 0]);
-  const [sizeCalculated, setSizeCalculated] = useState<boolean>(false);
+  const [position, setPosition] = useState<[number, number]>([pageX, pageY]);
 
   // Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
   // I have no idea what's going on here
@@ -253,16 +257,34 @@ const DropDown = (props: Props) => {
     );
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     fetchUser().then(() => {
-      setDimensions([selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number]);
-      console.log(pageY);
-      console.log(document.body.clientHeight);
-      console.log(window.innerHeight);
-      console.log(window.scrollY);
-      console.log(window);
+      calculatePosition(selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number);
     });
   }, [selectedUser]);
+
+  const calculatePosition = (width: number, height: number) => {
+    let footer = document.getElementsByClassName("ant-layout-footer Footer_footerContainer__gKNSx").item(0);
+    let rect = footer?.getBoundingClientRect();
+
+    let y = pageY + height + offsetTop >= document.body.scrollHeight - (footer?.clientHeight as number)
+      ? document.body.scrollHeight - offsetTop - (footer?.clientHeight as number) - height - 10
+      : pageY;
+
+    let x = pageX + width + offsetLeft >= document.body.clientWidth
+    ? document.body.clientWidth - width - offsetLeft - 10
+    : pageX;
+
+    console.log(height);
+    console.log(pageY + dimensions[1] + offsetTop)
+    console.log(rect)
+    console.log(pageY)
+    console.log(pageX)
+    console.log(document.body.scrollHeight)
+    console.log(window.scrollY);
+
+    setPosition([x, y]);
+  }
 
   const handleItemClick = async (item: any) => {
     switch (item.key) {
@@ -313,14 +335,8 @@ const DropDown = (props: Props) => {
       ref={selfRef}
       className={classes.menu}
       style={{
-        top: 
-          (pageY + dimensions[1]) > document.body.scrollHeight
-            ? document.body.scrollHeight - dimensions[1] - 100
-            : pageY,
-        left:
-          window.innerWidth - (pageX + dimensions[0]) <= 0
-            ? window.innerWidth - dimensions[0]
-            : pageX,
+        top: position[1],
+        left: position[0],
         display: showDropdown ? "block" : "none",
       }}>
       {canView ? (
