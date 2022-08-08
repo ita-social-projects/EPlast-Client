@@ -11,12 +11,9 @@ const getById = async (id: string | undefined) => {
 
   return response;
 };
-const getUserProfileById = async (
-  currentUserId: string | undefined,
-  focusUserId: string | undefined
-) => {
+const getUserProfileById = async (focusUserId: string | undefined) => {
   const response = await axios.get(
-    `${`${BASE_URL}User/`}${currentUserId}/${focusUserId}`
+    `${`${BASE_URL}User/`}UserProfile/${focusUserId}`
   );
 
   return response;
@@ -62,22 +59,19 @@ const getUserMenuAccess = async (userid: string) => {
   return response;
 };
 
-const putComment = async (
-  userId: string,
-  text: string
-) => {
+const putComment = async (userId: string, text: string) => {
   const response = await axios.put(
-    `${BASE_URL}User/${userId}/comment`, JSON.stringify(text)
+    `${BASE_URL}User/${userId}/comment`,
+    JSON.stringify(text)
   );
 
   return response;
 };
 
-const deleteComment = async (
-  userId: string
-) => {
+const deleteComment = async (userId: string) => {
   const response = await axios.put(
-    `${BASE_URL}User/${userId}/comment`, JSON.stringify("")
+    `${BASE_URL}User/${userId}/comment`,
+    JSON.stringify("")
   );
 
   return response;

@@ -23,17 +23,11 @@ export default class AuthorizeApi {
           AuthLocalStorage.setToken(response.data.token);
         }
       })
-      .catch(async (error) => {
+      .catch((error) => {
         if (error.response.data.value == "User-FormerMember") {
           showUserRenewalModal();
-        }
-        switch (error.response.status) {
-          case 400:
-            notificationLogic("error", 'Щось пішло не так');
-            break;
-          case 409:
-            notificationLogic("error", 'Підтвердіть реєстрацію, перейшовши за посиланням, вказаним у електронній пошті');
-            break;
+        } else if (error.response.status === 400) {
+          notificationLogic("error", error.response.data.value);
         }
       });
     return response;
