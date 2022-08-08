@@ -64,7 +64,9 @@ const DropDown = (props: Props) => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleAddDegree, setVisibleAddDegree] = useState<boolean>(false);
-  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(false);
+  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(
+    false
+  );
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
@@ -78,7 +80,9 @@ const DropDown = (props: Props) => {
   const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
     false
   );
-  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(false);
+  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(
+    false
+  );
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [, setGoverningBodyHead] = useState<boolean>(true);
@@ -284,7 +288,7 @@ const DropDown = (props: Props) => {
         break;
       case "2":
         await userDeleteCofirm(record, onDelete);
-        onChange("", "")
+        onChange("", "");
         break;
       case "3":
         await setShowRegionModal(true);
@@ -331,10 +335,7 @@ const DropDown = (props: Props) => {
         display: showDropdown ? "block" : "none",
       }}>
       {canView ? (
-        <Menu
-          theme="dark"
-          onClick={handleItemClick}
-        >
+        <Menu theme="dark" onClick={handleItemClick}>
           {canViewProfile ? (
             <Menu.Item key="1">
               <FileSearchOutlined />
@@ -383,7 +384,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {!canAddDegree && canChangeDegree ? (
+          {canChangeDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
               Змінити ступінь
@@ -392,7 +393,7 @@ const DropDown = (props: Props) => {
             <> </>
           )}
 
-          {!canChangeDegree && canAddDegree ? (
+          {canAddDegree ? (
             <Menu.Item key="8">
               <PlusCircleOutlined />
               Додати до уладу
