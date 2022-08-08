@@ -257,7 +257,17 @@ const ParticipantsTable = ({
     }
   }
 
-  return <Table columns={columns} dataSource={Participants} loading={loading}/>;
+  return (
+    <Table 
+      columns={columns}
+      dataSource={Participants}
+      loading={loading}
+      onRow={(record) => {
+        return ({
+          onContextMenu: (evt) => evt.preventDefault(),
+        })
+      }}
+    />);
 };
 
 export default ParticipantsTable;
