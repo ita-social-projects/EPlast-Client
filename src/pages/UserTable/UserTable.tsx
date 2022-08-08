@@ -267,7 +267,7 @@ const UsersTable = () => {
     let jwt = AuthLocalStorage.getToken() as string;
     let user = jwt_decode(jwt) as any;
     userApi
-      .getUserProfileById(user.nameid, user.nameid)
+      .getUserProfileById(user.nameid)
       .then((response) => setCurrentUser(response.data.user));
 
     let roles = userApi.getActiveUserRoles();
