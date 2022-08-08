@@ -3,7 +3,7 @@ import { Form, Input, Button, Modal, Select, DatePicker, Tabs, Space, Spin, Swit
 import styles from "./SignUp.module.css";
 import Switcher from "./Switcher/Switcher";
 import { checkAddress, checkEmail, checkFacebookLink, checkInstagramLink, checkNameSurName, checkOblastIsSpecified, checkPassword, checkPhone, checkTwitterLink } from "./verification";
-import AuthorizeApi from "../../api/authorizeApi";
+import AuthorizeApi, { RegisterDataResponse409 } from "../../api/authorizeApi";
 import { useHistory } from "react-router-dom";
 import {
   emptyInput,
@@ -25,6 +25,7 @@ import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
 import CheckboxsItem from "./CheckboxsItem";
 import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
 import RegionForAdministration from "../../models/Region/RegionForAdministration";
+import openNotificationWithIcon from "../../components/Notifications/Notification";
 
 let authService = new AuthorizeApi();
 
@@ -96,7 +97,7 @@ const SignUp: React.FC = () => {
   const [cityLoading, setCityLoading] = useState(false);
   const [regionLoading, setRegionLoading] = useState(false);
   const [hasPlast, setHasntPlast] = useState(false);
-  const [areaSelected, setAreaSelected] = useState(false);
+  const [areaSelected, setAreaSelected] = useState(state.formData.oblast !== undefined);
   const regionSelectRef = useRef(null);
   const history = useHistory();
 
@@ -128,9 +129,30 @@ const SignUp: React.FC = () => {
           instagramLink: instagramLink === "" ? null : instagramLink,
           fatherName: fatherName === "" ? null : fatherName,
         };
-        await authService.register(request);
-        setAvailabe(true);
-        history.push("/signin");
+
+        authService.register(request)
+          .then(res => {
+            setAvailabe(true);
+            openNotificationWithIcon("success", "Вам на пошту прийшов лист з підтвердженням");
+            history.push("/signin");
+          }).catch(error => {
+            const data = error.response.data as RegisterDataResponse409
+            setAvailabe(true);
+            switch (error.response.status) {
+              case 409:
+                if (data.isEmailConfirmed) {
+                  openNotificationWithIcon("error", `Користувач з вказаною поштою існує`);
+                } else {
+                  const registredOn = moment(data.registeredExpire);
+                  const timeDiff = registredOn.diff(moment.utc(), 'minute');
+                  const hours = Math.ceil(timeDiff / 60);
+                  openNotificationWithIcon("error", `Користувач з вказаною поштою існує, але пошта не підтверджена. Через ${hours} годин можна зареєстуватися знову.`);
+                }
+                break;
+              default:
+                openNotificationWithIcon("error", "Щось пішло не так");
+            }
+          })
       },
       cancel: async () => {
         setVisible(false);
