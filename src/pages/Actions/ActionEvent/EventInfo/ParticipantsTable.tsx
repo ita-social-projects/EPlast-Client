@@ -187,7 +187,7 @@ const ParticipantsTable = ({
       render: (status: any) => (
         <>
           <Tag color={setTagColor(status)} key={status}>
-            {status.toUpperCase()}
+            {status}
           </Tag>
         </>
       ),
@@ -199,7 +199,6 @@ const ParticipantsTable = ({
       title: "Відвідав подію",
       dataIndex: "wasPresent",
       key: "eventParticipant",
-      align: "center",
       render: (wasPresent: boolean, record: EventParticipant) => (
         <>
           <Checkbox
@@ -259,6 +258,7 @@ const ParticipantsTable = ({
 
   return (
     <Table 
+      pagination={{pageSize: 5}}
       columns={columns}
       dataSource={Participants}
       loading={loading}

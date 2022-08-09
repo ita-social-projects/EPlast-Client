@@ -87,10 +87,9 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
   const handleSubmit = async (values: any) => {
     if (values.upload !== undefined) {
       if (picturesCount >= MaxPicturesCount) {
-        notification.destroy();
         limitNotification(
           "Досягнуто ліміту фотографій у галереї подій!",
-          `Максимальна кількість фотографій у галереї повинна не перевищувати ${MaxPicturesCount} штук.`
+          `Максимальна кількість фотографій у галереї не повинна перевищувати ${MaxPicturesCount}.`
         );
       } else {
         if (
@@ -99,7 +98,7 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
         ) {
           limitNotification(
             "Перевищено ліміт фотографій для завантаження!",
-            "Зменшіть кількість вибраних фотографій для завантаження."
+            "Зменшіть кількість обраних фотографій."
           );
         } else {
           loadingNotification();
@@ -118,6 +117,7 @@ const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
             notification.destroy();
             updateNotification();
             form.resetFields();
+            setDisabled(true);
           } catch {
             notification.destroy();
             failUpdatingNotification();

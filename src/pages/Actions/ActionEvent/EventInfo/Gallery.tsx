@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Carousel, Spin, Avatar, Typography, Alert, Empty } from "antd";
+import { Carousel, Spin, Image, Typography, Alert, Empty, Grid, Row, Col, Divider } from "antd";
 import { EventGallery } from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
 import FormAddPictures from "./FormAddPictures";
@@ -41,24 +41,19 @@ const FillGallery = (pictures: EventGallery[]) => {
     );
   }
   return (
-    <Carousel
-      autoplay={true}
-      className="homeSlider"
-      arrows
-      prevArrow={<LeftOutlined />}
-      nextArrow={<RightOutlined />}
-    >
+    <div className="galleryContainer">
       {pictures.map((picture) => {
-        return (
-          <Avatar
-            shape="square"
-            size={350}
-            src={picture.fileName}
-            key={picture.galleryId}
-          />
-        );
-      })}
-    </Carousel>
+            return (
+              <div className="galleryPicture">
+                <Image
+                  className="galleryImg"
+                  src={picture.fileName}
+                  key={picture.galleryId}
+                />
+              </div>
+            );
+          })}
+    </div>
   );
 };
 
@@ -75,6 +70,7 @@ const Gallery = ({ eventId, userAccesses }: Props) => {
     if (userAccesses["AddPhotos"]) {
       return [
         <div>
+          <Divider/>
           <Title
             level={3}
             style={{

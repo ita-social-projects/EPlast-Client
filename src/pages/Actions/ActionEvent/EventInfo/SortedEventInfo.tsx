@@ -5,11 +5,12 @@ import {
   EditTwoTone,
   DeleteTwoTone,
   StopOutlined,
-  SettingTwoTone,
   CheckCircleTwoTone,
   QuestionCircleTwoTone,
   UserDeleteOutlined,
   UserAddOutlined,
+  CheckSquareOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import { EventDetails, EventAdmin } from "./EventInfo";
 import {
@@ -62,7 +63,7 @@ const RenderEventIcons = (
 
   const SubscribeToEvent = () => {
     eventIcons.push(
-      <Tooltip title="Зголоситись на подію" key="subscribe">
+      <Tooltip title="Зголоситися на подію" key="subscribe">
         <UserAddOutlined
           onClick={() =>
             showSubscribeConfirm({
@@ -161,11 +162,11 @@ const RenderEventIcons = (
     eventIcons.push(
       <Tooltip
         placement="bottom"
-        title="Ви можете затвердити подію!"
+        title="Затвердити подію"
         key="setting"
       >
-        <SettingTwoTone
-          twoToneColor="#3c5438"
+        <CheckSquareOutlined
+          style={{color:"#3c5438"}}
           onClick={() =>
             showApproveConfirm({
               eventId: event?.eventId,
@@ -217,7 +218,7 @@ const RenderEventIcons = (
   }
 
   eventIcons.push(
-    <Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
+    <Tooltip placement="bottom" title="Адміністратори події" key="admins">
       <IdcardOutlined
         style={{ color: "#3c5438", fontSize: "30px" }}
         className="icon"
@@ -276,26 +277,41 @@ const RenderAdminCards = (
         xxl: 2,
       }}
       dataSource={eventAdmins}
-      renderItem={(item) => (
-        <List.Item>
-          <Card
-            hoverable={canViewAdminProfiles}
-            title={item.adminType}
-            cover={<img alt="example" src={EventAdminLogo} />}
-            onClick={() =>
-              canViewAdminProfiles
-                ? history.push(`/userpage/main/${item.userId}`)
-                : null
-            }
-            className={canViewAdminProfiles ? "" : "hovering-cardbody"}
-          >
-            <div>{item.fullName}</div>
-          </Card>
-        </List.Item>
-      )}
+      renderItem={(item) => GetAdminInfo(item, canViewAdminProfiles)}
     />
   );
 };
+
+const GetAdminInfo = (admin: EventAdmin, canViewAdminProfiles: boolean) => {
+  const history = useHistory();
+  const [imageUrl, setImageUrl] = useState<string>("default_user_image.png");
+  const [isLoading, setLoading] = useState<boolean>(true);
+        
+  useEffect(() => {
+    userApi.getImage(admin.avatarUrl).then((response) => { 
+      setImageUrl(response.data);
+      setLoading(false);
+    });
+  }, []);
+
+  return (
+    <List.Item>
+      <Card
+        hoverable={canViewAdminProfiles}
+        title={admin.adminType}
+        cover={<img alt="avatar" src={isLoading ? EventAdminLogo : imageUrl} />}
+        onClick={() =>
+          canViewAdminProfiles
+            ? history.push(`/userpage/main/${admin.userId}`)
+            : null
+        }
+        className={canViewAdminProfiles ? "" : "hovering-cardbody"}
+      >
+        <div>{admin.fullName}</div>
+      </Card>
+    </List.Item>
+  )
+}
 
 const SortedEventInfo = ({
   userAccesses,
@@ -360,7 +376,7 @@ const SortedEventInfo = ({
       </Col>
       <Modal
         visible={adminsVisible}
-        title="Адміністрація події"
+        title="Адміністратори події"
         footer={null}
         onCancel={() => {
           setAdminsVisibility(false);

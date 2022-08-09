@@ -66,6 +66,7 @@ export interface EventAdmin {
   userId: string;
   fullName: string;
   adminType: string;
+  avatarUrl: string;
 }
 
 export interface EventGallery {
@@ -76,8 +77,6 @@ export interface EventGallery {
 const EventInfo = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
-  const [, setFilterTable] = useState([{}]);
-  const [baseData] = useState(rawData);
   // @ts-ignore
   const [event, setEvent] = useState<EventDetails>({});
   const [eventStatusID, setEventStatusID] = useState<number>();
@@ -91,6 +90,7 @@ const EventInfo = () => {
   const [isUserRegisteredUser, setUserRegisterUser] = useState<boolean>();
   const [participantsLoaded, setParticipantsLoaded] = useState<boolean>(false);
   const [participants, setParticipants] = useState<EventParticipant[]>([]);
+  const [filteredParticipants, setFilteredParticipants] = useState<EventParticipant[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,12 +124,16 @@ const EventInfo = () => {
   };
 
   const search = (value: any) => {
-    const filteredTable = baseData.filter((item: any) =>
-      Object.keys(item).some((k) =>
-        String(item[k]).toLowerCase().includes(value.toLowerCase())
-      )
-    );
-    setFilterTable(filteredTable);
+    if (value === "") {
+      setFilteredParticipants(participants);
+      return;
+    }
+
+    const filteredTable = participants.filter((item: EventParticipant) => 
+      item.fullName.toLowerCase().includes(value.toLowerCase()) ||
+      item.email.toLowerCase().includes(value.toLowerCase()));
+
+    setFilteredParticipants(filteredTable);
   };
 
   const subscribeOnEvent = () => {
@@ -154,13 +158,13 @@ const EventInfo = () => {
   };
 
   const setParticipantsInTable = (eventParticipants: EventParticipant[]) => {
-    setParticipants(
-      userAccesses["SeeUserTable"]
-      ? eventParticipants
-      : eventParticipants.filter(
-        (p: EventParticipant) => p.status == "Учасник"
-      )
+    let availableParticipants = userAccesses["SeeUserTable"]
+    ? eventParticipants
+    : eventParticipants.filter(
+      (p: EventParticipant) => p.status == "Учасник"
     );
+    setParticipants(availableParticipants);
+    setFilteredParticipants(availableParticipants);
     setParticipantsLoaded(true);
   };
 
@@ -194,25 +198,20 @@ const EventInfo = () => {
         </Col>
       </Row>
       <div className="event-info-wrapper">
-        <div className="eventGallary">
-          <Gallery
-            key={event.event?.eventLocation}
-            eventId={event.event?.eventId}
-            userAccesses={userAccesses}
-          />
-        </div>
         {userAccesses["SeeUserTable"] || event.isUserApprovedParticipant ? (
           <div className="participantsTable">
             <div key={"2"}>
               <Title level={2} className={classes.userTableTitle}>
                 Таблиця учасників
               </Title>
-              <Row>
+              <Row className={classes.searchArea}>
                 <Input.Search
+                  allowClear
                   className={classes.inputSearch}
                   placeholder="Пошук"
                   enterButton
                   onSearch={search}
+                  onChange={() => search("")}
                 />
               </Row>
             </div>
@@ -220,7 +219,7 @@ const EventInfo = () => {
               <ParticipantsTable
                 userAccesses={userAccesses}
                 isEventFinished={event.isEventFinished}
-                participants={participants}
+                participants={filteredParticipants}
                 eventName={event.event.eventName}
                 key={event.event.eventId}
                 setRender={setRender}
@@ -229,6 +228,13 @@ const EventInfo = () => {
             </div>
           </div>
         ) : null}
+        <div className="eventGallary">
+          <Gallery
+            key={event.event?.eventLocation}
+            eventId={event.event?.eventId}
+            userAccesses={userAccesses}
+          />
+        </div>
       </div>
     </div>
   );
