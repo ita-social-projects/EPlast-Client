@@ -1,6 +1,6 @@
 import React from "react";
 import { Drawer } from "antd";
-import FormEditDistinctionTypes from "./FormEditDistinctionTypes";
+import FormListOfDistinctionTypes from "./FormEditDistinctionTypes/FormListOfDistinctionTypes";
 
 interface Props {
   visibleModalEdit: boolean;
@@ -30,7 +30,7 @@ const EditDistinctionTypesModal = ({
       onClose={handleCancel}
       footer={null}
     >
-      <FormEditDistinctionTypes
+      <FormListOfDistinctionTypes
         setVisibleModal={setVisibleModalEditDist}
         onDelete={onDelete}
       />
