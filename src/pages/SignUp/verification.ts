@@ -24,6 +24,10 @@ export const checkNameSurName = (
   callback: any
 ) => {
   const reg = /^[а-яА-ЯІіЄєЇїҐґ' ]{1,20}((\s+|-))*$/;
+
+  if (value === null || value === undefined) {
+    return callback();
+  }
   if (value.length !== 0 && reg.test(value) === false) {
     return callback(
       shouldContain("тільки кириличні літери та бути коротшим за 20 символів")
@@ -78,6 +82,9 @@ export const checkAddress = (
   value: string,
   callback: any
 ) => {
+  if (value === null || value === undefined) {
+    return callback();
+  }
   const reg = /^[0-9а-яА-ЯІіЄєЇїҐґ'., -/\\]{1,50}(\s+|-)*$/;
   if ((value.length !== 0 && reg.test(value) === false) || value.trim().length === 0) {
     return callback(
@@ -92,6 +99,9 @@ export const checkFacebookLink = (
   value: string,
   callback: any
 ) => {
+  if (value === null || value === undefined) {
+    return callback();
+  }
   const regNew = /^(https?\:)?(\/\/)(www[\.])?(facebook.com\/)?(?:profile.php\?id=)?([0-9a-zA-Z.]{1,25})[\/]?$/;
   if (value.length !== 0 && regNew.test(value) === false) {
     return callback(
@@ -106,6 +116,9 @@ export const checkTwitterLink = (
   value: string,
   callback: any
 ) => {
+  if (value === null || value === undefined) {
+    return callback();
+  }
   const reg: RegExp = /^(https?\:)?(\/\/)(www[\.])?(twitter.com\/)([a-zA-Z0-9_.]{1,25})[\/]?$/;
   if ((value.length !== 0 && reg.test(value) === false)) {
     return callback(
@@ -120,6 +133,9 @@ export const checkInstagramLink = (
   value: string,
   callback: any
 ) => {
+  if (value === null || value === undefined) {
+    return callback();
+  }
   const reg = /^(https?\:)?(\/\/)(www[\.])?(instagram.com\/)([a-zA-Z0-9_.]{1,25})[\/]?$/;
   if ((value.length !== 0 && reg.test(value) === false)) {
     return callback(

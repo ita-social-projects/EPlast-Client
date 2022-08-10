@@ -450,21 +450,22 @@ export default function () {
   };
 
   const handleSubmit = async (values: any) => {
+    console.table({...values});
     const newUserProfile = {
       user: {
         id: data?.user?.id,
         userProfileID: data?.user.userProfileID,
         firstName: values.firstName?.trim(),
         lastName: values.lastName?.trim(),
-        fatherName: values.fatherName?.trim(),
+        fatherName: values?.fatherName?.trim(),
         phoneNumber: phoneNumber?.trim(),
         birthday: form?.getFieldValue("birthday"),
         imagePath: photoName,
         pseudo: values.pseudo?.trim(),
         publicPoliticalActivity: values.publicPoliticalActivity?.trim(),
-        facebookLink: values.facebookLink,
-        twitterLink: values.twitterLink,
-        instagramLink: values.instagramLink,
+        facebookLink: values?.facebookLink,
+        twitterLink: values?.twitterLink,
+        instagramLink: values?.instagramLink,
 
         degree: {
           id: degree?.id,
