@@ -66,8 +66,7 @@ const UserRenewalTable = () => {
     let jwt = AuthLocalStorage.getToken() as string;
     let user = jwt_decode(jwt) as any;
     setcurrentCityAdmin(
-      (await UserApi.getUserProfileById(user.nameid, user.nameid)).data.user
-        .cityId
+      (await UserApi.getUserProfileById(user.nameid)).data.user.cityId
     );
     let roles = UserApi.getActiveUserRoles();
     setCurrentRole(roles);
@@ -132,7 +131,9 @@ const UserRenewalTable = () => {
               Кількість запитів: {subtotal} / {total}
             </Title>
             <Table
-              rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
+              rowClassName={(record, index) =>
+                index === selectedRow ? classes.selectedRow : ""
+              }
               className={classes.table}
               dataSource={userRenewals}
               columns={columns}

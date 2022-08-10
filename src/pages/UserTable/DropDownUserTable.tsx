@@ -60,7 +60,9 @@ const DropDown = (props: Props) => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleAddDegree, setVisibleAddDegree] = useState<boolean>(false);
-  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(false);
+  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(
+    false
+  );
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
@@ -74,7 +76,9 @@ const DropDown = (props: Props) => {
   const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
     false
   );
-  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(false);
+  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(
+    false
+  );
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [, setGoverningBodyHead] = useState<boolean>(true);
@@ -255,7 +259,10 @@ const DropDown = (props: Props) => {
 
   useEffect(() => {
     fetchUser().then(() => {
-      setDimensions([selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number]);
+      setDimensions([
+        selfRef.current?.clientWidth as number,
+        selfRef.current?.clientHeight as number,
+      ]);
       setSizeCalculated(true);
     });
   }, [selectedUser]);
@@ -267,7 +274,7 @@ const DropDown = (props: Props) => {
         break;
       case "2":
         await userDeleteCofirm(record, onDelete);
-        onChange("", "")
+        onChange("", "");
         break;
       case "3":
         await setShowRegionModal(true);
@@ -309,7 +316,7 @@ const DropDown = (props: Props) => {
       ref={selfRef}
       className={classes.menu}
       style={{
-        top: 
+        top:
           window.innerHeight - (pageY + dimensions[1]) <= 0
             ? window.innerHeight - dimensions[1] - 30
             : pageY,
@@ -318,12 +325,10 @@ const DropDown = (props: Props) => {
             ? window.innerWidth - dimensions[0] - 30
             : pageX,
         display: showDropdown && sizeCalculated ? "block" : "none",
-      }}>
+      }}
+    >
       {canView ? (
-        <Menu
-          theme="dark"
-          onClick={handleItemClick}
-        >
+        <Menu theme="dark" onClick={handleItemClick}>
           {canViewProfile ? (
             <Menu.Item key="1">
               <FileSearchOutlined />
@@ -372,7 +377,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {!canAddDegree && canChangeDegree ? (
+          {canChangeDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
               Змінити ступінь
@@ -381,7 +386,7 @@ const DropDown = (props: Props) => {
             <> </>
           )}
 
-          {!canChangeDegree && canAddDegree ? (
+          {canAddDegree ? (
             <Menu.Item key="8">
               <PlusCircleOutlined />
               Додати до уладу

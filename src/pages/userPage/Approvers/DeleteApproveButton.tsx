@@ -3,11 +3,11 @@ import React, { useState } from "react";
 
 interface Props {
   approverId: number;
-  deleteApprove: (event: number) => Promise<void>;
+  onDeleteApprove: (id: number) => Promise<void>;
 }
 
 const DeleteApproveButton = (props: Props) => {
-  const { approverId, deleteApprove } = props;
+  const { approverId, onDeleteApprove } = props;
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   return (
@@ -17,7 +17,7 @@ const DeleteApproveButton = (props: Props) => {
       loading={isLoading}
       onClick={() => {
         setIsLoading(true);
-        deleteApprove(approverId);
+        onDeleteApprove(approverId);
       }}
       value={approverId}
     >
