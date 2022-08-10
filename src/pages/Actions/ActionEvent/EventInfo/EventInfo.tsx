@@ -1,21 +1,21 @@
+import { Col, Input, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { Col, Input, notification, Row, Typography } from "antd";
 import { useParams } from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
-import SortedEventInfo from "./SortedEventInfo";
-import rawData from "./data";
-import Gallery from "./Gallery";
 import eventsApi from "../../../../api/eventsApi";
 import EventDetailsHeader from "./EventDetailsHeader";
+import Gallery from "./Gallery";
+import SortedEventInfo from "./SortedEventInfo";
 // eslint-disable-next-line import/no-cycle
-import ParticipantsTable from "./ParticipantsTable";
-import "./EventInfo.less";
-import Spinner from "../../../Spinner/Spinner";
-import AuthLocalStorage from "../../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import eventUserApi from "../../../../api/eventUserApi";
 import UserApi from "../../../../api/UserApi";
+import AuthLocalStorage from "../../../../AuthLocalStorage";
+import EventFeedback from "../../../../models/EventUser/EventFeedback";
 import { Roles } from "../../../../models/Roles/Roles";
+import Spinner from "../../../Spinner/Spinner";
+import "./EventInfo.less";
+import ParticipantsTable from "./ParticipantsTable";
 
 const classes = require("./EventInfo.module.css");
 const { Title } = Typography;
@@ -50,6 +50,7 @@ export interface EventInformation {
   numberOfPartisipants: number;
   eventAdmins: EventAdmin[];
   eventParticipants: EventParticipant[];
+  eventFeedbacks: EventFeedback[];
 }
 
 export interface EventParticipant {

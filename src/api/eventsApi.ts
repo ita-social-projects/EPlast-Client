@@ -1,3 +1,4 @@
+import EventFeedback from "../models/EventUser/EventFeedback";
 import Api from "./api";
 
 const getTypes = async () => {
@@ -77,6 +78,11 @@ const createParticipant = async (id: number) => {
 
 const estimateEvent = async (id: number, estimate: number) => {
   const response = await Api.put(`Events/${id}/estimate/${estimate}`);
+  return response;
+};
+
+const leaveFeedback = async (id: number, feedback: EventFeedback) => {
+  const response = await Api.put(`Events/${id}/feedback`, feedback);
   return response;
 };
 

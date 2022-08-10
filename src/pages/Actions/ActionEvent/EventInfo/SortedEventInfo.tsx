@@ -1,33 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col, Tooltip, Modal, Card, List, Rate } from "antd";
 import {
-  IdcardOutlined,
-  EditTwoTone,
-  DeleteTwoTone,
-  StopOutlined,
   CheckCircleTwoTone,
-  QuestionCircleTwoTone,
-  UserDeleteOutlined,
-  UserAddOutlined,
   CheckSquareOutlined,
-  LoadingOutlined,
+  DeleteTwoTone,
+  EditTwoTone,
+  IdcardOutlined,
+  QuestionCircleTwoTone,
+  StopOutlined,
+  UserAddOutlined,
+  UserDeleteOutlined,
 } from "@ant-design/icons";
-import { EventDetails, EventAdmin } from "./EventInfo";
-import {
-  showSubscribeConfirm,
-  showUnsubscribeConfirm,
-  showDeleteConfirmForSingleEvent,
-  showApproveConfirm,
-} from "../../EventsModals";
-import EventAdminLogo from "../../../../assets/images/EventAdmin.png";
-import "./EventInfo.less";
-import eventsApi from "../../../../api/eventsApi";
+import { Card, Col, List, Modal, Rate, Row, Tooltip } from "antd";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import EventEditDrawer from "../EventEdit/EventEditDrawer";
 import eventUserApi from "../../../../api/eventUserApi";
+import userApi from "../../../../api/UserApi";
+import EventAdminLogo from "../../../../assets/images/EventAdmin.png";
 import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
 import EventsUser from "../../../../models/EventUser/EventUser";
-import userApi from "../../../../api/UserApi";
+import {
+  showApproveConfirm,
+  showDeleteConfirmForSingleEvent,
+  showSubscribeConfirm,
+  showUnsubscribeConfirm,
+} from "../../EventsModals";
+import EventEditDrawer from "../EventEdit/EventEditDrawer";
+import EventFeedbackModal from "./EventFeedbackModal";
+import { EventAdmin, EventDetails } from "./EventInfo";
+import "./EventInfo.less";
 
 interface Props {
   userAccesses: { [key: string]: boolean };
@@ -160,13 +159,9 @@ const RenderEventIcons = (
 
   if (userAccesses["ApproveEvent"] && event.eventStatus === "Не затверджено") {
     eventIcons.push(
-      <Tooltip
-        placement="bottom"
-        title="Затвердити подію"
-        key="setting"
-      >
+      <Tooltip placement="bottom" title="Затвердити подію" key="setting">
         <CheckSquareOutlined
-          style={{color:"#3c5438"}}
+          style={{ color: "#3c5438" }}
           onClick={() =>
             showApproveConfirm({
               eventId: event?.eventId,
@@ -230,32 +225,8 @@ const RenderEventIcons = (
   return eventIcons;
 };
 
-const RenderRatingSystem = ({
-  event,
-  canEstimate,
-  isEventFinished,
-  participantAssessment,
-}: EventDetails): React.ReactNode => {
-  if (isEventFinished && canEstimate) {
-    return (
-      <Rate
-        allowHalf
-        defaultValue={participantAssessment}
-        onChange={async (value) =>
-          await eventsApi.estimateEvent(event.eventId, value)
-        }
-      />
-    );
-  } else {
-    return (
-      <Rate
-        allowHalf
-        disabled
-        defaultValue={event.rating}
-        onChange={(value) => console.log(value)}
-      />
-    );
-  }
+const RenderRatingSystem = ({ event }: EventDetails) => {
+  return <Rate allowHalf disabled defaultValue={event.rating} />;
 };
 
 const RenderAdminCards = (
@@ -286,9 +257,9 @@ const GetAdminInfo = (admin: EventAdmin, canViewAdminProfiles: boolean) => {
   const history = useHistory();
   const [imageUrl, setImageUrl] = useState<string>("default_user_image.png");
   const [isLoading, setLoading] = useState<boolean>(true);
-        
+
   useEffect(() => {
-    userApi.getImage(admin.avatarUrl).then((response) => { 
+    userApi.getImage(admin.avatarUrl).then((response) => {
       setImageUrl(response.data);
       setLoading(false);
     });
@@ -310,8 +281,8 @@ const GetAdminInfo = (admin: EventAdmin, canViewAdminProfiles: boolean) => {
         <div>{admin.fullName}</div>
       </Card>
     </List.Item>
-  )
-}
+  );
+};
 
 const SortedEventInfo = ({
   userAccesses,
@@ -334,6 +305,9 @@ const SortedEventInfo = ({
   const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
   const [imageBase64, setImageBase64] = useState<string>();
   const [loading, setLoading] = useState(false);
+  const [isFeedbackModalVisible, setFeedbackModalVisible] = useState<boolean>(
+    false
+  );
 
   const fetchData = async () => {
     await eventUserApi.getEventsUser(userId).then(async (response) => {
@@ -372,7 +346,22 @@ const SortedEventInfo = ({
             setAdminsVisibility
           )}
         </div>
-        <div className="rateFlex">{RenderRatingSystem(event)}</div>
+        <div className="rateFlex">
+          {RenderRatingSystem(event)}
+          <div
+            className="feedbackInfo"
+            onClick={() => setFeedbackModalVisible(true)}
+          >
+            ({event.event.eventFeedbacks.length} відгуків)
+          </div>
+        </div>
+
+        <EventFeedbackModal
+          feedbacks={event.event.eventFeedbacks}
+          visible={isFeedbackModalVisible}
+          setVisible={setFeedbackModalVisible}
+          canLeaveFeedback={event.canEstimate}
+        />
       </Col>
       <Modal
         visible={adminsVisible}

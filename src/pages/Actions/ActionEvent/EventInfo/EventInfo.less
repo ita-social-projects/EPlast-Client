@@ -1,18 +1,18 @@
 @plast-color: #3c5438;
 @plast-color-hover: #73bd79;
-@cancelation-color: #8B0000;
-@cancelation-color-hover: #FF0000;
+@cancelation-color: #8b0000;
+@cancelation-color-hover: #ff0000;
 
 .event-info-background {
   padding: 20px 20px 20px 20px;
-  box-shadow: 0 0 9px 1px rgba(0, 0, 0, .25);
+  box-shadow: 0 0 9px 1px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.eventActions{
+.eventActions {
   width: 100%;
   padding: 20px 20px 20px 20px;
   display: flex;
@@ -21,8 +21,8 @@
   justify-content: center;
 }
 
-.eventActions{
-  @media (max-width: 768px)and (min-width: 280px) {
+.eventActions {
+  @media (max-width: 768px) and (min-width: 280px) {
     margin-right: 5px;
     text-size-adjust: scale(0.5);
   }
@@ -42,38 +42,38 @@
 
 .event-info-header {
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   justify-content: center;
 }
 
-.eventGallary{
+.eventGallary {
   width: 100%;
   margin: 40px 5px 0 5px;
   padding: 20px 20px 20px 20px;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 10vw;  
+  font-size: 10vw;
 }
 
-.upploadButton{
+.upploadButton {
   @media (max-width: 280px) {
     margin-left: -37px;
     transform: scale(0.8);
   }
-  @media (max-width: 320px) and (min-width:290px){
+  @media (max-width: 320px) and (min-width: 290px) {
     margin-left: -30px;
     transform: scale(0.9);
   }
 }
 
-.picturesWall{
+.picturesWall {
   @media (max-width: 280px) {
     width: 150px;
   }
-  @media (max-width: 320px) and (min-width:290px){
+  @media (max-width: 320px) and (min-width: 290px) {
     width: 170px;
   }
 }
@@ -104,6 +104,16 @@
   }
 }
 
+.feedbackInfo {
+  padding-left: 7px;
+  color: #999;
+  font-size: 0.4em;
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
+
 .galleryContainer {
   display: flex;
   flex-direction: row;
@@ -120,12 +130,12 @@
   }
 }
 
-.participantsTable{
+.participantsTable {
   width: 100%;
   margin: 40px 5px 0 5px;
   padding: 20px 20px 20px 20px;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   flex-direction: column;
 }
@@ -136,7 +146,7 @@
 
 .eventGallary:hover,
 .participantsTable:hover,
-.event-info-header:hover{
+.event-info-header:hover {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
@@ -187,6 +197,7 @@
   box-shadow: 0 0 0 !important;
   margin-top: 7px;
   padding-bottom: 6px;
+  align-items: baseline;
 }
 
 .rateFlex .ant-rate-star {
@@ -219,32 +230,31 @@ td {
 }
 
 .homeSlider {
-  @media(max-width: 280px) {
+  @media (max-width: 280px) {
     padding-left: 8px;
     padding-right: 8px;
-      }
-  @media (max-width: 376px) and (min-width:319px) {
+  }
+  @media (max-width: 376px) and (min-width: 319px) {
     width: 100%;
     height: 300px;
     padding-left: 8px;
     padding-right: 8px;
   }
-  @media (max-width: 540px) and (min-width:411px) {
+  @media (max-width: 540px) and (min-width: 411px) {
     width: 100%;
     height: 300px;
     padding-left: 15px;
     padding-right: 15px;
   }
-  @media (max-width: 540px) and (min-width:412px) {
+  @media (max-width: 540px) and (min-width: 412px) {
     width: 100%;
     height: 300px;
     padding-left: 15px;
     padding-right: 15px;
   }
-  @media (max-width: 767px) and (min-width:541px) {
+  @media (max-width: 767px) and (min-width: 541px) {
     width: 100%;
     height: 300px;
-
   }
   @media (min-width: 768px) {
     width: 80%;
@@ -264,18 +274,17 @@ td {
   color: #3c5438;
   font-size: 20px;
   height: 90px;
-  @media(max-width: 540px) and (min-width:411px){
-    left:-4px;
-      }
-  @media(max-width: 376px) and (min-width:319px){
-    left:-7px;
+  @media (max-width: 540px) and (min-width: 411px) {
+    left: -4px;
+  }
+  @media (max-width: 376px) and (min-width: 319px) {
+    left: -7px;
     font-size: 14px;
-      }
-  @media(max-width: 280px) {
-    left:-7px;
+  }
+  @media (max-width: 280px) {
+    left: -7px;
     font-size: 14px;
-      }
-
+  }
 }
 
 .ant-carousel .slick-next,
@@ -286,41 +295,40 @@ td {
   color: #3c5438;
   font-size: 20px;
   height: 30px;
-  @media(max-width: 540px) and (min-width:411px){
-    right:-4px;
-      }
-  @media(max-width: 376px) and (min-width:319px){
-    right:-7px;
+  @media (max-width: 540px) and (min-width: 411px) {
+    right: -4px;
+  }
+  @media (max-width: 376px) and (min-width: 319px) {
+    right: -7px;
     font-size: 14px;
-      }
-  @media(max-width: 280px) {
-    right:-7px;
+  }
+  @media (max-width: 280px) {
+    right: -7px;
     font-size: 14px;
-      }
+  }
 }
 
 @media (max-width: 767px) {
- .eventActions{
-   width: 100%;
-   display: contents;
+  .eventActions {
+    width: 100%;
+    display: contents;
   }
-  .rateFlex{
+  .event-info-header {
+    justify-content: center;
+  }
+  .eventGallary {
     width: 100%;
-    margin-bottom: 40px; 
-  }  
-  .eventGallary{
+  }
+  .participantsTable {
     width: 100%;
- }
- .participantsTable{
-  width: 100%;
-}
+  }
 }
 
 .eyeDetails {
   color: @plast-color !important;
 
   &:hover {
-    color: @plast-color-hover !important;;
+    color: @plast-color-hover !important;
   }
 }
 
@@ -347,7 +355,7 @@ td {
     font-size: 16px;
     color: black;
     text-align: center;
-    
+
     &:hover {
       color: @plast-color;
       text-decoration: underline;
@@ -359,7 +367,10 @@ td {
   overflow: auto;
   width: 100%;
 
-  .ant-table-thead > tr > th, .ant-table-tbody > tr > td, .ant-table tfoot > tr > th, .ant-table tfoot > tr > td {
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td,
+  .ant-table tfoot > tr > th,
+  .ant-table tfoot > tr > td {
     position: relative;
     padding: 16px 16px;
     overflow-wrap: break-word;
@@ -367,8 +378,7 @@ td {
   }
 }
 
-.hovering-cardbody > .ant-card-body:hover{
+.hovering-cardbody > .ant-card-body:hover {
   text-decoration: none;
-  color: black;  
-  
+  color: black;
 }
