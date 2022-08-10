@@ -137,3 +137,9 @@ export interface ApproversData {
   isUserHeadOfCity: boolean;
   currentUserId: string;
 }
+
+export enum ApproveType {
+  PlastMember,
+  Club,
+  City
+}
