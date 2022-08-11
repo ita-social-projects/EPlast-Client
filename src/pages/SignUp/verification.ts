@@ -23,7 +23,7 @@ export const checkNameSurName = (
   value: string,
   callback: any
 ) => {
-  const reg = /^[а-яА-ЯІіЄєЇїҐґ'- ]{1,20}((\s+|-))*$/;
+  const reg = /^[а-яА-ЯІіЄєЇїҐґ'-]{1,20}((\s+|-))*$/;
 
   if (value === null || value === undefined) {
     return callback();
@@ -69,7 +69,7 @@ export const checkPassword = (role: object, value: string, callback: any) => {
     if (reg.test(value) === false) {
       return callback(
         shouldContain(
-          "хоча б одну велику і малу літери, цифри та знаки"
+          "хоча б одну велику і малу латинську літери, цифри та знаки"
         )
       );
     }
