@@ -23,7 +23,7 @@ export const checkNameSurName = (
   value: string,
   callback: any
 ) => {
-  const reg = /^[а-яА-ЯІіЄєЇїҐґ' ]{1,20}((\s+|-))*$/;
+  const reg = /^[а-яА-ЯІіЄєЇїҐґ'- ]{1,20}((\s+|-))*$/;
 
   if (value === null || value === undefined) {
     return callback();
