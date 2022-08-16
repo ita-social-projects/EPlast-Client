@@ -52,12 +52,18 @@ const AddSectorAdminForm = (props: any) => {
   };
 
   const addSectorAdmin = async (admin: SectorAdmin) => {
-    await addAdministrator(admin.sectorId, admin);
+    const { data: newAdministrator } = await addAdministrator(admin.sectorId, admin);
     if (admin.adminType.adminTypeName == Roles.GoverningBodySectorHead) {
       setSectorHead(admin);
     }
-    setUsers(users.filter((x) => x.id !== admin.userId));
-    notificationLogic("success", "Користувач успішно доданий в провід");
+
+    if ((Date.now() > new Date(newAdministrator.endDate).getTime())) {
+      notificationLogic("info", "Колишні діловодства напряму були змінені");
+    } else {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+      setUsers(users.filter((x) => x.id !== admin.userId));
+      setAdmins((old: SectorAdmin[]) => [...old, newAdministrator]);
+    }
     form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
@@ -145,7 +151,6 @@ const AddSectorAdminForm = (props: any) => {
           showConfirm(newAdmin, existingAdmin);
         } else {
           addSectorAdmin(newAdmin);
-          setAdmins((old: SectorAdmin[]) => [...old, newAdmin]);
         }
       } finally {
         onAdd();

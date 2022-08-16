@@ -343,7 +343,7 @@ const Region = () => {
         previousAdmin = admin;
       }
     });
-    await AddAdmin(newAdmin);
+    const { data: newAdministrator } = await AddAdmin(newAdmin);
     await updateAdmins();
     if (previousAdmin.adminType.adminTypeName != "") {
       await createNotification(
@@ -357,7 +357,14 @@ const Region = () => {
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в окрузі`,
       true
     );
-    notificationLogic("success", "Користувач успішно доданий в провід");
+
+    if ((Date.now() > new Date(newAdministrator.endDate).getTime())) {
+      notificationLogic("info", "Колишні діловодства округи були змінені")
+    } else {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+  
+    }
+    
   };
 
   const editRegionAdmin = async (admin: RegionAdmin) => {

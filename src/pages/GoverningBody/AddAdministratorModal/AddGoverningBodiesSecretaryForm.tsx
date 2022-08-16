@@ -54,12 +54,19 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
-    await addAdministrator(admin.governingBodyId, admin);
+    const { data: newAdministrator } = await addAdministrator(admin.governingBodyId, admin);
     if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
       setGoverningBodyHead(admin);
     }
-    setUsers(users.filter((x) => x.id !== admin.userId));
-    notificationLogic("success", "Користувач успішно доданий в провід");
+
+    if ((Date.now() > new Date(newAdministrator.endDate).getTime())) {
+      notificationLogic("info", "Колишні діловодства краю були змінені");
+    } else {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+      setUsers(users.filter((x) => x.id !== admin.userId));
+      setAdmins((old: GoverningBodyAdmin[]) => [...old, newAdministrator]);
+    }
+
     form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
@@ -152,7 +159,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           showConfirm(newAdmin, existingAdmin);
         } else {
           addGoverningBodyAdmin(newAdmin);
-          setAdmins((old: GoverningBodyAdmin[]) => [...old, newAdmin]);
         }
       } finally {
         onAdd();

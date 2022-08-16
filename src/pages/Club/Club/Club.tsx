@@ -400,8 +400,7 @@ const Club = () => {
         previousAdmin = admin;
       }
     });
-    await addAdministrator(newAdmin.clubId, newAdmin);
-    await updateAdmins();
+    const { data: newAdministrator } = await addAdministrator(newAdmin.clubId, newAdmin);
     if (previousAdmin.adminType.adminTypeName != "") {
       await createNotification(
         previousAdmin.userId,
@@ -414,7 +413,12 @@ const Club = () => {
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в курені`,
       true
     );
-    notificationLogic("success", "Користувач успішно доданий в провід");
+    if ((Date.now() > new Date(newAdministrator.endDate).getTime())) {
+      notificationLogic("info", "Колишні діловодства куреня були змінені")
+    } else {
+      await updateAdmins();
+      notificationLogic("success", "Користувач успішно доданий в провід");
+    }
   };
 
   const editClubAdmin = async (admin: ClubAdmin) => {
@@ -622,10 +626,7 @@ const Club = () => {
         } else if (existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
         } else {
-          await addClubAdmin(admin).then(() => {
-            admins.push(admin);
-            setAdmins(admins);
-          });
+          await addClubAdmin(admin);
         }
       } finally {
         setvisible(false);
