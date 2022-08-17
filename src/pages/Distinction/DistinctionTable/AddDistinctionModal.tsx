@@ -1,4 +1,3 @@
-import { MinusOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import React from "react";
 import { useDistinctions } from "../../../stores/DistinctionsStore";
@@ -8,7 +7,6 @@ const AddUserDistinctionModal = () => {
   const [state, actions] = useDistinctions();
   return (
     <Drawer
-      closeIcon={<MinusOutlined />}
       title="Додати відзначення"
       placement="right"
       width={417}

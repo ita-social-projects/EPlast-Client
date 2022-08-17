@@ -148,6 +148,7 @@ const FormAddUserDistinction: React.FC = () => {
                 ]}
               >
                 <Select
+                  loading={state.isLoadingDistinctionTypes}
                   className={formclasses.selectTypeDistField}
                   showSearch
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}

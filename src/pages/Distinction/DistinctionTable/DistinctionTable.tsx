@@ -20,6 +20,7 @@ const DistinctionTable = () => {
 
   useEffect(() => {
     batch(() => {
+      actions.setLoadingUserDistinctionsTable(true);
       actions.getUserDistinctionsAccess();
       actions.fetchUserDistinctions();
     });
@@ -69,6 +70,7 @@ const DistinctionTable = () => {
           </Row>
           <div>
             <Table
+              loading={state.isLoadingUserDistinctionsTable}
               rowClassName={(record, index) =>
                 index === selectedRow ? classes.selectedRow : null
               }

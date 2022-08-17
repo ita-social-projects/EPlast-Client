@@ -19,6 +19,7 @@ const FormListOfDistinctionTypes: React.FC = () => {
   return (
     <>
       <List
+        loading={state.isLoadingDistinctionTypes}
         className={classes.list}
         header={null}
         footer={null}

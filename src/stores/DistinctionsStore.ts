@@ -4,7 +4,7 @@ import {
   createActionsHook,
   createHook,
   createStore,
-  defaults,
+  defaults
 } from "react-sweet-state";
 import distinctionApi from "../api/distinctionApi";
 import NotificationBoxApi from "../api/NotificationBoxApi";
@@ -15,7 +15,7 @@ import {
   failDeleteAction,
   failEditAction,
   failGetAction,
-  successfulDeleteAction,
+  successfulDeleteAction
 } from "../components/Notifications/Messages";
 import notificationLogic from "../components/Notifications/Notification";
 import Distinction from "../models/Distinction/Distinction";
@@ -42,6 +42,7 @@ type State = {
   editDistinctionTypesModalIsVisible: boolean;
   deleteModalIsVisible: boolean;
   deleteDitinctionId: number;
+  isLoadingUserDistinctionsTable: boolean;
   isLoadingUsersWithoutPrecautions: boolean;
   isLoadingDistinctionTypes: boolean;
 };
@@ -84,6 +85,7 @@ const initialState: State = {
   usersWithoutPrecautions: [],
   isLoadingDistinctionTypes: false,
   modalSelectedDistinction: new Distinction(),
+  isLoadingUserDistinctionsTable: false
 };
 
 const CreateDeleteNotification = (id: number): Action<State> => async ({
@@ -206,6 +208,14 @@ const actions = {
     });
   },
 
+  setLoadingUserDistinctionsTable: (isTableLoading: boolean): Action<State> => ({
+    setState,
+  }) => {
+    setState({
+      isLoadingUserDistinctionsTable: isTableLoading,
+    });
+  },
+
   setCurrentUserDistinction: (
     userDistinction: UserDistinctionTableInfo
   ): Action<State> => ({ setState }) => {
@@ -246,11 +256,12 @@ const actions = {
       );
   },
 
-  fetchUserDistinctions: (): Action<State> => ({ setState, getState }) => {
+  fetchUserDistinctions: (): Action<State> => ({ setState, getState,dispatch }) => {
     distinctionApi
       .getAllUsersDistinctions(getState().distinctionTableSettings)
       .then((response) => {
         setState({ userDistinctions: response });
+        dispatch(actions.setLoadingUserDistinctionsTable(false));
       })
       .catch(() => {
         notificationLogic(
