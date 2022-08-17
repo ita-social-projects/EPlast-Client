@@ -1,24 +1,10 @@
-import React from "react";
 import { Drawer } from "antd";
+import React from "react";
+import { useDistinctions } from "../../../stores/DistinctionsStore";
 import FormListOfDistinctionTypes from "./FormEditDistinctionTypes/FormListOfDistinctionTypes";
 
-interface Props {
-  visibleModalEdit: boolean;
-  setVisibleModalAddDist: (visibleModal: boolean) => void;
-  setVisibleModalEditDist: (visibleModal: boolean) => void;
-  onDelete: () => void;
-}
-
-const EditDistinctionTypesModal = ({
-  visibleModalEdit,
-  setVisibleModalAddDist,
-  setVisibleModalEditDist,
-  onDelete,
-}: Props) => {
-  const handleCancel = () => {
-    setVisibleModalEditDist(false);
-    setVisibleModalAddDist(true);
-  };
+const EditDistinctionTypesModal = () => {
+  const [state, actions] = useDistinctions();
 
   return (
     <Drawer
@@ -26,14 +12,11 @@ const EditDistinctionTypesModal = ({
       placement="right"
       width={420}
       height={1000}
-      visible={visibleModalEdit}
-      onClose={handleCancel}
+      visible={state.editDistinctionTypesModalIsVisible}
+      onClose={actions.closeEditDistinctionTypesModal}
       footer={null}
     >
-      <FormListOfDistinctionTypes
-        setVisibleModal={setVisibleModalEditDist}
-        onDelete={onDelete}
-      />
+      <FormListOfDistinctionTypes />
     </Drawer>
   );
 };

@@ -1,32 +1,20 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { List, Tooltip, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useDistinctions } from "../../../../stores/DistinctionsStore";
-import Distinction from "../../Interfaces/Distinction";
 import classes from "../FormEdit.module.css";
 import DeleteTypeConfirm from "./DeleteTypeConfirm";
 import FormAddDistinctionType from "./FormAddDistinctionType";
 import FormEditDistinctionType from "./FormEditDistinctionType";
 
-type FormListOfDistinctionTypesProps = {
-  setVisibleModal: (visibleModal: boolean) => void;
-  onDelete: () => void;
-};
-
-let defaultDist: Distinction = {
-  name: "",
-  id: 0,
-};
-const typeMaxLength = 200;
-
-const FormListOfDistinctionTypes: React.FC<FormListOfDistinctionTypesProps> = (
-  props: any
-) => {
+const FormListOfDistinctionTypes: React.FC = () => {
   const [state, actions] = useDistinctions();
 
   useEffect(() => {
-    actions.fetchData();
-  }, []);
+    if (state.editDistinctionTypesModalIsVisible) {
+      actions.fetchDistinctions();
+    }
+  }, [state.editDistinctionTypesModalIsVisible]);
 
   return (
     <>
@@ -40,18 +28,11 @@ const FormListOfDistinctionTypes: React.FC<FormListOfDistinctionTypesProps> = (
         renderItem={(item) => (
           <List.Item
             actions={[
-              state.editedDistinction.id == item.id ? (
-                <Tooltip title="Редагувати відзначення">
-                  <CloseOutlined
-                    className={classes.editIcon}
-                    onClick={actions.closeEditForm}
-                  />
-                </Tooltip>
-              ) : (
+              state.editedDistinction.id !== item.id && (
                 <Tooltip title="Редагувати відзначення">
                   <EditOutlined
                     className={classes.editIcon}
-                    onClick={() => actions.openEditForm(item)}
+                    onClick={() => actions.openDistinctionEditForm(item)}
                   />
                 </Tooltip>
               ),
@@ -74,7 +55,7 @@ const FormListOfDistinctionTypes: React.FC<FormListOfDistinctionTypesProps> = (
         )}
       />
       <br />
-      {state.editIsVisible ? (
+      {state.editDistinctionIsVisible ? (
         <FormEditDistinctionType />
       ) : (
         <FormAddDistinctionType />

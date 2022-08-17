@@ -1,8 +1,8 @@
-import { CheckOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Tooltip } from "antd";
 import React from "react";
+import Distinction from "../../../../models/Distinction/Distinction";
 import { useDistinctionsActions } from "../../../../stores/DistinctionsStore";
-import Distinction from "../../Interfaces/Distinction";
 import DistinctionTypeInputValidator from "./DistinctionTypeInputValidator";
 
 const FormAddDistinctionType = () => {
@@ -33,7 +33,7 @@ const FormAddDistinctionType = () => {
             <Button
               htmlType="submit"
               type="primary"
-              icon={<CheckOutlined />}
+              icon={<PlusOutlined />}
             ></Button>
           </Tooltip>
         </Form.Item>

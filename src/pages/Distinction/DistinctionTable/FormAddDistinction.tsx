@@ -1,122 +1,54 @@
-import React, { useEffect, useState } from "react";
+import { EditOutlined } from "@ant-design/icons";
 import {
-  Form,
-  DatePicker,
-  Select,
-  Input,
   Button,
-  Row,
   Col,
+  DatePicker,
+  Form,
+  Input,
+  Row,
+  Select,
   Tooltip,
 } from "antd";
-import { EditOutlined } from "@ant-design/icons";
-import Distinction from "../Interfaces/Distinction";
-import classes from "./FormEdit.module.css";
-import UserDistinction from "../Interfaces/UserDistinction";
+import React, { useEffect } from "react";
 import distinctionApi from "../../../api/distinctionApi";
-import formclasses from "./Form.module.css";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import EditDistinctionTypesModal from "./EditDistinctionTypesModal";
 import {
   emptyInput,
   maxNumber,
 } from "../../../components/Notifications/Messages";
+import UserDistinction from "../../../models/Distinction/UserDistinction";
+import EditDistinctionTypesModal from "./EditDistinctionTypesModal";
+import formclasses from "./Form.module.css";
+import classes from "./FormEdit.module.css";
 
-import precautionApi from "../../../api/precautionApi";
+import moment from "moment";
+import { batch } from "react-sweet-state";
 import {
   descriptionValidation,
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
-import moment from "moment";
-import FormItem from "antd/lib/form/FormItem";
+import { useDistinctions } from "../../../stores/DistinctionsStore";
 
-type FormAddDistinctionProps = {
-  setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: () => void;
-  onDelete: () => void;
-};
-
-const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
-  const { setVisibleModal, onAdd, onDelete } = props;
+const FormAddUserDistinction: React.FC = () => {
   const [form] = Form.useForm();
-  const [userData, setUserData] = useState<any[]>([
-    {
-      user: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        birthday: "",
-      },
-      regionName: "",
-      cityName: "",
-      clubName: "",
-      userPlastDegreeName: "",
-      userRoles: "",
-    },
-  ]);
-  const [distData, setDistData] = useState<Distinction[]>(Array<Distinction>());
-  const [loadingUserStatus, setLoadingUserStatus] = useState(false);
-  const [visibleModalEditDist, setVisibleModalEditDist] = useState(false);
   const dateFormat = "DD.MM.YYYY";
 
+  const [state, actions] = useDistinctions();
   useEffect(() => {
-    setLoadingUserStatus(true);
-    precautionApi.getUsersWithoutPrecautions().then((response) => {
-      setUserData(response);
-      setLoadingUserStatus(false);
-    });
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [visibleModalEditDist]);
-
-  const fetchData = async () => {
-    await distinctionApi.getDistinctions().then((response) => {
-      setDistData(response.data);
-    });
-  };
+    if (state.addUserDistinctionModalIsVisible) {
+      actions.fetchDistinctions();
+      actions.getUsersWithoutPrecautions();
+    }
+  }, [state.addUserDistinctionModalIsVisible]);
 
   const handleCancel = () => {
     form.resetFields();
-    setVisibleModal(false);
+    actions.closeUserDistinctionAddModal();
   };
 
   const backgroundColor = (user: any) => {
     return user.isInLowerRole
       ? { backgroundColor: "#D3D3D3" }
       : { backgroundColor: "white" };
-  };
-
-  const createNotifications = async (userDistinction: UserDistinction) => {
-    await NotificationBoxApi.createNotifications(
-      [userDistinction.userId],
-      `Вам було надано нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
-      NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/distinctions`,
-      `Переглянути`
-    );
-
-    await NotificationBoxApi.getCitiesForUserAdmins(
-      userDistinction.userId
-    ).then((res) => {
-      res.cityRegionAdmins.length !== 0 &&
-        res.cityRegionAdmins.forEach(async (cra) => {
-          await NotificationBoxApi.createNotifications(
-            [cra.cityAdminId, cra.regionAdminId],
-            `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нове відзначення: '${userDistinction.distinction.name}' від ${userDistinction.reporter}. `,
-            NotificationBoxApi.NotificationTypes.UserNotifications,
-            `/distinctions`,
-            `Переглянути`
-          );
-        });
-    });
-  };
-
-  const showModalEditTypes = () => {
-    setVisibleModal(false);
-    setVisibleModalEditDist(true);
   };
 
   const handleSubmit = async (values: any) => {
@@ -131,11 +63,11 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
       reason: values.reason,
       number: values.number,
     };
-    await distinctionApi.addUserDistinction(newDistinction);
-    setVisibleModal(false);
+    batch(() => {
+      actions.addUserDistinction(newDistinction);
+      actions.closeUserDistinctionAddModal();
+    });
     form.resetFields();
-    onAdd();
-    await createNotifications(newDistinction);
   };
 
   function disabledDate(currentDate: any) {
@@ -220,7 +152,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
                   showSearch
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
-                  {distData?.map((o) => (
+                  {state.distinctionTypes?.map((o) => (
                     <Select.Option key={o.id} value={JSON.stringify(o)}>
                       {o.name}
                     </Select.Option>
@@ -235,7 +167,7 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
               >
                 <EditOutlined
                   className={classes.editIcon}
-                  onClick={showModalEditTypes}
+                  onClick={actions.openEditDistinctionTypesModal}
                 />
               </Tooltip>
             </Col>
@@ -259,10 +191,10 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
             <Select
               className={formclasses.selectField}
               showSearch
-              loading={loadingUserStatus}
+              loading={state.isLoadingUsersWithoutPrecautions}
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
             >
-              {userData?.map((o) => (
+              {state.usersWithoutPrecautions?.map((o) => (
                 <Select.Option
                   key={o.id}
                   value={JSON.stringify(o)}
@@ -362,14 +294,9 @@ const FormAddDistinction: React.FC<FormAddDistinctionProps> = (props: any) => {
           </Form.Item>
         </Col>
       </Row>
-      <EditDistinctionTypesModal
-        setVisibleModalAddDist={setVisibleModal}
-        setVisibleModalEditDist={setVisibleModalEditDist}
-        visibleModalEdit={visibleModalEditDist}
-        onDelete={onDelete}
-      />
+      <EditDistinctionTypesModal />
     </Form>
   );
 };
 
-export default FormAddDistinction;
+export default FormAddUserDistinction;

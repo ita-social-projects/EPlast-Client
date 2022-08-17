@@ -1,8 +1,9 @@
-import { CloseOutlined, EditOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Tooltip } from "antd";
 import React, { useEffect } from "react";
+import Distinction from "../../../../models/Distinction/Distinction";
 import { useDistinctions } from "../../../../stores/DistinctionsStore";
-import Distinction from "../../Interfaces/Distinction";
+
 import DistinctionTypeInputValidator from "./DistinctionTypeInputValidator";
 
 const FormEditDistinctionType = () => {
@@ -22,7 +23,7 @@ const FormEditDistinctionType = () => {
     form.setFieldsValue({
       distinctionName: state.editedDistinction.name,
     });
-  });
+  }, []);
 
   return (
     <Form form={form} onFinish={editHandler} layout="inline" size="large">
@@ -39,17 +40,16 @@ const FormEditDistinctionType = () => {
             <Button
               htmlType="submit"
               type="primary"
-              icon={<EditOutlined />}
+              icon={<CheckOutlined />}
             ></Button>
           </Tooltip>
         </Form.Item>
         <Form.Item noStyle>
           <Tooltip title="Скасувати">
             <Button
-              danger
               htmlType="button"
               icon={<CloseOutlined />}
-              onClick={actions.closeEditForm}
+              onClick={actions.closeDistinctionEditForm}
             ></Button>
           </Tooltip>
         </Form.Item>
