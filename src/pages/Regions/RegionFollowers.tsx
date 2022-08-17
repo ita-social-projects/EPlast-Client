@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
 import {
   CloseOutlined,
   ExclamationCircleOutlined,
-  RollbackOutlined,
+  RollbackOutlined
 } from "@ant-design/icons";
+import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
+import Title from "antd/lib/typography/Title";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import {
-  getRegionFollowers,
   getRegionAdministration,
   getRegionById,
-  removeFollower,
+  getRegionFollowers,
+  removeFollower
 } from "../../api/regionsApi";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import userApi from "../../api/UserApi";
-import "./Region.less";
-import RegionFollower from "../../models/Region/RegionFollower";
-import Title from "antd/lib/typography/Title";
-import Spinner from "../Spinner/Spinner";
-import { Roles } from "../../models/Roles/Roles";
+import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import { successfulDeleteAction } from "../../components/Notifications/Messages";
 import notificationLogic from "../../components/Notifications/Notification";
 import extendedTitleTooltip, {
-  parameterMaxLength,
+  parameterMaxLength
 } from "../../components/Tooltip";
+import RegionFollower from "../../models/Region/RegionFollower";
+import Spinner from "../Spinner/Spinner";
+import "./Region.less";
 
 const AdminAndOkruga = ["Admin", "Крайовий Адмін", "Голова Округи"];
 const RegionFollowers = () => {
@@ -99,7 +98,7 @@ const RegionFollowers = () => {
 
   return (
     <Layout.Content>
-      <Title level={2}>Прихильники округи :</Title>
+      <Title level={2}>Заяви на створення станиць:</Title>
       {loading ? (
         <Spinner />
       ) : (
@@ -155,7 +154,7 @@ const RegionFollowers = () => {
               </Card>
             ))
           ) : (
-            <Title level={4}>Ще немає прихильників округи</Title>
+            <Title level={4}>Ще немає заяв на створення станиць</Title>
           )}
         </div>
       )}

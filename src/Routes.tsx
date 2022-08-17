@@ -1,69 +1,69 @@
+import AboutBase from "./pages/AboutBase/AboutBase";
+import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
+import EventUser from "./pages/Actions/ActionEvent/EventUser/EventUser";
+import Actions from "./pages/Actions/Actions";
+import EventTypes from "./pages/Actions/EventTypes/EventTypes";
+import AnnouncementsTable from "./pages/AnnouncementsTable/AnnouncementsTable";
+import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
+import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
+import AnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/AnnualReportInformation/AnnualReportInformation";
+import AnnualReportTable from "./pages/AnnualReport/AnnualReportTable/AnnualReportTable";
+import ClubAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/ClubAnnualReportInformation/ClubAnnualReportInformation";
+import RegionAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/RegionAnnualReportInformation";
+import { ClubAnnualReportCreate } from "./pages/AnnualReport/ClubAnnualReportCreate/ClubAnnualReportCreate";
+import ClubAnnualReportEdit from "./pages/AnnualReport/ClubAnnualReportEdit/ClubAnnualReportEdit";
+import RegionAnnualReportCreate from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportCreate";
+import RegionAnnualReportEdit from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportEdit";
 import ActionCities from "./pages/City/Cities/ActionCities";
 import City from "./pages/City/City/City";
-import CityMembers from "./pages/City/City/CityMembers";
 import CityAdministration from "./pages/City/City/CityAdministration";
 import CityDocuments from "./pages/City/City/CityDocuments";
 import CityFollowers from "./pages/City/City/CityFollowers";
+import CityMembers from "./pages/City/City/CityMembers";
 import CreateCity from "./pages/City/CreateCity/CreateCity";
-import EventUser from "./pages/Actions/ActionEvent/EventUser/EventUser";
-import Actions from "./pages/Actions/Actions";
-import ActionEvent from "./pages/Actions/ActionEvent/ActionEvent";
-import UserProfile from "./pages/userPage/personalData/PersonalData";
-import ActionClubs from "./pages/Club/Clubs/ActionClubs";
 import Club from "./pages/Club/Club/Club";
-import CreateClub from "./pages/Club/CreateClub/CreateClub";
-import ClubMembers from "./pages/Club/Club/ClubMembers";
-import ClubFollowers from "./pages/Club/Club/ClubFollowers";
 import ClubAdministration from "./pages/Club/Club/ClubAdministration";
 import ClubDocuments from "./pages/Club/Club/ClubDocuments";
-import EventTypes from "./pages/Actions/EventTypes/EventTypes";
-import AnnualReportCreate from "./pages/AnnualReport/AnnualReportCreate/AnnualReportCreate";
-import AnnualReportTable from "./pages/AnnualReport/AnnualReportTable/AnnualReportTable";
-import AnnualReportEdit from "./pages/AnnualReport/AnnualReportEdit/AnnualReportEdit";
-import UsersTable from "./pages/UserTable/UserTable";
+import ClubFollowers from "./pages/Club/Club/ClubFollowers";
+import ClubMembers from "./pages/Club/Club/ClubMembers";
+import ActionClubs from "./pages/Club/Clubs/ActionClubs";
+import CreateClub from "./pages/Club/CreateClub/CreateClub";
+import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import UserDistinctions from "./pages/Distinction/DistinctionTable/DistinctionTable";
-import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
-import Regions from "./pages/Regions/ActionRegion";
-import ActionRegion from "./pages/Regions/Region";
-import AddNewRegionFormPage from "./pages/Regions/AddRegion";
-import RegionAdministration from "./pages/Regions/RegionAdministration";
-import RegionDocuments from "./pages/Regions/RegionDocuments";
-import RegionMembers from "./pages/Regions/RegionMembers";
-import StatisticsCities from "./pages/Statistics/StatisticsCities";
-import StatisticsRegions from "./pages/Statistics/StatisticsRegions";
-import { ClubAnnualReportCreate } from "./pages/AnnualReport/ClubAnnualReportCreate/ClubAnnualReportCreate";
-import ClubAnnualReportEdit from "./pages/AnnualReport/ClubAnnualReportEdit/ClubAnnualReportEdit";
 import DocumentsTable from "./pages/Documents/DocumentsTable";
-import PrecautionTable from "./pages/Precaution/PrecautionTable/PrecautionTable";
-import RegionBoard from "./pages/RegionsBoard/RegionBoard";
-import RegionBoardEdit from "./pages/RegionsBoard/RegionBoardEdit";
-import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministration";
-import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
-import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
+import Announcements from "./pages/GoverningBody/Announcement/Announcement";
 import CreateGoverningBody from "./pages/GoverningBody/CreateGoverningBody";
-import AboutBase from "./pages/AboutBase/AboutBase";
-import CreateGoverningBodySector from "./pages/GoverningBody/Sector/CreateSector";
-import RegionAnnualReportCreate from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportCreate";
-import RegionAnnualReportEdit from "./pages/AnnualReport/RegionAnnualReportCreateEditView/RegionAnnualReportEdit";
-import RegionAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/RegionAnnualReportInformation";
-import AnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/AnnualReportInformation/AnnualReportInformation";
-import ClubAnnualReportInformation from "./pages/AnnualReport/AnnualReportTable/ClubAnnualReportInformation/ClubAnnualReportInformation";
+import GoverningBody from "./pages/GoverningBody/GoverningBody/GoverningBody";
 import GoverningBodyAdministration from "./pages/GoverningBody/GoverningBody/GoverningBodyAdministration";
 import GoverningBodyDocuments from "./pages/GoverningBody/GoverningBody/GoverningBodyDocuments";
-import GoverningBodySectors from "./pages/GoverningBody/Sector/Sectors";
-import GoverningBodySector from "./pages/GoverningBody/Sector/Sector";
+import CreateGoverningBodySector from "./pages/GoverningBody/Sector/CreateSector";
 import EditGoverningBodySector from "./pages/GoverningBody/Sector/EditSector";
-import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
+import GoverningBodySector from "./pages/GoverningBody/Sector/Sector";
 import GoverningBodySectorAdministration from "./pages/GoverningBody/Sector/SectorAdministration";
-import Announcements from "./pages/GoverningBody/Announcement/Announcement";
 import SectorAnnouncement from "./pages/GoverningBody/Sector/SectorAnnouncement/SectorAnnouncement";
-import UserRenewalTable from "./pages/UserRenewal/UserRenewalTable/UserRenewalTable";
-import TermsOfUse from "./pages/Terms/TermsOfUse";
-import TermsEdit from "./pages/Terms/TermsEdit";
-import AnnouncementsTable from "./pages/AnnouncementsTable/AnnouncementsTable";
-import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainAdministration";
-import DecisionTable from "./pages/DecisionTable/DecisionTable";
+import GoverningBodySectorDocuments from "./pages/GoverningBody/Sector/SectorDocuments";
+import GoverningBodySectors from "./pages/GoverningBody/Sector/Sectors";
+import KadrasTable from "./pages/KadraVykhovnykiv/KadrasPage";
+import PrecautionTable from "./pages/Precaution/PrecautionTable/PrecautionTable";
+import Regions from "./pages/Regions/ActionRegion";
+import AddNewRegionFormPage from "./pages/Regions/AddRegion";
+import ActionRegion from "./pages/Regions/Region";
+import RegionAdministration from "./pages/Regions/RegionAdministration";
+import RegionDocuments from "./pages/Regions/RegionDocuments";
 import RegionFollowers from "./pages/Regions/RegionFollowers";
+import RegionMembers from "./pages/Regions/RegionMembers";
+import RegionBoard from "./pages/RegionsBoard/RegionBoard";
+import RegionBoardAdministration from "./pages/RegionsBoard/RegionBoardAdministration";
+import RegionBoardDocuments from "./pages/RegionsBoard/RegionBoardDocuments";
+import RegionBoardEdit from "./pages/RegionsBoard/RegionBoardEdit";
+import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainAdministration";
+import StatisticsCities from "./pages/Statistics/StatisticsCities";
+import StatisticsRegions from "./pages/Statistics/StatisticsRegions";
+import TermsEdit from "./pages/Terms/TermsEdit";
+import TermsOfUse from "./pages/Terms/TermsOfUse";
+import UserProfile from "./pages/userPage/personalData/PersonalData";
+import UserRenewalTable from "./pages/UserRenewal/UserRenewalTable/UserRenewalTable";
+import UsersTable from "./pages/UserTable/UserTable";
 
 export default [
   {
@@ -229,7 +229,7 @@ export default [
   },
   {
     path: "/regions/followers/:id",
-    name: "Заяви на створення станиці",
+    name: "Заяви на створення станиць",
     Component: RegionFollowers,
   },
   {
