@@ -3,11 +3,14 @@ export default class BlankDocument {
   blobName: string;
   fileName: string;
   userId: string;
+  courseId: number | null;
 
   constructor() {
     this.id = 0;
     this.blobName = "";
     this.fileName = "";
     this.userId = "";
+    this.courseId = 0;
+    
   }
 }
