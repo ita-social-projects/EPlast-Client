@@ -142,11 +142,11 @@ const PrivateLayout = ({ children }: any) => {
             {userAccesses?.regionBoard ? (
               <Menu.Item key="regionsBoard" icon={<BankOutlined />}>
                 <a
-                  href="/regionsBoard"
+                  href="/regionalBoard"
                   onClick={(e) => {
                     e.preventDefault();
                     setCollapsed(true);
-                    history.push("/regionsBoard");
+                    history.push("/regionalBoard");
                   }}
                 >
                   Крайовий Провід Пласту
@@ -255,6 +255,7 @@ const PrivateLayout = ({ children }: any) => {
                       }}
                     >
                       Перестороги
+
                     </a>
                   </Menu.Item>
                 ) : null}
@@ -331,6 +332,7 @@ const PrivateLayout = ({ children }: any) => {
                   </Menu.Item>
                 ) : null}
 
+
                 {userAnnualReportAccess?.CanViewCityReportsTable ? (
                   <Menu.Item icon={<FileTextOutlined />} key="annualreportcity">
                     <a
@@ -342,24 +344,6 @@ const PrivateLayout = ({ children }: any) => {
                       }}
                     >
                       Річні звіти станиць
-                    </a>
-                  </Menu.Item>
-                ) : null}
-
-                {userAnnualReportAccess?.CanViewClubReportsTable ? (
-                  <Menu.Item
-                    icon={<FileTextOutlined />}
-                    key="annualreporthovel"
-                  >
-                    <a
-                      href="/annualreport/table/hovel"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCollapsed(true);
-                        history.push("/annualreport/table/hovel");
-                      }}
-                    >
-                      Річні звіти куренів
                     </a>
                   </Menu.Item>
                 ) : null}
@@ -399,6 +383,20 @@ const PrivateLayout = ({ children }: any) => {
                   </Menu.Item>
                 </SubMenu>
               </SubMenu>
+
+            ) : userAnnualReportAccess?.CanViewClubReportsTable ? (
+              <Menu.Item icon={<FileTextOutlined />} key="annualreporthovel">
+                <a
+                  href="/annualreport/table/hovel"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCollapsed(true);
+                    history.push("/annualreport/table/hovel");
+                  }}
+                >
+                  Річні звіти куренів
+                </a>
+              </Menu.Item>
             ) : null}
 
             {userAccesses?.aboutBase ? (
