@@ -358,13 +358,11 @@ const Region = () => {
       true
     );
 
-    if ((Date.now() > new Date(newAdministrator.endDate).getTime())) {
-      notificationLogic("info", "Колишні діловодства округи були змінені")
-    } else {
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
       notificationLogic("success", "Користувач успішно доданий в провід");
-  
+    } else {
+      notificationLogic("info", "Колишні діловодства округи були змінені");
     }
-    
   };
 
   const editRegionAdmin = async (admin: RegionAdmin) => {
@@ -390,14 +388,14 @@ const Region = () => {
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-            existingAdmin.endDate === undefined
+              existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (newAdmin.id === 0) {
           addRegionAdmin(newAdmin);
@@ -424,14 +422,14 @@ const Region = () => {
           є Головою Округи, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -446,14 +444,14 @@ const Region = () => {
           вже має таку роль, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -468,7 +466,7 @@ const Region = () => {
           не є членом Пласту.
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -802,7 +800,7 @@ const Region = () => {
                     style={{
                       display:
                         userAccesses["DeleteRegion"] ||
-                        userAccesses["EditRegion"]
+                          userAccesses["EditRegion"]
                           ? "block"
                           : "none",
                     }}
@@ -839,7 +837,7 @@ const Region = () => {
                         </Tooltip>
                       </Col>
                       {activeUserRoles.includes(Roles.Admin) ||
-                      activeUserRoles.includes(Roles.GoverningBodyAdmin) ? (
+                        activeUserRoles.includes(Roles.GoverningBodyAdmin) ? (
                         isActiveRegion ? (
                           <Col offset={1}>
                             <Tooltip title="Заархівувати округу">
@@ -1004,7 +1002,7 @@ const Region = () => {
               <a
                 onClick={() =>
                   userAccesses["IsAdmin"] ||
-                  (userAccesses["DownloadDocument"] && isActiveUserFromRegion)
+                    (userAccesses["DownloadDocument"] && isActiveUserFromRegion)
                     ? history.push(`/regions/documents/${region.id}`)
                     : undefined
                 }
@@ -1038,7 +1036,7 @@ const Region = () => {
             </Row>
             <div className="cityMoreButton">
               {userAccesses["IsAdmin"] ||
-              (userAccesses["DownloadDocument"] && isActiveUserFromRegion) ? (
+                (userAccesses["DownloadDocument"] && isActiveUserFromRegion) ? (
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -1103,8 +1101,8 @@ const Region = () => {
                             activeUserRoles.includes(role)
                           )
                             ? history.push(
-                                `/regions/follower/edit/${follower.id}`
-                              )
+                              `/regions/follower/edit/${follower.id}`
+                            )
                             : undefined
                         }
                       >

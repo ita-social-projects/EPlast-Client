@@ -59,12 +59,11 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       setGoverningBodyHead(admin);
     }
 
-    if ((Date.now() > new Date(newAdministrator.endDate).getTime())) {
-      notificationLogic("info", "Колишні діловодства краю були змінені");
-    } else {
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
       notificationLogic("success", "Користувач успішно доданий в провід");
-      setUsers(users.filter((x) => x.id !== admin.userId));
       setAdmins((old: GoverningBodyAdmin[]) => [...old, newAdministrator]);
+    } else {
+      notificationLogic("info", "Колишні діловодства краю були змінені");
     }
 
     form.resetFields();
@@ -105,14 +104,14 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-            existingAdmin.endDate === undefined
+              existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (newAdmin.id === 0) {
           addGoverningBodyAdmin(newAdmin);
@@ -318,8 +317,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-            ? undefined
-            : moment.utc(props.admin.endDate).local()
+              ? undefined
+              : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker

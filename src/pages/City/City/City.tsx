@@ -383,11 +383,11 @@ const City = () => {
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
       true
     );
-    if ((Date.now() > new Date(newAdministrator.endDate).getTime())) {
-      notificationLogic("info", "Колишні діловодства станиці були змінені")
-    } else {
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
       notificationLogic("success", "Користувач успішно доданий в провід");
       updateAdmins();
+    } else {
+      notificationLogic("info", "Колишні діловодства станиці були змінені")
     }
     return newAdministrator;
   };
