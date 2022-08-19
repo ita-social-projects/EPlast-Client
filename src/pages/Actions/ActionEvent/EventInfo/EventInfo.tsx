@@ -89,16 +89,19 @@ const EventInfo = () => {
     {}
   );
   const [isUserRegisteredUser, setUserRegisterUser] = useState<boolean>();
+  const [participantsLoaded, setParticipantsLoaded] = useState<boolean>(false);
+  const [participants, setParticipants] = useState<EventParticipant[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await eventsApi.getEventInfo(id);
+      await getUserAccessesForEvents(id);
       setEvent(response.data);
+      setParticipantsInTable(response.data.event.eventParticipants);
       getEventStatusId(response.data.event.eventStatus);
       setLoading(true);
     };
     fetchData();
-    getUserAccessesForEvents(id);
     getUserRoles();
   }, [visibleDrawer, approvedEvent, render]);
 
@@ -150,14 +153,15 @@ const EventInfo = () => {
     });
   };
 
-  const setParticipantsInTable = () => {
-    if (userAccesses["SeeUserTable"]) {
-      return event.event?.eventParticipants;
-    } else {
-      return event.event?.eventParticipants.filter(
+  const setParticipantsInTable = (eventParticipants: EventParticipant[]) => {
+    setParticipants(
+      userAccesses["SeeUserTable"]
+      ? eventParticipants
+      : eventParticipants.filter(
         (p: EventParticipant) => p.status == "Учасник"
-      );
-    }
+      )
+    );
+    setParticipantsLoaded(true);
   };
 
   return loading === false ? (
@@ -216,10 +220,11 @@ const EventInfo = () => {
               <ParticipantsTable
                 userAccesses={userAccesses}
                 isEventFinished={event.isEventFinished}
-                participants={setParticipantsInTable()}
+                participants={participants}
                 eventName={event.event.eventName}
-                key={event.event?.eventId}
+                key={event.event.eventId}
                 setRender={setRender}
+                loading={!participantsLoaded}
               />
             </div>
           </div>

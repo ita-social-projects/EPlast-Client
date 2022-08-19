@@ -949,7 +949,7 @@ const Region = () => {
                     <div
                       onClick={() =>
                         !activeUserRoles.includes(Roles.RegisteredUser)
-                          ? history.push(`/userpage/main/${admin.userId}`)
+                          ? history.push(`/userpage/main/${admin.user.id}`)
                           : undefined
                       }
                     >

@@ -77,7 +77,6 @@ const CityAdministration = () => {
     setAdministration(
       [...responseAdmins.data.administration].filter((a) => a != null)
     );
-
     setCityName(responseAdmins.data.name);
     setActiveUserRoles(userApi.getActiveUserRoles());
     setLoading(false);
@@ -180,11 +179,9 @@ const CityAdministration = () => {
               >
                 <div
                   onClick={() =>
-                    canSeeProfiles
-                      ? history.push(`/userpage/main/${member.userId}`)
-                      : undefined
+                    history.push(`/userpage/main/${member.user.id}`)
                   }
-                  className={`cityMember ${canSeeProfiles || "notAccess"}`}
+                  className={`cityMember`}
                 >
                   <div>
                     {photosLoading ? (
@@ -219,6 +216,7 @@ const CityAdministration = () => {
           Назад
         </Button>
       </div>
+      
       <AddAdministratorModal
         admin={admin}
         setAdmin={setAdmin}
@@ -228,6 +226,7 @@ const CityAdministration = () => {
         cityName={cityName}
         onAdd={onAdd}
       ></AddAdministratorModal>
+
     </Layout.Content>
   );
 };

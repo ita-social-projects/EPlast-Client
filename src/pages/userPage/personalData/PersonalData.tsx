@@ -38,7 +38,6 @@ export default function ({
 }: any) {
   const { userId } = useParams<{ userId: string }>();
 
-
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserId, setActiveUserId] = useState<string>("");
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
@@ -75,7 +74,7 @@ export default function ({
         notificationLogic("error", error.message);
       });
 
-    await UserApi.getUserProfileById(currentUserId, userId)
+    await UserApi.getUserProfileById(userId)
       .then((response) => {
         SetUserProfile(response.data);
         if (response.data?.user !== null) {
@@ -100,7 +99,9 @@ export default function ({
   };
 
   useEffect(() => {
-    if (!dataLoaded) {fetchData();}
+    if (!dataLoaded) {
+      fetchData();
+    }
   }, [dataLoaded]);
 
   return (
@@ -119,47 +120,50 @@ export default function ({
       }}
     >
       <ScrollToTop />
-      {!dataLoaded ? <Spinner /> :
-      <div className="mainContainer">
-        <Menu id={userId} />
-        {specify === "main" ? (
-          <div className="content">
-            <UserFields />
-          </div>
-        ) : specify === "edit" ? (
-          <div className="content">
-            <EditUserPage />
-          </div>
-        ) : specify === "activeMembership" ? (
-          <div className="content">
-            <ActiveMembership />
-          </div>
-        ) : specify === "secretaries" ? (
-          <div className="content">
-            <Secretaries />
-          </div>
-        ) : specify === "eventuser" ? (
-          <div className="content">
-            <EventUser />
-          </div>
-        ) : specify === "blank" ? (
-          <div className="content">
-            <Blanks />
-          </div>
-        ) : specify === "approvers" ? (
-          <div className="content">
-            <Approvers />
-          </div>
-        ): specify === "course" ? (
-          <div className="content">
-            <Course />
-          </div>
-        ) : (
-          <div className="content">
-            <UserFields />
-          </div>
-        )}
-      </div>}
+      {!dataLoaded ? (
+        <Spinner />
+      ) : (
+        <div className="mainContainer">
+          <Menu id={userId} />
+          {specify === "main" ? (
+            <div className="content">
+              <UserFields />
+            </div>
+          ) : specify === "edit" ? (
+            <div className="content">
+              <EditUserPage />
+            </div>
+          ) : specify === "activeMembership" ? (
+            <div className="content">
+              <ActiveMembership />
+            </div>
+          ) : specify === "secretaries" ? (
+            <div className="content">
+              <Secretaries />
+            </div>
+          ) : specify === "eventuser" ? (
+            <div className="content">
+              <EventUser />
+            </div>
+          ) : specify === "blank" ? (
+            <div className="content">
+              <Blanks />
+            </div>
+          ) : specify === "approvers" ? (
+            <div className="content">
+              <Approvers />
+            </div>
+          ) : specify === "course" ? (
+            <div className="content">
+              <Course />
+            </div>
+          ) : (
+            <div className="content">
+              <UserFields />
+            </div>
+          )}
+        </div>
+      )}
     </PersonalDataContext.Provider>
   );
 }
