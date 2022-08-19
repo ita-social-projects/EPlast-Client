@@ -255,7 +255,6 @@ const PrivateLayout = ({ children }: any) => {
                       }}
                     >
                       Перестороги
-
                     </a>
                   </Menu.Item>
                 ) : null}
@@ -332,7 +331,6 @@ const PrivateLayout = ({ children }: any) => {
                   </Menu.Item>
                 ) : null}
 
-
                 {userAnnualReportAccess?.CanViewCityReportsTable ? (
                   <Menu.Item icon={<FileTextOutlined />} key="annualreportcity">
                     <a
@@ -383,7 +381,6 @@ const PrivateLayout = ({ children }: any) => {
                   </Menu.Item>
                 </SubMenu>
               </SubMenu>
-
             ) : userAnnualReportAccess?.CanViewClubReportsTable ? (
               <Menu.Item icon={<FileTextOutlined />} key="annualreporthovel">
                 <a
