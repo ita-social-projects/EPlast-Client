@@ -38,7 +38,7 @@ interface Props {
   setVisibleDrawer: (visible: boolean) => void;
   subscribeOnEvent: () => void;
   unSubscribeOnEvent: () => void;
-  setRender: (visible: boolean) => void;
+  setRender: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const RenderEventIcons = (
@@ -225,8 +225,17 @@ const RenderEventIcons = (
   return eventIcons;
 };
 
-const RenderRatingSystem = ({ event }: EventDetails) => {
-  return <Rate allowHalf disabled defaultValue={event.rating} />;
+const GetReviewString = (amount: number) => {
+  let numberInText = String(amount);
+  let lastDigit = numberInText.charAt(numberInText.length - 1);
+
+  let single = ["1"];
+  let pair = ["2", "3", "4"];
+
+  if (single.includes(lastDigit) && amount != 11) return `${amount} відгук`;
+  else if (pair.includes(lastDigit) && (amount < 10 || amount > 20))
+    return `${amount} відгуки`;
+  else return `${amount} відгуків`;
 };
 
 const RenderAdminCards = (
@@ -323,18 +332,9 @@ const SortedEventInfo = ({
     });
   };
 
-  useEffect(() => {
-    setRender(true);
-  }, [event]);
-
   return (
     <Row>
       <Col className="eventActions">
-        <img
-          className="imgEvent"
-          alt="example"
-          src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
-        />
         <div className="iconsFlex">
           {RenderEventIcons(
             userAccesses,
@@ -347,20 +347,24 @@ const SortedEventInfo = ({
           )}
         </div>
         <div className="rateFlex">
-          {RenderRatingSystem(event)}
+          <Rate allowHalf disabled defaultValue={event.event.rating} />
           <div
-            className="feedbackInfo"
-            onClick={() => setFeedbackModalVisible(true)}
+            className={"feedbackInfo"}
+            onClick={() => {
+              setFeedbackModalVisible(true);
+            }}
           >
-            ({event.event.eventFeedbacks.length} відгуків)
+            ({GetReviewString(event.event.eventFeedbacks.length)})
           </div>
         </div>
 
         <EventFeedbackModal
+          eventId={event.event.eventId}
           feedbacks={event.event.eventFeedbacks}
           visible={isFeedbackModalVisible}
           setVisible={setFeedbackModalVisible}
           canLeaveFeedback={event.canEstimate}
+          setRender={setRender}
         />
       </Col>
       <Modal

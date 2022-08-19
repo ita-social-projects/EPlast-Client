@@ -1,6 +1,6 @@
-import { Col, Input, Row, Typography } from "antd";
+import { Input, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
 import eventsApi from "../../../../api/eventsApi";
 import EventDetailsHeader from "./EventDetailsHeader";
@@ -91,16 +91,25 @@ const EventInfo = () => {
   const [isUserRegisteredUser, setUserRegisterUser] = useState<boolean>();
   const [participantsLoaded, setParticipantsLoaded] = useState<boolean>(false);
   const [participants, setParticipants] = useState<EventParticipant[]>([]);
-  const [filteredParticipants, setFilteredParticipants] = useState<EventParticipant[]>([]);
+  const [filteredParticipants, setFilteredParticipants] = useState<
+    EventParticipant[]
+  >([]);
+
+  const history = useHistory();
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await eventsApi.getEventInfo(id);
-      await getUserAccessesForEvents(id);
-      setEvent(response.data);
-      setParticipantsInTable(response.data.event.eventParticipants);
-      getEventStatusId(response.data.event.eventStatus);
-      setLoading(true);
+      try {
+        const response = await eventsApi.getEventInfo(id);
+        await getUserAccessesForEvents(id);
+        setEvent(response.data);
+        setParticipantsInTable(response.data.event.eventParticipants);
+        getEventStatusId(response.data.event.eventStatus);
+        setLoading(true);
+      } catch (error) {
+        // this looks bad but i didn't find another way to accomplish this
+        if ((error.message as string).includes("404")) history.push("/404");
+      }
     };
     fetchData();
     getUserRoles();
@@ -111,7 +120,7 @@ const EventInfo = () => {
       setEventStatusID(response.data);
     });
   };
-  
+
   const getUserAccessesForEvents = async (id: number) => {
     let user: any = jwt(AuthLocalStorage.getToken() as string);
     await eventUserApi.getUserEventAccess(user.nameid, +id).then((response) => {
@@ -130,9 +139,11 @@ const EventInfo = () => {
       return;
     }
 
-    const filteredTable = participants.filter((item: EventParticipant) => 
-      item.fullName.toLowerCase().includes(value.toLowerCase()) ||
-      item.email.toLowerCase().includes(value.toLowerCase()));
+    const filteredTable = participants.filter(
+      (item: EventParticipant) =>
+        item.fullName.toLowerCase().includes(value.toLowerCase()) ||
+        item.email.toLowerCase().includes(value.toLowerCase())
+    );
 
     setFilteredParticipants(filteredTable);
   };
@@ -160,10 +171,10 @@ const EventInfo = () => {
 
   const setParticipantsInTable = (eventParticipants: EventParticipant[]) => {
     let availableParticipants = userAccesses["SeeUserTable"]
-    ? eventParticipants
-    : eventParticipants.filter(
-      (p: EventParticipant) => p.status == "Учасник"
-    );
+      ? eventParticipants
+      : eventParticipants.filter(
+          (p: EventParticipant) => p.status == "Учасник"
+        );
     setParticipants(availableParticipants);
     setFilteredParticipants(availableParticipants);
     setParticipantsLoaded(true);
@@ -173,8 +184,10 @@ const EventInfo = () => {
     <Spinner />
   ) : (
     <div className="event-info-background">
-      <Row className="event-info-header">
-        <Col xs={24} sm={24} md={24} lg={8}>
+      <Title level={2}>{event.event.eventName}</Title>
+      <div className="event-info-and-gallery">
+        <div className="event-info-header">
+          <EventDetailsHeader eventInfo={event.event} />
           <SortedEventInfo
             userAccesses={userAccesses}
             event={event}
@@ -188,16 +201,15 @@ const EventInfo = () => {
             setRender={setRender}
             canViewAdminProfiles={!isUserRegisteredUser}
           />
-        </Col>
-        <Col
-          xs={24}
-          sm={{ span: 24, offset: 1 }}
-          md={{ span: 24, offset: 3 }}
-          lg={{ span: 16, offset: 0 }}
-        >
-          <EventDetailsHeader eventInfo={event.event} />
-        </Col>
-      </Row>
+        </div>
+        <div className="eventGallary">
+          <Gallery
+            key={event.event?.eventLocation}
+            eventId={event.event?.eventId}
+            userAccesses={userAccesses}
+          />
+        </div>
+      </div>
       <div className="event-info-wrapper">
         {userAccesses["SeeUserTable"] || event.isUserApprovedParticipant ? (
           <div className="participantsTable">
@@ -229,13 +241,6 @@ const EventInfo = () => {
             </div>
           </div>
         ) : null}
-        <div className="eventGallary">
-          <Gallery
-            key={event.event?.eventLocation}
-            eventId={event.event?.eventId}
-            userAccesses={userAccesses}
-          />
-        </div>
       </div>
     </div>
   );

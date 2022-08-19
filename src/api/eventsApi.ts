@@ -23,6 +23,11 @@ const getCategoriesByPage = async (
   return response;
 };
 
+const getCategoryById = async (id: number) => {
+  const response = await Api.get(`Events/categories/${id}`);
+  return response;
+};
+
 const getEvents = async (typeId: number, categoryId: number) => {
   const response = await Api.get(
     `types/${typeId}/categories/${categoryId}/events`
@@ -76,13 +81,13 @@ const createParticipant = async (id: number) => {
   return response;
 };
 
-const estimateEvent = async (id: number, estimate: number) => {
-  const response = await Api.put(`Events/${id}/estimate/${estimate}`);
+const leaveFeedback = async (id: number, feedback: EventFeedback) => {
+  const response = await Api.put(`Events/${id}/feedbacks`, feedback);
   return response;
 };
 
-const leaveFeedback = async (id: number, feedback: EventFeedback) => {
-  const response = await Api.put(`Events/${id}/feedback`, feedback);
+const deleteFeedback = async (id: number, feedbackId: number) => {
+  const response = await Api.remove(`Events/${id}/feedbacks/${feedbackId}`);
   return response;
 };
 
@@ -128,13 +133,15 @@ export default {
   getTypes,
   getCategories,
   getCategoriesByPage,
+  getCategoryById,
   getEvents,
   getSections,
   createEventCategory,
   getEventInfo,
   getPictures,
   remove,
-  estimateEvent,
+  leaveFeedback,
+  deleteFeedback,
   createParticipant,
   removeParticipant,
   approveParticipant,

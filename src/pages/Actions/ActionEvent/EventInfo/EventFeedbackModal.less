@@ -17,3 +17,68 @@
     }
   }
 }
+
+.feedbackForm {
+  .ant-comment-inner {
+    padding-bottom: 4px;
+  }
+}
+
+.feedbackFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+
+  .errorText {
+    color: red;
+    padding-right: 7px;
+    opacity: 100;
+    transition: opacity 0.2s ease-in;
+  }
+
+  .hidden {
+    transition: opacity 0.2s ease-in;
+    opacity: 0;
+  }
+}
+
+.feedbackActions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: baseline;
+}
+
+.ant-comment-content-author {
+  .ant-comment-content-author-time {
+    width: 100%;
+  }
+  .ant-comment-content-author-name {
+    flex-shrink: 0;
+  }
+  word-wrap: normal;
+  flex-wrap: nowrap;
+}
+
+.ant-modal-body {
+  padding: 20px;
+}
+
+.warning-icon {
+  color: var(--antd-wave-shadow-color);
+  font-size: 2em;
+  //margin-right: 10px;
+}
+
+.feedback-forbidden-warning {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.feedback-forbidden-description {
+  margin: 0;
+  max-width: 85%;
+}

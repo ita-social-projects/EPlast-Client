@@ -1,46 +1,219 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { Avatar, Comment, Divider, Modal, Rate } from "antd";
+import {
+  CloseOutlined,
+  ExclamationCircleOutlined,
+  InfoCircleFilled,
+  LoadingOutlined,
+} from "@ant-design/icons";
+import {
+  Avatar,
+  Button,
+  Comment,
+  Divider,
+  Empty,
+  Modal,
+  Pagination,
+  Popconfirm,
+  Rate,
+} from "antd";
+import TextArea from "antd/lib/input/TextArea";
+import jwt from "jwt-decode";
 import React, { useEffect, useState } from "react";
+import eventsApi from "../../../../api/eventsApi";
 import UserApi from "../../../../api/UserApi";
+import AuthLocalStorage from "../../../../AuthLocalStorage";
 import EventFeedback from "../../../../models/EventUser/EventFeedback";
+import { Roles } from "../../../../models/Roles/Roles";
 import "./EventFeedbackModal.less";
 
 interface Properties {
+  eventId: number;
   feedbacks: EventFeedback[];
   visible: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   canLeaveFeedback: boolean;
+  setRender: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface FeedbackProperties {
+  eventId: number;
   feedback: EventFeedback;
+  isAdmin: boolean;
+  setRender: React.Dispatch<React.SetStateAction<boolean>>;
+  currentUserId: string;
+}
+
+interface LeaveFeedbackProperties {
+  eventId: number;
+  feedbacks: EventFeedback[];
+  setFormVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setRender: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Feedback: React.FC<FeedbackProperties> = (p: FeedbackProperties) => {
   const [avatar, setAvatar] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [canDelete, setCanDelete] = useState<boolean>(false);
+
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
+  const checkPermissions = async () => {
+    if (p.isAdmin) {
+      setCanDelete(true);
+      return;
+    }
+
+    setCanDelete(p.currentUserId === p.feedback.authorUserId);
+  };
 
   useEffect(() => {
-    setLoading(true);
     UserApi.getImage(p.feedback.authorAvatarUrl).then((response) =>
       setAvatar(response.data)
     );
+    checkPermissions();
     setLoading(false);
   }, []);
 
+  const handleDelete = () => {
+    eventsApi.deleteFeedback(p.eventId, p.feedback.id).then(() => {
+      p.setRender((prev) => !prev);
+    });
+  };
+
+  return (
+    <>
+      <Comment
+        className="feedback"
+        actions={[]}
+        author={p.feedback.authorName}
+        avatar={loading ? <LoadingOutlined /> : <Avatar src={avatar} />}
+        content={p.feedback.text}
+        datetime={
+          <div className="feedbackActions">
+            <Rate
+              className="feedbackRate"
+              allowHalf
+              disabled
+              defaultValue={p.feedback.rating}
+            />
+            {canDelete ? (
+              <Popconfirm
+                title="Видалити відгук?"
+                okText="Так"
+                cancelText="Ні"
+                onConfirm={() => handleDelete()}
+                icon={null}
+                okButtonProps={{ danger: true }}
+                placement={"leftTop"}
+              >
+                <CloseOutlined onClick={() => setShowConfirm(true)} />
+              </Popconfirm>
+            ) : null}
+          </div>
+        }
+      />
+    </>
+  );
+};
+
+const FeedbackForm: React.FC<LeaveFeedbackProperties> = (
+  p: LeaveFeedbackProperties
+) => {
+  const [avatar, setAvatar] = useState<string>("");
+  const [name, setName] = useState<string>("");
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isButtonLoading, setButtonLoading] = useState<boolean>(false);
+
+  const [rating, setRating] = useState<number>(-1);
+  const [feedbackText, setFeedbackText] = useState<string>("");
+
+  const [isRatingErrorShown, setRatingErrorShown] = useState<boolean>(false);
+
+  useEffect(() => {
+    UserApi.getActiveUserProfile().then((response) => {
+      UserApi.getImage(response.imagePath).then((response) =>
+        setAvatar(response.data)
+      );
+      setName(response.firstName + " " + response.lastName);
+      setLoading(false);
+    });
+  }, []);
+
+  const onSubmit = async () => {
+    if (rating === -1) {
+      setRatingErrorShown(true);
+      return;
+    }
+
+    if (isRatingErrorShown) {
+      return;
+    }
+
+    setButtonLoading(true);
+
+    let feedback: EventFeedback = new EventFeedback();
+    feedback.rating = rating;
+    feedback.text = feedbackText;
+
+    try {
+      await eventsApi.leaveFeedback(p.eventId, feedback);
+      p.setFormVisible(false);
+      p.setRender((prev) => !prev);
+    } catch {
+      notificationLogic("error", "Щось пішло не так");
+    } finally {
+      setButtonLoading(false);
+    }
+  };
+
+  const onChangeRating = (v: number) => {
+    setRating(v);
+    setRatingErrorShown(false);
+  };
+
+  const onChangeText = (v: string) => {
+    setRatingErrorShown(v.length === 0);
+    setFeedbackText(v);
+  };
+
   return (
     <Comment
-      className="feedback"
+      className="feedbackForm"
       actions={[]}
-      author={p.feedback.authorName}
+      author={name}
       avatar={loading ? <LoadingOutlined /> : <Avatar src={avatar} />}
-      content={p.feedback.text}
+      content={
+        <>
+          <TextArea
+            style={{ marginBottom: 8 }}
+            rows={4}
+            autoSize={{ minRows: 4, maxRows: 4 }}
+            maxLength={256}
+            minLength={1}
+            placeholder={"Текст відгуку (максимальна довжина - 256 символів)"}
+            onChange={(evt) => onChangeText(evt.target.value)}
+          />
+          <div className="feedbackFooter">
+            <span className={`errorText${isRatingErrorShown ? "" : " hidden"}`}>
+              <ExclamationCircleOutlined /> Поля оцінки та тексту відгука є
+              обов'язковими
+            </span>
+            <Button
+              type={"primary"}
+              onClick={() => onSubmit()}
+              loading={isButtonLoading}
+            >
+              Залишити відгук
+            </Button>
+          </div>
+        </>
+      }
       datetime={
         <Rate
           className="feedbackRate"
           allowHalf
-          disabled
-          defaultValue={p.feedback.rating}
+          defaultValue={rating}
+          onChange={(v) => onChangeRating(v)}
         />
       }
     />
@@ -48,28 +221,106 @@ const Feedback: React.FC<FeedbackProperties> = (p: FeedbackProperties) => {
 };
 
 const EventFeedbackModal: React.FC<Properties> = (p: Properties) => {
-  const [feedbacks, setFeedbacks] = useState<EventFeedback[]>(p.feedbacks);
+  const [isFeedbackFormVisible, setFeedbackFormVisible] = useState<boolean>(
+    true
+  );
 
-  useEffect(() => {}, []);
+  const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [isUserAdmin, setUserAdmin] = useState<boolean>(false);
+  const [userHasFeedbackAlready, setUserHasFeedbackAlready] = useState<boolean>(
+    false
+  );
+
+  const [page, setPage] = useState<number>(1);
+  const pageSize = 5;
+
+  useEffect(() => {
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
+    setCurrentUserId(user.nameid);
+
+    let roles = UserApi.getActiveUserRoles();
+    setUserAdmin(roles.includes(Roles.Admin));
+  }, []);
+
+  useEffect(() => {
+    setUserHasFeedbackAlready(
+      p.feedbacks.some((f) => f.authorUserId == currentUserId)
+    );
+  }, [p.feedbacks]);
 
   return (
     <Modal
+      title={"Відгуки"}
       visible={p.visible}
-      footer={null}
+      footer={
+        p.feedbacks.length > 5 ? (
+          <Pagination
+            onChange={(p) => setPage(p)}
+            defaultCurrent={1}
+            current={page}
+            total={p.feedbacks.length}
+            defaultPageSize={pageSize}
+          />
+        ) : null
+      }
       onCancel={() => p.setVisible(false)}
     >
-      {p.feedbacks.map((f, idx) => {
-        return (
+      {!userHasFeedbackAlready ? (
+        p.canLeaveFeedback ? (
           <>
-            <Feedback feedback={f} />
-            {idx < p.feedbacks.length - 1 ? (
-              <Divider style={{ margin: 6 }} />
-            ) : null}
+            <FeedbackForm
+              setRender={p.setRender}
+              eventId={p.eventId}
+              feedbacks={p.feedbacks}
+              setFormVisible={setFeedbackFormVisible}
+            />
+            <Divider style={{ margin: 6 }} />
           </>
-        );
-      })}
+        ) : (
+          <>
+            <div className="feedback-forbidden-warning">
+              <InfoCircleFilled className="warning-icon" />
+              <p className="feedback-forbidden-description">
+                Відгук можна залишити протягом 3-х днів після закінчення події і
+                тільки в тому випадку, якщо ви її відвідали.
+              </p>
+            </div>
+            <Divider />
+          </>
+        )
+      ) : null}
+      {p.feedbacks.length !== 0 ? (
+        p.feedbacks
+          .sort((a, b) => b.id - a.id)
+          .map((f, idx) => {
+            return idx + 1 <= pageSize * page &&
+              idx + 1 > pageSize * (page - 1) ? (
+              <>
+                <Feedback
+                  key={f.id}
+                  feedback={f}
+                  currentUserId={currentUserId}
+                  isAdmin={isUserAdmin}
+                  eventId={p.eventId}
+                  setRender={p.setRender}
+                />
+                {idx + 1 < pageSize * page && idx + 1 !== p.feedbacks.length ? (
+                  <Divider style={{ margin: 6 }} />
+                ) : null}
+              </>
+            ) : null;
+          })
+      ) : (
+        <Empty
+          description="Відгуків немає"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      )}
     </Modal>
   );
 };
 
 export default EventFeedbackModal;
+function notificationLogic(arg0: string, arg1: string) {
+  throw new Error("Function not implemented.");
+}

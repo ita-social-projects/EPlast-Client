@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import EventTypeCard from "./EventTypeCard";
-import eventsApi from "../../../api/eventsApi";
-import Spinner from "../../Spinner/Spinner";
 import { Card } from "antd";
-import EventCreateDrawer from "../ActionEvent/EventCreate/EventCreateDrawer";
-import { useParams } from "react-router-dom";
-import Add from "../../../assets/images/add.png";
-import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import eventsApi from "../../../api/eventsApi";
 import eventUserApi from "../../../api/eventUserApi";
 import userApi from "../../../api/UserApi";
+import Add from "../../../assets/images/add.png";
+import AuthLocalStorage from "../../../AuthLocalStorage";
+import Spinner from "../../Spinner/Spinner";
+import EventCreateDrawer from "../ActionEvent/EventCreate/EventCreateDrawer";
+import EventTypeCard from "./EventTypeCard";
 
 const classes = require("./EventTypes.module.css");
 

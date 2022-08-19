@@ -1,10 +1,9 @@
+import { Descriptions, Tooltip, Typography } from "antd";
 import React, { ReactNode } from "react";
-import { Typography, Descriptions, Tooltip } from "antd";
-import "./EventDetails.less";
-import { EventInformation, EventParticipant } from "./EventInfo";
 import extendedTitleTooltip from "../../../../components/Tooltip";
+import "./EventDetails.less";
 import "./EventDetailsHeader.less";
-import moment from "moment";
+import { EventInformation, EventParticipant } from "./EventInfo";
 
 const { Text } = Typography;
 
@@ -73,14 +72,7 @@ const EventDetailsHeader = ({
   },
 }: Props) => {
   return (
-    <Descriptions
-      column={{ xs: 1, sm: 2, md: 2, lg: 2, xxl: 3 }}
-      layout="horizontal"
-      className="descriptions"
-    >
-      <Descriptions.Item label={renderLabel("Назва")} span={3}>
-        {renderContentMaxlength(eventName)}
-      </Descriptions.Item>
+    <Descriptions layout="horizontal" className="descriptions" column={2}>
       <Descriptions.Item label={renderLabel("Форма проведення")}>
         {renderContent(formOfHolding)}
       </Descriptions.Item>
