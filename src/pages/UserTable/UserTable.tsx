@@ -82,7 +82,7 @@ const UsersTable = () => {
   const { Search } = Input;
   const location = useLocation();
   const queryParams = useRef<any>({});
-  const [selectedRow, setSelectedRow] = useState<number>(-1)
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
 
   useEffect(() => {
     initializePage();
@@ -265,7 +265,7 @@ const UsersTable = () => {
     let jwt = AuthLocalStorage.getToken() as string;
     let user = jwt_decode(jwt) as any;
     userApi
-      .getUserProfileById(user.nameid, user.nameid)
+      .getUserProfileById(user.nameid)
       .then((response) => setCurrentUser(response.data.user));
 
     let roles = userApi.getActiveUserRoles();
@@ -614,7 +614,9 @@ const UsersTable = () => {
         }}
       >
         <Table
-          rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
+          rowClassName={(record, index) =>
+            index === selectedRow ? classes.selectedRow : ""
+          }
           loading={!loading}
           className={classes.table}
           bordered
@@ -626,7 +628,7 @@ const UsersTable = () => {
             setFilter: setFilter,
             setPage: setPage,
             filterRole: filter,
-            isZgolosheni: currentTabName === "registered"
+            isZgolosheni: currentTabName === "registered",
           })}
           dataSource={users}
           onRow={(record, index) => {

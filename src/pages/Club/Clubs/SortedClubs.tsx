@@ -31,7 +31,7 @@ const SortedClubs = ({ switcher }: Props) => {
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
-  const { p } = useParams();
+  const { p = 1 } = useParams();
   const [page, setPage] = useState(+p);
 
   const setPhotos = async (clubs: ClubByPage[]) => {
@@ -48,7 +48,7 @@ const SortedClubs = ({ switcher }: Props) => {
       setPhotosLoading(false);
     }
   };
-  const getActiveClubs = async (page: number = 1) => {
+  const getActiveClubs = async (page: number) => {
     setLoading(true);
 
     try {
@@ -70,7 +70,7 @@ const SortedClubs = ({ switcher }: Props) => {
     }
   };
 
-  const getNotActiveClubs = async (page: number = 1) => {
+  const getNotActiveClubs = async (page: number) => {
     setLoading(true);
 
     try {
@@ -97,6 +97,7 @@ const SortedClubs = ({ switcher }: Props) => {
 
   const handleSizeChange = (pageSize: number = 10) => {
     setPageSize(pageSize);
+    handleChange(1);
   };
 
   const handleSearch = (event: any) => {
@@ -139,14 +140,9 @@ const SortedClubs = ({ switcher }: Props) => {
   };
 
   useEffect(() => {
-    setPage(+p);
-  }, []);
-
-  useEffect(() => {
     if (switcher) {
       getNotActiveClubs(page);
-    }
-    else {
+    } else {
       getActiveClubs(page);
     }
   }, [page, pageSize, searchedData, switcher]);

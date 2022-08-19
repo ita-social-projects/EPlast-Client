@@ -63,7 +63,7 @@ const AddSectorAdminForm = (props: any) => {
       [admin.userId],
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
+      `/regionalBoard/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
       `цьому напрямі керівного органу`
     );
   };
@@ -76,7 +76,7 @@ const AddSectorAdminForm = (props: any) => {
       [admin.userId],
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
+      `/regionalBoard/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
       `цьому напрямі керівного органу`
     );
   };
@@ -211,7 +211,7 @@ const AddSectorAdminForm = (props: any) => {
             o.isInDeputyRole ? (
               <Select.Option key={o.id} value={JSON.stringify(o)}>
                 <div className={classes.formOption}>
-                  {o.firstName + " " + o.lastName}
+                  {o.firstName} {o.lastName} <br /> {o.email}
                   <Tooltip title="Уже є адміністратором">
                     <InfoCircleOutlined />
                   </Tooltip>
@@ -219,7 +219,7 @@ const AddSectorAdminForm = (props: any) => {
               </Select.Option>
             ) : (
               <Select.Option key={o.id} value={JSON.stringify(o)}>
-                {o.firstName + " " + o.lastName}
+                {o.firstName} {o.lastName} <br /> {o.email}
               </Select.Option>
             )
           )}

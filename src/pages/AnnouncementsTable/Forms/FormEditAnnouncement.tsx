@@ -130,7 +130,7 @@ const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
       values.isPined
     );
     await actions.getAnnouncements();
-    notificationLogic("success", "Оголошення зміненно");
+    notificationLogic("success", "Оголошення змінено");
     setText(values.text);
     setTitle(values.title);
   };
@@ -193,7 +193,7 @@ const FormEditAnnouncement: React.FC<FormEditAnnouncementProps> = (
           {uploadImages.length >= 5 ? null : (
             <div>
               <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
+              <div style={{ marginTop: 8 }}>Завантажити фото</div>
             </div>
           )}
         </Upload>
