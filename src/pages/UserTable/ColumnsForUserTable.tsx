@@ -159,9 +159,6 @@ const ColumnsForUserTable = (props: Props): any[] => {
       title: (
         <Row className="tableHeader">
           <Col className="col-title">№</Col>
-          <Col className="col-value">
-            <SortDirection sort={1} />
-          </Col>
         </Row>
       ),
       render: (text, record, index) => {
