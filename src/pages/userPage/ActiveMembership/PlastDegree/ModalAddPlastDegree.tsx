@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import moment from "moment";
 import activeMembershipApi, {
   PlastDegree,
   UserPlastDegree,
 } from "../../../../api/activeMembershipApi";
 import FormAddPlastDegree from "./FormAddPlastDegree";
-import { LoadingOutlined } from "@ant-design/icons";
 import userApi from "../../../../api/UserApi";
 
 type ModalAddPlastDegreeProps = {
@@ -37,10 +38,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
     if (userBirthday === "0001-01-01T00:00:00" || undefined) {
       return "?";
     } else {
-      const today = new Date();
-      const birthday = new Date(userBirthday);
-      const distance = today.getTime() - birthday.getTime();
-      const yearsOld = Number(Math.floor(distance / 1000 / 60 / 60 / 24 / 365));
+      const yearsOld = moment().diff(moment(userBirthday), 'years');
       return yearsOld;
     }
   };
