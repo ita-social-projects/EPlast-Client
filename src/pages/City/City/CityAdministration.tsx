@@ -180,11 +180,10 @@ const CityAdministration = () => {
               >
                 <div
                   onClick={() =>
-                    canSeeProfiles ? 
+                    canSeeProfiles && 
                     history.push(`/userpage/main/${member.user.id}`)
-                    : undefined
                   }
-                  className={`cityMember ${canSeeProfiles || "notAccess"}`}
+                  className={`cityMember ${!canSeeProfiles && "notAccess"}`}
                 >
                   <div>
                     {photosLoading ? (
