@@ -139,6 +139,11 @@ const CityAdministration = () => {
     setReload(!reload);
   };
 
+  const canSeeProfiles = 
+    userCityAccesses["EditCity"] ||
+    activeUserRoles.includes(Roles.Supporter) ||
+    activeUserRoles.includes(Roles.PlastMember);
+
   useEffect(() => {
     fetchData();
   }, [reload]);
@@ -175,9 +180,11 @@ const CityAdministration = () => {
               >
                 <div
                   onClick={() =>
+                    canSeeProfiles ? 
                     history.push(`/userpage/main/${member.user.id}`)
+                    : undefined
                   }
-                  className={`cityMember`}
+                  className={`cityMember ${canSeeProfiles || "notAccess"}`}
                 >
                   <div>
                     {photosLoading ? (
