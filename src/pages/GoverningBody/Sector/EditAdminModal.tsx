@@ -53,7 +53,7 @@ const EditAdministratorModal = (props: Props) => {
 
   const disabledEndDate = (current: any) => {
     console.table(startDate);
-    return current && current < startDate;
+    return current && current < moment();
   };
 
   const disabledStartDate = (current: any) => {
