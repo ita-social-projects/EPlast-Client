@@ -1062,7 +1062,7 @@ const Region = () => {
         >
           <Card hoverable className="cityCard">
             <Title level={4}>
-              Прихильники округи{" "}
+              Заяви на створення станиць{" "}
               <a
                 onClick={() => history.push(`/regions/followers/${region.id}`)}
               >
