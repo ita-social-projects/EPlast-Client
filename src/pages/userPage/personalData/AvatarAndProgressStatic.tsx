@@ -17,6 +17,7 @@ import User from "../../../models/UserTable/User";
 import moment from "moment";
 import { PersonalDataContext } from "./PersonalData";
 import UserPrecautionStatus from "../../Precaution/Interfaces/UserPrecautionStatus";
+import { Roles } from "../../../models/Roles/Roles";
 
 const { Title } = Typography;
 const nameMaxLength = 55;
@@ -133,8 +134,15 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       link: "",
     },
   ]);
+   
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+
+  const getUserRoles = () => {
+    setActiveUserRoles(userApi.getActiveUserRoles);
+  }
 
   useEffect(() => {
+    getUserRoles();
     const fetchData = async () => {
       await kadrasApi.getAllKVsOfGivenUser(userId).then((responce) => {
         setkadras(responce.data);
@@ -157,6 +165,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     };
     fetchData();
   }, [props]);
+
+  const canAccessRegionTab = 
+    !activeUserRoles.includes(Roles.RegisteredUser);
 
   return loading === false ? (
     <div className="kadraWrapper">
@@ -183,7 +194,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           {region ? (
             <p className="statusText">
               Є прихильником округи:{" "}
-              <Link to={"/regions/" + regionId} className="LinkText">
+              <Link to={"/regions/" + regionId} className={`LinkText ${!canAccessRegionTab && "notAccess"}`}
+                onClick={event => !canAccessRegionTab && event.preventDefault()}
+              >
                 {region}
               </Link>
             </p>
