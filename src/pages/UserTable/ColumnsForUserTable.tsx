@@ -676,7 +676,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
     // insert phonenumber column right before email
     columns.splice(
       columns.findIndex(
-        (column) => (column.key?.valueOf() as string) == "email"
+        (column) => (column.key?.valueOf() as string) === "email"
       ),
       0,
       phoneNumberColumn
