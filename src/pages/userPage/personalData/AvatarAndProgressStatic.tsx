@@ -17,6 +17,7 @@ import UserPrecautionStatus from "../../Precaution/Interfaces/UserPrecautionStat
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "./PersonalData";
 import "./PersonalData.less";
+import userApi from "../../../api/UserApi";
 
 const { Title } = Typography;
 const nameMaxLength = 55;
