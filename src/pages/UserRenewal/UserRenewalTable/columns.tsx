@@ -1,9 +1,10 @@
 import "./Filter.less";
 import { FormLabelAlign } from "antd/lib/form/interface";
 import { SortOrder } from "antd/lib/table/interface";
-import { Tag } from "antd";
+import { Tag, Tooltip } from "antd";
 import moment from "moment";
 import React from "react";
+import UserComment from "../../UserTable/UserComment";
 
 const fetchYears = () => {
   const arrayOfYears = [];
@@ -16,8 +17,8 @@ const fetchYears = () => {
 };
 const years = fetchYears();
 const approval: { text: string; value: boolean }[] = [
-  { text: "погоджено", value: true },
-  { text: "на розгляді", value: false },
+  { text: "Погоджено", value: true },
+  { text: "На розгляді", value: false },
 ];
 const columns = [
   {
@@ -41,7 +42,12 @@ const columns = [
     title: "Станиця",
     dataIndex: "cityName",
     render: (cityName: string) => {
-      return cityName;
+      return (
+        <Tag color={"purple"} key={cityName}>
+          <Tooltip placement="topLeft" title={cityName}>
+            {cityName as any}
+          </Tooltip>
+        </Tag>)
     },
     sorter: (a: any, b: any) => a.cityName.localeCompare(b.cityName),
     sortDirections: ["ascend", "descend"] as SortOrder[],
@@ -50,7 +56,12 @@ const columns = [
     title: "Округа",
     dataIndex: "regionName",
     render: (regionName: string) => {
-      return regionName;
+      return (
+      <Tag color={"blue"} key={regionName}>
+        <Tooltip placement="topLeft" title={regionName}>
+          {regionName as any}
+        </Tooltip>
+      </Tag>)
     },
     sorter: (a: any, b: any) => a.regionName.localeCompare(b.regionName),
     sortDirections: ["ascend", "descend"] as SortOrder[],
@@ -58,8 +69,11 @@ const columns = [
   {
     title: "Дата запиту",
     dataIndex: "requestDate",
-    filters: years,
-    onFilter: (value: any, record: any) => record.requestDate.includes(value),
+    sorter: (a: any, b: any) => {
+      if (a > b) return 1;
+      else if (a = b) return 0;
+      else return -1;
+    },
     render: (requestDate: Date) => {
       return moment
         .utc(requestDate.toLocaleString())
@@ -79,19 +93,26 @@ const columns = [
   {
     title: "Статус",
     dataIndex: "approved",
-    filters: approval,
-    onFilter: (value: any, record: any) => record.approved === value,
     render: (approved: boolean) => {
       return (
         <div>
           {approved === true ? (
-            <Tag color="green">погоджено</Tag>
+            <Tag color="green">Погоджено</Tag>
           ) : (
-            <Tag color="geekblue">на розгляді</Tag>
+            <Tag color="geekblue">На розгляді</Tag>
           )}
         </div>
       );
     },
   },
+  {
+    title: "Коментар",
+    dataIndex: "comment",
+    render: (comment: string) => {
+      return (
+        <UserComment userId={""} canEdit={false} text={comment}/>
+      )
+    }
+  }
 ];
 export default columns;

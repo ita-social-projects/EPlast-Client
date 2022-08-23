@@ -10,6 +10,7 @@ type UserRenewalTableData = {
   requestDate: Date;
   email: string;
   approved: boolean;
+  comment: string;
 };
 
 export default UserRenewalTableData;

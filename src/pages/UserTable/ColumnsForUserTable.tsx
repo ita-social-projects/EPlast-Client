@@ -71,6 +71,8 @@ interface Props {
   setPage: any;
   filterRole: any;
   isZgolosheni: boolean;
+  page: number;
+  pageSize: number;
 }
 
 const ColumnsForUserTable = (props: Props): any[] => {
@@ -167,7 +169,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           <div className={styles.divWrapper}>
             <div className={styles.tagText}>
               <Tooltip placement="top" title={index}>
-                {(index + 1) as any}
+                {((index + 1) + props.pageSize * (props.page - 1)) as any}
               </Tooltip>
             </div>
           </div>
@@ -628,17 +630,6 @@ const ColumnsForUserTable = (props: Props): any[] => {
         );
       },
       key: "referal"
-    },
-    {
-      title: "Коментар",
-      dataIndex: "comment",
-      width: 180,
-      render: (comment: any, record: any) => {
-        return (
-          <UserComment userId={record.id} text={comment} canEdit={true}/>
-        );
-      },
-      key: "comment"
     }
   ]
 
@@ -659,6 +650,18 @@ const ColumnsForUserTable = (props: Props): any[] => {
     },
   }
 
+  let commentColumn = {
+    title: "Коментар",
+    dataIndex: "comment",
+    width: 180,
+    render: (comment: any, record: any) => {
+      return (
+        <UserComment userId={record.id} text={comment} canEdit={true}/>
+      );
+    },
+    key: "comment"
+  }
+
   if (props.isZgolosheni) {
     // insert phonenumber column right before email
     columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
@@ -667,7 +670,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
     let filtered = columns.filter(column => !forbiddenKeysForZgolosheni.includes(column.key?.valueOf() as string));
     columns = filtered.concat(columnsForZgolosheni);
   }
-
+  
+  columns.push(commentColumn);
   return columns;
 };
 
