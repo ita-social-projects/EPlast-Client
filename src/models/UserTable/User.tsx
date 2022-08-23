@@ -11,6 +11,7 @@ export default class User {
   email: string;
   emailConfirmed: boolean;
   userRoles: string;
+  isInLowerRole: boolean;
 
   constructor() {
     this.id = "";
@@ -23,5 +24,6 @@ export default class User {
     this.email = "";
     this.emailConfirmed = false;
     this.userRoles = "";
+    this.isInLowerRole = false;
   }
 }
