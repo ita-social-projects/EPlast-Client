@@ -87,6 +87,7 @@ const AddExtractFromUPUModal = (props: Props) => {
       blobName: props.document.blobName,
       fileName: fileName,
       userId: props.userId,
+      courseId: 0
     };
 
     await addExtractFromUPU(props.userId, newDocument);
