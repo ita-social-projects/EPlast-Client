@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import moment from "moment";
-import { Tooltip, Tag, Row, Col, Checkbox, Button } from "antd";
 import {
-  WomanOutlined,
-  ManOutlined,
-  CaretUpOutlined,
   CaretDownOutlined,
+  CaretUpOutlined,
+  ManOutlined,
+  WomanOutlined,
 } from "@ant-design/icons";
-import "./Filter.less";
+import { Button, Checkbox, Col, Row, Tag, Tooltip } from "antd";
+import { ColumnsType } from "antd/es/table";
+import moment from "moment";
+import React, { useState } from "react";
 import Transgender from "../../assets/images/lgbt.svg";
-import { Roles } from "../../models/Roles/Roles";
-import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
-import styles from "./UserTable.module.css";
-import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
 import OblastsRecord from "../../models/Oblast/OblastsRecord";
-import UserComment from "./UserComment";
-import { ColumnProps, ColumnsType } from "antd/es/table";
+import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
+import { Roles } from "../../models/Roles/Roles";
 import User from "../../models/UserTable/User";
+import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
+import "./Filter.less";
+import UserComment from "./UserComment";
+import styles from "./UserTable.module.css";
 
 const setTagColor = (userRoles: string) => {
   let color = "";
@@ -74,7 +74,6 @@ interface Props {
 }
 
 const ColumnsForUserTable = (props: Props): any[] => {
-
   const { sortKey, setSortKey, setFilter, setPage, filterRole } = props;
 
   const numberOfElementsInFilter: number = 10;
@@ -89,7 +88,12 @@ const ColumnsForUserTable = (props: Props): any[] => {
   });
 
   // names of the keys that aren't displayed in "Зголошені" tab
-  const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
+  const forbiddenKeysForZgolosheni = [
+    "clubName",
+    "userRoles",
+    "upuDegree",
+    "userPlastDegreeName",
+  ];
 
   const onChangeCheckbox = (e: any, i: number) => {
     let value = filterStatus.value.slice();
@@ -126,7 +130,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
             onClick={() => {
               setSortKey(props.sort);
             }}
-            className={sortKey === props.sort ? "sortDirection" : ""} >
+            className={sortKey === props.sort ? "sortDirection" : ""}
+          >
             <CaretUpOutlined />
           </button>
 
@@ -134,7 +139,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
             onClick={() => {
               setSortKey(-props.sort);
             }}
-            className={sortKey === -props.sort ? "sortDirection" : ""} >
+            className={sortKey === -props.sort ? "sortDirection" : ""}
+          >
             <CaretDownOutlined />
           </button>
         </div>
@@ -203,7 +209,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
-      key: "firstName"
+      key: "firstName",
     },
     {
       title: (
@@ -228,12 +234,14 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
-      key: "lastName"
+      key: "lastName",
     },
     {
       title: (
         <Row className="tableHeader">
-          <Col className="col-title">{props.isZgolosheni ? "Вік" : "Дата народження"}</Col>
+          <Col className="col-title">
+            {props.isZgolosheni ? "Вік" : "Дата народження"}
+          </Col>
           <Col className="col-value">
             <SortDirection sort={4} />
           </Col>
@@ -247,13 +255,19 @@ const ColumnsForUserTable = (props: Props): any[] => {
           <>
             {date !== null
               ? props.isZgolosheni
-                ? `${moment().diff(moment.utc(date.toLocaleString()), 'years')} (${moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY")})`
+                ? `${moment().diff(
+                    moment.utc(date.toLocaleString()),
+                    "years"
+                  )} (${moment
+                    .utc(date.toLocaleString())
+                    .local()
+                    .format("DD.MM.YYYY")})`
                 : moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY")
               : ""}
           </>
         );
       },
-      key: "birthday"
+      key: "birthday",
     },
     {
       title: "Стать",
@@ -282,7 +296,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           );
         }
       },
-      key: "gender"
+      key: "gender",
     },
     {
       title: "Email",
@@ -299,7 +313,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
-      key: "email"
+      key: "email",
     },
     {
       title: (
@@ -328,7 +342,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           )
         );
       },
-      key: "regionName"
+      key: "regionName",
     },
     {
       title: (
@@ -357,7 +371,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           )
         );
       },
-      key: "cityName"
+      key: "cityName",
     },
     {
       title: (
@@ -386,7 +400,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           )
         );
       },
-      key: "clubName"
+      key: "clubName",
     },
     {
       title: (
@@ -475,7 +489,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           return SortColumnHighlight(8, "");
         }
       },
-      key: "userPlastDegreeName"
+      key: "userPlastDegreeName",
     },
     {
       title: (
@@ -500,7 +514,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
-      key: "upuDegree"
+      key: "upuDegree",
     },
     {
       title: "Права доступу",
@@ -555,9 +569,9 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
-      key: "userRoles"
+      key: "userRoles",
     },
-  ]
+  ];
 
   let columnsForZgolosheni: ColumnsType<User> = [
     {
@@ -584,7 +598,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
-      key: "oblast"
+      key: "oblast",
     },
     {
       title: "Місце проживання",
@@ -601,7 +615,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           </div>
         );
       },
-      key: "address"
+      key: "address",
     },
     {
       title: "Звідки дізнався про Пласт",
@@ -609,41 +623,37 @@ const ColumnsForUserTable = (props: Props): any[] => {
       width: 150,
       render: (referals: any) => {
         let referalsString = referals as string;
-        referalsString = referalsString?.replace("Від друзів, рідних", "{FRIENDS}");
+        referalsString = referalsString?.replace(
+          "Від друзів, рідних",
+          "{FRIENDS}"
+        );
         return (
-          <div style={{display: "flex", flexWrap: "wrap"}}>
-            {referalsString?.split(',').map(referal => {
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {referalsString?.split(",").map((referal) => {
               referal = referal.replace("{FRIENDS}", "Від друзів, рідних");
               return (
-                <Tag
-                  color="blue"
-                  key={referal}
-                  className={styles.referalTag}
-                >
+                <Tag color="blue" key={referal} className={styles.referalTag}>
                   <Tooltip placement="leftTop" title={referal}>
                     {referal as any}
                   </Tooltip>
                 </Tag>
-              )
-            })
-            }
+              );
+            })}
           </div>
         );
       },
-      key: "referal"
+      key: "referal",
     },
     {
       title: "Коментар",
       dataIndex: "comment",
       width: 180,
       render: (comment: any, record: any) => {
-        return (
-          <UserComment userId={record.id} text={comment} canEdit={true}/>
-        );
+        return <UserComment userId={record.id} text={comment} canEdit={true} />;
       },
-      key: "comment"
-    }
-  ]
+      key: "comment",
+    },
+  ];
 
   let phoneNumberColumn = {
     title: "Номер телефону",
@@ -660,14 +670,23 @@ const ColumnsForUserTable = (props: Props): any[] => {
         </div>
       );
     },
-  }
+  };
 
   if (props.isZgolosheni) {
     // insert phonenumber column right before email
-    columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
+    columns.splice(
+      columns.findIndex(
+        (column) => (column.key?.valueOf() as string) == "email"
+      ),
+      0,
+      phoneNumberColumn
+    );
 
     // filter columns to display in zgolosheni tab
-    let filtered = columns.filter(column => !forbiddenKeysForZgolosheni.includes(column.key?.valueOf() as string));
+    let filtered = columns.filter(
+      (column) =>
+        !forbiddenKeysForZgolosheni.includes(column.key?.valueOf() as string)
+    );
     columns = filtered.concat(columnsForZgolosheni);
   }
 
