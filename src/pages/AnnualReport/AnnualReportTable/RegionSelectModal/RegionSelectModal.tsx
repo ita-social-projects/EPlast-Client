@@ -112,14 +112,6 @@ const RegionSelectModal = (props: Props) => {
         }}
       >
         <Row>
-          <Row>
-            <Tooltip title={"Очистити"}>
-              <ClearOutlined
-                onClick={onFormClear}
-                className="regionSelectModalClearOutlined"
-              />
-            </Tooltip>
-          </Row>
           <Col md={24} xs={24}>
             <Form.Item name="region" rules={validationSchema.region}>
               <Select

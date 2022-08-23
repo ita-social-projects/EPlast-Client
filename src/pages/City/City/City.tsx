@@ -854,11 +854,7 @@ const City = () => {
                 ) : null}
               </a>
             </Title>
-            <Row
-              className={members.length >= 4 ? "cityItems1" : "cityItems"}
-              justify="center"
-              gutter={[0, 16]}
-            >
+            <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
                 members.slice(0, membersToShow).map((member) => (
                   <Col

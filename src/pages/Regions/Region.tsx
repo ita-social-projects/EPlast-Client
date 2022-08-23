@@ -1,72 +1,72 @@
+import {
+  ContainerOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  FileTextOutlined,
+  PlusSquareFilled,
+} from "@ant-design/icons";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Layout,
+  Modal,
+  Row,
+  Skeleton,
+  Tag,
+  Tooltip,
+} from "antd";
+import Paragraph from "antd/lib/typography/Paragraph";
+import Title from "antd/lib/typography/Title";
+import jwt from "jwt-decode";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
-  Avatar,
-  Row,
-  Col,
-  Button,
-  Layout,
-  Modal,
-  Skeleton,
-  Card,
-  Tooltip,
-  Badge,
-  Tag,
-} from "antd";
-import {
-  FileTextOutlined,
-  EditOutlined,
-  PlusSquareFilled,
-  DeleteOutlined,
-  ContainerOutlined,
-  ExclamationCircleOutlined,
-} from "@ant-design/icons";
-import moment from "moment";
-import jwt from "jwt-decode";
-import Title from "antd/lib/typography/Title";
-import Paragraph from "antd/lib/typography/Paragraph";
-import {
-  getCheckPlastMember,
   cityNameOfApprovedMember,
+  getCheckPlastMember,
   getLogo,
 } from "../../api/citiesApi";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 import {
-  getRegionById,
+  AddAdmin,
   archiveRegion,
-  unArchiveRegion,
-  getRegionAdministration,
+  EditAdmin,
   getHead,
   getHeadDeputy,
+  getRegionAdministration,
+  getRegionById,
   getRegionFollowers,
-  AddAdmin,
   getUserRegionAccess,
-  EditAdmin,
   removeRegion,
+  unArchiveRegion,
 } from "../../api/regionsApi";
-import "./Region.less";
-import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
-import Spinner from "../Spinner/Spinner";
-import AddDocumentModal from "./AddDocModal";
-import RegionDocument from "../../models/Region/RegionDocument";
-import AddNewSecretaryForm from "./AddRegionSecretaryForm";
 import userApi from "../../api/UserApi";
-import CheckActiveCitiesForm from "./CheckActiveCitiesForm";
-import RegionDetailDrawer from "./RegionsDetailDrawer";
-import NotificationBoxApi from "../../api/NotificationBoxApi";
-import notificationLogic from "../../components/Notifications/Notification";
-import {
-  successfulEditAction,
-  successfulDeleteAction,
-  successfulArchiveAction,
-  successfulUnarchiveAction,
-  failArchiveAction,
-} from "../../components/Notifications/Messages";
-import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
-import { Roles } from "../../models/Roles/Roles";
-import RegionFollower from "../../models/Region/RegionFollower";
-import RegionAdmin from "../../models/Region/RegionAdmin";
+import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import AuthLocalStorage from "../../AuthLocalStorage";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
+import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
+import {
+  failArchiveAction,
+  successfulArchiveAction,
+  successfulDeleteAction,
+  successfulEditAction,
+  successfulUnarchiveAction,
+} from "../../components/Notifications/Messages";
+import notificationLogic from "../../components/Notifications/Notification";
+import RegionAdmin from "../../models/Region/RegionAdmin";
+import RegionDocument from "../../models/Region/RegionDocument";
+import RegionFollower from "../../models/Region/RegionFollower";
+import { Roles } from "../../models/Roles/Roles";
+import Spinner from "../Spinner/Spinner";
+import AddDocumentModal from "./AddDocModal";
+import AddNewSecretaryForm from "./AddRegionSecretaryForm";
+import CheckActiveCitiesForm from "./CheckActiveCitiesForm";
+import "./Region.less";
+import RegionDetailDrawer from "./RegionsDetailDrawer";
 
 const Region = () => {
   const history = useHistory();
@@ -1142,7 +1142,6 @@ const Region = () => {
         visible={visible}
         onCancel={handleClose}
         footer={null}
-        width={700}
       >
         <AddNewSecretaryForm
           onAdd={handleOk}
