@@ -73,7 +73,7 @@ const columns: ColumnsType<UserPrecautionTableItem> = [
     render: (endDate: Date, record: any) => {
       return record.isActive === true
         ? moment.utc(endDate.toLocaleString()).local().format("DD.MM.YYYY")
-        : "не активна";
+        : moment.utc(endDate.toLocaleString()).local().format("DD.MM.YYYY (неактивна)");
     },
     sorter: true,
     sortDirections: ["ascend", "descend"] as SortOrder[],
