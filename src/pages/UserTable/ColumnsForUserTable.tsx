@@ -159,9 +159,6 @@ const ColumnsForUserTable = (props: Props): any[] => {
       title: (
         <Row className="tableHeader">
           <Col className="col-title">№</Col>
-          <Col className="col-value">
-            <SortDirection sort={0} />
-          </Col>
         </Row>
       ),
       render: (text, record, index) => {
@@ -185,7 +182,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
         <Row className="tableHeader">
           <Col className="col-title">Ім'я</Col>
           <Col className="col-value">
-            <SortDirection sort={1} />
+            <SortDirection sort={2} />
           </Col>
         </Row>
       ),
@@ -193,11 +190,11 @@ const ColumnsForUserTable = (props: Props): any[] => {
       width: 130,
       render: (firstName: any) => {
         return SortColumnHighlight(
-          1,
+          2,
           <div className={styles.divWrapper}>
             <div className={styles.tagText}>
               <Tooltip placement="top" title={firstName}>
-                {firstName}
+                     {firstName}
               </Tooltip>
             </div>
           </div>
