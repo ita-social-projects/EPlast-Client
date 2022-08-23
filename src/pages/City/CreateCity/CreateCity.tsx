@@ -153,8 +153,15 @@ const CreateCity = () => {
 
     getRegionAdministration(regionId)
       .then((response) => {
-        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.OkrugaHead && admin.status === true);
-        if (user) listOfReceivers.push(user.userId);
+      response.data.map((admin: any) => {
+        if (
+          (admin.adminTypeId === AdminTypes.OkrugaHead ||
+            admin.adminTypeId === AdminTypes.OkrugaHeadDeputy) &&
+          admin.status === true
+        ) {
+          listOfReceivers.push(admin.userId);
+        }
+      });
       });
 
     getSuperAdmins()
