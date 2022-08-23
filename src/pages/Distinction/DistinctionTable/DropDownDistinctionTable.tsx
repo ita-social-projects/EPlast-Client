@@ -1,87 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { Menu } from "antd";
 import {
-  FileSearchOutlined,
   DeleteOutlined,
   EditOutlined,
+  FileSearchOutlined,
 } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
-import deleteConfirm from "./DeleteConfirm";
+import { Menu } from "antd";
+import React from "react";
+import { useDistinctions } from "../../../stores/DistinctionsStore";
 import classes from "../../DecisionTable/Table.module.css";
-import UserDistinction from "../Interfaces/UserDistinction";
-import User from "../../../models/UserTable/User";
-import distinctionApi from "../../../api/distinctionApi";
-import Distinction from "../Interfaces/Distinction";
+import deleteConfirm from "./DeleteConfirm";
 import EditDistinctionModal from "./EditDistinctionModal";
 
 interface Props {
-  record: number;
-  userId: string;
+  isDropdownShown: boolean;
   pageX: number;
   pageY: number;
-  showDropdown: boolean;
-  canEdit: boolean;
-  onDelete: (id: number) => void;
-  onEdit: (
-    id: number,
-    distinction: Distinction,
-    date: Date,
-    reason: string,
-    reporter: string,
-    number: number,
-    user: any,
-    userId: string
-  ) => void;
 }
 
-const DropDown = (props: Props) => {
-  const {
-    record,
-    userId,
-    pageX,
-    pageY,
-    showDropdown,
-    canEdit,
-    onDelete,
-    onEdit,
-  } = props;
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [UserDistinctions, setData] = useState<UserDistinction>({
-    id: 0,
-    distinction: {
-      id: 0,
-      name: "",
-    },
-    distinctionId: 0,
-    userId: "",
-    reporter: "",
-    reason: "",
-    number: 0,
-    date: new Date(),
-    user: new User(),
-  });
-
-  useEffect(() => {
-    if (showEditModal) {
-      const fetchData = async () => {
-        await distinctionApi
-          .getUserDistinctionById(record)
-          .then((res) => setData(res.data));
-      };
-      fetchData();
-    }
-  }, [showEditModal]);
+const DropDown = ({ isDropdownShown, pageX, pageY }: Props) => {
+  const [state, actions] = useDistinctions();
 
   const handleItemClick = async (item: any) => {
     switch (item.key) {
       case "1":
-        window.open(`/userpage/main/${userId}`);
+        window.open(`/userpage/main/${state.currentUserDistinction.userId}`);
         break;
       case "2":
-        deleteConfirm(record, onDelete);
+        deleteConfirm(
+          state.currentUserDistinction.id,
+          actions.deleteUserDistinction
+        );
         break;
       case "3":
-        await setShowEditModal(true);
+        await actions.openUserDistinctionEditModal();
         break;
       default:
         break;
@@ -95,7 +45,7 @@ const DropDown = (props: Props) => {
         selectable={false}
         className={classes.menu}
         style={{
-          top: 
+          top:
             window.innerHeight - (pageY + 144) < 0
               ? window.innerHeight - 154
               : pageY,
@@ -103,14 +53,14 @@ const DropDown = (props: Props) => {
             window.innerWidth - (pageX + 194) < 0
               ? window.innerWidth - 237
               : pageX,
-          display: showDropdown ? "block" : "none",
+          display: isDropdownShown ? "block" : "none",
         }}
       >
         <Menu.Item key="1">
           <FileSearchOutlined />
           Переглянути профіль
         </Menu.Item>
-        {canEdit ? (
+        {state.userDistinctionsAccess["EditTypeDistinction"] ? (
           <Menu.Item key="3">
             <EditOutlined />
             Редагувати
@@ -118,7 +68,7 @@ const DropDown = (props: Props) => {
         ) : (
           <></>
         )}
-        {canEdit ? (
+        {state.userDistinctionsAccess["EditTypeDistinction"] ? (
           <Menu.Item key="2">
             <DeleteOutlined />
             Видалити
@@ -127,13 +77,7 @@ const DropDown = (props: Props) => {
           <></>
         )}
       </Menu>
-      <EditDistinctionModal
-        record={record}
-        distinction={UserDistinctions}
-        showModal={showEditModal}
-        setShowModal={setShowEditModal}
-        onEdit={onEdit}
-      />
+      <EditDistinctionModal />
     </>
   );
 };
