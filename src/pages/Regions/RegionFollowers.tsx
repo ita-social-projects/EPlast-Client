@@ -25,7 +25,12 @@ import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../components/Tooltip";
 
-const AdminAndOkruga = ["Admin", "Крайовий Адмін", "Голова Округи"];
+const AdminAndOkruga = [
+  Roles.Admin,
+  Roles.GoverningBodyAdmin,
+  Roles.OkrugaHead,
+  Roles.OkrugaHeadDeputy,
+];
 const RegionFollowers = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -110,7 +115,9 @@ const RegionFollowers = () => {
                 key={follower.id}
                 className="detailsCard"
                 actions={
-                  AdminAndOkruga.some((role) => activeUserRoles.includes(role))
+                  [Roles.Admin, Roles.GoverningBodyAdmin].some((role) =>
+                    activeUserRoles.includes(role)
+                  )
                     ? [
                         <CloseOutlined
                           onClick={() => seeDeleteFollowerModal(follower)}
@@ -164,10 +171,10 @@ const RegionFollowers = () => {
           className="backButton"
           icon={<RollbackOutlined />}
           size={"large"}
-          onClick={() => history.goBack()}
+          href={`/regions/${id}`}
           type="primary"
         >
-          Назад
+          Повернутись до округи
         </Button>
       </div>
     </Layout.Content>

@@ -388,13 +388,13 @@ const CreateCity = () => {
 
   const sureConfirm = () => {
     Modal.confirm({
-      title: "Ваші дані будуть не збережені.",
+      title: "Ваші дані не будуть збережені.",
       content: (
         <div className={classes.Style}>
           <b>Відмінити створення станиці ?</b>{" "}
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
         history.goBack();
       },
