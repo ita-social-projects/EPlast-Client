@@ -74,6 +74,7 @@ interface Props {
 }
 
 const ColumnsForUserTable = (props: Props): any[] => {
+
   const { sortKey, setSortKey, setFilter, setPage, filterRole } = props;
 
   const numberOfElementsInFilter: number = 10;
@@ -125,16 +126,15 @@ const ColumnsForUserTable = (props: Props): any[] => {
             onClick={() => {
               setSortKey(props.sort);
             }}
-            className={sortKey === props.sort ? "sortDirection" : ""}
-          >
+            className={sortKey === props.sort ? "sortDirection" : ""} >
             <CaretUpOutlined />
           </button>
+
           <button
             onClick={() => {
               setSortKey(-props.sort);
             }}
-            className={sortKey === -props.sort ? "sortDirection" : ""}
-          >
+            className={sortKey === -props.sort ? "sortDirection" : ""} >
             <CaretDownOutlined />
           </button>
         </div>
@@ -159,14 +159,11 @@ const ColumnsForUserTable = (props: Props): any[] => {
       title: (
         <Row className="tableHeader">
           <Col className="col-title">№</Col>
-          <Col className="col-value">
-            <SortDirection sort={1} />
-          </Col>
         </Row>
       ),
       render: (text, record, index) => {
         return SortColumnHighlight(
-          1,
+          0,
           <div className={styles.divWrapper}>
             <div className={styles.tagText}>
               <Tooltip placement="top" title={index}>
@@ -197,7 +194,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
           <div className={styles.divWrapper}>
             <div className={styles.tagText}>
               <Tooltip placement="top" title={firstName}>
-                {firstName}
+                     {firstName}
               </Tooltip>
             </div>
           </div>
