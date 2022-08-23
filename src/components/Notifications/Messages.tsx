@@ -75,6 +75,10 @@ export const inputOnlyWhiteSpaces = () => {
   return `Поле не може містити лише порожні символи`;
 };
 
+export const inputWhiteSpacesAtTheBeginning = (name: string) => {
+  return `${name} не може починатися з порожнього символу`;
+};
+
 export const tryAgain = "Щось пішло не так. Спробуйте ще раз.";
 
 export const ReportAlreadyExists = "Звіт вже існує.";
@@ -158,6 +162,10 @@ export const failArchiveAction = (name: string) => {
   return `Не вдалось архівувати ${name} `;
 };
 
+export const failGetAction = (name: string) => {
+  return `Не вдалося завантажити ${name}`;
+};
+
 export const failApproveAction = () => {
   return `Будь ласка, зачекайте`;
 };
@@ -218,8 +226,4 @@ export const possibleFileExtensions = (items: string) => {
 
 export const fileIsTooBig = (maxSize: number) => {
   return `Розмір файлу перевищує ${maxSize} Мб`;
-};
-
-export const dataCantBeFetched = (name: string) => {
-  return `Виникла помилка під час завантаження ${name}`;
 };
