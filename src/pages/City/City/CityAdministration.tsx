@@ -143,6 +143,10 @@ const CityAdministration = () => {
     fetchData();
   }, [reload]);
 
+  const canSeeProfiles =
+    activeUserRoles.includes(Roles.Supporter) ||
+    activeUserRoles.includes(Roles.PlastMember);
+
   return (
     <Layout.Content>
       <Title level={2}>Провід станиці</Title>
@@ -212,17 +216,17 @@ const CityAdministration = () => {
           Назад
         </Button>
       </div>
-      {userCityAccesses["EditCity"] ? (
-        <AddAdministratorModal
-          admin={admin}
-          setAdmin={setAdmin}
-          visibleModal={visibleModal}
-          setVisibleModal={setVisibleModal}
-          cityId={+id}
-          cityName={cityName}
-          onAdd={onAdd}
-        ></AddAdministratorModal>
-      ) : null}
+      
+      <AddAdministratorModal
+        admin={admin}
+        setAdmin={setAdmin}
+        visibleModal={visibleModal}
+        setVisibleModal={setVisibleModal}
+        cityId={+id}
+        cityName={cityName}
+        onAdd={onAdd}
+      ></AddAdministratorModal>
+
     </Layout.Content>
   );
 };
