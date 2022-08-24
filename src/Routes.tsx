@@ -64,7 +64,7 @@ import AnnouncementsTable from "./pages/AnnouncementsTable/AnnouncementsTable";
 import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainAdministration";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import RegionFollowers from "./pages/Regions/RegionFollowers";
-import CreateCityApplication from "./pages/City/CreateCityApplication/CreateCityApplication";
+import CityApplication from "./pages/City/CityApplication/CityApplication";
 
 export default [
   {
@@ -231,7 +231,7 @@ export default [
   {
     path: "/regions/:regionId/followers/:followerId",
     name: "Заява на створення станиці",
-    Component: CreateCityApplication,
+    Component: CityApplication,
   },
   {
     path: "/regions/:id/followers",

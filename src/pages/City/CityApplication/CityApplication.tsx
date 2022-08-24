@@ -16,6 +16,9 @@ import UserApi from "../../../api/UserApi";
 import { OblastsWithoutNotSpecified } from "../../../models/Oblast/OblastsRecord";
 import TextArea from "antd/lib/input/TextArea";
 import RollbackOutlined from "@ant-design/icons/lib/icons/RollbackOutlined";
+import { getUserCityAccess } from "../../../api/citiesApi";
+import jwt from "jwt-decode";
+import AuthLocalStorage from "../../../AuthLocalStorage";
 
 const CreateCity = () => {
   const [form] = Form.useForm();
@@ -29,6 +32,7 @@ const CreateCity = () => {
     {} as RegionFollower
   );
   const [applicant, setApplicant] = useState<User>({} as User);
+  const [userAccess, setUserAccess] = useState<{ [key: string]: boolean }>({});
 
   const getRegionFollower = async (followerId: number) => {
     await getRegionFollowerById(followerId).then(async (followerResponse) => {
@@ -50,6 +54,9 @@ const CreateCity = () => {
     try {
       await getRegionFollower(followerId);
     } finally {
+      const user: any = jwt(AuthLocalStorage.getToken() as string);
+      const userAccess = await getUserCityAccess(followerId, user.nameid);
+      setUserAccess(userAccess.data);
       setDataLoaded(true);
     }
   };
@@ -188,13 +195,7 @@ const CreateCity = () => {
                 initialValue={regionFollower.phoneNumber}
                 rules={[descriptionValidation.Phone]}
               >
-                <ReactInputMask
-                  disabled
-                  mask="+380(99)-999-99-99"
-                  maskChar={null}
-                >
-                  {(inputProps: any) => <Input disabled {...inputProps} />}
-                </ReactInputMask>
+                <Input readOnly />
               </Form.Item>
             </Col>
             <Col md={12} xs={24}>
@@ -240,16 +241,18 @@ const CreateCity = () => {
               </Form.Item>
             </Col>
           </Row>
-          <Row className="cityButtons" justify="center" gutter={[0, 6]}>
-            <Col xs={24} sm={12}>
-              <Button
-                type="primary"
-                href={`/regions/${regionFollower.regionId}/followers/${regionFollower.id}/edit`}
-              >
-                Редагувати заяву
-              </Button>
-            </Col>
-          </Row>
+          {userAccess["CreateCity"] && (
+            <Row className="cityButtons" justify="center" gutter={[0, 6]}>
+              <Col xs={24} sm={12}>
+                <Button
+                  type="primary"
+                  href={`/regions/${regionFollower.regionId}/followers/${regionFollower.id}/edit`}
+                >
+                  Редагувати заяву
+                </Button>
+              </Col>
+            </Row>
+          )}
         </Form>
       </Card>
     </Layout.Content>

@@ -25,6 +25,7 @@ import {
   createCity,
   getCityById,
   getLogo,
+  getUserCityAccess,
   updateCity,
 } from "../../../api/citiesApi";
 import {
@@ -60,7 +61,9 @@ import RegionFollower from "../../../models/Region/RegionFollower";
 import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import OblastsRecord, { OblastsWithoutNotSpecified } from "../../../models/Oblast/OblastsRecord";
+import OblastsRecord, {
+  OblastsWithoutNotSpecified,
+} from "../../../models/Oblast/OblastsRecord";
 import UkraineOblasts from "../../../models/Oblast/UkraineOblasts";
 import TextArea from "antd/lib/input/TextArea";
 import { getGoverningBodiesAdmins } from "../../../api/governingBodiesApi";
@@ -90,6 +93,7 @@ const CreateCity = () => {
   const [regions, setRegions] = useState<RegionProfile[]>([]);
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
+  const [userAccess, setUserAccess] = useState<{ [key: string]: boolean }>({});
   const levels = [1, 2, 3];
 
   const getBase64 = (img: Blob, callback: Function) => {
@@ -423,7 +427,6 @@ const CreateCity = () => {
           await getActiveUser();
         }
       } else if (+followerId) await getCity();
-
       await getRegions();
     } finally {
       setDataLoaded(true);
