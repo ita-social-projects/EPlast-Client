@@ -1,40 +1,23 @@
-import React from "react";
 import { Drawer } from "antd";
-import FormAddDistinction from "./FormAddDistinction";
+import React from "react";
+import { useDistinctions } from "../../../stores/DistinctionsStore";
+import FormAddUserDistinction from "./FormAddDistinction";
 
-interface Props {
-  visibleModal: boolean;
-  setVisibleModal: (visibleModal: boolean) => void;
-  onAdd: () => void;
-  onDelete: () => void;
-}
-
-const AddDistinctionModal = ({
-  visibleModal,
-  setVisibleModal,
-  onAdd,
-  onDelete,
-}: Props) => {
-  const handleCancel = () => {
-    setVisibleModal(false);
-  };
+const AddUserDistinctionModal = () => {
+  const [state, actions] = useDistinctions();
   return (
     <Drawer
       title="Додати відзначення"
       placement="right"
       width={417}
       height={1000}
-      visible={visibleModal}
-      onClose={handleCancel}
+      visible={state.addUserDistinctionModalIsVisible}
+      onClose={actions.closeUserDistinctionAddModal}
       footer={null}
     >
-      <FormAddDistinction
-        setVisibleModal={setVisibleModal}
-        onAdd={onAdd}
-        onDelete={onDelete}
-      />
+      <FormAddUserDistinction />
     </Drawer>
   );
 };
 
-export default AddDistinctionModal;
+export default AddUserDistinctionModal;

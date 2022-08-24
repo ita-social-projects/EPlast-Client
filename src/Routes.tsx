@@ -434,11 +434,6 @@ export default [
     Component: PrecautionTable,
   },
   {
-    path: "/renewals",
-    name: "Запити на відновлення статусу",
-    Component: UserRenewalTable,
-  },
-  {
     path: "/statistics/cities",
     name: "Статистика Станиць",
     Component: StatisticsCities,
