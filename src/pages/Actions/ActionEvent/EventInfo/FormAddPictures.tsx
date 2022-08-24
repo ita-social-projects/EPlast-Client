@@ -1,183 +1,174 @@
-import React, { useState } from "react";
-import { Form, Button, Upload, notification, Tooltip } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { Button, Form, notification, Tooltip, Upload } from "antd";
+import React, { useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
-import { EventGallery } from "./EventInfo";
 import {
-  updateNotification,
-  failUpdatingNotification,
-  loadingNotification,
-  emptyPhotoListNotification,
-  limitNotification,
-} from "./GalleryNotifications";
-import "./EventInfo.less";
-import notificationLogic from "../../../../components/Notifications/Notification";
-import {
-  possibleFileExtensions,
   fileIsTooBig,
+  possibleFileExtensions,
 } from "../../../../components/Notifications/Messages";
+import notificationLogic from "../../../../components/Notifications/Notification";
+import { EventGallery } from "./EventInfo";
+import "./EventInfo.less";
+import {
+  emptyPhotoListNotification,
+  failUpdatingNotification,
+  limitNotification,
+  loadingNotification,
+  updateNotification,
+} from "./GalleryNotifications";
+import PicturesWall from "./PicturesWall";
+
 interface Props {
   eventId: number;
   updateGallery: (uploadedPictures: EventGallery[]) => void;
-  picturesCount: number;
+  pictures: EventGallery[];
+  removePicture: (pictureId: number) => void;
 }
 
-const formItemLayout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 14 },
-};
-
-const FormAddPictures = ({ eventId, updateGallery, picturesCount }: Props) => {
+const FormAddPictures = ({
+  eventId,
+  updateGallery,
+  pictures,
+  removePicture,
+}: Props) => {
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(true);
-  const MaxPicturesCount: number = 15;
+  const [addDisabled, setAddDisabled] = useState(false);
+
+  var ignoredFileIds: string[] = [];
+
+  const MaxPicturesCount = 15;
+  const MaxFileSize = 20971520;
+  const allowedMimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+  const allowedExtensions = ["jpeg", "jpg", "png"];
+
   const addPictures = async (eventId: number, data: FormData) => {
     return await eventsApi.uploadPictures(eventId, data);
   };
 
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    var arrayStatuses: any[] = [];
-    for (var i of e.fileList) {
-      i.status =
-        i.originFileObj.size <= 20971520 &&
-        (i.originFileObj.type === "image/jpeg" ||
-          i.originFileObj.type === "image/jpg" ||
-          i.originFileObj.type === "image/png")
-          ? "done"
-          : "error";
-      arrayStatuses.push(i.status);
-    }
-    if (arrayStatuses.includes("error") || e.fileList.length === 0) {
-      notification.destroy();
-      emptyPhotoListNotification();
-      setDisabled(true);
+  const checkAllFiles = (e: any) => {
+    if (e.fileList.length + pictures.length >= MaxPicturesCount) {
+      for (let i = 0; i < e.fileList.length; i++) {
+        if (pictures.length + i + 1 > MaxPicturesCount)
+          ignoredFileIds.push(e.fileList[i].uid);
+      }
+      setAddDisabled(true);
     } else {
-      setDisabled(false);
+      setAddDisabled(false);
     }
-    return e && e.fileList;
+
+    let filteredFiles = e.fileList.filter(
+      (f: any) =>
+        !ignoredFileIds.includes(f.uid) &&
+        f.originFileObj.size <= MaxFileSize &&
+        allowedMimeTypes.includes(f.originFileObj.type)
+    );
+
+    setDisabled(filteredFiles.length === 0);
+    return filteredFiles;
   };
 
   const checkFile = (size: number, fileName: string) => {
     const extension = fileName.split(".").reverse()[0].toLowerCase();
-    const isCorrectExtension =
-      extension.indexOf("jpeg") !== -1 ||
-      extension.indexOf("jpg") !== -1 ||
-      extension.indexOf("png") !== -1;
-    if (!isCorrectExtension) {
+
+    if (!allowedExtensions.includes(extension)) {
       notificationLogic("error", possibleFileExtensions("png, jpg, jpeg"));
     }
 
-    const isSmaller20mb = size <= 20971520;
+    const isSmaller20mb = size <= MaxFileSize;
     if (!isSmaller20mb) {
       notificationLogic("error", fileIsTooBig(20));
     }
 
-    return isCorrectExtension && isSmaller20mb;
+    /* this function has to return false
+    to prevent ant from automatically
+    starting the upload process*/
+    return false;
   };
 
-  const handleUpload = async ({ file, onSuccess }: any) => {
-    setTimeout(() => {
-      onSuccess("ok");
-    }, 0);
+  const handleUpload = async () => {
+    // has to be empty, because we use our custom logic
+    return;
   };
 
   const handleSubmit = async (values: any) => {
-    if (values.upload !== undefined) {
-      if (picturesCount >= MaxPicturesCount) {
-        limitNotification(
-          "Досягнуто ліміту фотографій у галереї подій!",
-          `Максимальна кількість фотографій у галереї не повинна перевищувати ${MaxPicturesCount}.`
-        );
-      } else {
-        if (
-          values.upload.length > MaxPicturesCount ||
-          values.upload.length > MaxPicturesCount - picturesCount
-        ) {
-          limitNotification(
-            "Перевищено ліміт фотографій для завантаження!",
-            "Зменшіть кількість обраних фотографій."
-          );
-        } else {
-          loadingNotification();
-
-          const picturesArray: any = [];
-          try {
-            for (var i = 0; i < values.upload.length; i++) {
-              const data = new FormData();
-              data.append("files", values.upload[i].originFileObj);
-              await addPictures(eventId, data).then(async (response) => {
-                picturesArray.push(response.data);
-              });
-            }
-            let merget = [].concat.apply([], picturesArray);
-            updateGallery(merget);
-            notification.destroy();
-            updateNotification();
-            form.resetFields();
-            setDisabled(true);
-          } catch {
-            notification.destroy();
-            failUpdatingNotification();
-          }
-        }
-      }
-    } else {
-      notification.destroy();
+    if (!values.upload) {
       emptyPhotoListNotification();
+      return;
+    }
+
+    if (values.upload.length + pictures.length > MaxPicturesCount) {
+      limitNotification(
+        "Перевищено ліміт фотографій для завантаження!",
+        "Зменшіть кількість обраних фотографій."
+      );
+      return;
+    }
+
+    loadingNotification();
+    const picturesArray: any = [];
+    try {
+      for (var i = 0; i < values.upload.length; i++) {
+        const data = new FormData();
+        data.append("files", values.upload[i].originFileObj);
+        console.log(data);
+        addPictures(eventId, data).then((response) => {
+          console.log(response.data);
+          picturesArray.push(response.data);
+        });
+      }
+
+      updateGallery(picturesArray);
+      notification.destroy();
+      updateNotification();
+      form.resetFields();
+      setDisabled(true);
+    } catch {
+      notification.destroy();
+      failUpdatingNotification();
     }
   };
 
   return (
-    <Form
-      name="validate_other"
-      {...formItemLayout}
-      initialValues={{
-        ["input-number"]: 3,
-        ["checkbox-group"]: ["A", "B"],
-        rate: 3.5,
-      }}
-      form={form}
-      onFinish={handleSubmit}
-      style={{ display: "block", textAlign: "center", alignItems: "center" }}
-    >
-      <Form.Item
-        name="upload"
-        valuePropName="fileList"
-        getValueFromEvent={normFile}
-        style={{
-          maxHeight: "400px",
-          overflow: "auto",
-          justifyContent: "center",
-          overflowX: "hidden",
-        }}
-      >
-        <Upload
-          beforeUpload={(e) => checkFile(e.size, e.name)}
-          name="gallery"
-          listType="picture"
-          multiple={true}
-          accept=".jpg,.jpeg,.png"
-          customRequest={handleUpload}
+    <>
+      <PicturesWall pictures={pictures} removePicture={removePicture} />
+      <Form form={form} onFinish={handleSubmit}>
+        <Form.Item
+          name="upload"
+          valuePropName="fileList"
+          getValueFromEvent={checkAllFiles}
+          style={{
+            maxHeight: "400px",
+            overflowY: "auto",
+            justifyContent: "center",
+          }}
         >
-          <Tooltip
-            placement="right"
-            title={`Ліміт завантаження: до ${MaxPicturesCount} зображень.`}
+          <Upload
+            beforeUpload={(e) => checkFile(e.size, e.name)}
+            name="gallery"
+            multiple={true}
+            accept=".jpg,.jpeg,.png"
+            customRequest={handleUpload}
           >
-            <Button className="upploadButton">
-              <UploadOutlined /> Додати фотографії
-            </Button>
-          </Tooltip>
-        </Upload>
-      </Form.Item>
-      <Form.Item style={{ justifyContent: "center" }}>
-        <Button type="primary" htmlType="submit" disabled={disabled}>
-          Завантажити
-        </Button>
-      </Form.Item>
-    </Form>
+            {pictures.length < MaxPicturesCount ? (
+              <Tooltip
+                placement="right"
+                title={`Ліміт завантаження: до ${MaxPicturesCount} зображень.`}
+              >
+                <Button className="upploadButton" disabled={addDisabled}>
+                  <UploadOutlined /> Додати фотографії
+                </Button>
+              </Tooltip>
+            ) : null}
+          </Upload>
+        </Form.Item>
+        {pictures.length < MaxPicturesCount ? (
+          <Button type="primary" htmlType="submit" disabled={disabled}>
+            Завантажити
+          </Button>
+        ) : null}
+      </Form>
+    </>
   );
 };
 

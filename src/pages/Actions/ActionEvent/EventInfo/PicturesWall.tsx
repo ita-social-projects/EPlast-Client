@@ -1,13 +1,13 @@
-import { Card, Row, Col, notification, Modal } from "antd";
-import React, { useState } from "react";
-import { EventGallery } from "./EventInfo";
 import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   EyeOutlined,
 } from "@ant-design/icons/lib";
+import { Card, Col, Image, Modal, notification, Row } from "antd";
+import React, { useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
 import { failDeleteAction } from "../../../../components/Notifications/Messages";
+import { EventGallery } from "./EventInfo";
 import "./EventInfo.less";
 
 interface Props {
@@ -18,6 +18,7 @@ interface Props {
 const PicturesWall = ({ pictures, removePicture }: Props) => {
   const [previewVisible, setPreviewVisibility] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  const [previewFileName, setPreviewFileName] = useState("");
   const deletePicture = async (id: number) => {
     return await eventsApi.removePicture(id);
   };
@@ -44,8 +45,7 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
   }
 
   const RenderPictureWallActions = (
-    id: number,
-    pictureInBase64: string
+    picture: EventGallery
   ): React.ReactNode[] => {
     const pictureActions: React.ReactNode[] = [];
     pictureActions.push(
@@ -53,7 +53,8 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
         className="eyeDetails"
         key="details"
         onClick={() => {
-          setPreviewImage(pictureInBase64);
+          setPreviewImage(picture.fileName);
+          setPreviewFileName(picture.blobName);
           setPreviewVisibility(true);
         }}
       />
@@ -62,7 +63,7 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
       <DeleteOutlined
         className="deletePicture"
         key="deletePicture"
-        onClick={() => seeDeleteModal(id)}
+        onClick={() => seeDeleteModal(picture.galleryId)}
       />
     );
 
@@ -70,14 +71,14 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
   };
 
   return (
-    <Row
-      className="picturesWall"
-      justify="center"
-      style={{ marginBottom: "15px" }}
-    >
+    <Row className="picturesWall" justify="center">
       <Col
-        span={16}
-        style={{ maxHeight: "400px", overflow: "auto", overflowX: "hidden" }}
+        span={24}
+        style={{
+          maxHeight: "500px",
+          overflow: "auto",
+          overflowX: "hidden",
+        }}
       >
         <Row justify="center" gutter={[16, 8]}>
           {pictures.map((picture) => (
@@ -91,22 +92,20 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
                     src={picture.fileName}
                   />
                 }
-                actions={RenderPictureWallActions(
-                  picture.galleryId,
-                  picture.fileName
-                )}
+                actions={RenderPictureWallActions(picture)}
                 bodyStyle={{ display: "none" }}
               ></Card>
             </Col>
           ))}
-          <Modal
-            visible={previewVisible}
-            title="Перегляд картинки"
-            footer={null}
-            onCancel={() => setPreviewVisibility(false)}
-          >
-            <img alt="example" style={{ width: "100%" }} src={previewImage} />
-          </Modal>
+          <Image
+            alt="event picture"
+            style={{ display: "none" }}
+            preview={{
+              visible: previewVisible,
+              onVisibleChange: (val) => setPreviewVisibility(val),
+            }}
+            src={previewImage}
+          />
         </Row>
       </Col>
     </Row>

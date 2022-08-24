@@ -1,11 +1,10 @@
+import { EditFilled } from "@ant-design/icons";
+import { Empty, Image, Modal, Spin, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { Carousel, Spin, Image, Typography, Alert, Empty, Grid, Row, Col, Divider } from "antd";
-import { EventGallery } from "./EventInfo";
 import eventsApi from "../../../../api/eventsApi";
-import FormAddPictures from "./FormAddPictures";
-import PicturesWall from "./PicturesWall";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { EventGallery } from "./EventInfo";
 import "./EventInfo.less";
+import FormAddPictures from "./FormAddPictures";
 
 const { Title } = Typography;
 
@@ -13,23 +12,6 @@ interface Props {
   eventId: number;
   userAccesses: { [key: string]: boolean };
 }
-
-const GallerySpinner = () => (
-  <div>
-    <Title level={2} style={{ color: "#3c5438" }}>
-      Галерея
-    </Title>
-    <Carousel autoplay={false} className="homeSlider">
-      <Spin tip="Завантаження...">
-        <Alert
-          message="Зачекайте будь ласка."
-          description="Завантаження фотографій може зайняти певний час."
-          type="info"
-        />
-      </Spin>
-    </Carousel>
-  </div>
-);
 
 const FillGallery = (pictures: EventGallery[]) => {
   if (pictures.length === 0) {
@@ -43,16 +25,16 @@ const FillGallery = (pictures: EventGallery[]) => {
   return (
     <div className="galleryContainer">
       {pictures.map((picture) => {
-            return (
-              <div className="galleryPicture">
-                <Image
-                  className="galleryImg"
-                  src={picture.fileName}
-                  key={picture.galleryId}
-                />
-              </div>
-            );
-          })}
+        return (
+          <div className="galleryPicture">
+            <Image
+              className="galleryImg"
+              src={picture.fileName}
+              key={picture.galleryId}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -61,42 +43,34 @@ const Gallery = ({ eventId, userAccesses }: Props) => {
   const [loading, setLoading] = useState(false);
   // @ts-ignore
   const [pictures, setPictures] = useState<EventGallery[]>([]);
+  const [showAdminGallery, setShowAdminGallery] = useState<boolean>(false);
 
   const addPictures = (uploadedPictures: EventGallery[]) =>
     setPictures(pictures.concat(uploadedPictures));
+
   const removePicture = (pictureId: number) =>
     setPictures(pictures.filter((picture) => picture.galleryId !== pictureId));
-  const GalleryAdministration = (): React.ReactNode[] => {
-    if (userAccesses["AddPhotos"]) {
-      return [
-        <div>
-          <Divider/>
-          <Title
-            level={3}
-            style={{
-              color: "#3c5438",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            key="spinnerTitle"
-          >
-            Адміністрування галереї
-          </Title>
+
+  const GalleryAdministration = (): React.ReactNode => {
+    return (
+      <Modal
+        title="Адміністрування галереї"
+        visible={showAdminGallery}
+        footer={null}
+        onCancel={() => setShowAdminGallery(false)}
+        className="admin-gallery-modal"
+      >
+        <div className="gallery-administration">
           <FormAddPictures
             eventId={eventId}
             updateGallery={addPictures}
-            picturesCount={pictures.length}
-            key="addPictures"
-          />
-          <PicturesWall
             pictures={pictures}
+            key="addPictures"
             removePicture={removePicture}
-            key="removePictures"
           />
-        </div>,
-      ];
-    } else return [];
+        </div>
+      </Modal>
+    );
   };
 
   useEffect(() => {
@@ -107,15 +81,28 @@ const Gallery = ({ eventId, userAccesses }: Props) => {
     };
     fetchData();
   }, []);
-  return loading === false ? (
-    GallerySpinner()
-  ) : (
+
+  return (
     <div>
-      <Title level={2} style={{ color: "#3c5438" }}>
-        Галерея
-      </Title>
-      {FillGallery(pictures)}
-      {GalleryAdministration()}
+      <div className="gallery-header">
+        <Title level={2} style={{ color: "#3c5438" }}>
+          Галерея
+        </Title>
+        {userAccesses["AddPhotos"] ? (
+          <EditFilled
+            className="edit-icon"
+            onClick={() => setShowAdminGallery(true)}
+          />
+        ) : null}
+      </div>
+      {loading === false ? (
+        <Spin tip="Завантаження..." />
+      ) : (
+        <>
+          {FillGallery(pictures)}
+          {GalleryAdministration()}
+        </>
+      )}
     </div>
   );
 };

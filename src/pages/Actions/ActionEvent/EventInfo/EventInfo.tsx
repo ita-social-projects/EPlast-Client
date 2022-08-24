@@ -73,6 +73,7 @@ export interface EventAdmin {
 export interface EventGallery {
   galleryId: number;
   fileName: string;
+  blobName: string;
 }
 
 const EventInfo = () => {

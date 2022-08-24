@@ -104,10 +104,10 @@ const EventDetailsHeader = ({
       <Descriptions.Item label={renderLabel("Локація")}>
         {renderLocationContent(eventLocation)}
       </Descriptions.Item>
-      <Descriptions.Item label={renderLabel("Призначена для")} span={3}>
+      <Descriptions.Item label={renderLabel("Призначена для")}>
         {renderContent(forWhom)}
       </Descriptions.Item>
-      <Descriptions.Item label={renderLabel("Опис")}>
+      <Descriptions.Item label={renderLabel("Опис")} span={2}>
         {renderContentMaxlength(description)}
       </Descriptions.Item>
     </Descriptions>

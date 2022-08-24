@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .eventActions {
@@ -32,7 +32,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin: auto;
+  margin: 0 10px 0 10px;
   flex: 1 1;
 
   @media (max-width: 800) {
@@ -41,7 +41,8 @@
 }
 
 .event-info-header {
-  width: 30%;
+  margin-right: 10px;
+  width: 600px;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   justify-content: center;
@@ -52,8 +53,8 @@
 }
 
 .eventGallary {
-  width: 100%;
-  margin: 0 5px 0 5px;
+  width: 80%;
+  margin: 0 5px 0 10px;
   padding: 20px 20px 20px 20px;
   box-shadow: 0 7px 14px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -80,12 +81,8 @@
 }
 
 .picturesWall {
-  @media (max-width: 280px) {
-    width: 150px;
-  }
-  @media (max-width: 320px) and (min-width: 290px) {
-    width: 170px;
-  }
+  width: 100%;
+  margin: 0;
 }
 
 .galleryPicture {
@@ -119,7 +116,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   height: auto;
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
   justify-content: center;
   align-content: flex-start;
@@ -128,6 +125,23 @@
     overflow-x: auto;
     justify-content: flex-start;
   }
+}
+
+.gallery-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: baseline;
+
+  .edit-icon {
+    font-size: 23px;
+    color: var(--antd-wave-shadow-color);
+    padding-left: 10px;
+  }
+}
+
+.admin-gallery-modal {
+  width: 800px !important;
 }
 
 .participantsTable {
