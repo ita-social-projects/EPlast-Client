@@ -248,7 +248,7 @@ const CreateCity = () => {
                   type="primary"
                   href={`/regions/${regionFollower.regionId}/followers/${regionFollower.id}/edit`}
                 >
-                  Редагувати заяву
+                  Управління заявою
                 </Button>
               </Col>
             </Row>
