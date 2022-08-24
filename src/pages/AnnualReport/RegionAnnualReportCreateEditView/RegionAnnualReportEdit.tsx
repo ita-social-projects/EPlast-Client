@@ -7,6 +7,7 @@ import Spinner from "../../Spinner/Spinner";
 import RegionAnnualReportForm from "../RegionAnnualReportForm/RegionAnnualReportForm";
 import regionsApi from "../../../api/regionsApi";
 import { CloseCircleOutlined } from "@ant-design/icons";
+import openNotificationWithIcon from '../../../components/Notifications/Notification';
 
 export const RegionAnnualReportEdit = () => {
   const { annualreportId, year } = useParams();
@@ -56,22 +57,13 @@ export const RegionAnnualReportEdit = () => {
   };
 
   const showSuccess = (message: string) => {
-    Modal.success({
-      content: message,
-      onOk: () => {
-        history.goBack();
-      },
-    });
+    openNotificationWithIcon("success", message);
+    history.goBack(); 
   };
 
   const showError = (message: string) => {
-    Modal.error({
-      title: "Помилка!",
-      content: message,
-      onOk: () => {
-        history.goBack();
-      },
-    });
+    openNotificationWithIcon("error", message);
+    history.goBack(); 
   };
 
   return (
