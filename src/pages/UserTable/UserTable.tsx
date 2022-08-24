@@ -31,12 +31,13 @@ import { shouldContain } from "../../components/Notifications/Messages";
 import classes from "./UserTable.module.css";
 import citiesApi from "../../api/citiesApi";
 import userApi from "../../api/UserApi";
-import User from "../Distinction/Interfaces/User";
+import User from "../../models/UserTable/User";
 import AuthLocalStorage from "../../AuthLocalStorage";
 import jwt_decode from "jwt-decode";
 import { Roles } from "../../models/Roles/Roles";
 import { useLocation } from "react-router-dom";
 import queryString from "querystring";
+import UserRenewalTable from "../UserRenewal/UserRenewalTable/UserRenewalTable";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -82,7 +83,8 @@ const UsersTable = () => {
   const { Search } = Input;
   const location = useLocation();
   const queryParams = useRef<any>({});
-  const [selectedRow, setSelectedRow] = useState<number>(-1);
+  const [selectedRow, setSelectedRow] = useState<number>(-1)
+  const tableBody = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     initializePage();
@@ -316,6 +318,10 @@ const UsersTable = () => {
         {
           key: "unconfirmed",
           tab: "Непідтверджені",
+        },
+        {
+          key: "renewals",
+          tab: "Очікують на відновлення членства",
         }
       );
     }
@@ -324,6 +330,7 @@ const UsersTable = () => {
 
   const fetchData = async () => {
     if (!(currentTabName && isQueryLoaded)) return;
+    if (currentTabName === "renewals") return;
 
     try {
       const response = await getUsersForTableByPage({
@@ -513,13 +520,13 @@ const UsersTable = () => {
       }}
     >
       <Title level={2}>Таблиця користувачів</Title>
-      <Title
-        level={4}
-        style={{ textAlign: "left", margin: 10 }}
-        underline={true}
-      >
-        Загальна кількість користувачів: {total}
-      </Title>
+        <Title
+          level={4}
+          style={{ textAlign: "left", margin: 10 }}
+          underline={true}
+        >
+          Загальна кількість користувачів: {total}
+        </Title>
       <div className={classes.searchContainer}>
         {loading ? (
           <div className={classes.filterContainer}>
@@ -605,90 +612,101 @@ const UsersTable = () => {
         </div>
       </div>
 
-      <Card
-        className={classes.card}
-        tabList={tabList}
-        activeTabKey={currentTabName}
-        onTabChange={(key) => {
-          onTabChange(key);
-        }}
-      >
-        <Table
-          rowClassName={(record, index) =>
-            index === selectedRow ? classes.selectedRow : ""
-          }
-          loading={!loading}
-          className={classes.table}
-          bordered
-          rowKey="id"
-          scroll={{ x: 1450 }}
-          columns={ColumnsForUserTable({
-            sortKey: sortKey,
-            setSortKey: setSortKey,
-            setFilter: setFilter,
-            setPage: setPage,
-            filterRole: filter,
-            isZgolosheni: currentTabName === "registered",
-          })}
-          dataSource={users}
-          onRow={(record, index) => {
-            return {
-              onDoubleClick: () => {
-                if (record.id && canView)
-                  window.open(`/userpage/main/${record.id}`);
-              },
-              onContextMenu: (event) => {
-                event.preventDefault();
-                setShowDropdown(false);
-                if (canView) {
-                  setRecordObj(record.id);
-                  setRecordRoles(parseUserRolesString(record.userRoles));
-                  setCurrentUserRoles(record.userRoles);
-                  setUser(users.find((x) => x.id == record.id));
-                  setX(event.pageX);
-                  setY(event.pageY);
-                  setShowDropdown(true);
-                  setSelectedRow(index as number);
-                }
-              },
-            };
+      <div ref={tableBody}>
+        <Card
+          className={classes.card}
+          tabList={tabList}
+          activeTabKey={currentTabName}
+          onTabChange={(key) => {
+            onTabChange(key);
           }}
-          onChange={(pagination) => {
-            if (pagination) {
-              window.scrollTo({
-                left: 0,
-                top: 0,
-                behavior: "smooth",
-              });
-            }
-          }}
-          pagination={{
-            current: page,
-            pageSize: pageSize,
-            total: total,
-            showLessItems: true,
-            responsive: true,
-            showSizeChanger: true,
-            onChange: (page) => handlePageChange(page),
-            onShowSizeChange: (page, size) => handleSizeChange(page, size),
-          }}
-        />
-      </Card>
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <DropDownUserTable
-          showDropdown={showDropdown}
-          record={recordObj}
-          pageX={x}
-          pageY={y}
-          inActiveTab={currentTabName === "confirmed"}
-          onDelete={handleDelete}
-          onChange={handleChange}
-          selectedUser={user}
-          selectedUserRoles={recordRoles}
-          currentUser={currentUser}
-          canView={canView}
-        />
-      </ClickAwayListener>
+        >
+          <UserRenewalTable
+            searchQuery={searchData}
+            hidden={currentTabName !== "renewals"}
+            setTotal={setTotal}
+            relativePosition={[tableBody.current?.offsetLeft as number, tableBody.current?.offsetTop as number]}
+            currentUser={currentUser}/>
+          <Table
+            style={currentTabName === "renewals" ? {display: "none"} : {}}
+            rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
+            loading={!loading}
+            className={classes.table}
+            bordered
+            rowKey="id"
+            scroll={{ x: 1450 }}
+            columns={ColumnsForUserTable({
+              sortKey: sortKey,
+              setSortKey: setSortKey,
+              setFilter: setFilter,
+              setPage: setPage,
+              filterRole: filter,
+              isZgolosheni: currentTabName === "registered",
+              page: page,
+              pageSize: pageSize,
+            })}
+            dataSource={users}
+            onRow={(record, index) => {
+              return {
+                onDoubleClick: () => {
+                  if (record.id && canView)
+                    window.open(`/userpage/main/${record.id}`);
+                },
+                onContextMenu: (event) => {
+                  event.preventDefault();
+                  setShowDropdown(false);
+                  if (canView) {
+                    setRecordObj(record.id);
+                    setRecordRoles(parseUserRolesString(record.userRoles));
+                    setCurrentUserRoles(record.userRoles);
+                    setUser(users.find((x) => x.id == record.id));
+                    setX(event.pageX - (tableBody.current?.offsetLeft as number));
+                    setY(event.pageY - (tableBody.current?.offsetTop as number));
+                    setShowDropdown(true);
+                    setSelectedRow(index as number);
+                  }
+                },
+              };
+            }}
+            onChange={(pagination) => {
+              if (pagination) {
+                window.scrollTo({
+                  left: 0,
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              total: total,
+              showLessItems: true,
+              responsive: true,
+              showSizeChanger: true,
+              onChange: (page) => handlePageChange(page),
+              onShowSizeChange: (page, size) => handleSizeChange(page, size),
+            }}
+          />
+          <ClickAwayListener onClickAway={handleClickAway}>
+          <DropDownUserTable
+            offsetTop={tableBody.current?.offsetTop as number}
+            offsetLeft={tableBody.current?.offsetLeft as number}
+            showDropdown={showDropdown}
+            record={recordObj}
+            pageX={x}
+            pageY={y}
+            inActiveTab={currentTabName === "confirmed"}
+            onDelete={handleDelete}
+            onChange={handleChange}
+            selectedUser={user}
+            selectedUserRoles={recordRoles}
+            currentUser={currentUser}
+            canView={canView}
+          />
+        </ClickAwayListener>
+        </Card>
+      </div>
     </Layout.Content>
   );
 };
