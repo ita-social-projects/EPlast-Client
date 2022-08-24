@@ -224,12 +224,17 @@ export default [
     Component: CreateCity,
   },
   {
-    path: "/regions/follower/edit/:id",
+    path: "/regions/:regionId/followers/:followerId/edit",
+    name: "Редагування заяви на створення станиці",
+    Component: CreateCity,
+  },
+  {
+    path: "/regions/:regionId/followers/:followerId",
     name: "Заява на створення станиці",
     Component: CreateCityApplication,
   },
   {
-    path: "/regions/followers/:id",
+    path: "/regions/:id/followers",
     name: "Заяви на створення станиці",
     Component: RegionFollowers,
   },

@@ -138,7 +138,9 @@ const RegionFollowers = () => {
                     AdminAndOkruga.some((role) =>
                       activeUserRoles.includes(role)
                     )
-                      ? history.push(`/regions/follower/edit/${follower.id}`)
+                      ? history.push(
+                          `/regions/${follower.regionId}/followers/${follower.id}`
+                        )
                       : undefined
                   }
                 >

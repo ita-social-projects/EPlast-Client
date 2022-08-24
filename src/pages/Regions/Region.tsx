@@ -1064,7 +1064,7 @@ const Region = () => {
             <Title level={4}>
               Прихильники округи{" "}
               <a
-                onClick={() => history.push(`/regions/followers/${region.id}`)}
+                onClick={() => history.push(`/regions/${region.id}/followers`)}
               >
                 {followersCount !== 0 ? (
                   <Badge
@@ -1096,7 +1096,7 @@ const Region = () => {
                             activeUserRoles.includes(role)
                           )
                             ? history.push(
-                                `/regions/follower/edit/${follower.id}`
+                                `/regions/${id}/followers/${follower.id}`
                               )
                             : undefined
                         }
@@ -1119,7 +1119,7 @@ const Region = () => {
               <Button
                 type="primary"
                 className="cityInfoButton"
-                onClick={() => history.push(`/regions/followers/${region.id}`)}
+                onClick={() => history.push(`/regions/${region.id}/followers`)}
               >
                 Більше
               </Button>

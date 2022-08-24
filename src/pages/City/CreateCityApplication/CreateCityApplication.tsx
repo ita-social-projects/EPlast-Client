@@ -15,10 +15,11 @@ import User from "../../../models/UserTable/User";
 import UserApi from "../../../api/UserApi";
 import { OblastsWithoutNotSpecified } from "../../../models/Oblast/OblastsRecord";
 import TextArea from "antd/lib/input/TextArea";
+import RollbackOutlined from "@ant-design/icons/lib/icons/RollbackOutlined";
 
 const CreateCity = () => {
   const [form] = Form.useForm();
-  const { id } = useParams();
+  const { regionId, followerId } = useParams();
   const history = useHistory();
   const [isDataLoaded, setDataLoaded] = useState<boolean>(false);
   const [appealRegion, setAppealRegion] = useState<RegionProfile>(
@@ -47,7 +48,7 @@ const CreateCity = () => {
 
   const loadData = async () => {
     try {
-      await getRegionFollower(id);
+      await getRegionFollower(followerId);
     } finally {
       setDataLoaded(true);
     }
@@ -188,11 +189,11 @@ const CreateCity = () => {
                 rules={[descriptionValidation.Phone]}
               >
                 <ReactInputMask
-                  readOnly
+                  disabled
                   mask="+380(99)-999-99-99"
                   maskChar={null}
                 >
-                  {(inputProps: any) => <Input readOnly {...inputProps} />}
+                  {(inputProps: any) => <Input disabled {...inputProps} />}
                 </ReactInputMask>
               </Form.Item>
             </Col>
@@ -243,10 +244,9 @@ const CreateCity = () => {
             <Col xs={24} sm={12}>
               <Button
                 type="primary"
-                className="backButton"
-                href={`/regions/followers/${regionFollower.regionId}`}
+                href={`/regions/${regionFollower.regionId}/followers/${regionFollower.id}/edit`}
               >
-                Повернутись до заяв
+                Редагувати заяву
               </Button>
             </Col>
           </Row>

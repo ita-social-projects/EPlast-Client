@@ -71,10 +71,12 @@ const classes = require("../../Club/Club/Modal.module.css");
 
 const CreateCity = () => {
   const [form] = Form.useForm();
-  const { id } = useParams();
+  const { regionId, followerId } = useParams();
   const history = useHistory();
   const location = useLocation();
-  const followerPath = "/regions/follower/";
+  const followerPath = "follower";
+  const editPath = "edit";
+  const newPath = "new";
   const isFollowerPath = location.pathname.includes(followerPath);
   const [isDataLoaded, setDataLoaded] = useState<boolean>(false);
   const [loadingButton, setLoadingButton] = useState(false);
@@ -145,14 +147,16 @@ const CreateCity = () => {
   const getNotificationReceivers = async (regionId: number) => {
     let listOfReceivers: string[] = [];
 
-    getGoverningBodiesAdmins()
-      .then((response) => {
-        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.GoverningBodyAdmin && admin.status === true);
-        if (user) listOfReceivers.push(user.userId);
-      });
+    getGoverningBodiesAdmins().then((response) => {
+      let user = response.data.find(
+        (admin: any) =>
+          admin.adminTypeId === AdminTypes.GoverningBodyAdmin &&
+          admin.status === true
+      );
+      if (user) listOfReceivers.push(user.userId);
+    });
 
-    getRegionAdministration(regionId)
-      .then((response) => {
+    getRegionAdministration(regionId).then((response) => {
       response.data.map((admin: any) => {
         if (
           (admin.adminTypeId === AdminTypes.OkrugaHead ||
@@ -162,15 +166,14 @@ const CreateCity = () => {
           listOfReceivers.push(admin.userId);
         }
       });
-      });
+    });
 
-    getSuperAdmins()
-      .then((response) => {
-        response.data.map((user: any) => listOfReceivers.push(user.id));
-      });
+    getSuperAdmins().then((response) => {
+      response.data.map((user: any) => listOfReceivers.push(user.id));
+    });
 
     return listOfReceivers;
-  }
+  };
 
   const getRegionFollower = async (followerId: number) => {
     await getRegionFollowerById(followerId).then(async (followerResponse) => {
@@ -185,11 +188,11 @@ const CreateCity = () => {
           setAppealRegion(regionResponse.data);
         }
       );
-    })
+    });
   };
 
   const getCity = async () => {
-    const response = await getCityById(+id);
+    const response = await getCityById(+followerId);
     if (response.data.logo !== null) {
       const logo = await getLogo(response.data.logo);
       response.data.logo = logo.data;
@@ -212,7 +215,7 @@ const CreateCity = () => {
     if (isFollowerPath) {
       const newRegionFollower: RegionFollower = {
         id: regionFollower.id,
-        userId: location.pathname.startsWith(followerPath + "edit")
+        userId: location.pathname.includes(editPath)
           ? applicant.id
           : activeUser.id,
         appeal: values.appeal,
@@ -262,7 +265,9 @@ const CreateCity = () => {
     const responsePromise = createRegionFollower(newRegionFollower);
     return responsePromise
       .then(async (response) => {
-        let peopleToReceiveNotification = await getNotificationReceivers(parseInt(newRegionFollower.regionId));
+        let peopleToReceiveNotification = await getNotificationReceivers(
+          parseInt(newRegionFollower.regionId)
+        );
         notificationLogic("success", successfulCreateAction("Заяву"));
         await createNotification(
           newRegionFollower.userId,
@@ -272,9 +277,9 @@ const CreateCity = () => {
           peopleToReceiveNotification,
           `На ваш розгляд чекає заява на створення станиці `,
           NotificationBoxApi.NotificationTypes.UserNotifications,
-          `/regions/follower/edit/${response.data}`,
+          `/regions/${newRegionFollower.regionId}/followers/${response.data}`,
           `${newRegionFollower.cityName}.`
-        )
+        );
         history.push(`/cities/page/1`);
       })
       .catch(() => {
@@ -311,7 +316,7 @@ const CreateCity = () => {
 
     return responsePromise
       .then(() => {
-        if (location.pathname.startsWith(followerPath + "edit")) {
+        if (location.pathname.includes(editPath)) {
           notificationLogic("success", successfulCreateAction("Станицю"));
           removeFollower(regionFollowerId);
           history.push(`/cities/${city.id}`);
@@ -364,7 +369,7 @@ const CreateCity = () => {
         {
           removeFollower(regionFollower.id);
           notificationLogic("success", successfulDeleteAction("Заяву"));
-          history.push(`/regions/followers/${regionFollower.regionId}`);
+          history.push(`/regions/${regionFollower.regionId}/followers`);
         }
       },
     });
@@ -412,12 +417,12 @@ const CreateCity = () => {
   const loadData = async () => {
     try {
       if (isFollowerPath) {
-        if (location.pathname.startsWith(`${followerPath}edit`)) {
-          await getRegionFollower(id);
+        if (location.pathname.includes(editPath)) {
+          await getRegionFollower(followerId);
         } else {
           await getActiveUser();
         }
-      } else if (+id) await getCity();
+      } else if (+followerId) await getCity();
 
       await getRegions();
     } finally {
@@ -477,23 +482,23 @@ const CreateCity = () => {
                       ? regionFollower.logo
                       : CityDefaultLogo
                     : city?.logo
-                      ? city.logo
-                      : CityDefaultLogo
+                    ? city.logo
+                    : CityDefaultLogo
                 }
                 alt="City"
                 className="cityLogo"
               />
             </Upload>
           </Form.Item>
-            <Row justify="center" gutter={[16, 4]}>
+          <Row justify="center" gutter={[16, 4]}>
             {isFollowerPath ? (
-                <Col md={12} xs={24}>
+              <Col md={12} xs={24}>
                 <Form.Item
                   name="applicant"
                   label="Заявник"
                   labelCol={{ span: 24 }}
                   initialValue={
-                    location.pathname.startsWith(followerPath + "edit")
+                    location.pathname.includes(editPath)
                       ? applicant.firstName + " " + applicant.lastName
                       : activeUser.firstName + " " + activeUser.lastName
                   }
@@ -504,7 +509,7 @@ const CreateCity = () => {
                     readOnly
                     maxLength={51}
                     onClick={() =>
-                      location.pathname.startsWith(followerPath + "edit")
+                      location.pathname.includes(editPath)
                         ? history.push(`/userpage/main/${applicant.id}`)
                         : undefined
                     }
@@ -513,7 +518,7 @@ const CreateCity = () => {
               </Col>
             ) : null}
             {isFollowerPath ? (
-                <Col md={12} xs={24}>
+              <Col md={12} xs={24}>
                 <Form.Item
                   name="appeal"
                   label="Заява"
@@ -525,7 +530,7 @@ const CreateCity = () => {
                 </Form.Item>
               </Col>
             ) : null}
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="name"
                 label="Назва"
@@ -541,27 +546,21 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="level"
                 label="Рівень"
                 labelCol={{ span: 24 }}
-                initialValue={
-                  isFollowerPath ? regionFollower.level : 1
-                }
+                initialValue={isFollowerPath ? regionFollower.level : 1}
               >
-                <Select
-                  showSearch
-                  optionFilterProp="children"
-                >
+                <Select showSearch optionFilterProp="children">
                   {levels.map((item: number) => (
-                    <Select.Option value={item}>
-                      {item}
-                    </Select.Option>
+                    <Select.Option value={item}>{item}</Select.Option>
                   ))}
                 </Select>
               </Form.Item>
-              </Col><Col md={12} xs={24}>
+            </Col>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="oblast"
                 label="Область"
@@ -574,19 +573,17 @@ const CreateCity = () => {
                 <Select
                   showSearch
                   optionFilterProp="children"
-                  disabled={
-                    location.pathname.startsWith(followerPath + "edit")
-                  }
+                  disabled={location.pathname.includes(editPath)}
                 >
-                  {OblastsWithoutNotSpecified.map(([key, value]) =>
+                  {OblastsWithoutNotSpecified.map(([key, value]) => (
                     <Select.Option key={key} value={key}>
                       {value}
                     </Select.Option>
-                  )}
+                  ))}
                 </Select>
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="region"
                 label="Округа"
@@ -599,9 +596,7 @@ const CreateCity = () => {
                 <Select
                   showSearch
                   optionFilterProp="children"
-                  disabled={
-                    location.pathname.startsWith(followerPath + "edit")
-                  }
+                  disabled={location.pathname.includes(editPath)}
                 >
                   {regions
                     .sort((a, b) => a.regionName.localeCompare(b.regionName))
@@ -616,7 +611,7 @@ const CreateCity = () => {
                 </Select>
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="address"
                 label="Адреса"
@@ -632,7 +627,7 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="phoneNumber"
                 label="Номер телефону"
@@ -642,15 +637,12 @@ const CreateCity = () => {
                 }
                 rules={[descriptionValidation.Phone]}
               >
-                <ReactInputMask
-                  mask="+380(99)-999-99-99"
-                  maskChar={null}
-                >
+                <ReactInputMask mask="+380(99)-999-99-99" maskChar={null}>
                   {(inputProps: any) => <Input {...inputProps} />}
                 </ReactInputMask>
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="cityURL"
                 label="Посилання"
@@ -666,17 +658,17 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="email"
                 label="Електронна пошта"
                 labelCol={{ span: 24 }}
                 rules={descriptionValidation.Email}
-                initialValue={isFollowerPath ? regionFollower.email : city.email}
+                initialValue={
+                  isFollowerPath ? regionFollower.email : city.email
+                }
               >
-                <Input
-                  maxLength={51}
-                />
+                <Input maxLength={51} />
               </Form.Item>
             </Col>
             <Col md={{ span: 24 }} xs={24}>
@@ -705,7 +697,7 @@ const CreateCity = () => {
           </Row>
           <Row className="cityButtons" justify="center" gutter={[0, 6]}>
             <Col xs={24} sm={12}>
-              {location.pathname.startsWith(followerPath + "edit") ? (
+              {location.pathname.includes(editPath) ? (
                 <Button
                   type="primary"
                   className="backButton"
@@ -724,8 +716,8 @@ const CreateCity = () => {
               )}
             </Col>
             <Col xs={24} sm={12}>
-              {location.pathname.startsWith(followerPath + "edit") ||
-                location.pathname.startsWith("/cities/edit/") ? (
+              {location.pathname.includes(editPath) ||
+              location.pathname.includes(editPath) ? (
                 <Button
                   htmlType="submit"
                   loading={loadingButton}
@@ -733,7 +725,7 @@ const CreateCity = () => {
                 >
                   Підтвердити
                 </Button>
-              ) : location.pathname.startsWith(followerPath + "new") ? (
+              ) : location.pathname.includes(newPath) ? (
                 <Button
                   htmlType="submit"
                   loading={loadingButton}
