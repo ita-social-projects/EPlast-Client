@@ -729,7 +729,7 @@ const CreateEditNotification =
           [userId],
           `Вашу пересторогу: '${name}' було змінено. `,
           NotificationBoxApi.NotificationTypes.UserNotifications,
-          `/state.tableData`,
+          `/precautions`,
           `Переглянути`
         );
         NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
@@ -739,7 +739,7 @@ const CreateEditNotification =
                 [cra.cityAdminId, cra.regionAdminId],
                 `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
                 NotificationBoxApi.NotificationTypes.UserNotifications,
-                `/state.tableData`,
+                `/precautions`,
                 `Переглянути`
               );
             });
