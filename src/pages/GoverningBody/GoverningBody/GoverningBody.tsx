@@ -91,7 +91,7 @@ const GoverningBody = () => {
   const [adminsPhotosLoading, setAdminsPhotosLoading] = useState<boolean>(
     false
   );
-  const [visible, setVisible] = useState<boolean>(false);
+  const [visibleCreate, setCreateVisible] = useState<boolean>(false);
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -321,7 +321,7 @@ const GoverningBody = () => {
   };
 
   const handleAdminAdd = () => {
-    setVisible(false);
+    setCreateVisible(false);
   };
 
   useEffect(() => {
@@ -658,7 +658,7 @@ const GoverningBody = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => setVisible(true)}
+                  onClick={() => setCreateVisible(true)}
                 />
               ) : null}
               <Button
@@ -840,12 +840,12 @@ const GoverningBody = () => {
       />
       <Modal
         title="Додати діловода"
-        visible={visible}
-        onCancel={() => setVisible(false)}
+        visible={visibleCreate}
+        onCancel={() => setCreateVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
-          visibleModal={visible}
+          visibleModal={visibleCreate}
           onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}

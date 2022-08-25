@@ -55,7 +55,7 @@ const CreateClub = () => {
   const [loadingButton, setLoadingButton] = useState(false);
   const [loading, setLoading] = useState(false);
   const [club, setClub] = useState<ClubProfile>(new ClubProfile());
-
+  const isCreating = !club.id;
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
@@ -135,7 +135,7 @@ const CreateClub = () => {
       slogan: values.slogan,
       isActive: club.isActive,
     };
-    if (!club.id) {
+    if (isCreating) {
       CreateClub(newClub);
     } else {
       EditClub(newClub);
@@ -172,10 +172,14 @@ const CreateClub = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-          <b>Відмінити створення куреня ?</b>{" "}
+          {
+            isCreating
+              ? <b>Відмінити створення куреня ?</b>
+              : <b>Відмінити редагування куреня ?</b>
+          }
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         history.goBack();
       },
