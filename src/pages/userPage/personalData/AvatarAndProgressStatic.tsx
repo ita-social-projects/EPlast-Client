@@ -181,23 +181,23 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         <div>
           {region ? (
             <p className="statusText">
-              Є прихильником округи:{" "}
+              Є зголошеним до округи:{" "}
               <Link to={"/regions/" + regionId} className="LinkText">
                 {region}
               </Link>
             </p>
           ) : (
-            <p className="statusText">Не є прихильником жодної округи</p>
+            <p className="statusText">Не є зголошеним до жодної округи</p>
           )}
           {city ? (
             <p className="statusText">
-              Є прихильником станиці:{" "}
+              Є зголошеним до станиці:{" "}
               <Link to={"/cities/" + cityId} className="LinkText">
                 {city}
               </Link>
             </p>
           ) : (
-            <p className="statusText">Не є прихильником жодної станиці</p>
+            <p className="statusText">Не є зголошеним до жодної станиці</p>
           )}
         </div>
       ) : (
@@ -219,13 +219,13 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       {clubMemberIsApproved == false ? (
         club ? (
           <p className="statusText">
-            Є прихильником куреня:{" "}
+            Є зголошеним до куреня:{" "}
             <Link to={"/clubs/" + clubId} className="LinkText">
               {club}
             </Link>
           </p>
         ) : (
-          <p className="statusText">Не є прихильником жодного куреня</p>
+          <p className="statusText">Не є зголошеним до жодного куреня</p>
         )
       ) : (
         <p className="statusText">
