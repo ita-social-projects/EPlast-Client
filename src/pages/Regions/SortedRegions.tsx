@@ -126,7 +126,7 @@ const SortedRegions = ({ switcher }: Props) => {
   return (
     <Layout.Content className="cities">
       {switcher ? (
-        <Title level={1}>Не активні округи</Title>
+        <Title level={1}>Неактивні округи</Title>
       ) : (
         <Title level={1}>Округи</Title>
       )}
