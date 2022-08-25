@@ -122,7 +122,7 @@ const AddNewRegionFormPage = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-          <b>Відмінити створення округи ?</b>{" "}
+          <b>Відмінити створення округи ?</b>
         </div>
       ),
       onCancel() { },

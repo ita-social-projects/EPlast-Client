@@ -52,12 +52,18 @@ const AddSectorAdminForm = (props: any) => {
   };
 
   const addSectorAdmin = async (admin: SectorAdmin) => {
-    await addAdministrator(admin.sectorId, admin);
+    const { data: newAdministrator } = await addAdministrator(admin.sectorId, admin);
     if (admin.adminType.adminTypeName == Roles.GoverningBodySectorHead) {
       setSectorHead(admin);
     }
-    setUsers(users.filter((x) => x.id !== admin.userId));
-    notificationLogic("success", "Користувач успішно доданий в провід");
+
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+      setUsers(users.filter((x) => x.id !== admin.userId));
+      setAdmins((old: SectorAdmin[]) => [...old, newAdministrator]);
+    } else {
+      notificationLogic("info", "Колишні діловодства напряму були змінені");
+    }
     form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
@@ -93,14 +99,14 @@ const AddSectorAdminForm = (props: any) => {
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-            existingAdmin.endDate === undefined
+              existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (newAdmin.id === 0) {
           addSectorAdmin(newAdmin);
@@ -145,7 +151,6 @@ const AddSectorAdminForm = (props: any) => {
           showConfirm(newAdmin, existingAdmin);
         } else {
           addSectorAdmin(newAdmin);
-          setAdmins((old: SectorAdmin[]) => [...old, newAdmin]);
         }
       } finally {
         onAdd();
@@ -305,8 +310,8 @@ const AddSectorAdminForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-            ? undefined
-            : moment.utc(props.admin.endDate).local()
+              ? undefined
+              : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker
