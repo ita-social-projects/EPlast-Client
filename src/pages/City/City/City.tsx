@@ -73,6 +73,7 @@ import "moment/locale/uk";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import ModalAddPlastDegree from "../../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
+import { boolean } from "yup";
 
 const City = () => {
   const history = useHistory();
@@ -369,8 +370,7 @@ const City = () => {
         previousAdmin = admin;
       }
     });
-    await addAdministrator(newAdmin.cityId, newAdmin);
-    await updateAdmins();
+    const { data: newAdministrator } = await addAdministrator(newAdmin.cityId, newAdmin);
     if (previousAdmin.adminType.adminTypeName != "") {
       await createNotification(
         previousAdmin.userId,
@@ -383,7 +383,13 @@ const City = () => {
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
       true
     );
-    notificationLogic("success", "Користувач успішно доданий в провід");
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+      updateAdmins();
+    } else {
+      notificationLogic("info", "Колишні діловодства станиці були змінені")
+    }
+    return newAdministrator;
   };
 
   const editCityAdmin = async (admin: CityAdmin) => {
@@ -409,21 +415,21 @@ const City = () => {
           закінчується{" "}
           <b>
             {moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(existingAdmin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (newAdmin.id === 0) {
           addCityAdmin(newAdmin);
           setAdmins(
             (admins as CityAdmin[]).map((x) =>
               x.userId === existingAdmin?.userId &&
-              x.adminType.adminTypeName ===
+                x.adminType.adminTypeName ===
                 existingAdmin?.adminType?.adminTypeName
                 ? newAdmin
                 : x
@@ -447,14 +453,14 @@ const City = () => {
           є Головою Станиці, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -469,14 +475,14 @@ const City = () => {
           вже має таку роль, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -491,7 +497,7 @@ const City = () => {
           не є членом Пласту.
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -528,10 +534,11 @@ const City = () => {
         } else if (existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
         } else {
-          await addCityAdmin(admin).then(() => {
+          const newAdmin = await addCityAdmin(admin);
+          if (newAdmin.status) {
             admins.push(admin);
             setAdmins(admins);
-          });
+          }
         }
       } finally {
         setvisibleAddModal(false);
@@ -858,9 +865,8 @@ const City = () => {
               {members.length !== 0 ? (
                 members.slice(0, membersToShow).map((member) => (
                   <Col
-                    className={`cityMemberItem ${
-                      canSeeOtherProfiles || "notAccess"
-                    }`}
+                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
+                      }`}
                     key={member.id}
                     xs={12}
                     sm={8}
@@ -928,9 +934,8 @@ const City = () => {
               {admins.length !== 0 ? (
                 admins.slice(0, adminsToShow).map((admin) => (
                   <Col
-                    className={`cityMemberItem ${
-                      canSeeOtherProfiles || "notAccess"
-                    }`}
+                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
+                      }`}
                     key={admin.id}
                     xs={12}
                     sm={8}
@@ -986,8 +991,8 @@ const City = () => {
               <a
                 onClick={() =>
                   userAccesses["IsAdmin"] ||
-                  (userAccesses["DownloadDocument"] &&
-                    city.name == activeUserCity)
+                    (userAccesses["DownloadDocument"] &&
+                      city.name == activeUserCity)
                     ? history.push(`/cities/documents/${city.id}`)
                     : undefined
                 }
@@ -1023,8 +1028,8 @@ const City = () => {
             </Row>
             <div className="cityMoreButton">
               {userAccesses["IsAdmin"] ||
-              (userAccesses["DownloadDocument"] &&
-                city.name == activeUserCity) ? (
+                (userAccesses["DownloadDocument"] &&
+                  city.name == activeUserCity) ? (
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -1067,9 +1072,8 @@ const City = () => {
               {isActiveCity ? (
                 canJoin ? (
                   <Col
-                    className={`cityMemberItem ${
-                      canSeeOtherProfiles || "notAccess"
-                    }`}
+                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
+                      }`}
                     xs={12}
                     sm={8}
                     onClick={() => showJoinModal()}
@@ -1092,9 +1096,8 @@ const City = () => {
                   .slice(0, canJoin ? followersToShow : followersToShowOnAdd)
                   .map((followers) => (
                     <Col
-                      className={`cityMemberItem ${
-                        canSeeOtherProfiles || "notAccess"
-                      }`}
+                      className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
+                        }`}
                       xs={12}
                       sm={8}
                       key={followers.id}
@@ -1104,8 +1107,8 @@ const City = () => {
                           onClick={() =>
                             canSeeOtherProfiles
                               ? history.push(
-                                  `/userpage/main/${followers.userId}`
-                                )
+                                `/userpage/main/${followers.userId}`
+                              )
                               : undefined
                           }
                         >
@@ -1118,8 +1121,8 @@ const City = () => {
                           <p className="userName">{followers.user.lastName}</p>
                         </div>
                         {(userAccesses["EditCity"] && isLoadingPlus) ||
-                        (isLoadingMemberId !== followers.id &&
-                          !isLoadingPlus) ? (
+                          (isLoadingMemberId !== followers.id &&
+                            !isLoadingPlus) ? (
                           <Tooltip
                             placement={"bottom"}
                             title={"Додати до членів"}
