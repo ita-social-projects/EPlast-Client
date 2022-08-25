@@ -24,7 +24,7 @@ variables:
   value: '$(Build.BuildId)'
 - name: imagePullSecret
   # value: 'eplast1348122b-auth'
-  value: 'default-token-hz2ss'
+  value: 'default-token-fb8vv'
 
   # Agent VM image name
 - name: vmImageName
