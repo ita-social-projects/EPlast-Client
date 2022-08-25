@@ -274,21 +274,6 @@ const PrivateLayout = ({ children }: any) => {
                   </Menu.Item>
                 ) : null}
 
-                {userAccesses.renewals ? (
-                  <Menu.Item key="renewals">
-                    <a
-                      href="/renewals"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCollapsed(true);
-                        history.push("/renewals");
-                      }}
-                    >
-                      Відновлення статусу
-                    </a>
-                  </Menu.Item>
-                ) : null}
-
                 {userAccesses.legislation ? (
                   <Menu.Item key="legislation">
                     <a

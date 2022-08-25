@@ -1048,7 +1048,7 @@ const Region = () => {
                 </Button>
               ) : null}
               {isActiveRegion ? (
-                userAccesses["EditCity"] ? (
+                userAccesses["EditRegion"] ? (
                   <PlusSquareFilled
                     className="addReportIcon"
                     onClick={() => setVisibleModal(true)}
