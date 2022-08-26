@@ -1,5 +1,5 @@
 import { DeleteFilled, EyeFilled, LoadingOutlined } from "@ant-design/icons";
-import { Image, Popconfirm } from "antd";
+import { Image, notification, Popconfirm } from "antd";
 import React, { useEffect, useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
 import { EventGallery } from "./EventInfo";
@@ -39,6 +39,7 @@ const GalleryPicture: React.FC<ImageProps> = (p: ImageProps) => {
     try {
       await eventsApi.removePicture(p.pictureId);
       p.removePictureHook(p.pictureId);
+      notification.success({ message: "Фотографію було успішно видалено." });
     } finally {
       setDeleteConfirmLoading(false);
     }
@@ -47,14 +48,6 @@ const GalleryPicture: React.FC<ImageProps> = (p: ImageProps) => {
   return (
     <div
       className={`gallery-picture${p.isEditing && !isLoading ? "-edit" : ""}`}
-      // style={
-      //   p.isEditing && !isLoading
-      //     ? {
-      //         background: `url(${picture?.encodedData})`,
-      //         backgroundSize: "contain",
-      //       }
-      //     : {}
-      // }
     >
       {isLoading ? (
         <LoadingOutlined className="loading-icon" />
@@ -67,6 +60,7 @@ const GalleryPicture: React.FC<ImageProps> = (p: ImageProps) => {
                 onClick={() => setPreviewVisible(true)}
               />
               <Popconfirm
+                icon={null}
                 title="Видалити фото?"
                 onConfirm={onDelete}
                 okButtonProps={{

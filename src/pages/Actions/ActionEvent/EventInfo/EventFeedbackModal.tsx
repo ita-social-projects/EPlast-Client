@@ -11,6 +11,7 @@ import {
   Divider,
   Empty,
   Modal,
+  notification,
   Pagination,
   Popconfirm,
   Rate,
@@ -73,10 +74,10 @@ const Feedback: React.FC<FeedbackProperties> = (p: FeedbackProperties) => {
     checkPermissions();
   }, []);
 
-  const handleDelete = () => {
-    eventsApi.deleteFeedback(p.eventId, p.feedback.id).then(() => {
-      p.setRender((prev) => !prev);
-    });
+  const handleDelete = async () => {
+    await eventsApi.deleteFeedback(p.eventId, p.feedback.id);
+    p.setRender((prev) => !prev);
+    notification.success({ message: "Відгук було успішно видалено." });
   };
 
   return (
@@ -169,6 +170,7 @@ const FeedbackForm: React.FC<LeaveFeedbackProperties> = (
       await eventsApi.leaveFeedback(p.eventId, feedback);
       p.setFormVisible(false);
       p.setRender((prev) => !prev);
+      notification.success({ message: "Відгук було успішно опубліковано." });
     } finally {
       setButtonLoading(false);
     }
