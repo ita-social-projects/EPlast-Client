@@ -1,7 +1,19 @@
 .descriptions {
-  max-width: 100%;
+  width: 100%;
   padding: 10px 10px 0 10px;
   text-overflow: ellipsis;
+
+  @media (max-width: 750px) {
+    .ant-descriptions-view > table {
+      table-layout: fixed;
+    }
+  }
+}
+
+.descriptions-item {
+  background: none !important;
+  //background-color: rgba(0, 0, 0, 0.05) !important;
+  border: none !important;
 }
 
 .eventLabel {

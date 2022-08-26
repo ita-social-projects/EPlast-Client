@@ -51,6 +51,7 @@ export interface EventInformation {
   eventAdmins: EventAdmin[];
   eventParticipants: EventParticipant[];
   eventFeedbacks: EventFeedback[];
+  gallery: number[];
 }
 
 export interface EventParticipant {
@@ -73,7 +74,7 @@ export interface EventAdmin {
 export interface EventGallery {
   galleryId: number;
   fileName: string;
-  blobName: string;
+  encodedData: string;
 }
 
 const EventInfo = () => {
@@ -185,7 +186,9 @@ const EventInfo = () => {
     <Spinner />
   ) : (
     <div className="event-info-background">
-      <Title level={2}>{event.event.eventName}</Title>
+      <Title style={{ overflowWrap: "anywhere" }} level={2}>
+        {event.event.eventName}
+      </Title>
       <div className="event-info-and-gallery">
         <div className="event-info-header">
           <EventDetailsHeader eventInfo={event.event} />
@@ -208,6 +211,7 @@ const EventInfo = () => {
             key={event.event?.eventLocation}
             eventId={event.event?.eventId}
             userAccesses={userAccesses}
+            pictureList={event.event.gallery}
           />
         </div>
       </div>

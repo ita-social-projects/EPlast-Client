@@ -53,8 +53,8 @@ const PicturesWall = ({ pictures, removePicture }: Props) => {
         className="eyeDetails"
         key="details"
         onClick={() => {
-          setPreviewImage(picture.fileName);
-          setPreviewFileName(picture.blobName);
+          setPreviewImage(picture.encodedData);
+          setPreviewFileName(picture.fileName);
           setPreviewVisibility(true);
         }}
       />

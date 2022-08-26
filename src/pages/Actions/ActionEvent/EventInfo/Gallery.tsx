@@ -1,86 +1,32 @@
-import { EditFilled } from "@ant-design/icons";
-import { Empty, Image, Modal, Spin, Typography } from "antd";
-import React, { useEffect, useState } from "react";
-import eventsApi from "../../../../api/eventsApi";
-import { EventGallery } from "./EventInfo";
+import { CheckOutlined, EditFilled } from "@ant-design/icons";
+import { Empty, Tooltip, Typography } from "antd";
+import React, { useState } from "react";
 import "./EventInfo.less";
-import FormAddPictures from "./FormAddPictures";
+import GalleryPicture from "./GalleryPicture";
+import GalleryPictureAdd from "./GalleryPictureAdd";
 
 const { Title } = Typography;
 
 interface Props {
   eventId: number;
   userAccesses: { [key: string]: boolean };
+  pictureList: number[];
 }
 
-const FillGallery = (pictures: EventGallery[]) => {
-  if (pictures.length === 0) {
-    return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description="Галерея події порожня"
-      />
-    );
-  }
-  return (
-    <div className="galleryContainer">
-      {pictures.map((picture) => {
-        return (
-          <div className="galleryPicture">
-            <Image
-              className="galleryImg"
-              src={picture.fileName}
-              key={picture.galleryId}
-            />
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-const Gallery = ({ eventId, userAccesses }: Props) => {
-  const [loading, setLoading] = useState(false);
+const Gallery = ({ eventId, userAccesses, pictureList }: Props) => {
+  const [loading, setLoading] = useState(true);
   // @ts-ignore
-  const [pictures, setPictures] = useState<EventGallery[]>([]);
-  const [showAdminGallery, setShowAdminGallery] = useState<boolean>(false);
+  const [pictures, setPictures] = useState<number[]>(pictureList);
+  const [isEditing, setEditing] = useState<boolean>(false);
 
-  const addPictures = (uploadedPictures: EventGallery[]) =>
-    setPictures(pictures.concat(uploadedPictures));
+  const MaxPictureCount = 15;
 
-  const removePicture = (pictureId: number) =>
-    setPictures(pictures.filter((picture) => picture.galleryId !== pictureId));
-
-  const GalleryAdministration = (): React.ReactNode => {
-    return (
-      <Modal
-        title="Адміністрування галереї"
-        visible={showAdminGallery}
-        footer={null}
-        onCancel={() => setShowAdminGallery(false)}
-        className="admin-gallery-modal"
-      >
-        <div className="gallery-administration">
-          <FormAddPictures
-            eventId={eventId}
-            updateGallery={addPictures}
-            pictures={pictures}
-            key="addPictures"
-            removePicture={removePicture}
-          />
-        </div>
-      </Modal>
-    );
+  const addPictures = (uploadedPictureIds: number[]) => {
+    setPictures([...pictures, ...uploadedPictureIds]);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await eventsApi.getPictures(eventId);
-      setPictures(response.data);
-      setLoading(true);
-    };
-    fetchData();
-  }, []);
+  const removePicture = (pictureId: number) =>
+    setPictures(pictures.filter((picture) => picture !== pictureId));
 
   return (
     <div>
@@ -89,19 +35,49 @@ const Gallery = ({ eventId, userAccesses }: Props) => {
           Галерея
         </Title>
         {userAccesses["AddPhotos"] ? (
-          <EditFilled
-            className="edit-icon"
-            onClick={() => setShowAdminGallery(true)}
-          />
+          <>
+            <Tooltip title="Редагувати галерею">
+              <EditFilled
+                style={{ display: isEditing ? "none" : "block" }}
+                className="edit-icon"
+                onClick={() => setEditing(true)}
+              />
+            </Tooltip>
+            <Tooltip title="Завершити редагування галереї">
+              <CheckOutlined
+                style={{ display: isEditing ? "block" : "none" }}
+                className="edit-icon"
+                onClick={() => setEditing(false)}
+              />
+            </Tooltip>
+          </>
         ) : null}
       </div>
-      {loading === false ? (
-        <Spin tip="Завантаження..." />
+      {pictures.length !== 0 || isEditing ? (
+        <div className="galleryContainer">
+          {pictures.map((picture) => {
+            return (
+              <GalleryPicture
+                key={picture}
+                pictureId={picture}
+                isEditing={isEditing}
+                removePictureHook={removePicture}
+              />
+            );
+          })}
+          {isEditing && pictures.length < MaxPictureCount ? (
+            <GalleryPictureAdd
+              eventId={eventId}
+              pictureList={pictures}
+              addPicturesHook={addPictures}
+            />
+          ) : null}
+        </div>
       ) : (
-        <>
-          {FillGallery(pictures)}
-          {GalleryAdministration()}
-        </>
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="Галерея події порожня"
+        />
       )}
     </div>
   );

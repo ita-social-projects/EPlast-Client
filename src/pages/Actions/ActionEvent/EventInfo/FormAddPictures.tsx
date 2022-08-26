@@ -1,5 +1,6 @@
-import { UploadOutlined } from "@ant-design/icons";
-import { Button, Form, notification, Tooltip, Upload } from "antd";
+import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
+import { Button, Divider, Form, Image, notification, Upload } from "antd";
+import { RcFile, UploadFile } from "antd/lib/upload/interface";
 import React, { useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
 import {
@@ -7,7 +8,6 @@ import {
   possibleFileExtensions,
 } from "../../../../components/Notifications/Messages";
 import notificationLogic from "../../../../components/Notifications/Notification";
-import { EventGallery } from "./EventInfo";
 import "./EventInfo.less";
 import {
   emptyPhotoListNotification,
@@ -16,24 +16,22 @@ import {
   loadingNotification,
   updateNotification,
 } from "./GalleryNotifications";
-import PicturesWall from "./PicturesWall";
 
 interface Props {
   eventId: number;
-  updateGallery: (uploadedPictures: EventGallery[]) => void;
-  pictures: EventGallery[];
-  removePicture: (pictureId: number) => void;
+  addPicturesHook: (pictures: number[]) => void;
+  pictureList: number[];
 }
 
-const FormAddPictures = ({
-  eventId,
-  updateGallery,
-  pictures,
-  removePicture,
-}: Props) => {
+const FormAddPictures = (p: Props) => {
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(true);
   const [addDisabled, setAddDisabled] = useState(false);
+
+  const [isPreviewVisible, setPreviewVisible] = useState<boolean>(false);
+  const [previewImage, setPreviewImage] = useState<string>();
+
+  const [isUploading, setUploading] = useState<boolean>(false);
 
   var ignoredFileIds: string[] = [];
 
@@ -47,9 +45,9 @@ const FormAddPictures = ({
   };
 
   const checkAllFiles = (e: any) => {
-    if (e.fileList.length + pictures.length >= MaxPicturesCount) {
+    if (e.fileList.length + p.pictureList.length >= MaxPicturesCount) {
       for (let i = 0; i < e.fileList.length; i++) {
-        if (pictures.length + i + 1 > MaxPicturesCount)
+        if (p.pictureList.length + i + 1 > MaxPicturesCount)
           ignoredFileIds.push(e.fileList[i].uid);
       }
       setAddDisabled(true);
@@ -91,13 +89,23 @@ const FormAddPictures = ({
     return;
   };
 
+  const handlePreview = (file: UploadFile) => {
+    let reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result as string);
+      setPreviewVisible(true);
+    };
+    reader.readAsDataURL(file.originFileObj as RcFile);
+  };
+
   const handleSubmit = async (values: any) => {
+    setUploading(true);
     if (!values.upload) {
       emptyPhotoListNotification();
       return;
     }
 
-    if (values.upload.length + pictures.length > MaxPicturesCount) {
+    if (values.upload.length + p.pictureList.length > MaxPicturesCount) {
       limitNotification(
         "Перевищено ліміт фотографій для завантаження!",
         "Зменшіть кількість обраних фотографій."
@@ -106,19 +114,16 @@ const FormAddPictures = ({
     }
 
     loadingNotification();
-    const picturesArray: any = [];
     try {
+      let picturesArray: number[] = [];
       for (var i = 0; i < values.upload.length; i++) {
         const data = new FormData();
         data.append("files", values.upload[i].originFileObj);
-        console.log(data);
-        addPictures(eventId, data).then((response) => {
-          console.log(response.data);
-          picturesArray.push(response.data);
-        });
+        let response = await addPictures(p.eventId, data);
+        picturesArray.push(response.data[0]);
       }
 
-      updateGallery(picturesArray);
+      p.addPicturesHook(picturesArray);
       notification.destroy();
       updateNotification();
       form.resetFields();
@@ -127,11 +132,22 @@ const FormAddPictures = ({
       notification.destroy();
       failUpdatingNotification();
     }
+    setUploading(false);
   };
 
   return (
     <>
-      <PicturesWall pictures={pictures} removePicture={removePicture} />
+      <div className="modal-warning">
+        <InfoCircleFilled className="modal-warning-icon" />
+        <p className="modal-warning-description">
+          Допустимі розширення файлів - <strong>.jpg, .jpeg і .png</strong>.
+          <br />
+          Максимальний розмір файлу - <strong>20 Мб</strong>.
+          <br />
+          Максимальна кількість фото в галереї - <strong>15</strong>.
+        </p>
+      </div>
+      <Divider />
       <Form form={form} onFinish={handleSubmit}>
         <Form.Item
           name="upload"
@@ -149,25 +165,37 @@ const FormAddPictures = ({
             multiple={true}
             accept=".jpg,.jpeg,.png"
             customRequest={handleUpload}
+            listType="picture-card"
+            onPreview={handlePreview}
           >
-            {pictures.length < MaxPicturesCount ? (
-              <Tooltip
-                placement="right"
-                title={`Ліміт завантаження: до ${MaxPicturesCount} зображень.`}
-              >
-                <Button className="upploadButton" disabled={addDisabled}>
-                  <UploadOutlined /> Додати фотографії
-                </Button>
-              </Tooltip>
+            {p.pictureList.length < MaxPicturesCount && !addDisabled ? (
+              <div className="upload-button">
+                <PlusOutlined />
+                Додати файл
+              </div>
             ) : null}
           </Upload>
         </Form.Item>
-        {pictures.length < MaxPicturesCount ? (
-          <Button type="primary" htmlType="submit" disabled={disabled}>
+        {p.pictureList.length < MaxPicturesCount ? (
+          <Button
+            type="primary"
+            style={{ width: "100%" }}
+            htmlType="submit"
+            disabled={disabled}
+            loading={isUploading}
+          >
             Завантажити
           </Button>
         ) : null}
       </Form>
+      <Image
+        style={{ display: "none" }}
+        src={previewImage}
+        preview={{
+          visible: isPreviewVisible,
+          onVisibleChange: (v) => setPreviewVisible(v),
+        }}
+      />
     </>
   );
 };

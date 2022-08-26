@@ -66,6 +66,11 @@ const getPictures = async (eventId: number) => {
   return response;
 };
 
+const getPictureById = async (pictureId: number) => {
+  const response = await Api.get(`Events/pictures/${pictureId}`);
+  return response;
+};
+
 const remove = async (id: number) => {
   const response = await Api.remove(`Events/${id}`);
   return response;
@@ -139,6 +144,7 @@ export default {
   createEventCategory,
   getEventInfo,
   getPictures,
+  getPictureById,
   remove,
   leaveFeedback,
   deleteFeedback,

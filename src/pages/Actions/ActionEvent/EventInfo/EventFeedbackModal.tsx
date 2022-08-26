@@ -16,11 +16,9 @@ import {
   Rate,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import jwt from "jwt-decode";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
 import UserApi from "../../../../api/UserApi";
-import AuthLocalStorage from "../../../../AuthLocalStorage";
 import EventFeedback from "../../../../models/EventUser/EventFeedback";
 import { Roles } from "../../../../models/Roles/Roles";
 import "./EventFeedbackModal.less";
@@ -54,8 +52,6 @@ const Feedback: React.FC<FeedbackProperties> = (p: FeedbackProperties) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [canDelete, setCanDelete] = useState<boolean>(false);
 
-  const [showConfirm, setShowConfirm] = useState<boolean>(false);
-
   const checkPermissions = async () => {
     if (p.isAdmin) {
       setCanDelete(true);
@@ -65,12 +61,16 @@ const Feedback: React.FC<FeedbackProperties> = (p: FeedbackProperties) => {
     setCanDelete(p.currentUserId === p.feedback.authorUserId);
   };
 
-  useEffect(() => {
-    UserApi.getImage(p.feedback.authorAvatarUrl).then((response) =>
-      setAvatar(response.data)
-    );
-    checkPermissions();
+  const fetchData = async () => {
+    setLoading(true);
+    let image = await UserApi.getImage(p.feedback.authorAvatarUrl);
+    setAvatar(image.data);
     setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+    checkPermissions();
   }, []);
 
   const handleDelete = () => {
@@ -85,7 +85,13 @@ const Feedback: React.FC<FeedbackProperties> = (p: FeedbackProperties) => {
         className="feedback"
         actions={[]}
         author={p.feedback.authorName}
-        avatar={loading ? <LoadingOutlined /> : <Avatar src={avatar} />}
+        avatar={
+          loading ? (
+            <Avatar icon={<LoadingOutlined />} />
+          ) : (
+            <Avatar src={avatar} />
+          )
+        }
         content={p.feedback.text}
         datetime={
           <div className="feedbackActions">
@@ -105,7 +111,7 @@ const Feedback: React.FC<FeedbackProperties> = (p: FeedbackProperties) => {
                 okButtonProps={{ danger: true }}
                 placement={"leftTop"}
               >
-                <CloseOutlined onClick={() => setShowConfirm(true)} />
+                <CloseOutlined />
               </Popconfirm>
             ) : null}
           </div>
@@ -129,14 +135,18 @@ const FeedbackForm: React.FC<LeaveFeedbackProperties> = (
 
   const [isRatingErrorShown, setRatingErrorShown] = useState<boolean>(false);
 
+  const fetchData = async () => {
+    setLoading(true);
+    let userProfile = await UserApi.getActiveUserProfile();
+    console.log(userProfile);
+    let userImage = await UserApi.getImage(userProfile.imagePath);
+    setAvatar(userImage.data);
+    setName(userProfile.firstName + " " + userProfile.lastName);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    UserApi.getActiveUserProfile().then((response) => {
-      UserApi.getImage(response.imagePath).then((response) =>
-        setAvatar(response.data)
-      );
-      setName(response.firstName + " " + response.lastName);
-      setLoading(false);
-    });
+    fetchData();
   }, []);
 
   const onSubmit = async () => {
@@ -159,8 +169,6 @@ const FeedbackForm: React.FC<LeaveFeedbackProperties> = (
       await eventsApi.leaveFeedback(p.eventId, feedback);
       p.setFormVisible(false);
       p.setRender((prev) => !prev);
-    } catch {
-      notificationLogic("error", "Щось пішло не так");
     } finally {
       setButtonLoading(false);
     }
@@ -181,7 +189,13 @@ const FeedbackForm: React.FC<LeaveFeedbackProperties> = (
       className="feedbackForm"
       actions={[]}
       author={name}
-      avatar={loading ? <LoadingOutlined /> : <Avatar src={avatar} />}
+      avatar={
+        loading ? (
+          <Avatar icon={<LoadingOutlined />} />
+        ) : (
+          <Avatar src={avatar} />
+        )
+      }
       content={
         <>
           <TextArea
@@ -225,7 +239,7 @@ const EventFeedbackModal: React.FC<Properties> = (p: Properties) => {
     true
   );
 
-  const [currentUserId, setCurrentUserId] = useState<string>("");
+  const currentUserId = useRef<string>();
   const [isUserAdmin, setUserAdmin] = useState<boolean>(false);
   const [userHasFeedbackAlready, setUserHasFeedbackAlready] = useState<boolean>(
     false
@@ -235,21 +249,21 @@ const EventFeedbackModal: React.FC<Properties> = (p: Properties) => {
   const pageSize = 5;
 
   useEffect(() => {
-    let user: any = jwt(AuthLocalStorage.getToken() as string);
-    setCurrentUserId(user.nameid);
+    currentUserId.current = UserApi.getActiveUserId();
 
     let roles = UserApi.getActiveUserRoles();
     setUserAdmin(roles.includes(Roles.Admin));
-  }, []);
+  }, [p.feedbacks]);
 
   useEffect(() => {
     setUserHasFeedbackAlready(
-      p.feedbacks.some((f) => f.authorUserId == currentUserId)
+      p.feedbacks.some((f) => f.authorUserId == currentUserId.current)
     );
   }, [p.feedbacks]);
 
   return (
     <Modal
+      className="ant-feedback-modal"
       title={"Відгуки"}
       visible={p.visible}
       footer={
@@ -299,7 +313,7 @@ const EventFeedbackModal: React.FC<Properties> = (p: Properties) => {
                 <Feedback
                   key={f.id}
                   feedback={f}
-                  currentUserId={currentUserId}
+                  currentUserId={currentUserId.current as string}
                   isAdmin={isUserAdmin}
                   eventId={p.eventId}
                   setRender={p.setRender}
@@ -321,6 +335,3 @@ const EventFeedbackModal: React.FC<Properties> = (p: Properties) => {
 };
 
 export default EventFeedbackModal;
-function notificationLogic(arg0: string, arg1: string) {
-  throw new Error("Function not implemented.");
-}
