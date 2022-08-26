@@ -11,10 +11,10 @@ const FormListOfDistinctionTypes: React.FC = () => {
   const [state, actions] = useDistinctions();
 
   useEffect(() => {
-    if (state.editDistinctionTypesModalIsVisible) {
+    if (state.isEditDistinctionTypesModalVisible) {
       actions.fetchDistinctions();
     }
-  }, [state.editDistinctionTypesModalIsVisible]);
+  }, [state.isEditDistinctionTypesModalVisible]);
 
   return (
     <>
@@ -56,7 +56,7 @@ const FormListOfDistinctionTypes: React.FC = () => {
         )}
       />
       <br />
-      {state.editDistinctionIsVisible ? (
+      {state.isEditDistinctionVisible ? (
         <FormEditDistinctionType />
       ) : (
         <FormAddDistinctionType />

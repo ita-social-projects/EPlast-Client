@@ -25,7 +25,7 @@ const FormEditDistinction = () => {
   const [state, actions] = useDistinctions();
 
   useEffect(() => {
-    if (state.editUserDistinctionFormIsVisible) {
+    if (state.isEditUserDistinctionFormVisible) {
       form.setFieldsValue({
         number: state.editedUserDistinction.number,
         distinction: state.editedUserDistinction.distinction.id,
@@ -43,7 +43,7 @@ const FormEditDistinction = () => {
         actions.getUsersWithoutPrecautions();
       });
     }
-  }, [state.editUserDistinctionFormIsVisible]);
+  }, [state.isEditUserDistinctionFormVisible]);
 
   const backgroundColor = (user: any) => {
     return user.isInLowerRole

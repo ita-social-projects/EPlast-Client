@@ -12,7 +12,7 @@ const EditDistinctionTypesModal = () => {
       placement="right"
       width={420}
       height={1000}
-      visible={state.editDistinctionTypesModalIsVisible}
+      visible={state.isEditDistinctionTypesModalVisible}
       onClose={actions.closeEditDistinctionTypesModal}
       footer={null}
     >

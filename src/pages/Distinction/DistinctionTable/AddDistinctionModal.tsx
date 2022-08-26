@@ -11,7 +11,7 @@ const AddUserDistinctionModal = () => {
       placement="right"
       width={417}
       height={1000}
-      visible={state.addUserDistinctionModalIsVisible}
+      visible={state.isAddUserDistinctionModalVisible}
       onClose={actions.closeUserDistinctionAddModal}
       footer={null}
     >

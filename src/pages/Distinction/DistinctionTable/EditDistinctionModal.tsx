@@ -11,7 +11,7 @@ const EditDistinctionModal = () => {
       placement="right"
       width="auto"
       height={1000}
-      visible={state.editUserDistinctionFormIsVisible}
+      visible={state.isEditUserDistinctionFormVisible}
       onClose={actions.closeUserDistinctionEditModal}
       footer={null}
     >
