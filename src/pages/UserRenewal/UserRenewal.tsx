@@ -1,5 +1,8 @@
 import { checkEmail } from "../SignUp/verification";
-import { emptyInput } from "../../components/Notifications/Messages";
+import {
+  emptyInput,
+  failToSendNotification,
+} from "../../components/Notifications/Messages";
 import { Form, Steps, Button, Input, Select } from "antd";
 import { getCities } from "../../api/citiesApi";
 import { NotificationType } from "../../api/NotificationBoxApi";
@@ -141,10 +144,7 @@ export default function () {
         }
       })
       .catch((error) => {
-        notificationLogic(
-          "error",
-          "Сталася помилка при зверненні до адміністрації міста, спробуйте пізніше"
-        );
+        notificationLogic("error", failToSendNotification("проводу станиці"));
       });
 
     getSuperAdmins()
@@ -154,7 +154,7 @@ export default function () {
       .catch((error) => {
         notificationLogic(
           "error",
-          "Сталася помилка при зверненні до адміністрації пласту, спробуйте пізніше"
+          failToSendNotification("адміністрації Пласту")
         );
       });
   };
