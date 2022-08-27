@@ -36,7 +36,7 @@ const AnnualReportForm = (props: Props) => {
     textarea: [{ max: 2000, message: maxLength(2000) }],
     money: [
       { required: true, message: emptyInput() },
-      { pattern: /\d+$/, message: shouldContain("додатні числа") },
+      { pattern: /^[1-9]\d*(\.\d+)?$/, message: shouldContain("додатні числа") },
       {
         validator: (_: object, value: string) =>
           String(value).length <= 10
