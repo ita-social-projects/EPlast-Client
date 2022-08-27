@@ -21,7 +21,7 @@ import {
 export const descriptionValidation = {
   Appeal: [
     {
-      pattern: /^\S*((?=(\S+))\2\s?)+$/,
+      pattern: /^(([А-ЯҐЄІЇа-яґєії0-9])+([\s.,\-:'])?)*([А-ЯҐЄІЇа-яґєії0-9]){1}$/,
       message: incorrectAppeal,
     },
     {
