@@ -1,8 +1,9 @@
 import { Descriptions, Tooltip, Typography } from "antd";
 import React, { ReactNode, useEffect, useState } from "react";
 import extendedTitleTooltip from "../../../../components/Tooltip";
+import { EventInformation } from "../../../../models/Events/EventInformation";
+import { EventParticipant } from "../../../../models/Events/EventParticipant";
 import "./EventDetailsHeader.less";
-import { EventInformation, EventParticipant } from "./EventInfo";
 
 const { Text } = Typography;
 

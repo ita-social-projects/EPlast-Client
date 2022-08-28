@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 
 // eslint-disable-next-line import/no-cycle
 import eventsApi from "../../../api/eventsApi";
+import { EventAdmin } from "../../../models/Events/EventAdmin";
+import { EventParticipant } from "../../../models/Events/EventParticipant";
 import Spinner from "../../Spinner/Spinner";
 import EventCard from "./EventCard/EventCard";
-import { EventAdmin, EventParticipant } from "./EventInfo/EventInfo";
 
 const classes = require("./ActionEvent.module.css");
 

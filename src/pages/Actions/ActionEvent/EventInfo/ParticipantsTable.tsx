@@ -19,8 +19,8 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import eventsApi from "../../../../api/eventsApi";
 import NotificationBoxApi from "../../../../api/NotificationBoxApi";
+import { EventParticipant } from "../../../../models/Events/EventParticipant";
 import { showError } from "../../EventsModals";
-import { EventParticipant } from "./EventInfo";
 import "./ParticipantsTable.less";
 
 const { Text } = Typography;
@@ -166,6 +166,7 @@ const ParticipantsTable = ({
       title: "Користувач",
       dataIndex: "fullName",
       key: "user",
+      fixed: "left",
       render: (text: any, record) => (
         <div onClick={() => history.push(`/userpage/main/${record.userId}`)}>
           <Text className="participant-table-fullName" strong>

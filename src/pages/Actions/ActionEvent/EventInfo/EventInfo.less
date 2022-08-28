@@ -3,6 +3,13 @@
 @cancelation-color: #8b0000;
 @cancelation-color-hover: #ff0000;
 
+.event-breadcrumb {
+  margin-top: 7px;
+  padding: 3px 0 3px 0;
+  width: 100%;
+  text-align: center;
+}
+
 .modal-warning-icon {
   color: var(--antd-wave-shadow-color);
   font-size: 45px !important;
@@ -106,6 +113,21 @@
 
 .ant-card-cover img {
   object-fit: cover;
+}
+
+.admin-card .ant-card-cover > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  width: 100%;
+}
+
+.admin-card-hoverable > .ant-card-body:hover {
+  text-decoration: none;
+  color: black;
 }
 
 .galleryImg .ant-image-img {
@@ -403,9 +425,4 @@ td {
     overflow-wrap: break-word;
     background: #fafafa;
   }
-}
-
-.hovering-cardbody > .ant-card-body:hover {
-  text-decoration: none;
-  color: black;
 }

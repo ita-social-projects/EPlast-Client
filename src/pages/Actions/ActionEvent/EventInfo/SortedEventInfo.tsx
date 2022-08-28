@@ -4,19 +4,28 @@ import {
   DeleteTwoTone,
   EditTwoTone,
   IdcardOutlined,
+  LoadingOutlined,
   QuestionCircleTwoTone,
   StopOutlined,
   UserAddOutlined,
   UserDeleteOutlined,
 } from "@ant-design/icons";
-import { Card, Col, List, Modal, Rate, Row, Tooltip } from "antd";
+import {
+  Avatar,
+  Card,
+  Col,
+  List,
+  Modal,
+  notification,
+  Rate,
+  Row,
+  Tooltip,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import eventUserApi from "../../../../api/eventUserApi";
 import userApi from "../../../../api/UserApi";
-import EventAdminLogo from "../../../../assets/images/EventAdmin.png";
-import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
-import EventsUser from "../../../../models/EventUser/EventUser";
+import { EventAdmin } from "../../../../models/Events/EventAdmin";
+import { EventDetails } from "../../../../models/Events/EventDetails";
 import {
   showApproveConfirm,
   showDeleteConfirmForSingleEvent,
@@ -25,7 +34,6 @@ import {
 } from "../../EventsModals";
 import EventEditDrawer from "../EventEdit/EventEditDrawer";
 import EventFeedbackModal from "./EventFeedbackModal";
-import { EventAdmin, EventDetails } from "./EventInfo";
 import "./EventInfo.less";
 
 interface Props {
@@ -267,11 +275,20 @@ const GetAdminInfo = (admin: EventAdmin, canViewAdminProfiles: boolean) => {
   const [imageUrl, setImageUrl] = useState<string>("default_user_image.png");
   const [isLoading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    userApi.getImage(admin.avatarUrl).then((response) => {
-      setImageUrl(response.data);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      let avatar = await userApi.getImage(admin.avatarUrl);
+      setImageUrl(avatar.data);
+    } catch (e) {
+      notification.error(e.message);
+    } finally {
       setLoading(false);
-    });
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   return (
@@ -279,13 +296,21 @@ const GetAdminInfo = (admin: EventAdmin, canViewAdminProfiles: boolean) => {
       <Card
         hoverable={canViewAdminProfiles}
         title={admin.adminType}
-        cover={<img alt="avatar" src={isLoading ? EventAdminLogo : imageUrl} />}
+        cover={
+          isLoading ? (
+            <Avatar shape="square" icon={<LoadingOutlined />} />
+          ) : (
+            <Avatar shape="square" alt="admin avatar" src={imageUrl} />
+          )
+        }
         onClick={() =>
           canViewAdminProfiles
             ? history.push(`/userpage/main/${admin.userId}`)
             : null
         }
-        className={canViewAdminProfiles ? "" : "hovering-cardbody"}
+        className={`admin-card${
+          canViewAdminProfiles ? " admin-card-hoverable" : ""
+        }`}
       >
         <div>{admin.fullName}</div>
       </Card>
@@ -307,30 +332,9 @@ const SortedEventInfo = ({
 }: Props) => {
   const [adminsVisible, setAdminsVisibility] = useState(false);
   const { id } = useParams();
-  const { userId } = useParams();
-  const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
-    new CreatedEvents(),
-  ]);
-  const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
-  const [imageBase64, setImageBase64] = useState<string>();
-  const [loading, setLoading] = useState(false);
   const [isFeedbackModalVisible, setFeedbackModalVisible] = useState<boolean>(
     false
   );
-
-  const fetchData = async () => {
-    await eventUserApi.getEventsUser(userId).then(async (response) => {
-      setCreatedEvents(response.data);
-      setAllEvents(response.data);
-      await userApi
-        .getImage(response.data.user.imagePath)
-        .then((response: { data: any }) => {
-          setImageBase64(response.data);
-        });
-
-      setLoading(true);
-    });
-  };
 
   return (
     <Row>
@@ -386,7 +390,7 @@ const SortedEventInfo = ({
         statusId={eventStatusId}
         visibleEventEditDrawer={visibleDrawer}
         setShowEventEditDrawer={setVisibleDrawer}
-        onEdit={fetchData}
+        onEdit={() => null}
       />
     </Row>
   );

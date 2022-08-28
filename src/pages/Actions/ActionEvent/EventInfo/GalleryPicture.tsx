@@ -2,7 +2,7 @@ import { DeleteFilled, EyeFilled, LoadingOutlined } from "@ant-design/icons";
 import { Image, notification, Popconfirm } from "antd";
 import React, { useEffect, useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
-import { EventGallery } from "./EventInfo";
+import { EventGallery } from "../../../../models/Events/EventGallery";
 import "./GalleryPicture.less";
 
 interface ImageProps {

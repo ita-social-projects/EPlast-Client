@@ -1,4 +1,4 @@
-import { Input, Row, Typography } from "antd";
+import { Breadcrumb, Input, Row, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
@@ -7,11 +7,13 @@ import EventDetailsHeader from "./EventDetailsHeader";
 import Gallery from "./Gallery";
 import SortedEventInfo from "./SortedEventInfo";
 // eslint-disable-next-line import/no-cycle
+import { HomeOutlined } from "@ant-design/icons";
 import jwt from "jwt-decode";
 import eventUserApi from "../../../../api/eventUserApi";
 import UserApi from "../../../../api/UserApi";
 import AuthLocalStorage from "../../../../AuthLocalStorage";
-import EventFeedback from "../../../../models/EventUser/EventFeedback";
+import { EventDetails } from "../../../../models/Events/EventDetails";
+import { EventParticipant } from "../../../../models/Events/EventParticipant";
 import { Roles } from "../../../../models/Roles/Roles";
 import Spinner from "../../../Spinner/Spinner";
 import "./EventInfo.less";
@@ -20,62 +22,41 @@ import ParticipantsTable from "./ParticipantsTable";
 const classes = require("./EventInfo.module.css");
 const { Title } = Typography;
 
-export interface EventDetails {
-  event: EventInformation;
-  participantAssessment: number;
-  isUserParticipant: boolean;
-  isUserApprovedParticipant: boolean;
-  isUserUndeterminedParticipant: boolean;
-  isUserRejectedParticipant: boolean;
-  isEventFinished: boolean;
-  isEventNotApproved: boolean;
-  canEstimate: boolean;
+interface BcProps {
+  type: [number, string];
+  category: [number, string];
+  event: [number, string];
 }
 
-export interface EventInformation {
-  eventId: number;
-  eventName: string;
-  description: string;
-  eventDateStart: string;
-  eventDateEnd: string;
-  eventLocation: string;
-  eventTypeId: number;
-  eventType: string;
-  eventCategoryId: number;
-  eventCategory: string;
-  eventStatus: string;
-  formOfHolding: string;
-  forWhom: string;
-  rating: number;
-  numberOfPartisipants: number;
-  eventAdmins: EventAdmin[];
-  eventParticipants: EventParticipant[];
-  eventFeedbacks: EventFeedback[];
-  gallery: number[];
-}
+const EventBreadcrumb: React.FC<BcProps> = (p: BcProps) => {
+  const maxTextLength = 20;
 
-export interface EventParticipant {
-  participantId: number;
-  fullName: string;
-  email: string;
-  userId: string;
-  statusId: number;
-  status: string;
-  wasPresent: boolean;
-}
+  const textForCrumbs = (text: string) => {
+    return text.length > maxTextLength ? (
+      <Tooltip title={text}>{text.slice(0, maxTextLength) + "..."}</Tooltip>
+    ) : (
+      <span>{text}</span>
+    );
+  };
 
-export interface EventAdmin {
-  userId: string;
-  fullName: string;
-  adminType: string;
-  avatarUrl: string;
-}
-
-export interface EventGallery {
-  galleryId: number;
-  fileName: string;
-  encodedData: string;
-}
+  return (
+    <Breadcrumb className="event-breadcrumb">
+      <Breadcrumb.Item href="/">
+        <HomeOutlined />
+      </Breadcrumb.Item>
+      <Breadcrumb.Item href="/events/types">Типи подій</Breadcrumb.Item>
+      <Breadcrumb.Item href={`/events/${p.type[0]}/categories`}>
+        {textForCrumbs(p.type[1])}
+      </Breadcrumb.Item>
+      <Breadcrumb.Item
+        href={`/types/${p.type[0]}/categories/${p.category[0]}/events`}
+      >
+        {textForCrumbs(p.category[1])}
+      </Breadcrumb.Item>
+      <Breadcrumb.Item>{textForCrumbs(p.event[1])}</Breadcrumb.Item>
+    </Breadcrumb>
+  );
+};
 
 const EventInfo = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -191,6 +172,11 @@ const EventInfo = () => {
       </Title>
       <div className="event-info-and-gallery">
         <div className="event-info-header">
+          <EventBreadcrumb
+            type={[event.event.eventTypeId, event.event.eventType]}
+            category={[event.event.eventCategoryId, event.event.eventCategory]}
+            event={[event.event.eventId, event.event.eventName]}
+          />
           <EventDetailsHeader eventInfo={event.event} />
           <SortedEventInfo
             userAccesses={userAccesses}

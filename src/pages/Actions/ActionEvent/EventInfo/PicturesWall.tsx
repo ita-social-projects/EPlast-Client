@@ -7,7 +7,7 @@ import { Card, Col, Image, Modal, notification, Row } from "antd";
 import React, { useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
 import { failDeleteAction } from "../../../../components/Notifications/Messages";
-import { EventGallery } from "./EventInfo";
+import { EventGallery } from "../../../../models/Events/EventGallery";
 import "./EventInfo.less";
 
 interface Props {

@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { Modal } from "antd";
+import React from "react";
 import eventsApi from "../../api/eventsApi";
 import eventUserApi from "../../api/eventUserApi";
-import {
-  successfulDeleteAction,
-  tryAgain,
-} from "../../components/Notifications/Messages";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
-import { EventAdmin } from "./ActionEvent/EventInfo/EventInfo";
+import { tryAgain } from "../../components/Notifications/Messages";
+import { EventAdmin } from "../../models/Events/EventAdmin";
 
 const { confirm } = Modal;
 
