@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { Avatar, Progress, Skeleton, Tooltip, Typography } from "antd";
-import "./PersonalData.less";
-import userApi from "../../../api/UserApi";
-import kadrasApi from "../../../api/KadraVykhovnykivApi";
+import moment from "moment";
 import distinctionApi from "../../../api/distinctionApi";
+import kadrasApi from "../../../api/KadraVykhovnykivApi";
 import precautionApi from "../../../api/precautionApi";
-import KV1YPU from "../../../assets/images/KV1YPU.png";
 import KV1YPN from "../../../assets/images/KV1YPN.png";
+import KV1YPU from "../../../assets/images/KV1YPU.png";
 import KV2YPN from "../../../assets/images/KV2YPN.png";
 import KV2YPU from "../../../assets/images/KV2YPU.png";
-import UserDistinction from "../../Distinction/Interfaces/UserDistinction";
-import UserPrecaution from "../../Precaution/Interfaces/UserPrecaution";
+import UserDistinction from "../../../models/Distinction/UserDistinction";
 import User from "../../../models/UserTable/User";
-import moment from "moment";
-import { PersonalDataContext } from "./PersonalData";
+import UserPrecaution from "../../Precaution/Interfaces/UserPrecaution";
 import UserPrecautionStatus from "../../Precaution/Interfaces/UserPrecautionStatus";
+import { PersonalDataContext } from "./PersonalData";
+import "./PersonalData.less";
 
 const { Title } = Typography;
 const nameMaxLength = 55;
@@ -182,23 +181,23 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         <div>
           {region ? (
             <p className="statusText">
-              Є прихильником округи:{" "}
+              Є зголошеним до округи:{" "}
               <Link to={"/regions/" + regionId} className="LinkText">
                 {region}
               </Link>
             </p>
           ) : (
-            <p className="statusText">Не є прихильником жодної округи</p>
+            <p className="statusText">Не є зголошеним до жодної округи</p>
           )}
           {city ? (
             <p className="statusText">
-              Є прихильником станиці:{" "}
+              Є зголошеним до станиці:{" "}
               <Link to={"/cities/" + cityId} className="LinkText">
                 {city}
               </Link>
             </p>
           ) : (
-            <p className="statusText">Не є прихильником жодної станиці</p>
+            <p className="statusText">Не є зголошеним до жодної станиці</p>
           )}
         </div>
       ) : (
@@ -220,13 +219,13 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       {clubMemberIsApproved == false ? (
         club ? (
           <p className="statusText">
-            Є прихильником куреня:{" "}
+            Є зголошеним до куреня:{" "}
             <Link to={"/clubs/" + clubId} className="LinkText">
               {club}
             </Link>
           </p>
         ) : (
-          <p className="statusText">Не є прихильником жодного куреня</p>
+          <p className="statusText">Не є зголошеним до жодного куреня</p>
         )
       ) : (
         <p className="statusText">

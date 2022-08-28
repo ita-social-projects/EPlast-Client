@@ -1,17 +1,17 @@
 import { Button, Col, DatePicker, Form, Input, Row, Select } from "antd";
-import React, { useEffect, useState } from "react";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
 import {
   checkRoleNameExists,
   getUsersForGoverningBodyAdminForm,
 } from "../../../api/governingBodiesApi";
 import {
-  dataCantBeFetched,
   emptyInput,
+  failGetAction,
   inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages";
-import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 import notificationLogic from "../../../components/Notifications/Notification";
+import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 
 type Props = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -66,7 +66,7 @@ const AddRegionBoardMainAdminForm = ({
       .catch(() => {
         notificationLogic(
           "error",
-          dataCantBeFetched("користувачів. Спробуйте пізніше")
+          failGetAction("користувачів. Спробуйте пізніше")
         );
       })
       .finally(() => {

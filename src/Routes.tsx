@@ -65,6 +65,7 @@ import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainA
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import RegionFollowers from "./pages/Regions/RegionFollowers";
 import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
+import RegionEditFormPage from "./pages/Regions/RegionEdit";
 
 export default [
   {
@@ -177,6 +178,11 @@ export default [
     path: "/regions/new",
     name: "Створити округу",
     Component: AddNewRegionFormPage,
+  },
+  {
+    path: "/regions/edit/:id",
+    name: "Редагувати станицю",
+    Component: RegionEditFormPage,
   },
   {
     path: "/regions",
@@ -433,11 +439,6 @@ export default [
     path: "/precautions",
     name: "Перестороги",
     Component: PrecautionTable,
-  },
-  {
-    path: "/renewals",
-    name: "Запити на відновлення статусу",
-    Component: UserRenewalTable,
   },
   {
     path: "/statistics/cities",

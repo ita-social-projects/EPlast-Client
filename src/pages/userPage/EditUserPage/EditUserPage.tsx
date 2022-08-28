@@ -45,6 +45,7 @@ import "./EditUserPage.less";
 import { UpuDegree } from "../Interface/Interface";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "../personalData/PersonalData";
+import { profileValidator } from "../../SignUp/SignUp";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
@@ -168,23 +169,9 @@ export default function () {
   }
 
   const validationSchema = {
-    name: [
-      { max: 25, message: maxLength(25) },
-      { min: 2, message: minLength(2) },
-      { required: true, message: emptyInput() },
-      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
-    ],
-    surName: [
-      { max: 25, message: maxLength(25) },
-      { min: 2, message: minLength(2) },
-      { required: true, message: emptyInput() },
-      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
-    ],
-    fatherName: [
-      { max: 25, message: maxLength(25) },
-      { min: 2, message: minLength(2) },
-      { pattern: onlyLettersPattern, message: wrongOnlyLettersMessage },
-    ],
+    name: profileValidator.FirstName,
+    surName: profileValidator.LastName,
+    fatherName: profileValidator.FatherName,
     gender: [{ required: true, message: emptyInput() }],
     birthday: [{ required: true, message: emptyInput() }],
     degree: [
@@ -215,11 +202,9 @@ export default function () {
       { max: 50, message: maxLength(50) },
       { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
     ],
-    address: [
-      { max: 50, message: maxLength(50) },
-      { required: true, message: emptyInput() },
-      { pattern: allVariantsPattern, message: wrongAllVariantsMessage },
-    ],
+    address:
+      profileValidator.Address
+    ,
     pseudo: [
       { max: 25, message: maxLength(25) },
       { min: 2, message: minLength(2) },
@@ -465,21 +450,22 @@ export default function () {
   };
 
   const handleSubmit = async (values: any) => {
+    console.table({...values});
     const newUserProfile = {
       user: {
         id: data?.user?.id,
         userProfileID: data?.user.userProfileID,
         firstName: values.firstName?.trim(),
         lastName: values.lastName?.trim(),
-        fatherName: values.fatherName?.trim(),
+        fatherName: values?.fatherName?.trim(),
         phoneNumber: phoneNumber?.trim(),
         birthday: form?.getFieldValue("birthday"),
         imagePath: photoName,
         pseudo: values.pseudo?.trim(),
         publicPoliticalActivity: values.publicPoliticalActivity?.trim(),
-        facebookLink: values.facebookLink,
-        twitterLink: values.twitterLink,
-        instagramLink: values.instagramLink,
+        facebookLink: values?.facebookLink,
+        twitterLink: values?.twitterLink,
+        instagramLink: values?.instagramLink,
 
         degree: {
           id: degree?.id,
@@ -883,6 +869,7 @@ export default function () {
               label="Посилання на Facebook"
               name="facebookLink"
               className={styles.formItem}
+              rules={profileValidator.FacebookLink}
             >
               <Input className={styles.dataInput} />
             </Form.Item>
@@ -892,6 +879,7 @@ export default function () {
               label="Посилання на Twitter"
               name="twitterLink"
               className={styles.formItem}
+              rules={profileValidator.TwitterLink}
             >
               <Input className={styles.dataInput} />
             </Form.Item>
@@ -899,6 +887,7 @@ export default function () {
               label="Посилання на Instagram"
               name="instagramLink"
               className={styles.formItem}
+              rules={profileValidator.InstagramLink}
             >
               <Input className={styles.dataInput} />
             </Form.Item>
