@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Button, Layout, Collapse, Space, Tooltip } from "antd";
+import { Input, Button, Layout, Collapse, Space, Tooltip, Empty } from "antd";
 import Spinner from "../Spinner/Spinner";
 import Search from "antd/lib/input/Search";
 import Title from "antd/lib/typography/Title";
@@ -48,6 +48,7 @@ const AboutBase = () => {
   const [sectEdit, setSectEdit] = useState(0);
   const [curSect, setCurSect] = useState<SectionModel>(defaultSect);
   const [sectData, setSectData] = useState<SectionModel[]>([defaultSect]);
+  const [filteredSectData, setFilteredSectData] = useState<SectionModel[]>([defaultSect]);
   const [subsectData, setSubsectData] = useState<SubSectionModel[]>([
     defaultSubSect,
   ]);
@@ -82,6 +83,13 @@ const AboutBase = () => {
       setSearchedData("");
     }
   };
+
+  const search = () => {
+    const filteredData = sectData.filter(item =>{
+      return item.title.toLowerCase().includes(searchedData.toLowerCase()); 
+    });
+    setFilteredSectData(filteredData);
+  }
 
   const handleDelete = (id: number) => {
     const filteredData = sectData.filter((s: { id: number }) => s.id !== id);
@@ -145,6 +153,10 @@ const AboutBase = () => {
   };
 
   useEffect(() => {
+    search();
+  }, [searchedData, sectData]);
+
+  useEffect(() => {
     setLoading(true);
     elementsVisibility();
     fetchSectData();
@@ -168,7 +180,8 @@ const AboutBase = () => {
           onSearch={handleSearch}
         />
       </div>
-      {sectData.map((sectitem) => (
+      {!filteredSectData.length ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/> :
+      filteredSectData.map((sectitem) => (
         <Collapse className="section" key={sectitem.id}>
           <Panel
             header={
