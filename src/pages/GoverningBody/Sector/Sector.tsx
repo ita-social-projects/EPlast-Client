@@ -456,7 +456,7 @@ const Sector = () => {
                 }
               >
                 {announcementsCount !== 0 &&
-                userAccesses["ViewAnnouncements"] ? (
+                  userAccesses["ViewAnnouncements"] ? (
                   <Badge
                     count={announcementsCount}
                     style={{ backgroundColor: "#3c5438" }}
@@ -647,8 +647,8 @@ const Sector = () => {
                 onClick={() =>
                   userAccesses["ViewDocument"]
                     ? history.push(
-                        `/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`
-                      )
+                      `/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`
+                    )
                     : undefined
                 }
               >
@@ -722,6 +722,7 @@ const Sector = () => {
         onAdd={onAnnouncementAdd}
       />
       <Modal
+        width="750px"
         title="Додати діловода"
         visible={visible}
         onOk={handleAdminAdd}
