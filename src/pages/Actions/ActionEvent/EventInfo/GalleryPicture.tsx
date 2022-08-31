@@ -1,7 +1,8 @@
 import { DeleteFilled, EyeFilled, LoadingOutlined } from "@ant-design/icons";
-import { Image, notification, Popconfirm } from "antd";
+import { notification, Popconfirm } from "antd";
 import React, { useEffect, useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
+import { ImagePreview } from "../../../../components/ImagePreview/ImagePreview";
 import { EventGallery } from "../../../../models/Events/EventGallery";
 import "./GalleryPicture.less";
 
@@ -76,13 +77,12 @@ const GalleryPicture: React.FC<ImageProps> = (p: ImageProps) => {
             src={picture?.encodedData}
             onClick={p.isEditing ? undefined : () => setPreviewVisible(true)}
           />
-          <Image
+          <ImagePreview
+            key={picture?.galleryId}
+            fileName={picture?.fileName}
             src={picture?.encodedData}
-            style={{ display: "none" }}
-            preview={{
-              visible: isPreviewVisible,
-              onVisibleChange: (value) => setPreviewVisible(value),
-            }}
+            visible={isPreviewVisible}
+            onHide={() => setPreviewVisible(false)}
           />
         </>
       )}

@@ -1,8 +1,9 @@
 import { InfoCircleFilled, PlusOutlined } from "@ant-design/icons";
-import { Button, Divider, Form, Image, notification, Upload } from "antd";
+import { Button, Divider, Form, notification, Upload } from "antd";
 import { RcFile, UploadFile } from "antd/lib/upload/interface";
 import React, { useState } from "react";
 import eventsApi from "../../../../api/eventsApi";
+import { ImagePreview } from "../../../../components/ImagePreview/ImagePreview";
 import {
   fileIsTooBig,
   possibleFileExtensions,
@@ -30,6 +31,7 @@ const FormAddPictures = (p: Props) => {
 
   const [isPreviewVisible, setPreviewVisible] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string>();
+  const [previewFileName, setPreviewFileName] = useState<string>();
 
   const [isUploading, setUploading] = useState<boolean>(false);
 
@@ -93,6 +95,7 @@ const FormAddPictures = (p: Props) => {
     let reader = new FileReader();
     reader.onloadend = () => {
       setPreviewImage(reader.result as string);
+      setPreviewFileName(file.name);
       setPreviewVisible(true);
     };
     reader.readAsDataURL(file.originFileObj as RcFile);
@@ -188,13 +191,11 @@ const FormAddPictures = (p: Props) => {
           </Button>
         ) : null}
       </Form>
-      <Image
-        style={{ display: "none" }}
+      <ImagePreview
         src={previewImage}
-        preview={{
-          visible: isPreviewVisible,
-          onVisibleChange: (v) => setPreviewVisible(v),
-        }}
+        fileName={previewFileName}
+        visible={isPreviewVisible}
+        onHide={() => setPreviewVisible(false)}
       />
     </>
   );
