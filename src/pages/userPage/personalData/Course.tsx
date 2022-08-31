@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Col, Skeleton } from "antd";
+import { Button, Col, Modal, Skeleton } from "antd";
 import { useParams } from "react-router-dom";
 import jwt from "jwt-decode";
 import Title from "antd/lib/typography/Title";
@@ -12,16 +12,21 @@ import ListOfAchievementsModal from "../Blanks/UserAchievements/ListOfAchievemen
 import BlankDocument from "../../../models/Blank/BlankDocument";
 import { getAllAchievementDocumentsByUserId } from "../../../api/blankApi";
 import AuthLocalStorage from "../../../AuthLocalStorage";
-
+import classes from "../Blanks/Blanks.module.css";
 export default function () {
 
   const [visibleAchievementModal, setvisibleAchievementModal] = useState(false);
   const [visibleListModal, setvisibleListModal] = useState(false);
   const [showAchievementModal, setshowAchievementModal] = useState(false);
   const [isDataLoaded, setDataLoaded] = useState<boolean>(false);
+  
+  const [courseId, setcourseId] = useState<number>(0);
+
 
   const [allCourses, setallCourses] = useState<Course[]>([]);
   const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
+
+  const [visible, setVisible] = useState<boolean>(false);
   let userToken: { nameid: string } = { nameid: "" };
 
   const { userId } = useParams<{ userId: string }>();
@@ -34,16 +39,20 @@ export default function () {
 
   const fetchData = async () => {
     userToken = jwt(AuthLocalStorage.getToken() ?? "");
-
     const coursesPromise = getAllCourseByUserId(activeUserId);
     const achievementsPromise = getAllAchievementDocumentsByUserId(activeUserId);
 
     setAchievementDoc((await achievementsPromise).data);
     setallCourses((await coursesPromise).data);
-
     setDataLoaded(true);
   };
-
+  const addCertificate = async (courseid : number) => {
+    setcourseId(courseid);
+    setvisibleAchievementModal(true);
+  };
+  const handleClose = async () => {
+    setVisible(false);
+  };
   useEffect(() => {
     if (!isDataLoaded) fetchData();
   }, []);
@@ -61,10 +70,15 @@ export default function () {
     )
     : isDataLoaded
       ? (
-        <div className="container">
+        <div className={classes.wrapper2}>
+          
           {
+           
             allCourses.map((sectitem) =>
-              <Col>
+        
+            (sectitem.isFinishedByUser === false) ?
+            (
+              <Col key={sectitem.id}>
                 <Title level={2} title={sectitem.name} />
                 <p>
                   <strong>{userProfile?.user.firstName}</strong>, пройдіть курс для продовження співпраці з нами
@@ -74,49 +88,54 @@ export default function () {
                     <img src={PlastLogo} alt="PlastLogo" />
                   </a>
                 </div>
-              </Col>
-            )}
-
-          {/* WARN: this is a hardcoded block, which will be shown only if there are no courses stored in DB */}
-          {!allCourses.length
-            ? (
-              <Col>
-                <Title level={2}>VumOnline курс</Title>
-                <div className="rowBlock">
-                  <a href="https://vumonline.ua/search/?search=%D0%BF%D0%BB%D0%B0%D1%81%D1%82" >
-                    <img src={PlastLogo} alt="PlastLogo" />
-                  </a>
-                </div>
-              </Col>
-            )
-            : null
-          }
-          {/* END WARN */}
-
-          <div className="rowBlock">
+             
             <Button
               type="primary"
               className="buttonaddcertificate"
-              onClick={() => setvisibleAchievementModal(true)}
+              onClick={() => addCertificate(sectitem.id)}
             >
               Додати сертифікат
             </Button>
-          </div>
-
-
-          {!allCourses.length
-            ? (
+              </Col>
+            ) :
+            (
               <Col style={{ marginTop: "64px" }}>
+                    <Title level={2}> {sectitem.name}</Title>
                 <p>
-                  Курс пройдено, сертифікат можна переглянути в <Button type="link" className="Link" onClick={() => setvisibleListModal(true)}>
+                  Курс {sectitem.name} пройдено, сертифікат можна переглянути в <Button type="link" className="Link" onClick={() => setvisibleListModal(true)}>
                     <b> Досягненнях</b>
                   </Button>
                 </p>
               </Col>
             )
-            : null
+            )
           }
 
+          {/* WARN: this is a hardcoded block, which will be shown only if there are no courses stored in DB */}
+         
+          {/* END WARN */}
+
+        {/*          
+          <div className="rowBlock">
+            <Button
+              type="primary"
+              className="buttonaddcertificate"
+              onClick={() => setVisible(true)}
+            >
+              Додати курс
+            </Button>
+          </div> */}
+
+     
+      <Modal
+        title="Додати Курс"
+        visible={visible}
+        onCancel={handleClose}
+        footer={null}
+      >
+        лінк назва
+      </Modal>
+      
           <ListOfAchievementsModal
             userToken={userToken}
             visibleModal={visibleListModal}
@@ -139,6 +158,7 @@ export default function () {
 
           <AddAchievementsModal
             userId={activeUserId}
+            courseId={courseId}
             visibleModal={visibleAchievementModal}
             setVisibleModal={setvisibleAchievementModal}
             showModal={showAchievementModal}

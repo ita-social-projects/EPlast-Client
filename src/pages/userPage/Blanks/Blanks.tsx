@@ -516,6 +516,7 @@ export const Blanks = () => {
       />
 
       <AddAchievementsModal
+      courseId={null}
       setshowModal={setvisibleAchievementModal}
       showModal={visibleAchievementModal}
         userId={fullUserProfile?.user.id}

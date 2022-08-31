@@ -12,7 +12,8 @@ variables:
 - group: EPlast
   # Container registry service connection established during pipeline creation
 - name: dockerRegistryServiceConnection
-  value: '5aab2e73-307d-46b2-8421-8ac50de15018'
+  # value: '5aab2e73-307d-46b2-8421-8ac50de15018'
+  value: '88435167-4a39-4ca0-9290-a2ef27d3ff17'
 - name: imageRepository
   value: 'eplastweb'
 - name: containerRegistry
@@ -22,7 +23,8 @@ variables:
 - name: tag
   value: '$(Build.BuildId)'
 - name: imagePullSecret
-  value: 'eplast1348122b-auth'
+  # value: 'eplast1348122b-auth'
+  value: 'pull-secret'
 
   # Agent VM image name
 - name: vmImageName
@@ -88,9 +90,11 @@ stages:
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              action: 'createSecret'
+              kubernetesServiceConnection: 'eplast-kuber-test-env'
+              secretType: 'dockerRegistry'
+              secretName: '$(imagePullSecret)'
+              dockerRegistryEndpoint: '$(dockerRegistryServiceConnection)'
               
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
