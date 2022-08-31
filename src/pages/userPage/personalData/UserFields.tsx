@@ -18,6 +18,7 @@ export default function () {
     activeUserRoles,
     activeUserId,
     activeUserProfile,
+    userProfileAccess,
     loading,
   } = useContext(PersonalDataContext);
 
@@ -450,26 +451,14 @@ export default function () {
           <div className="buttonWrapper">
             <Button
               className="confirmBtn"
-              hidden={
-                !(
-                  activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin) ||
-                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
-                )
-              }
+              hidden={ !userProfileAccess["CanEditUserProfile"] }
               onClick={() => history.push(`/userpage/edit/${userId}`)}
             >
               Редагувати профіль
             </Button>
             <Button
               className="confirmBtn"
-              hidden={
-                !(
-                  activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin) ||
-                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
-                )
-              }
+              hidden={ !userProfileAccess["CanEditUserProfile"] }
               onClick={() => history.push(`/cities/page/1`)}
             >
               Обрати/змінити станицю
@@ -477,11 +466,8 @@ export default function () {
             <Button
               className="confirmBtn"
               hidden={
-                !(
-                  activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin) ||
-                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
-                ) || activeUserRoles.includes(Roles.RegisteredUser)
+                !userProfileAccess["CanEditUserProfile"] || 
+                activeUserRoles.includes(Roles.RegisteredUser)
               }
               onClick={() => history.push(`/clubs/page/1`)}
             >
