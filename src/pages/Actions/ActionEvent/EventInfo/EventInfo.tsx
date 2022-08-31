@@ -33,7 +33,9 @@ const EventBreadcrumb: React.FC<BcProps> = (p: BcProps) => {
 
   const textForCrumbs = (text: string) => {
     return text.length > maxTextLength ? (
-      <Tooltip title={text}>{text.slice(0, maxTextLength) + "..."}</Tooltip>
+      <Tooltip title={text}>
+        {(text.slice(0, maxTextLength) + "...") as any}
+      </Tooltip>
     ) : (
       <span>{text}</span>
     );
