@@ -159,7 +159,7 @@ const AnnouncementsTable = () => {
           Видалити
         </Menu.Item>
       ) : null}
-      {state.userAccesses.DeleteAnnouncement ? (
+      {state.userAccesses.EditAnnouncement ? (
         <Menu.Item
           key="2"
           onClick={() => {
@@ -176,7 +176,7 @@ const AnnouncementsTable = () => {
   return (
     <Layout>
       <Content>
-        <h1> Дошка оголошень </h1>
+        <h1>Дошка оголошень</h1>
         {state.userAccesses.AddAnnouncement ? (
           <Row justify="end">
             <Button
@@ -207,60 +207,65 @@ const AnnouncementsTable = () => {
               return (
                 <List.Item key={item.id} className={classes.listItem}>
                   <div className={classes.metaWrapper}>
-                    <div>
-                      <Tooltip
-                        title="Натисніть, щоб показати більше дій"
-                        placement="topRight"
-                      >
-                        <Dropdown
-                          overlay={moreMenu}
-                          placement="bottomCenter"
-                          trigger={["click"]}
-                        >
-                          <EllipsisOutlined
-                            className={classes.titleButtonIcon}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setSelectedAnnouncement(item.id);
-                            }}
-                          />
-                        </Dropdown>
-                      </Tooltip>
-                    </div>
-
-                    {item.isPined ? (
+                    {state.userAccesses.EditAnnouncement || state.userAccesses.DeleteAnnouncement ? (
                       <div>
                         <Tooltip
-                          title="Натисніть, щоб відкріпити оголошення"
+                          title="Натисніть, щоб показати більше дій"
                           placement="topRight"
                         >
-                          <Popconfirm
-                            placement="bottom"
-                            title="Відкріпити оголошення"
-                            icon={null}
-                            onConfirm={() => handlePin(item)}
-                            okText="Так"
-                            cancelText="Ні"
+                          <Dropdown
+                            overlay={moreMenu}
+                            placement="bottomCenter"
+                            trigger={["click"]}
                           >
-                            <PushpinFilled
+                            <EllipsisOutlined
                               className={classes.titleButtonIcon}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedAnnouncement(item.id);
+                              }}
                             />
-                          </Popconfirm>
+                          </Dropdown>
                         </Tooltip>
                       </div>
-                    ) : (
-                      <div>
-                        <Tooltip
-                          title="Натисніть, щоб закріпити оголошення"
-                          placement="topRight"
-                        >
-                          <PushpinOutlined
-                            className={classes.titleButtonIcon}
-                            onClick={() => handlePin(item)}
-                          />
-                        </Tooltip>
-                      </div>
-                    )}
+                    ) : null}
+
+                    {state.userAccesses.EditAnnouncement ? (
+                      item.isPined ? (
+                        <div>
+                          <Tooltip
+                            title="Натисніть, щоб відкріпити оголошення"
+                            placement="topRight"
+                          >
+                            <Popconfirm
+                              placement="bottom"
+                              title="Відкріпити оголошення"
+                              icon={null}
+                              onConfirm={() => handlePin(item)}
+                              okText="Так"
+                              cancelText="Ні"
+                            >
+                              <PushpinFilled
+                                className={classes.titleButtonIcon}
+                              />
+                            </Popconfirm>
+                          </Tooltip>
+                        </div>
+                      ) : (
+                        <div>
+                          <Tooltip
+                            title="Натисніть, щоб закріпити оголошення"
+                            placement="topRight"
+                          >
+                            <PushpinOutlined
+                              className={classes.titleButtonIcon}
+                              onClick={() => handlePin(item)}
+                            />
+                          </Tooltip>
+                        </div>
+                      )
+                    ) : null}
+
                     <List.Item.Meta
                       className={classes.listItemMeta}
                       title={`${item.firstName} ${item.lastName}`}

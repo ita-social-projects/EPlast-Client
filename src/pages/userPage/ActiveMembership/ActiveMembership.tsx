@@ -44,7 +44,7 @@ const ActiveMembership = () => {
     fullUserProfile,
     activeUserProfile,
     loading,
-    UpdateData,
+    updateData,
   } = useContext(PersonalDataContext);
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
   const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>(
@@ -130,7 +130,7 @@ const ActiveMembership = () => {
   };
 
   const fetchData = async () => {
-    if (UpdateData) UpdateData();
+    if (updateData) updateData();
     const token = AuthLocalStorage.getToken() as string;
     setUserToken(jwt(token));
 

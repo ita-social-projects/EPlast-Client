@@ -12,9 +12,9 @@ import EditUserPage from "../EditUserPage/EditUserPage";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import Menu from "../Menu/Menu";
 import Secretaries from "../Secretaries/SecretariesPage";
-import Course from "./Course";
-import "./PersonalData.less";
 import UserFields from "./UserFields";
+import { Courses } from "./Courses";
+import "./PersonalData.less";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
@@ -48,12 +48,12 @@ export default function ({
     [key: string]: boolean;
   }>({});
 
-  const [userProfile, SetUserProfile] = useState<Data>();
-  const ChangeUserProfile = (user: Data) => {
-    SetUserProfile(user);
+  const [userProfile, setUserProfile] = useState<Data>();
+  const changeUserProfile = (user: Data) => {
+    setUserProfile(user);
   };
 
-  const UpdateData = () => {
+  const updateData = () => {
     fetchData();
   };
 
@@ -64,8 +64,8 @@ export default function ({
     setActiveUserRoles(userRoles);
 
     let currentUserId = UserApi.getActiveUserId();
-    let UserProfileAccess = UserApi.getUserProfileAccess(currentUserId, userId);
-    setUserProfileAccess((await UserProfileAccess).data);
+    let userProfileAccess = await UserApi.getUserProfileAccess(currentUserId, userId);
+    setUserProfileAccess(userProfileAccess.data);
     setActiveUserId(currentUserId);
 
     let userProfile = await UserApi.getActiveUserProfile();
@@ -115,8 +115,8 @@ export default function ({
         userProfileAccess,
         loading: dataLoaded,
         imageBase64,
-        ChangeUserProfile,
-        UpdateData,
+        changeUserProfile,
+        updateData,
       }}
     >
       <ScrollToTop />
@@ -155,7 +155,7 @@ export default function ({
             </div>
           ) : specify === "course" ? (
             <div className="content">
-              <Course />
+              <Courses />
             </div>
           ) : (
             <div className="content">
