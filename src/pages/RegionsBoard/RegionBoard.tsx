@@ -456,7 +456,7 @@ const RegionBoard = () => {
                   </Col>
                 ))
               ) : (
-                <Paragraph>Ще немає членів станиці</Paragraph>
+                <Paragraph>Ще немає адміністрації Крайового Проводу</Paragraph>
               )}
             </Row>
             <div className="regionBoardMoreButton">
