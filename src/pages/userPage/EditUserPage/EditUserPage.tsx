@@ -423,12 +423,8 @@ export default function () {
     setPhoneNumber(event.target.value);
   };
 
-  const handleOnChangeBirthday = (event: any, value: any) => {
-    if (value === "") {
-      setBirthday(undefined);
-    } else {
-      setBirthday(moment.utc(event?._d).local());
-    }
+  const handleOnChangeBirthday = (event: any) => {
+    setBirthday(event);
   };
 
   const handleOnChangeUpuDegree = (value: any) => {
@@ -459,7 +455,7 @@ export default function () {
         lastName: values.lastName?.trim(),
         fatherName: values?.fatherName?.trim(),
         phoneNumber: phoneNumber?.trim(),
-        birthday: form?.getFieldValue("birthday"),
+        birthday: moment(values.birthday).format("YYYY-MM-DD"),
         imagePath: photoName,
         pseudo: values.pseudo?.trim(),
         publicPoliticalActivity: values.publicPoliticalActivity?.trim(),
