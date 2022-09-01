@@ -75,7 +75,7 @@ export default function () {
   );
   const [upuDegree, setUpuDegree] = useState<UpuDegree>();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const { UpdateData } = useContext(PersonalDataContext);
+  const { updateData } = useContext(PersonalDataContext);
 
   const fetchData = async () => {
     const token = AuthLocalStorage.getToken() as string;
@@ -271,7 +271,7 @@ export default function () {
         getBase64(info.file, async (imageUrl: any) => {
           setUserAvatar(imageUrl);
           await userApi.updateProfileImage(userId, imageUrl);
-          if (UpdateData) UpdateData();
+          if (updateData) updateData();
         });
         setPhotoName(null);
         notificationLogic("success", fileIsUpload("Фото"));
@@ -446,7 +446,7 @@ export default function () {
         notificationLogic("error", fileIsNotUpload("фото"));
       });
     setPhotoName(defaultPhotoName);
-    if (UpdateData) UpdateData();
+    if (updateData) updateData();
   };
 
   const handleSubmit = async (values: any) => {
@@ -510,7 +510,7 @@ export default function () {
       .catch(() => {
         notificationLogic("error", tryAgain);
       });
-    if (UpdateData) UpdateData();
+    if (updateData) updateData();
     fetchData();
   };
 

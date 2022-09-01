@@ -50,7 +50,7 @@ const EventUser = () => {
   const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
     new CreatedEvents(),
   ]);
-  const { fullUserProfile, UpdateData } = useContext(PersonalDataContext);
+  const { fullUserProfile, updateData } = useContext(PersonalDataContext);
   const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
   const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
   const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
@@ -81,7 +81,7 @@ const EventUser = () => {
     getUserAccessesForEvents();
   };
   const fetchData = async () => {
-    if (UpdateData) UpdateData();
+    if (updateData) updateData();
     const token = AuthLocalStorage.getToken() as string;
     setUserToken(jwt(token));
     await eventUserApi.getEventsUser(userId).then(async (response) => {
