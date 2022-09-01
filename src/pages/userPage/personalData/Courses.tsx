@@ -72,7 +72,8 @@ export const Courses: React.FC = () => {
       <div className={classes.wrapper2}>
         {
           allCourses.map(sectitem =>
-            (userProfile?.shortUser.id === activeUserId && sectitem.isFinishedByUser === false) ? (
+            (sectitem.isFinishedByUser === false && 
+            (userProfile?.shortUser?.id === activeUserId || userProfile?.shortUser === null)) ? (
               <Col key={sectitem.id}>
                 <Title level={2} title={sectitem.name} />
                 <p>

@@ -80,6 +80,7 @@ const ListOfAchievementsModal = (props: Props) => {
     setAchievements(concatedAchievements);
     setLoadingMore({ loading: false, hasMore: true });
   };
+
   const handleInfiniteOfLoad = () => {
     setLoadingMore({ loading: true, hasMore: true });
     if (isEmpty) {
@@ -89,6 +90,43 @@ const ListOfAchievementsModal = (props: Props) => {
     getAchievements();
     setPageNumber(++pageNumber);
   };
+
+  const getListActions = (blackDocumentItem: BlankDocument) => {
+    const actions: JSX.Element[] = [];
+    if (props.hasAccessToSeeAndDownload) {
+      actions.push(
+        <EyeOutlined
+          className={classes.reviewIcon}
+          onClick={() =>
+            reviewFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
+          }
+        />,
+        <DownloadOutlined
+          className={classes.downloadIcon}
+          onClick={() =>
+            downloadFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
+          }
+        />
+      );
+    }
+    if (props.hasAccessToDelete) {
+      actions.push(
+        <Popconfirm
+          title="Видалити цей документ?"
+          placement="right"
+          icon={false}
+          onConfirm={() => deleteFIle(blackDocumentItem.id, blackDocumentItem.userId, blackDocumentItem.fileName)}
+          okText="Так"
+          cancelText="Ні"
+        >
+          <DeleteOutlined
+            className={classes.deleteIcon}
+          />
+        </Popconfirm>
+      );
+    }
+    return actions;
+  }
 
   return (
     <Modal
@@ -112,57 +150,8 @@ const ListOfAchievementsModal = (props: Props) => {
                 actions={
                   item.fileName.split(".")[1] !== "doc" &&
                   item.fileName.split(".")[1] !== "docx"
-                    ? [
-                        <EyeOutlined
-                          className={classes.reviewIcon}
-                          hidden={!props.hasAccessToSeeAndDownload}
-                          onClick={() =>
-                            reviewFile(item.blobName, item.fileName)
-                          }
-                        />,
-                        <DownloadOutlined
-                          className={classes.downloadIcon}
-                          hidden={!props.hasAccessToSeeAndDownload}
-                          onClick={() =>
-                            downloadFile(item.blobName, item.fileName)
-                          }
-                        />,
-                        <Popconfirm
-                          title="Видалити цей документ?"
-                          placement="right"
-                          icon={false}
-                          onConfirm={() => deleteFIle(item.id,item.userId, item.fileName)}
-                          okText="Так"
-                          cancelText="Ні"
-                        >
-                          <DeleteOutlined
-                            hidden={!props.hasAccessToDelete}
-                            className={classes.deleteIcon}
-                          />
-                        </Popconfirm>,
-                      ]
-                    : [
-                        <DownloadOutlined
-                          className={classes.downloadIcon}
-                          hidden={!props.hasAccessToSeeAndDownload}
-                          onClick={() =>
-                            downloadFile(item.blobName, item.fileName)
-                          }
-                        />,
-                        <Popconfirm
-                          title="Видалити цей документ?"
-                          placement="right"
-                          icon={false}
-                          onConfirm={() => deleteFIle(item.id,item.userId, item.fileName)}
-                          okText="Так"
-                          cancelText="Ні"
-                        >
-                          <DeleteOutlined
-                            hidden={!props.hasAccessToDelete}
-                            className={classes.deleteIcon}
-                          />
-                        </Popconfirm>,
-                      ]
+                    ? getListActions(item)
+                    : getListActions(item).splice(0, 1)
                 }
               >
                 {item.blobName.split(".")[1] === "pdf" ? (
