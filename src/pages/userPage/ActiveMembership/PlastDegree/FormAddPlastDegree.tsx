@@ -52,7 +52,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   const [loading, setLoading] = useState(false);
 
   const [isFormReady, setFormReady] = useState(false);
-  const { UpdateData } = useContext(PersonalDataContext);
+  const { updateData } = useContext(PersonalDataContext);
 
   const handleFinish = async (info: any) => {
     setLoading(true);
@@ -118,9 +118,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     form.resetFields();
     props.resetAvailablePlastDegree();
     setLoading(false);
-    if (UpdateData) {
-      await UpdateData();
-    }
+    if (updateData) updateData();
     
     props.setVisibleModal(false);
 

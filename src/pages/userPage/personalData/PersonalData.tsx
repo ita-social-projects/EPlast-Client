@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Blanks } from "../Blanks/Blanks";
+import { Courses } from "./Courses";
 import Menu from "../Menu/Menu";
-import "./PersonalData.less";
+import Spinner from "../../Spinner/Spinner";
 import UserFields from "./UserFields";
 import EditUserPage from "../EditUserPage/EditUserPage";
 import Approvers from "../Approvers/Approvers";
 import ActiveMembership from "../ActiveMembership/ActiveMembership";
 import EventUser from "../../Actions/ActionEvent/EventUser/EventUser";
-import { useParams } from "react-router-dom";
 import Secretaries from "../Secretaries/SecretariesPage";
-import { Blanks } from "../Blanks/Blanks";
 import UserApi from "../../../api/UserApi";
-import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import notificationLogic from "../../../components/Notifications/Notification";
 import ScrollToTop from "../../../components/ScrollToTop/ScrollToTop";
-import Course from "./Course";
-import Spinner from "../../Spinner/Spinner";
+import { Data, IPersonalDataContext, User } from "../Interface/Interface";
+import "./PersonalData.less";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
@@ -48,12 +48,12 @@ export default function ({
     [key: string]: boolean;
   }>({});
 
-  const [userProfile, SetUserProfile] = useState<Data>();
-  const ChangeUserProfile = (user: Data) => {
-    SetUserProfile(user);
+  const [userProfile, setUserProfile] = useState<Data>();
+  const changeUserProfile = (user: Data) => {
+    setUserProfile(user);
   };
 
-  const UpdateData = () => {
+  const updateData = () => {
     fetchData();
   };
 
@@ -61,8 +61,8 @@ export default function ({
     let userRoles = UserApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
     let currentUserId = UserApi.getActiveUserId();
-    let UserProfileAccess = UserApi.getUserProfileAccess(currentUserId, userId);
-    setUserProfileAccess((await UserProfileAccess).data);
+    let userProfileAccess = await UserApi.getUserProfileAccess(currentUserId, userId);
+    setUserProfileAccess(userProfileAccess.data);
     setActiveUserId(currentUserId);
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);
@@ -76,7 +76,7 @@ export default function ({
 
     await UserApi.getUserProfileById(userId)
       .then((response) => {
-        SetUserProfile(response.data);
+        setUserProfile(response.data);
         if (response.data?.user !== null) {
           UserApi.getImage(response.data?.user.imagePath).then(
             (response: { data: any }) => {
@@ -115,8 +115,8 @@ export default function ({
         userProfileAccess,
         loading: dataLoaded,
         imageBase64,
-        ChangeUserProfile,
-        UpdateData,
+        changeUserProfile,
+        updateData,
       }}
     >
       <ScrollToTop />
@@ -155,7 +155,7 @@ export default function ({
             </div>
           ) : specify === "course" ? (
             <div className="content">
-              <Course />
+              <Courses />
             </div>
           ) : (
             <div className="content">
