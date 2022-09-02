@@ -12,9 +12,9 @@ import EditUserPage from "../EditUserPage/EditUserPage";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
 import Menu from "../Menu/Menu";
 import Secretaries from "../Secretaries/SecretariesPage";
-import UserFields from "./UserFields";
 import { Courses } from "./Courses";
 import "./PersonalData.less";
+import UserFields from "./UserFields";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
@@ -64,7 +64,10 @@ export default function ({
     setActiveUserRoles(userRoles);
 
     let currentUserId = UserApi.getActiveUserId();
-    let userProfileAccess = await UserApi.getUserProfileAccess(currentUserId, userId);
+    let userProfileAccess = await UserApi.getUserProfileAccess(
+      currentUserId,
+      userId
+    );
     setUserProfileAccess(userProfileAccess.data);
     setActiveUserId(currentUserId);
 
@@ -80,7 +83,7 @@ export default function ({
 
     try {
       let focusUserProfile = await UserApi.getUserProfileById(userId);
-      SetUserProfile(focusUserProfile.data);
+      setUserProfile(focusUserProfile.data);
       if (focusUserProfile.data?.user !== null) {
         let userImage = await UserApi.getImage(
           focusUserProfile.data?.user.imagePath
