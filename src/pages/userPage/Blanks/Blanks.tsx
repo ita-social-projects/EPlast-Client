@@ -46,6 +46,7 @@ export const Blanks = () => {
     fullUserProfile,
     activeUserRoles,
     userProfileAccess,
+    userBlankAccess,
     loading,
   } = useContext(PersonalDataContext);
   const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
@@ -283,8 +284,7 @@ export const Blanks = () => {
                       {getAppropriateToGenderVerb()} Життєпис
                     </h2>
                   )}
-                  {(userToken.nameid === userId ||
-                    activeUserRoles.includes(Roles.Admin)) && (
+                  {userBlankAccess["CanAddBiography"] && (
                     <div>
                       <Button
                         type="primary"
