@@ -20,7 +20,7 @@ export const Courses: React.FC = () => {
   const [visibleListModal, setVisibleListModal] = useState(false);
   const [showAchievementModal, setshowAchievementModal] = useState(false);
   const [isDataLoaded, setDataLoaded] = useState(false);
-  const [courseId, setcourseId] = useState(0);
+  const [courseId, setCourseId] = useState(0);
 
   const [allCourses, setallCourses] = useState<Course[]>([]);
   const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
@@ -45,7 +45,7 @@ export const Courses: React.FC = () => {
   };
 
   const addCertificate = async (courseid: number) => {
-    setcourseId(courseid);
+    setCourseId(courseid);
     setVisibleAchievementModal(true);
   };
 
@@ -101,7 +101,10 @@ export const Courses: React.FC = () => {
                   <Button 
                     type="link" 
                     className="Link" 
-                    onClick={() => setVisibleListModal(true)}
+                    onClick={() => {
+                      setVisibleListModal(true);
+                      setCourseId(sectitem.id)
+                    }}
                   >
                     <b>Досягненнях</b>
                   </Button>
@@ -152,6 +155,7 @@ export const Courses: React.FC = () => {
             || userToken.nameid === userId
           }
           setAchievementDoc={setAchievementDoc}
+          courseId={courseId}
         />
 
         <AddAchievementsModal
