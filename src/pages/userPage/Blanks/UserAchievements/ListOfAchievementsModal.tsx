@@ -152,13 +152,13 @@ const ListOfAchievementsModal = (props: Props) => {
             renderItem={(item) => (
               <List.Item
                 actions={
-                  item.fileName.split(".")[1] !== "doc" &&
-                  item.fileName.split(".")[1] !== "docx"
+                  item.fileName.split(".").pop()! !== "doc" &&
+                  item.fileName.split(".").pop()! !== "docx"
                     ? getActions(item)
                     : getActions(item, false)
                 }
               >
-                {item.blobName.split(".")[1] === "pdf" ? (
+                {item.blobName.split(".").pop()! === "pdf" ? (
                   <FilePdfOutlined className={classes.fileIcon} />
                 ) : (
                   <FileImageOutlined className={classes.fileIcon} />
