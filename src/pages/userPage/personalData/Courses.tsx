@@ -95,7 +95,10 @@ export const Courses: React.FC = () => {
                   <Button 
                     type="link" 
                     className="Link" 
-                    onClick={() => setVisibleListModal(true)}
+                    onClick={() => {
+                      setVisibleListModal(true);
+                      setCourseId(sectitem.id)
+                    }}
                   >
                     <b>Досягненнях</b>
                   </Button>

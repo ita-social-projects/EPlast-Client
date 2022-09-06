@@ -30,6 +30,7 @@ interface Props {
   hasAccessToSeeAndDownload?: boolean;
   hasAccessToDelete?: boolean;
   userToken: any;
+  courseId?: number; 
 }
 
 const ListOfAchievementsModal = (props: Props) => {
@@ -42,7 +43,7 @@ const ListOfAchievementsModal = (props: Props) => {
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize] = useState(7);
   const [isEmpty, setIsEmpty] = useState(false);
-
+  
   const handleCancel = () => {
     setLoadingMore({ loading: false, hasMore: true });
     setIsEmpty(false);
@@ -67,7 +68,7 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const getAchievements = async () => {
-    const response = await getAchievementsByPage(pageNumber, pageSize, userId);
+    const response = await getAchievementsByPage(pageNumber, pageSize, userId, props.courseId);
     if (response.data.length === 0) {
       setIsEmpty(true);
     }
@@ -86,16 +87,20 @@ const ListOfAchievementsModal = (props: Props) => {
     setPageNumber(prev => prev + 1);
   };
 
-  const getListActions = (blackDocumentItem: BlankDocument) => {
+  const getActions = (blackDocumentItem: BlankDocument, isNotDocx = true) => {
     const actions: JSX.Element[] = [];
     if (props.hasAccessToSeeAndDownload) {
+      if (isNotDocx) {
+        actions.push(
+          <EyeOutlined
+            className={classes.reviewIcon}
+            onClick={() =>
+              reviewFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
+            }
+          />
+        );
+      }
       actions.push(
-        <EyeOutlined
-          className={classes.reviewIcon}
-          onClick={() =>
-            reviewFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
-          }
-        />,
         <DownloadOutlined
           className={classes.downloadIcon}
           onClick={() =>
@@ -147,13 +152,13 @@ const ListOfAchievementsModal = (props: Props) => {
             renderItem={(item) => (
               <List.Item
                 actions={
-                  item.fileName.split(".")[1] !== "doc" &&
-                  item.fileName.split(".")[1] !== "docx"
-                    ? getListActions(item)
-                    : getListActions(item)
+                  item.fileName.split(".").pop()! !== "doc" &&
+                  item.fileName.split(".").pop()! !== "docx"
+                    ? getActions(item)
+                    : getActions(item, false)
                 }
               >
-                {item.blobName.split(".")[1] === "pdf" ? (
+                {item.blobName.split(".").pop()! === "pdf" ? (
                   <FilePdfOutlined className={classes.fileIcon} />
                 ) : (
                   <FileImageOutlined className={classes.fileIcon} />

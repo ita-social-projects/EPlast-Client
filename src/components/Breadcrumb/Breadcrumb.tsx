@@ -1,7 +1,7 @@
-import React from "react";
-import { Breadcrumb as AntdBreadcrumb, Typography } from "antd";
-import { RouteComponentProps, withRouter } from "react-router-dom";
 import { HomeOutlined } from "@ant-design/icons";
+import { Breadcrumb as AntdBreadcrumb, Typography } from "antd";
+import React from "react";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 import routes from "../../Routes";
 
 const { Text } = Typography;
