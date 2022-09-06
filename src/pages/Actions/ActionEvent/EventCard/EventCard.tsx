@@ -1,33 +1,21 @@
+import { Card, Tooltip } from "antd";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Card, Tooltip } from "antd";
-import EventLogo from "../../../../assets/images/handshake.png";
 import userApi from "../../../../api/UserApi";
+import EventLogo from "../../../../assets/images/handshake.png";
 
 import {
-  EditTwoTone,
-  DeleteTwoTone,
-  StopOutlined,
-  SettingTwoTone,
   FlagTwoTone,
   NotificationTwoTone,
+  SettingTwoTone,
   ToolTwoTone,
-  CheckCircleTwoTone,
-  QuestionCircleTwoTone,
-  UserDeleteOutlined,
-  UserAddOutlined,
 } from "@ant-design/icons";
 // eslint-disable-next-line import/named
-import {
-  showSubscribeConfirm,
-  showUnsubscribeConfirm,
-  showDeleteConfirm,
-} from "../../EventsModals";
 
 // eslint-disable-next-line import/no-cycle
-import { CardProps } from "../SortedEvents";
-import { Roles } from "../../../../models/Roles/Roles";
 import extendedTitleTooltip from "../../../../components/Tooltip";
+import { Roles } from "../../../../models/Roles/Roles";
+import { CardProps } from "../SortedEvents";
 
 const classes = require("./EventCard.module.css");
 const eventNameMaxLength = 14;
@@ -70,7 +58,7 @@ const EventCard = ({
     const eventIcons: React.ReactNode[] = [];
     if (isUserEventAdmin) {
       eventIcons.push(
-        <Tooltip title="Ви адмін!">
+        <Tooltip title="Ви адмініструєте цю подію">
           <SettingTwoTone twoToneColor="#3c5438" key="setting" />
         </Tooltip>
       );
