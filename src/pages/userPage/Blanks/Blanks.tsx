@@ -495,11 +495,11 @@ export const Blanks = () => {
           </div>
         </div>
       </Form>
+
       <ListOfAchievementsModal
         userToken={userToken}
         visibleModal={visibleListAchievementModal}
         setVisibleModal={setVisibleListAchievementModal}
-        achievementDoc={achievementDoc}
         hasAccess={
           userProfileAccess["CanSeeUserDistinction"] ||
           userToken.nameid === userId
@@ -512,13 +512,10 @@ export const Blanks = () => {
           userProfileAccess["CanDeleteUserDistinction"] ||
           userToken.nameid === userId
         }
-        setAchievementDoc={setAchievementDoc}
       />
 
       <AddAchievementsModal
-      courseId={null}
-      setshowModal={setvisibleAchievementModal}
-      showModal={visibleAchievementModal}
+        courseId={null}
         userId={fullUserProfile?.user.id}
         visibleModal={visibleAchievementModal}
         setVisibleModal={setvisibleAchievementModal}

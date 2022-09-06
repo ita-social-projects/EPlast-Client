@@ -82,7 +82,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           )}
           <Menu.Item
             className="menuItem"
-            key="coursse"
+            key="course"
             onClick={() => history.push(`/userpage/course/${props.id}`)}
           >
             Курс

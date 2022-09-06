@@ -1,5 +1,5 @@
 import { Button, Col, Form, Modal, Row, Upload } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import notificationLogic from "../../../../components/Notifications/Notification";
 import { addAchievementDocuments } from "../../../../api/blankApi";
@@ -18,9 +18,7 @@ const { Dragger } = Upload;
 
 interface Props {
   visibleModal: boolean;
-  showModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  setshowModal: (showModal: boolean) => void;
   userId: string;
   courseId:number | null;
 }
@@ -55,7 +53,7 @@ const AddAchievementsModal = (props: Props) => {
   };
 
   const checkFile = (fileName: string, fileSize: number): boolean => {
-    const extension = fileName.split(".").reverse()[0].toLowerCase();
+    const extension = fileName.split(".").pop()!;
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -83,13 +81,11 @@ const AddAchievementsModal = (props: Props) => {
     setLoading(true);
     await addAchievementDocuments(files);
     props.setVisibleModal(false);
-    props.setshowModal(true);
     form.resetFields();
     removeFile();
     setDisabled(true);
     setLoading(false);
     setButtonLoading(false);
-
   };
 
   const removeFile = () => {
