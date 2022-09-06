@@ -91,7 +91,7 @@ export const openBiographyFile = async (fileBlob: string, fileName: string) => {
   const response = await (
     await api.get(`Blanks/BiographyDocumentBase64/${fileBlob}`, fileBlob)
   ).data;
-  const format = fileName.split(".")[1];
+  const format = fileName.split(".").pop()!;
   const base64 = response.split(",")[1];
   await openFile(base64, format);
 };
@@ -119,7 +119,7 @@ export const openExtractFromUPUFile = async (
   const response = await (
     await api.get(`Blanks/ExtractFromUPUDocumentBase64/${fileBlob}`, fileBlob)
   ).data;
-  const format = fileName.split(".")[1];
+  const format = fileName.split(".").pop()!;
   const base64 = response.split(",")[1];
   await openFile(base64, format);
 };
@@ -131,7 +131,7 @@ export const openAchievemetFile = async (
   const response = await (
     await api.get(`Blanks/AchievementDocumentBase64/${fileBlob}`, fileBlob)
   ).data;
-  const format = fileName.split(".")[1];
+  const format = fileName.split(".").pop()!;
   const base64 = response.split(",")[1];
   await openFile(base64, format);
 };
