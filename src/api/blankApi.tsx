@@ -35,12 +35,14 @@ export const getAllAchievementDocumentsByUserId = async (userId: string) => {
 export const getAchievementsByPage = async (
   pageNumber: number,
   pageSize: number,
-  userId: string
+  userId: string,
+  courseId = 0
 ) => {
   const response = await api.get(`Blanks/InfinityScroll`, {
     pageNumber,
     pageSize,
     userId,
+    courseId
   });
   return response;
 };

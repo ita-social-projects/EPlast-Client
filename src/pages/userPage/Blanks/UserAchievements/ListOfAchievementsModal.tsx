@@ -32,6 +32,7 @@ interface Props {
   hasAccessToDelete?: boolean;
   setAchievementDoc: (document: BlankDocument[]) => void;
   userToken: any;
+  courseId?: number; 
 }
 
 const ListOfAchievementsModal = (props: Props) => {
@@ -44,7 +45,7 @@ const ListOfAchievementsModal = (props: Props) => {
   let [pageNumber, setPageNumber] = useState(0);
   const [pageSize] = useState(7);
   const [isEmpty, setIsEmpty] = useState(false);
-
+  
   const handleCancel = () => {
     setLoadingMore({ loading: false, hasMore: true });
     setIsEmpty(false);
@@ -54,7 +55,6 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const deleteFIle = async (documentId: number,  userId: string, fileName: string) => {
-   console.log("delete");
     await removeAchievementDocument(documentId ,userId);
     notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
     setAchievements(achievements.filter((d) => d.id !== documentId));
@@ -72,7 +72,7 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const getAchievements = async () => {
-    const response = await getAchievementsByPage(pageNumber, pageSize, userId);
+    const response = await getAchievementsByPage(pageNumber, pageSize, userId, props.courseId);
     if (response.data.length === 0) {
       setIsEmpty(true);
     }
@@ -91,16 +91,20 @@ const ListOfAchievementsModal = (props: Props) => {
     setPageNumber(++pageNumber);
   };
 
-  const getListActions = (blackDocumentItem: BlankDocument) => {
+  const getActions = (blackDocumentItem: BlankDocument, isNotDocx = true) => {
     const actions: JSX.Element[] = [];
     if (props.hasAccessToSeeAndDownload) {
+      if (isNotDocx) {
+        actions.push(
+          <EyeOutlined
+            className={classes.reviewIcon}
+            onClick={() =>
+              reviewFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
+            }
+          />
+        );
+      }
       actions.push(
-        <EyeOutlined
-          className={classes.reviewIcon}
-          onClick={() =>
-            reviewFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
-          }
-        />,
         <DownloadOutlined
           className={classes.downloadIcon}
           onClick={() =>
@@ -150,8 +154,8 @@ const ListOfAchievementsModal = (props: Props) => {
                 actions={
                   item.fileName.split(".").pop()! !== "doc" &&
                   item.fileName.split(".").pop()! !== "docx"
-                    ? getListActions(item)
-                    : getListActions(item).splice(0, 1)
+                    ? getActions(item)
+                    : getActions(item, false)
                 }
               >
                 {item.blobName.split(".").pop()! === "pdf" ? (
