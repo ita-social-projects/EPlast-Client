@@ -19,7 +19,7 @@ import classes from "./ListOfAchievements.module.css";
 import notificationLogic from "../../../../components/Notifications/Notification";
 import InfiniteScroll from "react-infinite-scroller";
 import { useParams } from "react-router-dom";
-import { successfulDeleteAction } from "../../../../components/Notifications/Messages";
+import { failDeleteAction, successfulDeleteAction } from "../../../../components/Notifications/Messages";
 import extendedTitleTooltip from "../../../../components/Tooltip";
 const fileNameMaxLength = 47;
 
@@ -53,10 +53,14 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const deleteFIle = async (documentId: number,  userId: string, fileName: string) => {
-    await removeAchievementDocument(documentId, userId);
-    notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
-    const achievementsWithoutDeleted = achievements.filter((d) => d.id !== documentId);
-    setAchievements(achievementsWithoutDeleted);
+    try {
+      await removeAchievementDocument(documentId, userId);
+      notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
+      const achievementsWithoutDeleted = achievements.filter((d) => d.id !== documentId);
+      setAchievements(achievementsWithoutDeleted);
+    } catch (error) {
+      notificationLogic("error", failDeleteAction(`Файл ${fileName}`));
+    }
   };
 
   const downloadFile = async (fileBlob: string, fileName: string) => {
