@@ -1,12 +1,15 @@
-.actionsWrapper {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-  margin: 0 auto;
+.background{
+    background-color: rgb(238, 238, 238);
 }
-.cardStyles {
-  width: 180px;
-  margin: 15px;
-  text-align: center;
+.actionsWrapper{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0 auto;
+}
+.cardStyles{
+    width: 180px;
+    margin: 15px;
+    text-align: center;
 }

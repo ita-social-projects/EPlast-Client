@@ -1,11 +1,14 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
-import React from "react";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import eventsApi from "../../api/eventsApi";
 import eventUserApi from "../../api/eventUserApi";
+import {
+  successfulDeleteAction,
+  tryAgain,
+} from "../../components/Notifications/Messages";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
-import { tryAgain } from "../../components/Notifications/Messages";
-import { EventAdmin } from "../../models/Events/EventAdmin";
+import { EventAdmin } from "./ActionEvent/EventInfo/EventInfo";
 
 const { confirm } = Modal;
 
@@ -63,6 +66,7 @@ export const showSubscribeConfirm = ({
   confirm({
     title: "Ви впевнені, що хочете зголоситися на дану подію?",
     icon: <ExclamationCircleOutlined />,
+    content: `Подія: ${eventName}`,
     okText: "Так, зголоситися",
     cancelText: "Скасувати",
     onOk() {
@@ -90,6 +94,9 @@ export const showSubscribeConfirm = ({
           showError();
         });
     },
+    onCancel() {
+      console.log("Cancel");
+    },
   });
 };
 
@@ -103,8 +110,8 @@ export const showUnsubscribeConfirm = ({
   confirm({
     title: "Ви впевнені, що хочете відписатися від події?",
     icon: <ExclamationCircleOutlined />,
+    content: `Подія: ${eventName}`,
     okText: "Так, відписатися",
-    okType: "danger",
     cancelText: "Скасувати",
     onOk() {
       const deleteParticipant = async () => {
@@ -131,6 +138,9 @@ export const showUnsubscribeConfirm = ({
           showError();
         });
     },
+    onCancel() {
+      console.log("Cancel");
+    },
   });
 };
 
@@ -144,6 +154,7 @@ export const showDeleteConfirm = ({
   confirm({
     title: "Ви впевнені, що хочете видалити дану подію?",
     icon: <ExclamationCircleOutlined />,
+    content: `Подія: ${eventName}`,
     okText: "Так, видалити",
     okType: "danger",
     cancelText: "Скасувати",
@@ -170,6 +181,9 @@ export const showDeleteConfirm = ({
           showError();
         });
     },
+    onCancel() {
+      console.log("Cancel Delete");
+    },
   });
 };
 
@@ -183,6 +197,7 @@ export const showDeleteConfirmForSingleEvent = ({
   confirm({
     title: "Ви впевнені, що хочете видалити дану подію?",
     icon: <ExclamationCircleOutlined />,
+    content: `Подія: ${eventName}`,
     okText: "Так, видалити",
     okType: "danger",
     cancelText: "Скасувати",
@@ -205,6 +220,9 @@ export const showDeleteConfirmForSingleEvent = ({
           showError();
         });
     },
+    onCancel() {
+      console.log("Cancel Delete");
+    },
   });
 };
 
@@ -218,6 +236,7 @@ export const showApproveConfirm = ({
   confirm({
     title: "Ви впевнені, що хочете затвердити дану подію?",
     icon: <ExclamationCircleOutlined />,
+    content: `Подія: ${eventName}`,
     okText: "Так, затвердити",
     cancelText: "Скасувати",
     onOk() {
@@ -243,6 +262,9 @@ export const showApproveConfirm = ({
         .catch(() => {
           showError();
         });
+    },
+    onCancel() {
+      console.log("Cancel");
     },
   });
 };
