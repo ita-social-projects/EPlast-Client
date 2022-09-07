@@ -1,68 +1,83 @@
-import { Breadcrumb, Input, Row, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { Col, Input, notification, Row, Typography } from "antd";
+import { useParams } from "react-router-dom";
 // eslint-disable-next-line import/no-cycle
+import SortedEventInfo from "./SortedEventInfo";
+import rawData from "./data";
+import Gallery from "./Gallery";
 import eventsApi from "../../../../api/eventsApi";
 import EventDetailsHeader from "./EventDetailsHeader";
-import Gallery from "./Gallery";
-import SortedEventInfo from "./SortedEventInfo";
 // eslint-disable-next-line import/no-cycle
-import { HomeOutlined } from "@ant-design/icons";
+import ParticipantsTable from "./ParticipantsTable";
+import "./EventInfo.less";
+import Spinner from "../../../Spinner/Spinner";
+import AuthLocalStorage from "../../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import eventUserApi from "../../../../api/eventUserApi";
 import UserApi from "../../../../api/UserApi";
-import AuthLocalStorage from "../../../../AuthLocalStorage";
-import { EventDetails } from "../../../../models/Events/EventDetails";
-import { EventParticipant } from "../../../../models/Events/EventParticipant";
 import { Roles } from "../../../../models/Roles/Roles";
-import Spinner from "../../../Spinner/Spinner";
-import "./EventInfo.less";
-import ParticipantsTable from "./ParticipantsTable";
 
 const classes = require("./EventInfo.module.css");
 const { Title } = Typography;
 
-interface BcProps {
-  type: [number, string];
-  category: [number, string];
-  event: [number, string];
+export interface EventDetails {
+  event: EventInformation;
+  participantAssessment: number;
+  isUserParticipant: boolean;
+  isUserApprovedParticipant: boolean;
+  isUserUndeterminedParticipant: boolean;
+  isUserRejectedParticipant: boolean;
+  isEventFinished: boolean;
+  isEventNotApproved: boolean;
+  canEstimate: boolean;
 }
 
-const EventBreadcrumb: React.FC<BcProps> = (p: BcProps) => {
-  const maxTextLength = 20;
+export interface EventInformation {
+  eventId: number;
+  eventName: string;
+  description: string;
+  eventDateStart: string;
+  eventDateEnd: string;
+  eventLocation: string;
+  eventTypeId: number;
+  eventType: string;
+  eventCategoryId: number;
+  eventCategory: string;
+  eventStatus: string;
+  formOfHolding: string;
+  forWhom: string;
+  rating: number;
+  numberOfPartisipants: number;
+  eventAdmins: EventAdmin[];
+  eventParticipants: EventParticipant[];
+}
 
-  const textForCrumbs = (text: string) => {
-    return text.length > maxTextLength ? (
-      <Tooltip title={text}>
-        {(text.slice(0, maxTextLength) + "...") as any}
-      </Tooltip>
-    ) : (
-      <span>{text}</span>
-    );
-  };
+export interface EventParticipant {
+  participantId: number;
+  fullName: string;
+  email: string;
+  userId: string;
+  statusId: number;
+  status: string;
+  wasPresent: boolean;
+}
 
-  return (
-    <Breadcrumb className="event-breadcrumb">
-      <Breadcrumb.Item href="/">
-        <HomeOutlined />
-      </Breadcrumb.Item>
-      <Breadcrumb.Item href="/events/types">Типи подій</Breadcrumb.Item>
-      <Breadcrumb.Item href={`/events/${p.type[0]}/categories`}>
-        {textForCrumbs(p.type[1])}
-      </Breadcrumb.Item>
-      <Breadcrumb.Item
-        href={`/types/${p.type[0]}/categories/${p.category[0]}/events`}
-      >
-        {textForCrumbs(p.category[1])}
-      </Breadcrumb.Item>
-      <Breadcrumb.Item>{textForCrumbs(p.event[1])}</Breadcrumb.Item>
-    </Breadcrumb>
-  );
-};
+export interface EventAdmin {
+  userId: string;
+  fullName: string;
+  adminType: string;
+}
+
+export interface EventGallery {
+  galleryId: number;
+  fileName: string;
+}
 
 const EventInfo = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false);
+  const [, setFilterTable] = useState([{}]);
+  const [baseData] = useState(rawData);
   // @ts-ignore
   const [event, setEvent] = useState<EventDetails>({});
   const [eventStatusID, setEventStatusID] = useState<number>();
@@ -76,25 +91,15 @@ const EventInfo = () => {
   const [isUserRegisteredUser, setUserRegisterUser] = useState<boolean>();
   const [participantsLoaded, setParticipantsLoaded] = useState<boolean>(false);
   const [participants, setParticipants] = useState<EventParticipant[]>([]);
-  const [filteredParticipants, setFilteredParticipants] = useState<
-    EventParticipant[]
-  >([]);
-
-  const history = useHistory();
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await eventsApi.getEventInfo(id);
-        await getUserAccessesForEvents(id);
-        setEvent(response.data);
-        setParticipantsInTable(response.data.event.eventParticipants);
-        getEventStatusId(response.data.event.eventStatus);
-        setLoading(true);
-      } catch (error) {
-        // this looks bad but i didn't find another way to accomplish this
-        if ((error.message as string).includes("404")) history.push("/404");
-      }
+      const response = await eventsApi.getEventInfo(id);
+      await getUserAccessesForEvents(id);
+      setEvent(response.data);
+      setParticipantsInTable(response.data.event.eventParticipants);
+      getEventStatusId(response.data.event.eventStatus);
+      setLoading(true);
     };
     fetchData();
     getUserRoles();
@@ -105,7 +110,7 @@ const EventInfo = () => {
       setEventStatusID(response.data);
     });
   };
-
+  
   const getUserAccessesForEvents = async (id: number) => {
     let user: any = jwt(AuthLocalStorage.getToken() as string);
     await eventUserApi.getUserEventAccess(user.nameid, +id).then((response) => {
@@ -119,18 +124,12 @@ const EventInfo = () => {
   };
 
   const search = (value: any) => {
-    if (value === "") {
-      setFilteredParticipants(participants);
-      return;
-    }
-
-    const filteredTable = participants.filter(
-      (item: EventParticipant) =>
-        item.fullName.toLowerCase().includes(value.toLowerCase()) ||
-        item.email.toLowerCase().includes(value.toLowerCase())
+    const filteredTable = baseData.filter((item: any) =>
+      Object.keys(item).some((k) =>
+        String(item[k]).toLowerCase().includes(value.toLowerCase())
+      )
     );
-
-    setFilteredParticipants(filteredTable);
+    setFilterTable(filteredTable);
   };
 
   const subscribeOnEvent = () => {
@@ -155,13 +154,13 @@ const EventInfo = () => {
   };
 
   const setParticipantsInTable = (eventParticipants: EventParticipant[]) => {
-    let availableParticipants = userAccesses["SeeUserTable"]
+    setParticipants(
+      userAccesses["SeeUserTable"]
       ? eventParticipants
       : eventParticipants.filter(
-          (p: EventParticipant) => p.status == "Учасник"
-        );
-    setParticipants(availableParticipants);
-    setFilteredParticipants(availableParticipants);
+        (p: EventParticipant) => p.status == "Учасник"
+      )
+    );
     setParticipantsLoaded(true);
   };
 
@@ -169,17 +168,8 @@ const EventInfo = () => {
     <Spinner />
   ) : (
     <div className="event-info-background">
-      <Title style={{ overflowWrap: "anywhere" }} level={2}>
-        {event.event.eventName}
-      </Title>
-      <div className="event-info-and-gallery">
-        <div className="event-info-header">
-          <EventBreadcrumb
-            type={[event.event.eventTypeId, event.event.eventType]}
-            category={[event.event.eventCategoryId, event.event.eventCategory]}
-            event={[event.event.eventId, event.event.eventName]}
-          />
-          <EventDetailsHeader eventInfo={event.event} />
+      <Row className="event-info-header">
+        <Col xs={24} sm={24} md={24} lg={8}>
           <SortedEventInfo
             userAccesses={userAccesses}
             event={event}
@@ -193,31 +183,36 @@ const EventInfo = () => {
             setRender={setRender}
             canViewAdminProfiles={!isUserRegisteredUser}
           />
-        </div>
+        </Col>
+        <Col
+          xs={24}
+          sm={{ span: 24, offset: 1 }}
+          md={{ span: 24, offset: 3 }}
+          lg={{ span: 16, offset: 0 }}
+        >
+          <EventDetailsHeader eventInfo={event.event} />
+        </Col>
+      </Row>
+      <div className="event-info-wrapper">
         <div className="eventGallary">
           <Gallery
             key={event.event?.eventLocation}
             eventId={event.event?.eventId}
             userAccesses={userAccesses}
-            pictureList={event.event.gallery}
           />
         </div>
-      </div>
-      <div className="event-info-wrapper">
         {userAccesses["SeeUserTable"] || event.isUserApprovedParticipant ? (
           <div className="participantsTable">
             <div key={"2"}>
               <Title level={2} className={classes.userTableTitle}>
                 Таблиця учасників
               </Title>
-              <Row className={classes.searchArea}>
+              <Row>
                 <Input.Search
-                  allowClear
                   className={classes.inputSearch}
                   placeholder="Пошук"
                   enterButton
                   onSearch={search}
-                  onChange={() => search("")}
                 />
               </Row>
             </div>
@@ -225,7 +220,7 @@ const EventInfo = () => {
               <ParticipantsTable
                 userAccesses={userAccesses}
                 isEventFinished={event.isEventFinished}
-                participants={filteredParticipants}
+                participants={participants}
                 eventName={event.event.eventName}
                 key={event.event.eventId}
                 setRender={setRender}

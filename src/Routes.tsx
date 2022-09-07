@@ -64,7 +64,6 @@ import AnnouncementsTable from "./pages/AnnouncementsTable/AnnouncementsTable";
 import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainAdministration";
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import RegionFollowers from "./pages/Regions/RegionFollowers";
-import EventInfo from "./pages/Actions/ActionEvent/EventInfo/EventInfo";
 import RegionEditFormPage from "./pages/Regions/RegionEdit";
 
 export default [
@@ -328,7 +327,7 @@ export default [
   {
     path: "/events/details/:id",
     name: "Подія",
-    Component: EventInfo,
+    Component: ActionEvent,
   },
   {
     path: "/userpage/eventUsers/:userId",
