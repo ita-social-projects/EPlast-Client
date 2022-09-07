@@ -227,3 +227,7 @@ export const possibleFileExtensions = (items: string) => {
 export const fileIsTooBig = (maxSize: number) => {
   return `Розмір файлу перевищує ${maxSize} Мб`;
 };
+
+export const failToSendNotification = (name: string) => {
+  return `Сталася помилка при відправці повідомлення ${name}, спробуйте пізніше`;
+};
