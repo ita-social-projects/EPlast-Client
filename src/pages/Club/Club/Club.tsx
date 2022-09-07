@@ -72,6 +72,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
+import { useUserTableStore } from "../../../stores/UserTableStore";
 
 const sloganMaxLength = 38;
 
@@ -110,6 +111,7 @@ const Club = () => {
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [isActiveClub, setIsActiveClub] = useState<boolean>(true);
+  const [state, actions] = useUserTableStore();
   const classes = require("./Modal.module.css");
 
   const changeApproveStatus = async (memberId: number) => {
@@ -981,8 +983,10 @@ const Club = () => {
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => {
-                  if (userAccesses.EditClub)
-                    history.push(`/user/table?club=${club.id}`);
+                  if (userAccesses.EditClub){
+                    actions.setClubs([club.id]);
+                    history.push(`/user/table`);
+                  }
                   else history.push(`/clubs/members/${club.id}`);
                 }}
               >
@@ -1219,8 +1223,10 @@ const Club = () => {
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => {
-                  if (userAccesses.EditClub)
-                    history.push(`/user/table?tab=registered&club=${club.id}`);
+                  if (userAccesses.EditClub){
+                    actions.setClubs([club.id]);
+                    history.push(`/user/table?tab=registered`);
+                  }
                   else history.push(`/clubs/followers/${club.id}`);
                 }}
               >
