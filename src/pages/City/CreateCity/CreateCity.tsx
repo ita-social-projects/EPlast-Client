@@ -89,6 +89,7 @@ const CreateCity = () => {
   const [applicant, setApplicant] = useState<User>({} as User);
   const [activeUser, setActiveUser] = useState<User>({} as User);
   const levels = [1, 2, 3];
+  const isCreating = !city.id;
 
   const getBase64 = (img: Blob, callback: Function) => {
     const reader = new FileReader();
@@ -243,7 +244,7 @@ const CreateCity = () => {
         isActive: city.isActive,
         oblast: values.oblast,
       };
-      if (!city.id) {
+      if (isCreating) {
         CreateCity(newCity, -1);
       } else {
         EditCity(newCity);
@@ -384,7 +385,10 @@ const CreateCity = () => {
       title: "Ваші дані будуть не збережені.",
       content: (
         <div className={classes.Style}>
-          <b>Відмінити створення станиці ?</b>{" "}
+          {isCreating
+            ? <b>Відмінити створення станиці ?</b>
+            : <b>Відмінити редагування станиці ?</b>}
+
         </div>
       ),
       onCancel() { },
@@ -478,9 +482,9 @@ const CreateCity = () => {
               />
             </Upload>
           </Form.Item>
-            <Row justify="center" gutter={[16, 4]}>
+          <Row justify="center" gutter={[16, 4]}>
             {isFollowerPath ? (
-                <Col md={12} xs={24}>
+              <Col md={12} xs={24}>
                 <Form.Item
                   name="applicant"
                   label="Заявник"
@@ -506,7 +510,7 @@ const CreateCity = () => {
               </Col>
             ) : null}
             {isFollowerPath ? (
-                <Col md={12} xs={24}>
+              <Col md={12} xs={24}>
                 <Form.Item
                   name="appeal"
                   label="Заява"
@@ -518,7 +522,7 @@ const CreateCity = () => {
                 </Form.Item>
               </Col>
             ) : null}
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="name"
                 label="Назва"
@@ -534,7 +538,7 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="level"
                 label="Рівень"
@@ -554,7 +558,7 @@ const CreateCity = () => {
                   ))}
                 </Select>
               </Form.Item>
-              </Col><Col md={12} xs={24}>
+            </Col><Col md={12} xs={24}>
               <Form.Item
                 name="oblast"
                 label="Область"
@@ -579,7 +583,7 @@ const CreateCity = () => {
                 </Select>
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="region"
                 label="Округа"
@@ -609,7 +613,7 @@ const CreateCity = () => {
                 </Select>
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="address"
                 label="Адреса"
@@ -625,7 +629,7 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="phoneNumber"
                 label="Номер телефону"
@@ -643,7 +647,7 @@ const CreateCity = () => {
                 </ReactInputMask>
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="cityURL"
                 label="Посилання"
@@ -659,7 +663,7 @@ const CreateCity = () => {
                 />
               </Form.Item>
             </Col>
-              <Col md={12} xs={24}>
+            <Col md={12} xs={24}>
               <Form.Item
                 name="email"
                 label="Електронна пошта"

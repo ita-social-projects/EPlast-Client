@@ -14,8 +14,10 @@ import UserDistinction from "../../../models/Distinction/UserDistinction";
 import User from "../../../models/UserTable/User";
 import UserPrecaution from "../../Precaution/Interfaces/UserPrecaution";
 import UserPrecautionStatus from "../../Precaution/Interfaces/UserPrecautionStatus";
+import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "./PersonalData";
 import "./PersonalData.less";
+import userApi from "../../../api/UserApi";
 
 const { Title } = Typography;
 const nameMaxLength = 55;
@@ -132,8 +134,15 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       link: "",
     },
   ]);
+   
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+
+  const getUserRoles = () => {
+    setActiveUserRoles(userApi.getActiveUserRoles);
+  }
 
   useEffect(() => {
+    getUserRoles();
     const fetchData = async () => {
       await kadrasApi.getAllKVsOfGivenUser(userId).then((responce) => {
         setkadras(responce.data);
@@ -156,6 +165,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     };
     fetchData();
   }, [props]);
+
+  const canAccessRegionTab = 
+    !activeUserRoles.includes(Roles.RegisteredUser);
 
   return loading === false ? (
     <div className="kadraWrapper">
@@ -181,23 +193,25 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         <div>
           {region ? (
             <p className="statusText">
-              Є прихильником округи:{" "}
-              <Link to={"/regions/" + regionId} className="LinkText">
+              Є зголошеним до округи:{" "}
+              <Link to={"/regions/" + regionId} className={`LinkText ${!canAccessRegionTab && "notAccess"}`}
+                onClick={event => !canAccessRegionTab && event.preventDefault()}
+              >
                 {region}
               </Link>
             </p>
           ) : (
-            <p className="statusText">Не є прихильником жодної округи</p>
+            <p className="statusText">Не є зголошеним до жодної округи</p>
           )}
           {city ? (
             <p className="statusText">
-              Є прихильником станиці:{" "}
+              Є зголошеним до станиці:{" "}
               <Link to={"/cities/" + cityId} className="LinkText">
                 {city}
               </Link>
             </p>
           ) : (
-            <p className="statusText">Не є прихильником жодної станиці</p>
+            <p className="statusText">Не є зголошеним до жодної станиці</p>
           )}
         </div>
       ) : (
@@ -219,13 +233,13 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       {clubMemberIsApproved == false ? (
         club ? (
           <p className="statusText">
-            Є прихильником куреня:{" "}
+            Є зголошеним до куреня:{" "}
             <Link to={"/clubs/" + clubId} className="LinkText">
               {club}
             </Link>
           </p>
         ) : (
-          <p className="statusText">Не є прихильником жодного куреня</p>
+          <p className="statusText">Не є зголошеним до жодного куреня</p>
         )
       ) : (
         <p className="statusText">
