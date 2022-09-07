@@ -234,8 +234,6 @@ const UsersTable = () => {
         form.setFieldsValue({
           locationFilter: [cityFilter],
         });
-
-        setDynamicCities([...dynamicCities, city]);
       }
     }
     setQueryLoaded((prev) => [true, prev[1]]);
@@ -252,8 +250,6 @@ const UsersTable = () => {
         form.setFieldsValue({
           locationFilter: [...form.getFieldValue("locationFilter"), clubFilter],
         });
-
-        setDynamicClubs([...dynamicClubs, club]);
       }
     }
     setQueryLoaded((prev) => [prev[0], true]);
