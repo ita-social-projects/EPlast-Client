@@ -102,7 +102,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       );
     }
 
-    if (degreeChanged) { 
+    if (degreeChanged && props.isChangingUserDegree) { 
       await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
 
       await NotificationBoxApi.createNotifications(
