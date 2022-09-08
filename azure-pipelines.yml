@@ -90,6 +90,8 @@ stages:
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
+              script: |  
+                az aks get-credentials --resource-group EPlast --name EPlast
               action: 'createSecret'
               kubernetesServiceConnection: 'eplast-kuber-test-env'
               secretType: 'dockerRegistry'
