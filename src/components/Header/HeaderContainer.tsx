@@ -20,13 +20,22 @@ import NotificationBoxApi, {
   NotificationType,
   UserNotification,
 } from "../../api/NotificationBoxApi";
-import WebSocketConnection from "../NotificationBox/WebSocketConnection";
 import HistoryDrawer from "../HistoryNavi/HistoryDrawer";
 import { useLocation } from "react-router-dom";
+import NotificationHub from "../../hubs/notificationHub";
 
 let authService = new AuthorizeApi();
 
-const HeaderContainer = () => {
+const HeaderContainer: React.FC = () => {
+  const notificationHub = new NotificationHub();
+  return <Header notificationHub={notificationHub} />
+}
+
+interface HeaderProps {
+  notificationHub: NotificationHub
+}
+
+const Header: React.FC<HeaderProps> = ({ notificationHub }) => {
   const user = AuthorizeApi.isSignedIn();
   const [imageBase64, setImageBase64] = useState<string>();
   const [name, setName] = useState<string>();
@@ -44,6 +53,11 @@ const HeaderContainer = () => {
   const [visibleHistoryDrawer, setVisibleHistoryDrawer] = useState(false);
   const location = useLocation().pathname;
 
+  notificationHub.onAddNotification((notification) => {
+    console.table(notification);
+    setNotifications([...notifications, notification]);
+  })
+
   const fetchData = async () => {
     if (user) {
       const user: any = jwt(token);
@@ -57,14 +71,6 @@ const HeaderContainer = () => {
         if (response.data.user.id !== undefined) {
           getNotifications(response.data.user.id);
           getNotificationTypes();
-          let connection = WebSocketConnection.ManageConnection(
-            response.data.user.id
-          );
-
-          connection.onmessage = function (event) {
-            const result = JSON.parse(decodeURIComponent(event.data));
-            setNotifications((t) => [result as UserNotification].concat(t));
-          };
         }
         await userApi
           .getImage(response.data.user.imagePath)

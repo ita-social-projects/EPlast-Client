@@ -1,4 +1,3 @@
-import { HttpResponse } from "@microsoft/signalr";
 import UkraineOblasts from "../models/Oblast/UkraineOblasts";
 import { ActiveCity } from "../pages/AnnualReport/Interfaces/City";
 import api from "./api";
