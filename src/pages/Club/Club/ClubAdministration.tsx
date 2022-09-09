@@ -115,10 +115,20 @@ const ClubAdministration = () => {
   const onAdd = async (newAdmin: ClubAdmin = new ClubAdmin()) => {
     const index = administration.findIndex((a) => a.id === admin.id);
     administration[index] = newAdmin;
-    await createNotification(
-      newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`
-    );
+    if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`
+      );
+    }
+    else if (newAdmin.startDate !== admin.startDate || newAdmin.endDate !== admin.endDate) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам було змінено час правління на 
+        ${moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - 
+        ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")} в курені`
+      );
+    }
     setAdministration(administration);
     setReload(!reload);
   };
