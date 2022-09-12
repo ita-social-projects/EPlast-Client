@@ -440,9 +440,7 @@ const RegionBoard = () => {
                   >
                     <div
                       onClick={() =>
-                        userAccesses["EditRB"]
-                          ? history.push(`/userpage/main/${admin.userId}`)
-                          : undefined
+                          history.push(`/userpage/main/${admin.userId}`)
                       }
                     >
                       {photosLoading ? (
