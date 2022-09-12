@@ -63,7 +63,6 @@ const RegionAdministration = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
-  const [regionName, setRegionName] = useState<string>("");
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -94,7 +93,6 @@ const RegionAdministration = () => {
     const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
     setRegion(regionResponse.data);
-    setRegionName(regionResponse.data.name);
     setPhotos([...administrationResponse.data].filter((a) => a != null));
     setAdministration(
       [...administrationResponse.data].filter((a) => a != null)
@@ -151,9 +149,10 @@ const RegionAdministration = () => {
   };
 
   const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
+    alert('on add');
     const index = administration.findIndex((a) => a.id === admin.id);
     administration[index] = newAdmin;
-    await createNotification(
+    await createNotification( 
       newAdmin.userId,
       `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
     );
@@ -175,7 +174,7 @@ const RegionAdministration = () => {
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${id}`,
-      regionName
+      region.regionName
     );
   };
 
