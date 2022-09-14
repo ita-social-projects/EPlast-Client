@@ -17,14 +17,14 @@ spec:
     http:
       paths:        
       - backend:
-          service
+          service:
             name: eplastweb
             port:
               number: 80
         path: /
         pathType: ImplementationSpecific
       - backend:
-          service
+          service:
             name: prometheus-grafana
             port:
               number: 80
