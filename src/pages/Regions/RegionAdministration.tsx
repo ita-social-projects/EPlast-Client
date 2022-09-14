@@ -151,8 +151,15 @@ const RegionAdministration = () => {
   };
 
   const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
-    const index = administration.findIndex((a) => a.id === admin.id);
-    administration[index] = newAdmin;
+    const previousAdmin = administration.find(a => a.id === admin.id)!; 
+    const adminIdx = administration.findIndex(a => a.id === admin.id);
+    administration[adminIdx] = newAdmin;
+    if (previousAdmin.adminType.adminTypeName !== newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`
+      );
+    }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
