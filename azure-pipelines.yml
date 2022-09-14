@@ -93,7 +93,7 @@ stages:
               script: |  
                 az aks get-credentials --resource-group EPlast --name EPlast
               action: 'createSecret'
-              kubernetesServiceConnection: 'eplast-kuber-test-env'
+              kubernetesServiceConnection: 'EPlast-test-deploy'
               secretType: 'dockerRegistry'
               secretName: '$(imagePullSecret)'
               dockerRegistryEndpoint: '$(dockerRegistryServiceConnection)'
@@ -102,6 +102,7 @@ stages:
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
+              kubernetesServiceConnection: 'EPlast-test-deploy'
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml
