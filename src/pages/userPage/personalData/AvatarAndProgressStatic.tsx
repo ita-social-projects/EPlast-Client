@@ -14,8 +14,10 @@ import UserDistinction from "../../../models/Distinction/UserDistinction";
 import User from "../../../models/UserTable/User";
 import UserPrecaution from "../../Precaution/Interfaces/UserPrecaution";
 import UserPrecautionStatus from "../../Precaution/Interfaces/UserPrecautionStatus";
+import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "./PersonalData";
 import "./PersonalData.less";
+import userApi from "../../../api/UserApi";
 
 const { Title } = Typography;
 const nameMaxLength = 55;
@@ -132,8 +134,15 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
       link: "",
     },
   ]);
+   
+  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
+
+  const getUserRoles = () => {
+    setActiveUserRoles(userApi.getActiveUserRoles);
+  }
 
   useEffect(() => {
+    getUserRoles();
     const fetchData = async () => {
       await kadrasApi.getAllKVsOfGivenUser(userId).then((responce) => {
         setkadras(responce.data);
@@ -156,6 +165,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     };
     fetchData();
   }, [props]);
+
+  const canAccessRegionTab = 
+    !activeUserRoles.includes(Roles.RegisteredUser);
 
   return loading === false ? (
     <div className="kadraWrapper">
@@ -182,7 +194,9 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           {region ? (
             <p className="statusText">
               Є зголошеним до округи:{" "}
-              <Link to={"/regions/" + regionId} className="LinkText">
+              <Link to={"/regions/" + regionId} className={`LinkText ${!canAccessRegionTab && "notAccess"}`}
+                onClick={event => !canAccessRegionTab && event.preventDefault()}
+              >
                 {region}
               </Link>
             </p>

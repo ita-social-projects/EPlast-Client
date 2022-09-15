@@ -23,7 +23,7 @@ export const incorrectSlogan =
 
 export const incorrectAppeal =
   wrongFormat +
-  ". Заява не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
+  ". Заява не повинна починатись, закінчуватись пробілом або спецсимволом чи містити більше одного пробілу або спецсимволу поспіль! Доступні спецсимволи: . , ' : - ";
 
 export const incorrectName =
   wrongFormat +
@@ -226,4 +226,8 @@ export const possibleFileExtensions = (items: string) => {
 
 export const fileIsTooBig = (maxSize: number) => {
   return `Розмір файлу перевищує ${maxSize} Мб`;
+};
+
+export const failToSendNotification = (name: string) => {
+  return `Сталася помилка при відправці повідомлення ${name}, спробуйте пізніше`;
 };

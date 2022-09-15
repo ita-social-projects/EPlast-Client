@@ -32,6 +32,7 @@ interface Props {
   hasAccessToDelete?: boolean;
   setAchievementDoc: (document: BlankDocument[]) => void;
   userToken: any;
+  courseId?: number; 
 }
 
 const ListOfAchievementsModal = (props: Props) => {
@@ -44,7 +45,7 @@ const ListOfAchievementsModal = (props: Props) => {
   let [pageNumber, setPageNumber] = useState(0);
   const [pageSize] = useState(7);
   const [isEmpty, setIsEmpty] = useState(false);
-
+  
   const handleCancel = () => {
     setLoadingMore({ loading: false, hasMore: true });
     setIsEmpty(false);
@@ -54,7 +55,6 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const deleteFIle = async (documentId: number,  userId: string, fileName: string) => {
-   console.log("delete");
     await removeAchievementDocument(documentId ,userId);
     notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
     setAchievements(achievements.filter((d) => d.id !== documentId));
@@ -72,7 +72,7 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const getAchievements = async () => {
-    const response = await getAchievementsByPage(pageNumber, pageSize, userId);
+    const response = await getAchievementsByPage(pageNumber, pageSize, userId, props.courseId);
     if (response.data.length === 0) {
       setIsEmpty(true);
     }
@@ -80,6 +80,7 @@ const ListOfAchievementsModal = (props: Props) => {
     setAchievements(concatedAchievements);
     setLoadingMore({ loading: false, hasMore: true });
   };
+
   const handleInfiniteOfLoad = () => {
     setLoadingMore({ loading: true, hasMore: true });
     if (isEmpty) {
@@ -89,6 +90,47 @@ const ListOfAchievementsModal = (props: Props) => {
     getAchievements();
     setPageNumber(++pageNumber);
   };
+
+  const getActions = (blackDocumentItem: BlankDocument, isNotDocx = true) => {
+    const actions: JSX.Element[] = [];
+    if (props.hasAccessToSeeAndDownload) {
+      if (isNotDocx) {
+        actions.push(
+          <EyeOutlined
+            className={classes.reviewIcon}
+            onClick={() =>
+              reviewFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
+            }
+          />
+        );
+      }
+      actions.push(
+        <DownloadOutlined
+          className={classes.downloadIcon}
+          onClick={() =>
+            downloadFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
+          }
+        />
+      );
+    }
+    if (props.hasAccessToDelete) {
+      actions.push(
+        <Popconfirm
+          title="Видалити цей документ?"
+          placement="right"
+          icon={false}
+          onConfirm={() => deleteFIle(blackDocumentItem.id, blackDocumentItem.userId, blackDocumentItem.fileName)}
+          okText="Так"
+          cancelText="Ні"
+        >
+          <DeleteOutlined
+            className={classes.deleteIcon}
+          />
+        </Popconfirm>
+      );
+    }
+    return actions;
+  }
 
   return (
     <Modal
@@ -110,62 +152,13 @@ const ListOfAchievementsModal = (props: Props) => {
             renderItem={(item) => (
               <List.Item
                 actions={
-                  item.fileName.split(".")[1] !== "doc" &&
-                  item.fileName.split(".")[1] !== "docx"
-                    ? [
-                        <EyeOutlined
-                          className={classes.reviewIcon}
-                          hidden={!props.hasAccessToSeeAndDownload}
-                          onClick={() =>
-                            reviewFile(item.blobName, item.fileName)
-                          }
-                        />,
-                        <DownloadOutlined
-                          className={classes.downloadIcon}
-                          hidden={!props.hasAccessToSeeAndDownload}
-                          onClick={() =>
-                            downloadFile(item.blobName, item.fileName)
-                          }
-                        />,
-                        <Popconfirm
-                          title="Видалити цей документ?"
-                          placement="right"
-                          icon={false}
-                          onConfirm={() => deleteFIle(item.id,item.userId, item.fileName)}
-                          okText="Так"
-                          cancelText="Ні"
-                        >
-                          <DeleteOutlined
-                            hidden={!props.hasAccessToDelete}
-                            className={classes.deleteIcon}
-                          />
-                        </Popconfirm>,
-                      ]
-                    : [
-                        <DownloadOutlined
-                          className={classes.downloadIcon}
-                          hidden={!props.hasAccessToSeeAndDownload}
-                          onClick={() =>
-                            downloadFile(item.blobName, item.fileName)
-                          }
-                        />,
-                        <Popconfirm
-                          title="Видалити цей документ?"
-                          placement="right"
-                          icon={false}
-                          onConfirm={() => deleteFIle(item.id,item.userId, item.fileName)}
-                          okText="Так"
-                          cancelText="Ні"
-                        >
-                          <DeleteOutlined
-                            hidden={!props.hasAccessToDelete}
-                            className={classes.deleteIcon}
-                          />
-                        </Popconfirm>,
-                      ]
+                  item.fileName.split(".").pop()! !== "doc" &&
+                  item.fileName.split(".").pop()! !== "docx"
+                    ? getActions(item)
+                    : getActions(item, false)
                 }
               >
-                {item.blobName.split(".")[1] === "pdf" ? (
+                {item.blobName.split(".").pop()! === "pdf" ? (
                   <FilePdfOutlined className={classes.fileIcon} />
                 ) : (
                   <FileImageOutlined className={classes.fileIcon} />
