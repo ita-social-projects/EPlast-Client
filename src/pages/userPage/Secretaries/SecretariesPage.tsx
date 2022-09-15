@@ -44,7 +44,7 @@ export const Secretaries = () => {
   const [noTitleKey, setKey] = useState<string>("1");
   const [LoadInfo, setLoadInfo] = useState<boolean>(false);
 
-  const { userProfile, fullUserProfile, UpdateData } = useContext(
+  const { userProfile, fullUserProfile } = useContext(
     PersonalDataContext
   );
 
