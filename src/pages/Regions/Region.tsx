@@ -411,6 +411,44 @@ const Region = () => {
     });
   };
 
+    const showConfirmAddNewHead = (
+      newAdmin: RegionAdmin,
+      existingAdmin?: RegionAdmin
+    ) => {
+      Modal.confirm({
+        title: "Призначити даного користувача на цю посаду?",
+        onCancel() { },
+        async onOk() {
+          await addRegionAdmin(newAdmin);
+          admins.push(newAdmin);
+          setAdmins(admins);
+        },
+      });
+    };
+
+    const showAddNewHeadExpired = (
+      newAdmin: RegionAdmin,
+      existingAdmin?: RegionAdmin
+    ) => {
+      Modal.confirm({
+        title: "Призначити даного користувача на цю посаду?",
+        content: (
+          <div className={classes.Style}>
+            <b>
+              Дані будуть внесені у колишні діловодства округи, оскільки час
+              правління вже закінчився.
+            </b> 
+          </div>
+        ),
+        onCancel() { },
+        async onOk() {
+          await addRegionAdmin(newAdmin);
+          admins.push(newAdmin);
+          setAdmins(admins);
+        },
+      });
+    };
+
   const showDisableModal = async (admin: RegionAdmin) => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
@@ -474,6 +512,7 @@ const Region = () => {
     setActiveMemberVisibility(false);
   };
 
+
   const handleOk = async (admin: RegionAdmin) => {
     if (admin.id === 0) {
       const head = (admins as RegionAdmin[]).find(
@@ -488,10 +527,27 @@ const Region = () => {
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
       try {
+        const existEndDate = moment.utc(existingAdmin?.endDate).local();
+        const existStartDate = moment.utc(existingAdmin?.startDate).local();
+        const newAdminStartDate = moment.utc(admin.startDate).local();
+        const newAdminEndDate = moment.utc(admin.endDate).local();
+        const currentDate = moment.utc(new Date()).local();
+
         if (head?.userId === admin.userId) {
           showDisableModal(head);
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
+        } else if (
+          existingAdmin !== undefined &&
+          admin.endDate !== undefined &&
+          ((existStartDate > newAdminStartDate &&
+            existEndDate < newAdminEndDate) ||
+            (existEndDate > newAdminEndDate &&
+              existStartDate < newAdminStartDate) ||
+            (existEndDate > newAdminEndDate &&
+              newAdminEndDate > existStartDate))
+        ) {
+          showDisable(existingAdmin);
         } else if (
           admin.adminType.adminTypeName === "Голова ОПР" ||
           admin.adminType.adminTypeName === "Член ОПР" ||
@@ -500,10 +556,10 @@ const Region = () => {
         ) {
           const check = await getCheckPlastMember(admin.userId);
           if (check.data) {
-            await addRegionAdmin(admin).then(() => {
-              admins.push(admin);
-              setAdmins(admins);
-            });
+            if (newAdminEndDate < currentDate){
+              showAddNewHeadExpired(admin, existingAdmin)
+            } 
+            else { showConfirmAddNewHead(admin, existingAdmin) };
           } else {
             showPlastMemberDisable(admin);
           }
