@@ -34,7 +34,7 @@ interface Props {
   regionName: string;
   onAdd?: (admin?: RegionAdmin) => void;
   onChange?: (id: string, userRoles: string) => void;
-}
+} 
 
 const AddAdministratorModal = (props: Props) => {
   const [loading, setLoading] = useState(false);
@@ -316,12 +316,15 @@ const AddAdministratorModal = (props: Props) => {
                   !activeUserRoles.includes(Roles.Admin),
               },
               { value: Roles.OkrugaHeadDeputy },
-              { value: "Голова СПС" },
-              { value: "Фотограф" },
+              { value: Roles.OkrugaReferentUPS },
+              { value: Roles.OkrugaReferentUSP },
+              { value: Roles.OkrugaReferentOfActiveMembership },
               { value: "Писар" },
+              { value: "Бунчужний" },
               { value: "Скарбник" },
               { value: "Домівкар" },
-              { value: "Член СПР" },
+              { value: "Член ОПР" },
+              { value: "Голова ОПР" },
             ]}
             placeholder={"Тип адміністрування"}
             value={props.admin.adminType.adminTypeName}

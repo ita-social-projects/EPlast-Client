@@ -1,72 +1,72 @@
+import {
+  ContainerOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  FileTextOutlined,
+  PlusSquareFilled,
+} from "@ant-design/icons";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Layout,
+  Modal,
+  Row,
+  Skeleton,
+  Tag,
+  Tooltip,
+} from "antd";
+import Paragraph from "antd/lib/typography/Paragraph";
+import Title from "antd/lib/typography/Title";
+import jwt from "jwt-decode";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import {
-  Avatar,
-  Row,
-  Col,
-  Button,
-  Layout,
-  Modal,
-  Skeleton,
-  Card,
-  Tooltip,
-  Badge,
-  Tag,
-} from "antd";
-import {
-  FileTextOutlined,
-  EditOutlined,
-  PlusSquareFilled,
-  DeleteOutlined,
-  ContainerOutlined,
-  ExclamationCircleOutlined,
-} from "@ant-design/icons";
-import moment from "moment";
-import jwt from "jwt-decode";
-import Title from "antd/lib/typography/Title";
-import Paragraph from "antd/lib/typography/Paragraph";
-import {
-  getCheckPlastMember,
   cityNameOfApprovedMember,
+  getCheckPlastMember,
   getLogo,
 } from "../../api/citiesApi";
+import NotificationBoxApi from "../../api/NotificationBoxApi";
 import {
-  getRegionById,
+  AddAdmin,
   archiveRegion,
-  unArchiveRegion,
-  getRegionAdministration,
+  EditAdmin,
   getHead,
   getHeadDeputy,
+  getRegionAdministration,
+  getRegionById,
   getRegionFollowers,
-  AddAdmin,
   getUserRegionAccess,
-  EditAdmin,
   removeRegion,
+  unArchiveRegion,
 } from "../../api/regionsApi";
-import "./Region.less";
+import userApi from "../../api/UserApi";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
+import AuthLocalStorage from "../../AuthLocalStorage";
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
+import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
+import {
+  failArchiveAction,
+  successfulArchiveAction,
+  successfulDeleteAction,
+  successfulEditAction,
+  successfulUnarchiveAction,
+} from "../../components/Notifications/Messages";
+import notificationLogic from "../../components/Notifications/Notification";
+import RegionAdmin from "../../models/Region/RegionAdmin";
+import RegionDocument from "../../models/Region/RegionDocument";
+import RegionFollower from "../../models/Region/RegionFollower";
+import { Roles } from "../../models/Roles/Roles";
 import Spinner from "../Spinner/Spinner";
 import AddDocumentModal from "./AddDocModal";
-import RegionDocument from "../../models/Region/RegionDocument";
 import AddNewSecretaryForm from "./AddRegionSecretaryForm";
-import userApi from "../../api/UserApi";
 import CheckActiveCitiesForm from "./CheckActiveCitiesForm";
+import "./Region.less";
 import RegionDetailDrawer from "./RegionsDetailDrawer";
-import NotificationBoxApi from "../../api/NotificationBoxApi";
-import notificationLogic from "../../components/Notifications/Notification";
-import {
-  successfulEditAction,
-  successfulDeleteAction,
-  successfulArchiveAction,
-  successfulUnarchiveAction,
-  failArchiveAction,
-} from "../../components/Notifications/Messages";
-import Crumb from "../../components/Breadcrumb/Breadcrumb";
-import PsevdonimCreator from "../../components/HistoryNavi/historyPseudo";
-import { Roles } from "../../models/Roles/Roles";
-import RegionFollower from "../../models/Region/RegionFollower";
-import RegionAdmin from "../../models/Region/RegionAdmin";
-import AuthLocalStorage from "../../AuthLocalStorage";
 
 const Region = () => {
   const history = useHistory();
@@ -343,7 +343,7 @@ const Region = () => {
         previousAdmin = admin;
       }
     });
-    await AddAdmin(newAdmin);
+    const { data: newAdministrator } = await AddAdmin(newAdmin);
     await updateAdmins();
     if (previousAdmin.adminType.adminTypeName != "") {
       await createNotification(
@@ -357,7 +357,12 @@ const Region = () => {
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в окрузі`,
       true
     );
-    notificationLogic("success", "Користувач успішно доданий в провід");
+
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+    } else {
+      notificationLogic("info", "Колишні діловодства округи були змінені");
+    }
   };
 
   const editRegionAdmin = async (admin: RegionAdmin) => {
@@ -383,14 +388,14 @@ const Region = () => {
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-            existingAdmin.endDate === undefined
+              existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (newAdmin.id === 0) {
           addRegionAdmin(newAdmin);
@@ -406,6 +411,44 @@ const Region = () => {
     });
   };
 
+    const showConfirmAddNewHead = (
+      newAdmin: RegionAdmin,
+      existingAdmin?: RegionAdmin
+    ) => {
+      Modal.confirm({
+        title: "Призначити даного користувача на цю посаду?",
+        onCancel() { },
+        async onOk() {
+          await addRegionAdmin(newAdmin);
+          admins.push(newAdmin);
+          setAdmins(admins);
+        },
+      });
+    };
+
+    const showAddNewHeadExpired = (
+      newAdmin: RegionAdmin,
+      existingAdmin?: RegionAdmin
+    ) => {
+      Modal.confirm({
+        title: "Призначити даного користувача на цю посаду?",
+        content: (
+          <div className={classes.Style}>
+            <b>
+              Дані будуть внесені у колишні діловодства округи, оскільки час
+              правління вже закінчився.
+            </b> 
+          </div>
+        ),
+        onCancel() { },
+        async onOk() {
+          await addRegionAdmin(newAdmin);
+          admins.push(newAdmin);
+          setAdmins(admins);
+        },
+      });
+    };
+
   const showDisableModal = async (admin: RegionAdmin) => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
@@ -417,14 +460,14 @@ const Region = () => {
           є Головою Округи, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -439,14 +482,14 @@ const Region = () => {
           вже має таку роль, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -461,13 +504,14 @@ const Region = () => {
           не є членом Пласту.
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
   };
+
 
   const handleOk = async (admin: RegionAdmin) => {
     if (admin.id === 0) {
@@ -483,10 +527,27 @@ const Region = () => {
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
       try {
+        const existEndDate = moment.utc(existingAdmin?.endDate).local();
+        const existStartDate = moment.utc(existingAdmin?.startDate).local();
+        const newAdminStartDate = moment.utc(admin.startDate).local();
+        const newAdminEndDate = moment.utc(admin.endDate).local();
+        const currentDate = moment.utc(new Date()).local();
+
         if (head?.userId === admin.userId) {
           showDisableModal(head);
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
+        } else if (
+          existingAdmin !== undefined &&
+          admin.endDate !== undefined &&
+          ((existStartDate > newAdminStartDate &&
+            existEndDate < newAdminEndDate) ||
+            (existEndDate > newAdminEndDate &&
+              existStartDate < newAdminStartDate) ||
+            (existEndDate > newAdminEndDate &&
+              newAdminEndDate > existStartDate))
+        ) {
+          showDisable(existingAdmin);
         } else if (
           admin.adminType.adminTypeName === "Голова ОПР" ||
           admin.adminType.adminTypeName === "Член ОПР" ||
@@ -495,10 +556,10 @@ const Region = () => {
         ) {
           const check = await getCheckPlastMember(admin.userId);
           if (check.data) {
-            await addRegionAdmin(admin).then(() => {
-              admins.push(admin);
-              setAdmins(admins);
-            });
+            if (newAdminEndDate < currentDate){
+              showAddNewHeadExpired(admin, existingAdmin)
+            } 
+            else { showConfirmAddNewHead(admin, existingAdmin) };
           } else {
             showPlastMemberDisable(admin);
           }
@@ -645,12 +706,7 @@ const Region = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <div>
-              <Crumb
-                current={region.regionName}
-                first="/"
-                second={url.replace(`/${id}`, "/page/1")}
-                second_name="Округи"
-              />
+              <Breadcrumb currentLocationName={region.regionName} />
               {isActiveRegion ? null : (
                 <Tag className="status" color={"red"}>
                   Заархівовано
@@ -800,7 +856,7 @@ const Region = () => {
                     style={{
                       display:
                         userAccesses["DeleteRegion"] ||
-                        userAccesses["EditRegion"]
+                          userAccesses["EditRegion"]
                           ? "block"
                           : "none",
                     }}
@@ -808,9 +864,7 @@ const Region = () => {
                     <Button
                       type="primary"
                       className="cityInfoButton"
-                      onClick={() =>
-                        history.push(`/annualreport/table/region`)
-                      }
+                      onClick={() => history.push(`/annualreport/table/region`)}
                     >
                       Річні звіти
                     </Button>
@@ -838,7 +892,8 @@ const Region = () => {
                           />
                         </Tooltip>
                       </Col>
-                        {(activeUserRoles.includes(Roles.Admin) || activeUserRoles.includes(Roles.GoverningBodyAdmin)) ? (
+                      {activeUserRoles.includes(Roles.Admin) ||
+                        activeUserRoles.includes(Roles.GoverningBodyAdmin) ? (
                         isActiveRegion ? (
                           <Col offset={1}>
                             <Tooltip title="Заархівувати округу">
@@ -955,7 +1010,7 @@ const Region = () => {
                     <div
                       onClick={() =>
                         !activeUserRoles.includes(Roles.RegisteredUser)
-                          ? history.push(`/userpage/main/${admin.userId}`)
+                          ? history.push(`/userpage/main/${admin.user.id}`)
                           : undefined
                       }
                     >
@@ -1003,7 +1058,7 @@ const Region = () => {
               <a
                 onClick={() =>
                   userAccesses["IsAdmin"] ||
-                  (userAccesses["DownloadDocument"] && isActiveUserFromRegion)
+                    (userAccesses["DownloadDocument"] && isActiveUserFromRegion)
                     ? history.push(`/regions/documents/${region.id}`)
                     : undefined
                 }
@@ -1037,7 +1092,7 @@ const Region = () => {
             </Row>
             <div className="cityMoreButton">
               {userAccesses["IsAdmin"] ||
-              (userAccesses["DownloadDocument"] && isActiveUserFromRegion) ? (
+                (userAccesses["DownloadDocument"] && isActiveUserFromRegion) ? (
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -1049,7 +1104,7 @@ const Region = () => {
                 </Button>
               ) : null}
               {isActiveRegion ? (
-                userAccesses["EditCity"] ? (
+                userAccesses["EditRegion"] ? (
                   <PlusSquareFilled
                     className="addReportIcon"
                     onClick={() => setVisibleModal(true)}
@@ -1102,8 +1157,8 @@ const Region = () => {
                             activeUserRoles.includes(role)
                           )
                             ? history.push(
-                                `/regions/follower/edit/${follower.id}`
-                              )
+                              `/regions/follower/edit/${follower.id}`
+                            )
                             : undefined
                         }
                       >

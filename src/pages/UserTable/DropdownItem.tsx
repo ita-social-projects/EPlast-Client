@@ -557,7 +557,14 @@ class RemoveCityFollowerItem extends DropdownItem {
 
 //-------------------------------------------------------------------------------------------------------------------------------
 
-//Builds CoR for each of the dropdown items
+/*READ BEFORE CREATING NEW CHECKS*/
+
+//CheckCreator builds CoR for each of the dropdown items
+//Keep in mind that every Chain has to be completed from the first to the last check in order to
+//show an Item in context menu.
+//It means that every Check either invokes next Check or returns false and stops the chain.
+//If check returns false Item will not show in context menu.
+
 //To improve performance we can create all check's separately for each chain
 //of these check's (each method in this class), so each chain will be builded only one time.
 //However, it will take some extra memory and will be more complicated to implement and maintain.
@@ -648,7 +655,7 @@ class CheckCreator {
 
     return this.checkId;
   }
-  
+
   public rebuildChainForSettingCityAdministration(): ICheck {
     this.checkId
       .setNext(this.selectedUserIsNotRegisteredUser)
@@ -981,17 +988,28 @@ class SelectedUserIsAFollowerCheck extends Check {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    return (
+    if (
       selectedUser.isCityFollower ||
       selectedUser.isClubFollower ||
       selectedUser.cityId === null ||
       selectedUser.regionId === null
-    );
+    ) {
+      return super.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        places
+      );
+    } else {
+      return false;
+    }
   }
 }
 
 //Inverted version of the previous check
-class SelectedUserIsNotAFollowerCheck extends SelectedUserIsAFollowerCheck {
+class SelectedUserIsNotAFollowerCheck extends Check {
   public check(
     currentUser: any,
     currentUserAdminRoles: Array<AdminRole>,
@@ -1000,13 +1018,23 @@ class SelectedUserIsNotAFollowerCheck extends SelectedUserIsAFollowerCheck {
     selectedUserNonAdminRoles: Array<NonAdminRole>,
     places: Array<Place>
   ): boolean {
-    return !super.check(
-      currentUser,
-      currentUserAdminRoles,
-      selectedUser,
-      selectedUserAdminRoles,
-      selectedUserNonAdminRoles,
-      places);
+    if (
+      !selectedUser.isCityFollower &&
+      !selectedUser.isClubFollower &&
+      selectedUser.cityId !== null &&
+      selectedUser.regionId !== null
+    ) {
+      return super.check(
+        currentUser,
+        currentUserAdminRoles,
+        selectedUser,
+        selectedUserAdminRoles,
+        selectedUserNonAdminRoles,
+        places
+      );
+    } else {
+      return false;
+    }
   }
 }
 

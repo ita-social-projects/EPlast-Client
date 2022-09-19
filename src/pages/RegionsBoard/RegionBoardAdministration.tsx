@@ -75,7 +75,9 @@ const RegionBoardAdministration = () => {
                 <div className="cityMember">
                   <div
                     onClick={() =>
-                      history.push(`/governingBodies/${governingBody.id}`)
+                      history.push(
+                        `/regionalBoard/governingBodies/${governingBody.id}`
+                      )
                     }
                   >
                     {photosLoading ? (

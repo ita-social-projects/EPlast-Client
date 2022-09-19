@@ -1,42 +1,43 @@
-import React, { useEffect, useRef, useState } from "react";
 import {
-  Table,
+  Button,
+  Card,
+  Col,
+  Form,
   Input,
   Layout,
-  Row,
-  Col,
-  Button,
-  TreeSelect,
   Modal,
-  Form,
-  Card,
+  Row,
+  Table,
+  TreeSelect,
 } from "antd";
-import "./Filter.less";
-import { getUsersForTableByPage } from "../../api/adminApi";
-import clubsApi from "../../api/clubsApi";
-import DropDownUserTable from "./DropDownUserTable";
-import Title from "antd/lib/typography/Title";
-import ColumnsForUserTable from "./ColumnsForUserTable";
-import UserTable from "../../models/UserTable/UserTable";
-import ClickAwayListener from "react-click-away-listener";
 import { TreeNode } from "antd/lib/tree-select";
-import City from "../Statistics/Interfaces/City";
+import Title from "antd/lib/typography/Title";
+import jwt_decode from "jwt-decode";
+import queryString from "querystring";
+import React, { useEffect, useRef, useState } from "react";
+import ClickAwayListener from "react-click-away-listener";
+import { useLocation } from "react-router-dom";
 import activeMembershipApi, {
   PlastDegree,
 } from "../../api/activeMembershipApi";
-import regionsApi from "../../api/regionsApi";
-import Region from "../Statistics/Interfaces/Region";
-import Club from "../AnnualReport/Interfaces/Club";
-import { shouldContain } from "../../components/Notifications/Messages";
-import classes from "./UserTable.module.css";
+import { getUsersForTableByPage } from "../../api/adminApi";
 import citiesApi from "../../api/citiesApi";
+import clubsApi from "../../api/clubsApi";
+import regionsApi from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
-import User from "../Distinction/Interfaces/User";
 import AuthLocalStorage from "../../AuthLocalStorage";
-import jwt_decode from "jwt-decode";
+import { shouldContain } from "../../components/Notifications/Messages";
 import { Roles } from "../../models/Roles/Roles";
-import { useLocation } from "react-router-dom";
-import queryString from "querystring";
+import User from "../../models/UserTable/User";
+import UserTable from "../../models/UserTable/UserTable";
+import Club from "../AnnualReport/Interfaces/Club";
+import City from "../Statistics/Interfaces/City";
+import Region from "../Statistics/Interfaces/Region";
+import UserRenewalTable from "../UserRenewal/UserRenewalTable/UserRenewalTable";
+import ColumnsForUserTable from "./ColumnsForUserTable";
+import DropDownUserTable from "./DropDownUserTable";
+import "./Filter.less";
+import classes from "./UserTable.module.css";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -72,7 +73,11 @@ const UsersTable = () => {
 
   const cityList = useRef<Array<City>>([]);
   const clubList = useRef<Array<Club>>([]);
-  const [isQueryLoaded, setQueryLoaded] = useState(false);
+  // isQueryLoaded [<true if cities are loaded>, <true if clubs are loaded>]
+  const [isQueryLoaded, setQueryLoaded] = useState<[boolean, boolean]>([
+    false,
+    false,
+  ]);
 
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
@@ -82,7 +87,8 @@ const UsersTable = () => {
   const { Search } = Input;
   const location = useLocation();
   const queryParams = useRef<any>({});
-  const [selectedRow, setSelectedRow] = useState<number>(-1)
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
+  const tableBody = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     initializePage();
@@ -230,9 +236,10 @@ const UsersTable = () => {
           locationFilter: [cityFilter],
         });
 
-        setDynamicCities([...dynamicCities, city]);
+        setDynamicCities([city]);
       }
     }
+    setQueryLoaded((prev) => [true, prev[1]]);
   };
 
   const getClubFromQuery = () => {
@@ -247,11 +254,10 @@ const UsersTable = () => {
           locationFilter: [...form.getFieldValue("locationFilter"), clubFilter],
         });
 
-        setDynamicClubs([...dynamicClubs, club]);
+        setDynamicClubs([club]);
       }
     }
-
-    setQueryLoaded(true);
+    setQueryLoaded((prev) => [prev[0], true]);
   };
 
   const showError = (message: string) => {
@@ -265,7 +271,7 @@ const UsersTable = () => {
     let jwt = AuthLocalStorage.getToken() as string;
     let user = jwt_decode(jwt) as any;
     userApi
-      .getUserProfileById(user.nameid, user.nameid)
+      .getUserProfileById(user.nameid)
       .then((response) => setCurrentUser(response.data.user));
 
     let roles = userApi.getActiveUserRoles();
@@ -316,6 +322,10 @@ const UsersTable = () => {
         {
           key: "unconfirmed",
           tab: "Непідтверджені",
+        },
+        {
+          key: "renewals",
+          tab: "Очікують на відновлення членства",
         }
       );
     }
@@ -323,7 +333,8 @@ const UsersTable = () => {
   };
 
   const fetchData = async () => {
-    if (!(currentTabName && isQueryLoaded)) return;
+    if (!(currentTabName && isQueryLoaded[0] && isQueryLoaded[1])) return;
+    if (currentTabName === "renewals") return;
 
     try {
       const response = await getUsersForTableByPage({
@@ -605,88 +616,111 @@ const UsersTable = () => {
         </div>
       </div>
 
-      <Card
-        className={classes.card}
-        tabList={tabList}
-        activeTabKey={currentTabName}
-        onTabChange={(key) => {
-          onTabChange(key);
-        }}
-      >
-        <Table
-          rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
-          loading={!loading}
-          className={classes.table}
-          bordered
-          rowKey="id"
-          scroll={{ x: 1450 }}
-          columns={ColumnsForUserTable({
-            sortKey: sortKey,
-            setSortKey: setSortKey,
-            setFilter: setFilter,
-            setPage: setPage,
-            filterRole: filter,
-            isZgolosheni: currentTabName === "registered"
-          })}
-          dataSource={users}
-          onRow={(record, index) => {
-            return {
-              onDoubleClick: () => {
-                if (record.id && canView)
-                  window.open(`/userpage/main/${record.id}`);
-              },
-              onContextMenu: (event) => {
-                event.preventDefault();
-                setShowDropdown(false);
-                if (canView) {
-                  setRecordObj(record.id);
-                  setRecordRoles(parseUserRolesString(record.userRoles));
-                  setCurrentUserRoles(record.userRoles);
-                  setUser(users.find((x) => x.id == record.id));
-                  setX(event.pageX);
-                  setY(event.pageY);
-                  setShowDropdown(true);
-                  setSelectedRow(index as number);
-                }
-              },
-            };
+      <div ref={tableBody}>
+        <Card
+          className={classes.card}
+          tabList={tabList}
+          activeTabKey={currentTabName}
+          onTabChange={(key) => {
+            onTabChange(key);
           }}
-          onChange={(pagination) => {
-            if (pagination) {
-              window.scrollTo({
-                left: 0,
-                top: 0,
-                behavior: "smooth",
-              });
+        >
+          <UserRenewalTable
+            searchQuery={searchData}
+            hidden={currentTabName !== "renewals"}
+            setTotal={setTotal}
+            relativePosition={[
+              tableBody.current?.offsetLeft as number,
+              tableBody.current?.offsetTop as number,
+            ]}
+            currentUser={currentUser}
+          />
+          <Table
+            style={currentTabName === "renewals" ? { display: "none" } : {}}
+            rowClassName={(record, index) =>
+              index === selectedRow ? classes.selectedRow : ""
             }
-          }}
-          pagination={{
-            current: page,
-            pageSize: pageSize,
-            total: total,
-            showLessItems: true,
-            responsive: true,
-            showSizeChanger: true,
-            onChange: (page) => handlePageChange(page),
-            onShowSizeChange: (page, size) => handleSizeChange(page, size),
-          }}
-        />
-      </Card>
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <DropDownUserTable
-          showDropdown={showDropdown}
-          record={recordObj}
-          pageX={x}
-          pageY={y}
-          inActiveTab={currentTabName === "confirmed"}
-          onDelete={handleDelete}
-          onChange={handleChange}
-          selectedUser={user}
-          selectedUserRoles={recordRoles}
-          currentUser={currentUser}
-          canView={canView}
-        />
-      </ClickAwayListener>
+            loading={!loading}
+            className={classes.table}
+            bordered
+            rowKey="id"
+            scroll={{ x: 1450 }}
+            columns={ColumnsForUserTable({
+              sortKey: sortKey,
+              setSortKey: setSortKey,
+              setFilter: setFilter,
+              setPage: setPage,
+              filterRole: filter,
+              isZgolosheni: currentTabName === "registered",
+              page: page,
+              pageSize: pageSize,
+            })}
+            dataSource={users}
+            onRow={(record, index) => {
+              return {
+                onDoubleClick: () => {
+                  if (record.id && canView)
+                    window.open(`/userpage/main/${record.id}`);
+                },
+                onContextMenu: (event) => {
+                  event.preventDefault();
+                  setShowDropdown(false);
+                  if (canView) {
+                    setRecordObj(record.id);
+                    setRecordRoles(parseUserRolesString(record.userRoles));
+                    setCurrentUserRoles(record.userRoles);
+                    setUser(users.find((x) => x.id == record.id));
+                    setX(
+                      event.pageX - (tableBody.current?.offsetLeft as number)
+                    );
+                    setY(
+                      event.pageY - (tableBody.current?.offsetTop as number)
+                    );
+                    setShowDropdown(true);
+                    setSelectedRow(index as number);
+                  }
+                },
+              };
+            }}
+            onChange={(pagination) => {
+              if (pagination) {
+                window.scrollTo({
+                  left: 0,
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              total: total,
+              showLessItems: true,
+              responsive: true,
+              showSizeChanger: true,
+              onChange: (page) => handlePageChange(page),
+              onShowSizeChange: (page, size) => handleSizeChange(page, size),
+            }}
+          />
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <DropDownUserTable
+              offsetTop={tableBody.current?.offsetTop as number}
+              offsetLeft={tableBody.current?.offsetLeft as number}
+              showDropdown={showDropdown}
+              record={recordObj}
+              pageX={x}
+              pageY={y}
+              inActiveTab={currentTabName === "confirmed"}
+              onDelete={handleDelete}
+              onChange={handleChange}
+              selectedUser={user}
+              selectedUserRoles={recordRoles}
+              currentUser={currentUser}
+              canView={canView}
+            />
+          </ClickAwayListener>
+        </Card>
+      </div>
     </Layout.Content>
   );
 };

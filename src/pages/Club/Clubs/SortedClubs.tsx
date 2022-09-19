@@ -23,15 +23,13 @@ const SortedClubs = ({ switcher }: Props) => {
   const path: string = "/clubs";
   const history = useHistory();
   const [clubs, setClubs] = useState<ClubByPage[]>([]);
-  const [canCreate, setCanCreate] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [searchedData, setSearchedData] = useState("");
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [activeCanCreate, setActiveCanCreate] = useState<boolean>(false);
-  const { p } = useParams();
+  const { p = 1 } = useParams();
   const [page, setPage] = useState(+p);
 
   const setPhotos = async (clubs: ClubByPage[]) => {
@@ -48,7 +46,7 @@ const SortedClubs = ({ switcher }: Props) => {
       setPhotosLoading(false);
     }
   };
-  const getActiveClubs = async (page: number = 1) => {
+  const getActiveClubs = async (page: number) => {
     setLoading(true);
 
     try {
@@ -57,20 +55,17 @@ const SortedClubs = ({ switcher }: Props) => {
         pageSize,
         searchedData.trim()
       );
-
       setPhotosLoading(true);
       setActiveUserRoles(userApi.getActiveUserRoles);
       setPhotos(response.data.clubs);
       setClubs(response.data.clubs);
-      setCanCreate(response.data.canCreate);
-      setActiveCanCreate(response.data.canCreate);
       setTotal(response.data.rows);
     } finally {
       setLoading(false);
     }
   };
 
-  const getNotActiveClubs = async (page: number = 1) => {
+  const getNotActiveClubs = async (page: number) => {
     setLoading(true);
 
     try {
@@ -97,6 +92,7 @@ const SortedClubs = ({ switcher }: Props) => {
 
   const handleSizeChange = (pageSize: number = 10) => {
     setPageSize(pageSize);
+    handleChange(1);
   };
 
   const handleSearch = (event: any) => {
@@ -106,7 +102,6 @@ const SortedClubs = ({ switcher }: Props) => {
 
   const renderCity = (arr: ClubByPage[]) => {
     if (arr) {
-      // eslint-disable-next-line react/no-array-index-key
       return arr.map((club: ClubByPage) => (
         <Link to={`${path}/${club.id}`}>
           <Card
@@ -139,14 +134,9 @@ const SortedClubs = ({ switcher }: Props) => {
   };
 
   useEffect(() => {
-    setPage(+p);
-  }, []);
-
-  useEffect(() => {
     if (switcher) {
       getNotActiveClubs(page);
-    }
-    else {
+    } else {
       getActiveClubs(page);
     }
   }, [page, pageSize, searchedData, switcher]);
@@ -173,21 +163,22 @@ const SortedClubs = ({ switcher }: Props) => {
       ) : (
         <div>
           <div className="cityWrapper">
-            {switcher ? null : activeUserRoles.includes(Roles.Admin) &&
-              page === 1 &&
-              searchedData.length === 0 ? (
-              <Card
-                hoverable
-                className="cardStyles addCity"
-                cover={<img src={Add} alt="AddCity" />}
-                onClick={() => history.push(`${path}/new`)}
-              >
-                <Card.Meta
-                  className="titleText"
-                  title="Створити новий курінь"
-                />
-              </Card>
-            ) : null}
+            {switcher ? null : (activeUserRoles.includes(Roles.Admin)
+              || activeUserRoles.includes(Roles.GoverningBodyAdmin))
+              && page === 1 && searchedData.length === 0
+              ? (
+                <Card
+                  hoverable
+                  className="cardStyles addCity"
+                  cover={<img src={Add} alt="AddCity" />}
+                  onClick={() => history.push(`${path}/new`)}
+                >
+                  <Card.Meta
+                    className="titleText"
+                    title="Створити новий курінь"
+                  />
+                </Card>
+              ) : null}
             {clubs.length === 0 ? (
               <div>
                 <Result status="404" title="Курінь не знайдено" />

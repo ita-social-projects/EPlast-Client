@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   Select,
+  Modal,
 } from "antd";
 import React, { useState, useEffect } from "react";
 import ReactInputMask from "react-input-mask";
@@ -37,6 +38,7 @@ import {
   emptyInput,
 } from "../../components/Notifications/Messages";
 import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
+const classes = require("../Club/Club/Modal.module.css");
 
 const RegionEditFormPage = () => {
   const currentRegion = Number(
@@ -132,6 +134,21 @@ const RegionEditFormPage = () => {
     form.resetFields();
     notificationLogic("success", successfulEditAction("Дані округи"));
     history.push(`/regions/${currentRegion}`);
+  };
+
+  const sureConfirm = () => {
+    Modal.confirm({
+      title: "Ваші дані будуть не збережені.",
+      content: (
+        <div className={classes.Style}>
+          <b>Відмінити редагування округи ?</b>
+        </div>
+      ),
+      onCancel() { },
+      onOk() {
+        history.goBack();
+      },
+    });
   };
 
   return (
@@ -340,7 +357,7 @@ const RegionEditFormPage = () => {
                 <Button
                   type="primary"
                   className="backButton"
-                  onClick={() => history.goBack()}
+                  onClick={() => sureConfirm()}
                 >
                   Назад
                 </Button>

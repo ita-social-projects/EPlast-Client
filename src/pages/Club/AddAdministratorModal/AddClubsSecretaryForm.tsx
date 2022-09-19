@@ -116,7 +116,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
         <Select showSearch>
           {members?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
-              {o.firstName + " " + o.lastName}
+              {o.firstName} {o.lastName} <br /> {o.email}
             </Select.Option>
           ))}
         </Select>

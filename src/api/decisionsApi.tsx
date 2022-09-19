@@ -57,10 +57,10 @@ export type DecisionPost = {
   fileName: string | null;
 };
 export const statusTypePostParser = (
-  statusType: decisionStatusType
+  statusType: string
 ): number => {
-  if (statusType.value === "InReview") return 0;
-  if (statusType.value === "Confirmed") return 1;
+  if (statusType === "InReview") return 0;
+  if (statusType === "Confirmed") return 1;
   return 2;
 };
 export const statusTypeFromStringParser = (statusType: string): number => {

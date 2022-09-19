@@ -92,6 +92,7 @@ const AddNewSecretaryForm = (props: any) => {
 
   return (
     <Form
+      className={classes.form}
       name="basic"
       onFinish={(values) => {
         handleSubmit(values);
@@ -117,7 +118,7 @@ const AddNewSecretaryForm = (props: any) => {
         <Select showSearch className={classes.inputField}>
           {users?.map((o) => (
             <Select.Option key={o.id} value={JSON.stringify(o)}>
-              {o.firstName + " " + o.lastName}
+              {o.firstName} {o.lastName} <br /> {o.email}
             </Select.Option>
           ))}
         </Select>

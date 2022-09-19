@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Tooltip } from "antd";
 import {
   FileTextOutlined,
   CloseOutlined,
@@ -105,6 +105,7 @@ const RegionBoardDocuments = () => {
                 actions={
                   userAccesses["ManipulateDocument"]
                     ? [
+                      <Tooltip title="Завантажити документ">
                         <DownloadOutlined
                           key="download"
                           onClick={() =>
@@ -113,11 +114,15 @@ const RegionBoardDocuments = () => {
                               document.fileName
                             )
                           }
-                        />,
-                        <CloseOutlined
-                          key="close"
-                          onClick={() => onClickRemoveDocument(document)}
-                        />,
+                        />
+                        </Tooltip>,
+
+                        <Tooltip title="Видалити документ">
+                          <CloseOutlined
+                            key="close"
+                            onClick={() => onClickRemoveDocument(document)}
+                          />
+                        </Tooltip>,
                       ]
                     : [
                         <DownloadOutlined

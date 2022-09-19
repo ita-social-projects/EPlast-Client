@@ -1,13 +1,8 @@
-import React from "react";
-import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import distinctionApi from "../../../api/distinctionApi";
+import { Modal } from "antd";
+import React from "react";
 
 const { confirm } = Modal;
-
-const remove = async (id: number) => {
-  await distinctionApi.deleteUserDistinction(id);
-};
 
 const DeleteConfirm = (id: number, onDelete: any) => {
   return confirm({
@@ -16,11 +11,7 @@ const DeleteConfirm = (id: number, onDelete: any) => {
     okText: "Так",
     cancelText: "Ні",
     async onOk() {
-      try {
-        await remove(id);
-      } finally {
-        onDelete(id);
-      }
+      onDelete(id);
     },
   });
 };

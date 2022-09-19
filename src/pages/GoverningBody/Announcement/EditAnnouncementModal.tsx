@@ -193,7 +193,7 @@ const EditAnnouncementModal = ({
           {uploadImages.length >= 5 ? null : (
             <div>
               <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
+              <div style={{ marginTop: 8 }}>Завантажити фото</div>
             </div>
           )}
         </Upload>

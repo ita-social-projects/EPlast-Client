@@ -3,10 +3,11 @@ import { Form, Input, Button, Modal, Select, DatePicker, Tabs, Space, Spin, Swit
 import styles from "./SignUp.module.css";
 import Switcher from "./Switcher/Switcher";
 import { checkAddress, checkEmail, checkFacebookLink, checkInstagramLink, checkNameSurName, checkOblastIsSpecified, checkPassword, checkPhone, checkTwitterLink } from "./verification";
-import AuthorizeApi from "../../api/authorizeApi";
+import AuthorizeApi, { RegisterDataResponse409 } from "../../api/authorizeApi";
 import { useHistory } from "react-router-dom";
 import {
   emptyInput,
+  maxLength,
   minLength,
 } from "../../components/Notifications/Messages";
 import TermsOfUseModel from "../../models/TermsOfUse/TermsOfUseModel";
@@ -24,8 +25,69 @@ import UkraineOblasts from "../../models/Oblast/UkraineOblasts";
 import CheckboxsItem from "./CheckboxsItem";
 import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
 import RegionForAdministration from "../../models/Region/RegionForAdministration";
+import openNotificationWithIcon from "../../components/Notifications/Notification";
 
 let authService = new AuthorizeApi();
+
+export const profileValidator = {
+  Email: [
+    { required: true, message: emptyInput() },
+    { validator: checkEmail },
+  ],
+  Password: [
+    { required: true, message: emptyInput() },
+    { validator: checkPassword },
+  ],
+  FirstName: [
+    { max: 25, message: maxLength(25) },
+    { min: 2, message: minLength(2) },
+    { required: true, message: emptyInput() },
+    { validator: checkNameSurName },
+  ],
+  LastName: [
+    { max: 25, message: maxLength(25) },
+    { min: 2, message: minLength(2) },
+    { required: true, message: emptyInput() },
+    { validator: checkNameSurName },
+  ],
+  FatherName: [
+    { max: 25, message: maxLength(25) },
+    { min: 2, message: minLength(2) },
+    { validator: checkNameSurName },
+  ],
+  ConfirmPassword: [
+    { required: true, message: emptyInput() },
+    { min: 8, message: minLength(8) },
+  ],
+  CityId: [
+    { required: true, message: emptyInput() }
+  ],
+  Date: [
+    { required: true, message: emptyInput() }
+  ],
+  Oblast: [
+    { required: true, message: emptyInput() },
+    { validator: checkOblastIsSpecified }
+  ],
+  Address: [
+    { max: 50, message: maxLength(50) },
+    { validator: checkAddress },
+    { required: true, message: emptyInput() }
+  ],
+  PhoneNumber: [
+    { required: true, message: emptyInput() },
+    { validator: checkPhone },
+  ],
+  FacebookLink: [
+    { validator: checkFacebookLink },
+  ],
+  TwitterLink: [
+    { validator: checkTwitterLink },
+  ],
+  InstagramLink: [
+    { validator: checkInstagramLink },
+  ],
+};
 
 const SignUp: React.FC = () => {
   const [form] = Form.useForm();
@@ -35,7 +97,7 @@ const SignUp: React.FC = () => {
   const [cityLoading, setCityLoading] = useState(false);
   const [regionLoading, setRegionLoading] = useState(false);
   const [hasPlast, setHasntPlast] = useState(false);
-  const [areaSelected, setAreaSelected] = useState(false);
+  const [areaSelected, setAreaSelected] = useState(state.formData.oblast !== undefined);
   const regionSelectRef = useRef(null);
   const history = useHistory();
 
@@ -67,9 +129,30 @@ const SignUp: React.FC = () => {
           instagramLink: instagramLink === "" ? null : instagramLink,
           fatherName: fatherName === "" ? null : fatherName,
         };
-        await authService.register(request);
-        setAvailabe(true);
-        history.push("/signin");
+
+        authService.register(request)
+          .then(res => {
+            setAvailabe(true);
+            openNotificationWithIcon("success", "Вам на пошту прийшов лист з підтвердженням");
+            history.push("/signin");
+          }).catch(error => {
+            const data = error.response.data as RegisterDataResponse409
+            setAvailabe(true);
+            switch (error.response.status) {
+              case 409:
+                if (data.isEmailConfirmed) {
+                  openNotificationWithIcon("error", `Користувач з вказаною поштою існує`);
+                } else {
+                  const registredOn = moment(data.registeredExpire);
+                  const timeDiff = registredOn.diff(moment.utc(), 'minute');
+                  const hours = Math.ceil(timeDiff / 60);
+                  openNotificationWithIcon("error", `Користувач з вказаною поштою існує, але пошта не підтверджена. Через ${hours} годин можна зареєстуватися знову.`);
+                }
+                break;
+              default:
+                openNotificationWithIcon("error", "Щось пішло не так");
+            }
+          })
       },
       cancel: async () => {
         setVisible(false);
@@ -137,58 +220,7 @@ const SignUp: React.FC = () => {
     }
   };
 
-  const validator = {
-    Email: [
-      { required: true, message: emptyInput() },
-      { validator: checkEmail },
-    ],
-    Password: [
-      { required: true, message: emptyInput() },
-      { validator: checkPassword },
-    ],
-    FirstName: [
-      { required: true, message: emptyInput() },
-      { validator: checkNameSurName },
-    ],
-    LastName: [
-      { required: true, message: emptyInput() },
-      { validator: checkNameSurName },
-    ],
-    FatherName: [
-      { validator: checkNameSurName },
-    ],
-    ConfirmPassword: [
-      { required: true, message: emptyInput() },
-      { min: 8, message: minLength(8) },
-    ],
-    CityId: [
-      { required: true, message: emptyInput() }
-    ],
-    Date: [
-      { required: true, message: emptyInput() }
-    ],
-    Oblast: [
-      { required: true, message: emptyInput() },
-      { validator: checkOblastIsSpecified }
-    ],
-    Address: [
-      { validator: checkAddress },
-      { required: true, message: emptyInput() }
-    ],
-    PhoneNumber: [
-      { required: true, message: emptyInput() },
-      { validator: checkPhone },
-    ],
-    FacebookLink: [
-      { validator: checkFacebookLink },
-    ],
-    TwitterLink: [
-      { validator: checkTwitterLink },
-    ],
-    InstagramLink: [
-      { validator: checkInstagramLink },
-    ],
-  };
+
 
   return (
     <div className={styles.mainContainerSignUp} >
@@ -200,24 +232,24 @@ const SignUp: React.FC = () => {
         form={form}
         onFinish={handler.submit}
       >
-        <Form.Item label="Прізвище" name="lastName" rules={validator.LastName}>
+        <Form.Item label="Прізвище" name="lastName" rules={profileValidator.LastName}>
           <Input placeholder="Введіть прізвище" />
         </Form.Item>
 
-        <Form.Item label="Ім'я" name="firstName" rules={validator.FirstName}>
+        <Form.Item label="Ім'я" name="firstName" rules={profileValidator.FirstName}>
           <Input placeholder="Введіть ім'я" />
         </Form.Item>
 
-        <Form.Item label="По батькові" name="fatherName" rules={validator.FatherName}>
+        <Form.Item label="По батькові" name="fatherName" rules={profileValidator.FatherName}>
           <Input placeholder="Введіть по батькові" />
         </Form.Item>
 
-        <Form.Item label="Місце проживання" name="address" rules={validator.Address}>
+        <Form.Item label="Місце проживання" name="address" rules={profileValidator.Address}>
           <Input placeholder="Введіть місце проживання" />
         </Form.Item>
 
         <Form.Item
-          rules={validator.Date}
+          rules={profileValidator.Date}
           name="birthday"
           label="Дата народження"
         >
@@ -251,7 +283,7 @@ const SignUp: React.FC = () => {
 
         <Form.Item
           name="oblast"
-          rules={validator.Oblast}
+          rules={profileValidator.Oblast}
           label="Область"
         >
           <Select
@@ -320,7 +352,7 @@ const SignUp: React.FC = () => {
             tabTitle: "Facebook",
             formItem: {
               name: "facebookLink",
-              rules: validator.FacebookLink
+              rules: profileValidator.FacebookLink
             },
             input: {
               type: "url",
@@ -331,7 +363,7 @@ const SignUp: React.FC = () => {
             tabTitle: "Twitter",
             formItem: {
               name: "twitterLink",
-              rules: validator.TwitterLink
+              rules: profileValidator.TwitterLink
             },
             input: {
               type: "url",
@@ -342,7 +374,7 @@ const SignUp: React.FC = () => {
             tabTitle: "Instagram",
             formItem: {
               name: "instagramLink",
-              rules: validator.InstagramLink,
+              rules: profileValidator.InstagramLink,
             },
             input: {
               type: "url",
@@ -353,7 +385,7 @@ const SignUp: React.FC = () => {
 
         <Form.Item
           name="phoneNumber"
-          rules={validator.PhoneNumber}
+          rules={profileValidator.PhoneNumber}
           label="Телефон"
         >
           <div className={"ant-form-item-control-input-content"}>
@@ -365,12 +397,12 @@ const SignUp: React.FC = () => {
           </div>
         </Form.Item>
 
-        <Form.Item label="Пошта" name="email" rules={validator.Email}>
+        <Form.Item label="Пошта" name="email" rules={profileValidator.Email}>
           <Input
             placeholder="Введіть електронну пошту" />
         </Form.Item>
 
-        <Form.Item name="password" label="Пароль" rules={validator.Password}>
+        <Form.Item name="password" label="Пароль" rules={profileValidator.Password}>
           <Input.Password
             visibilityToggle={true}
             placeholder="Введіть пароль"

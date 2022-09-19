@@ -37,7 +37,6 @@ const CityAdministration = () => {
   const [administration, setAdministration] = useState<CityAdmin[]>([]);
   const [visibleModal, setVisibleModal] = useState(false);
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
-  const [canEdit, setCanEdit] = useState<Boolean>(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [cityName, setCityName] = useState<string>("");
@@ -78,7 +77,6 @@ const CityAdministration = () => {
     setAdministration(
       [...responseAdmins.data.administration].filter((a) => a != null)
     );
-    setCanEdit(responseAdmins.data.canEdit);
     setCityName(responseAdmins.data.name);
     setActiveUserRoles(userApi.getActiveUserRoles());
     setLoading(false);
@@ -145,9 +143,9 @@ const CityAdministration = () => {
     fetchData();
   }, [reload]);
 
-  const canSeeProfiles = canEdit ||
+  const canSeeProfiles =
     activeUserRoles.includes(Roles.Supporter) ||
-    activeUserRoles.includes(Roles.PlastMember)
+    activeUserRoles.includes(Roles.PlastMember);
 
   return (
     <Layout.Content>
@@ -168,24 +166,22 @@ const CityAdministration = () => {
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
                 actions={
                   userCityAccesses["EditCity"] &&
-                    (userCityAccesses["AddCityHead"] ||
-                      member.adminType.adminTypeName !== Roles.CityHead)
+                  (userCityAccesses["AddCityHead"] ||
+                    member.adminType.adminTypeName !== Roles.CityHead)
                     ? [
-                      <SettingOutlined onClick={() => showModal(member)} />,
-                      <CloseOutlined
-                        onClick={() => seeDeleteModal(member)}
-                      />,
-                    ]
+                        <SettingOutlined onClick={() => showModal(member)} />,
+                        <CloseOutlined
+                          onClick={() => seeDeleteModal(member)}
+                        />,
+                      ]
                     : undefined
                 }
               >
                 <div
                   onClick={() =>
-                    canSeeProfiles
-                      ? history.push(`/userpage/main/${member.userId}`)
-                      : undefined
+                    history.push(`/userpage/main/${member.user.id}`)
                   }
-                  className={`cityMember ${canSeeProfiles || "notAccess"}`}
+                  className={`cityMember`}
                 >
                   <div>
                     {photosLoading ? (
@@ -220,17 +216,17 @@ const CityAdministration = () => {
           Назад
         </Button>
       </div>
-      {canEdit ? (
-        <AddAdministratorModal
-          admin={admin}
-          setAdmin={setAdmin}
-          visibleModal={visibleModal}
-          setVisibleModal={setVisibleModal}
-          cityId={+id}
-          cityName={cityName}
-          onAdd={onAdd}
-        ></AddAdministratorModal>
-      ) : null}
+      
+      <AddAdministratorModal
+        admin={admin}
+        setAdmin={setAdmin}
+        visibleModal={visibleModal}
+        setVisibleModal={setVisibleModal}
+        cityId={+id}
+        cityName={cityName}
+        onAdd={onAdd}
+      ></AddAdministratorModal>
+
     </Layout.Content>
   );
 };

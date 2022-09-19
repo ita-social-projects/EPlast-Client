@@ -3,6 +3,13 @@ import notificationLogic from "../components/Notifications/Notification";
 import FacebookData from "../pages/SignIn/FacebookDataInterface";
 import AuthLocalStorage from "../AuthLocalStorage";
 import Api from "./api";
+import { AxiosResponse } from "axios";
+
+export interface RegisterDataResponse409 {
+  error: string
+  isEmailConfirmed: boolean
+  registeredExpire: Date
+}
 
 export default class AuthorizeApi {
   static isSignedIn(): boolean {
@@ -16,34 +23,27 @@ export default class AuthorizeApi {
           AuthLocalStorage.setToken(response.data.token);
         }
       })
-      .catch(async (error) => {
+      .catch((error) => {
         if (error.response.data.value == "User-FormerMember") {
           showUserRenewalModal();
-        }
-        switch (error.response.status) {
-          case 400:
-            notificationLogic("error", 'Щось пішло не так');
-            break;
-          case 409:
-            notificationLogic("error", 'Підтвердіть реєстрацію, перейшовши за посиланням, вказаним у електронній пошті');
-            break;
+        } else if (error.response.status === 400) {
+          notificationLogic("error", error.response.data.value);
         }
       });
     return response;
   };
 
+
+
+
   register = async (data: any) => {
+
+
     const response = await Api.post("Auth/signup", data)
-      .then((response) => {
-        notificationLogic("success", "Вам на пошту прийшов лист з підтвердженням");
-      })
-      .catch((error) => {
-        if (error.response.status === 400) {
-          notificationLogic("error", "Щось пішло не так");
-        }
-      });
     return response;
   };
+
+
 
   forgotPassword = async (data: any) => {
     const response = await Api.post("Password/forgotPassword", data)

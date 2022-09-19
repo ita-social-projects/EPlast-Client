@@ -68,10 +68,10 @@ import {
   failArchiveAction,
   failApproveAction,
 } from "../../../components/Notifications/Messages";
-import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
+import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
 
 const sloganMaxLength = 38;
 
@@ -291,10 +291,7 @@ const Club = () => {
         title: "Ви впевнені, що хочете доєднатися до даного куреня??",
         content: (
           <div className={classes.Style}>
-            <b>
-              Ви втратите свою попередню посаду.
-            </b>{" "}
-
+            <b>Ви втратите свою попередню посаду.</b>{" "}
           </div>
         ),
         icon: <ExclamationCircleOutlined />,
@@ -342,7 +339,6 @@ const Club = () => {
       okType: "primary",
       maskClosable: true,
     });
-
   }
   const getClub = async () => {
     setLoading(true);
@@ -404,8 +400,7 @@ const Club = () => {
         previousAdmin = admin;
       }
     });
-    await addAdministrator(newAdmin.clubId, newAdmin);
-    await updateAdmins();
+    const { data: newAdministrator } = await addAdministrator(newAdmin.clubId, newAdmin);
     if (previousAdmin.adminType.adminTypeName != "") {
       await createNotification(
         previousAdmin.userId,
@@ -418,7 +413,12 @@ const Club = () => {
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в курені`,
       true
     );
-    notificationLogic("success", "Користувач успішно доданий в провід");
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
+      await updateAdmins();
+      notificationLogic("success", "Користувач успішно доданий в провід");
+    } else {
+      notificationLogic("info", "Колишні діловодства куреня були змінені")
+    }
   };
 
   const editClubAdmin = async (admin: ClubAdmin) => {
@@ -526,14 +526,33 @@ const Club = () => {
     });
   };
 
-  const showConfirmAddNewHead = (newAdmin: ClubAdmin, existingAdmin?: ClubAdmin) => {
+  const showConfirmAddNewHead = (
+    newAdmin: ClubAdmin,
+    existingAdmin?: ClubAdmin
+  ) => {
+    Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      onCancel() { },
+      async onOk() {
+        await addClubAdmin(newAdmin);
+        admins.push(newAdmin);
+        setAdmins(admins);
+      },
+    });
+  };
+
+  const showAddNewHeadExpired = (
+    newAdmin: ClubAdmin,
+    existingAdmin?: ClubAdmin
+  ) => {
     Modal.confirm({
       title: "Призначити даного користувача на цю посаду?",
       content: (
         <div className={classes.Style}>
           <b>
-            Дані будуть внесені у колишні діловодства куреня, оскільки час правління вже закінчився.
-          </b>
+            Дані будуть внесені у колишні діловодства куреня, оскільки час
+            правління вже закінчився.
+          </b> 
         </div>
       ),
       onCancel() { },
@@ -545,21 +564,28 @@ const Club = () => {
     });
   };
 
+
   const showImpossibleAddManager = async (admin?: ClubAdmin) => {
     return Modal.warning({
-      title: "Неможливо додати нового адміна, оскільки в цей період займає посаду адмін: ",
+      title:
+        "Неможливо додати нового адміна, оскільки в цей період займає посаду адмін: ",
       content: (
         <div className={classes.Style}>
           <b>
             {admin?.user.firstName} {admin?.user.lastName}
           </b>{" "}
-          час правління поточного адміна  {" "}
+          час правління поточного адміна{" "}
           <b>
             {moment.utc(admin?.endDate).local().format("DD.MM.YYYY") ===
               "Invalid date"
               ? "ще не скоро"
-              : `${moment.utc(admin?.startDate).local().format("DD.MM.YYYY")}  -  ${moment.utc(admin?.endDate).local().format("DD.MM.YYYY")}`
-            }
+              : `${moment
+                .utc(admin?.startDate)
+                .local()
+                .format("DD.MM.YYYY")}  -  ${moment
+                  .utc(admin?.endDate)
+                  .local()
+                  .format("DD.MM.YYYY")}`}
           </b>
           .
         </div>
@@ -586,19 +612,24 @@ const Club = () => {
         const existStartDate = moment.utc(existingAdmin?.startDate).local();
         const newAdminStartDate = moment.utc(admin.startDate).local();
         const newAdminEndDate = moment.utc(admin.endDate).local();
+        const currentDate = moment.utc(new Date()).local();
+        
         if (head?.userId === admin.userId) {
           showDisableModal(head);
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
-        }
-        else if (existingAdmin !== undefined && admin.endDate !== undefined &&
-          (existStartDate > newAdminStartDate && existEndDate < newAdminEndDate
-            || existEndDate > newAdminEndDate && existStartDate < newAdminStartDate
-            || existEndDate > newAdminEndDate && newAdminEndDate > existStartDate)) {
-
+        } else if (
+          existingAdmin !== undefined &&
+          admin.endDate !== undefined &&
+          ((existStartDate > newAdminStartDate &&
+            existEndDate < newAdminEndDate) ||
+            (existEndDate > newAdminEndDate &&
+              existStartDate < newAdminStartDate) ||
+            (existEndDate > newAdminEndDate &&
+              newAdminEndDate > existStartDate))
+        ) {
           showImpossibleAddManager(existingAdmin);
-        }
-        else if (
+        } else if (
           admin.adminType.adminTypeName === "Голова КПР" ||
           admin.adminType.adminTypeName === "Член КПР" ||
           admin.adminType.adminTypeName === Roles.KurinHead ||
@@ -606,17 +637,18 @@ const Club = () => {
         ) {
           const check = await getCheckPlastMember(admin.userId);
           if (check.data) {
-            showConfirmAddNewHead(admin, existingAdmin);
-          } else {
+            if (newAdminEndDate < currentDate){
+              showAddNewHeadExpired(admin, existingAdmin)
+            } 
+            else { showConfirmAddNewHead(admin, existingAdmin) };
+          } 
+          else {
             showPlastMemberDisable(admin);
           }
         } else if (existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
         } else {
-          await addClubAdmin(admin).then(() => {
-            admins.push(admin);
-            setAdmins(admins);
-          });
+          await addClubAdmin(admin);
         }
       } finally {
         setvisible(false);
@@ -688,12 +720,7 @@ const Club = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="clubCard">
             <div>
-              <Crumb
-                current={club.name}
-                first="/"
-                second={url.replace(`/${id}`, "/page/1")}
-                second_name="Курені"
-              />
+              <Breadcrumb currentLocationName={club.name} />
               {isActiveClub ? null : (
                 <Tag className="status" color="red">
                   Заархівовано
@@ -976,10 +1003,10 @@ const Club = () => {
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => {
-                  if (userAccesses.EditClub) history.push(`/user/table?club=${club.id}`);
+                  if (userAccesses.EditClub)
+                    history.push(`/user/table?club=${club.id}`);
                   else history.push(`/clubs/members/${club.id}`);
-                }
-                }
+                }}
               >
                 Більше
               </Button>
@@ -1181,10 +1208,7 @@ const Club = () => {
                       </div>
                       {(userAccesses.EditClub && isLoadingPlus) ||
                         (isLoadingMemberId !== followers.id && !isLoadingPlus) ? (
-                        <Tooltip
-                          placement="bottom"
-                          title="Додати до членів"
-                        >
+                        <Tooltip placement="bottom" title="Додати до членів">
                           <PlusOutlined
                             className="approveIcon"
                             onClick={async () =>
@@ -1217,10 +1241,10 @@ const Club = () => {
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => {
-                  if (userAccesses.EditClub) history.push(`/user/table?tab=registered&club=${club.id}`)
-                  else history.push(`/clubs/followers/${club.id}`)
-                }
-                }
+                  if (userAccesses.EditClub)
+                    history.push(`/user/table?tab=registered&club=${club.id}`);
+                  else history.push(`/clubs/followers/${club.id}`);
+                }}
               >
                 Більше
               </Button>

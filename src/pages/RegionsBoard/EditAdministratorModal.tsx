@@ -41,7 +41,7 @@ const EditAdministratorModal = ({
       userId,
       `${message}: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/regionsBoard/administrations`,
+      `/regionalBoard/administrations`,
       `Переглянути`
     );
   };

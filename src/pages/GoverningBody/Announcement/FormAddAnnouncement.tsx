@@ -181,7 +181,7 @@ const FormAddAnnouncement: React.FC<FormAddAnnouncementProps> = (
   const uploadButton = (
     <div>
       <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
+      <div style={{ marginTop: 8 }}>Завантажити фото</div>
     </div>
   );
 

@@ -57,7 +57,6 @@ import Paragraph from "antd/lib/typography/Paragraph";
 import Spinner from "../../Spinner/Spinner";
 import CityDetailDrawer from "../CityDetailDrawer/CityDetailDrawer";
 import notificationLogic from "../../../components/Notifications/Notification";
-import Crumb from "../../../components/Breadcrumb/Breadcrumb";
 import NotificationBoxApi from "../../../api/NotificationBoxApi";
 import {
   successfulDeleteAction,
@@ -73,6 +72,8 @@ import { Roles } from "../../../models/Roles/Roles";
 import "moment/locale/uk";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import ModalAddPlastDegree from "../../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
+import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
+import { boolean } from "yup";
 
 const City = () => {
   const history = useHistory();
@@ -105,6 +106,7 @@ const City = () => {
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(
     false
   );
+  const [visible, setvisible] = useState<boolean>(false);
   const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
@@ -369,8 +371,7 @@ const City = () => {
         previousAdmin = admin;
       }
     });
-    await addAdministrator(newAdmin.cityId, newAdmin);
-    await updateAdmins();
+    const { data: newAdministrator } = await addAdministrator(newAdmin.cityId, newAdmin);
     if (previousAdmin.adminType.adminTypeName != "") {
       await createNotification(
         previousAdmin.userId,
@@ -383,7 +384,13 @@ const City = () => {
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
       true
     );
-    notificationLogic("success", "Користувач успішно доданий в провід");
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+      updateAdmins();
+    } else {
+      notificationLogic("info", "Колишні діловодства станиці були змінені")
+    }
+    return newAdministrator;
   };
 
   const editCityAdmin = async (admin: CityAdmin) => {
@@ -432,6 +439,45 @@ const City = () => {
         } else {
           editCityAdmin(newAdmin);
         }
+      },
+    });
+  };
+
+  
+  const showConfirmAddNewHead = (
+    newAdmin: CityAdmin,
+    existingAdmin?: CityAdmin
+  ) => {
+    Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      onCancel() { },
+      async onOk() {
+        await addCityAdmin(newAdmin);
+        admins.push(newAdmin);
+        setAdmins(admins);
+      },
+    });
+  };
+
+  const showAddNewHeadExpired = (
+    newAdmin: CityAdmin,
+    existingAdmin?: CityAdmin
+  ) => {
+    Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            Дані будуть внесені у колишні діловодства станиці, оскільки час
+            правління вже закінчився.
+          </b> 
+        </div>
+      ),
+      onCancel() { },
+      async onOk() {
+        await addCityAdmin(newAdmin);
+        admins.push(newAdmin);
+        setAdmins(admins);
       },
     });
   };
@@ -495,7 +541,7 @@ const City = () => {
     });
   };
 
-  const handleOk = async (admin: CityAdmin) => {
+  const handleOk = async (admin: CityAdmin) => {  
     if (admin.id === 0) {
       const head = (admins as CityAdmin[]).find(
         (x) => x.adminType.adminTypeName === Roles.CityHead
@@ -509,37 +555,58 @@ const City = () => {
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
       try {
+        const existEndDate = moment.utc(existingAdmin?.endDate).local();
+        const existStartDate = moment.utc(existingAdmin?.startDate).local();
+        const newAdminStartDate = moment.utc(admin.startDate).local();
+        const newAdminEndDate = moment.utc(admin.endDate).local();
+        const currentDate = moment.utc(new Date()).local();
+
         if (head?.userId === admin.userId) {
           showDisableModal(head);
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
         } else if (
+          existingAdmin !== undefined &&
+          admin.endDate !== undefined &&
+          ((existStartDate > newAdminStartDate &&
+            existEndDate < newAdminEndDate) ||
+            (existEndDate > newAdminEndDate &&
+              existStartDate < newAdminStartDate) ||
+            (existEndDate > newAdminEndDate &&
+              newAdminEndDate > existStartDate))
+        ) {
+          showDisable(existingAdmin);
+        }
+        else if (
           admin.adminType.adminTypeName === "Голова СПР" ||
-          admin.adminType.adminTypeName === "Член СПР"
+          admin.adminType.adminTypeName === "Член СПР" ||
+          admin.adminType.adminTypeName === Roles.CityHead ||
+          admin.adminType.adminTypeName === Roles.CityHeadDeputy
         ) {
           const check = await getCheckPlastMember(admin.userId);
           if (check.data) {
-            await addCityAdmin(admin);
-            admins.push(admin);
-            setAdmins(admins);
-          } else {
+            if (newAdminEndDate < currentDate){
+              showAddNewHeadExpired(admin, existingAdmin)
+            } 
+            else { showConfirmAddNewHead(admin, existingAdmin) };
+          } 
+          else {
             showPlastMemberDisable(admin);
           }
         } else if (existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
         } else {
-          await addCityAdmin(admin).then(() => {
-            admins.push(admin);
-            setAdmins(admins);
-          });
+          await addCityAdmin(admin);
         }
       } finally {
-        setvisibleAddModal(false);
+        setvisible(false);
       }
     } else {
       if (
         admin.adminType.adminTypeName === "Голова СПР" ||
-        admin.adminType.adminTypeName === "Член СПР"
+        admin.adminType.adminTypeName === "Член СПР" ||
+        admin.adminType.adminTypeName === Roles.CityHead ||
+        admin.adminType.adminTypeName === Roles.CityHeadDeputy
       ) {
         if (await getCheckPlastMember(admin.userId)) {
           await editCityAdmin(admin);
@@ -590,7 +657,9 @@ const City = () => {
   };
 
   const handleAddDegree = async () => {
-    const memberId = followers.find((item) => item.userId === selectedFollowerUID)?.id;
+    const memberId = followers.find(
+      (item) => item.userId === selectedFollowerUID
+    )?.id;
     setIsLoadingMemberId(memberId ?? NaN);
 
     setFollowers(followers.filter((f) => f.id !== memberId));
@@ -616,9 +685,10 @@ const City = () => {
     }
   }, [city]);
 
-  const canSeeOtherProfiles = userAccesses["EditCity"] ||
+  const canSeeOtherProfiles =
+    userAccesses["EditCity"] ||
     activeUserRoles.includes(Roles.Supporter) ||
-    activeUserRoles.includes(Roles.PlastMember)
+    activeUserRoles.includes(Roles.PlastMember);
 
   return loading ? (
     <Spinner />
@@ -631,12 +701,7 @@ const City = () => {
         <Col xl={15} sm={24} xs={24}>
           <Card hoverable className="cityCard">
             <div>
-              <Crumb
-                current={city.name}
-                first="/"
-                second={url.replace(`/${id}`, "/page/1")}
-                second_name="Станиці"
-              />
+              <Breadcrumb currentLocationName={city.name} />
               {isActiveCity ? null : (
                 <Tag className="status" color={"red"}>
                   Заархівовано
@@ -856,15 +921,12 @@ const City = () => {
                 ) : null}
               </a>
             </Title>
-            <Row
-              className={members.length >= 4 ? "cityItems1" : "cityItems"}
-              justify="center"
-              gutter={[0, 16]}
-            >
+            <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {members.length !== 0 ? (
                 members.slice(0, membersToShow).map((member) => (
                   <Col
-                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"}`}
+                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
+                      }`}
                     key={member.id}
                     xs={12}
                     sm={8}
@@ -895,7 +957,8 @@ const City = () => {
                 type="primary"
                 className="cityInfoButton"
                 onClick={() => {
-                  if (userAccesses["EditCity"]) history.push(`/user/table?city=${city.id}`);
+                  if (userAccesses["EditCity"])
+                    history.push(`/user/table?city=${city.id}`);
                   else history.push(`/cities/members/${city.id}`);
                 }}
               >
@@ -930,7 +993,9 @@ const City = () => {
             <Row className="cityItems" justify="center" gutter={[0, 16]}>
               {admins.length !== 0 ? (
                 admins.slice(0, adminsToShow).map((admin) => (
-                  <Col className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"}`}
+                  <Col
+                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
+                      }`}
                     key={admin.id}
                     xs={12}
                     sm={8}
@@ -1067,7 +1132,8 @@ const City = () => {
               {isActiveCity ? (
                 canJoin ? (
                   <Col
-                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"}`}
+                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
+                      }`}
                     xs={12}
                     sm={8}
                     onClick={() => showJoinModal()}
@@ -1090,7 +1156,8 @@ const City = () => {
                   .slice(0, canJoin ? followersToShow : followersToShowOnAdd)
                   .map((followers) => (
                     <Col
-                      className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"}`}
+                      className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
+                        }`}
                       xs={12}
                       sm={8}
                       key={followers.id}
@@ -1156,7 +1223,8 @@ const City = () => {
                 type="primary"
                 className="cityInfoButton"
                 onClick={() => {
-                  if (userAccesses["EditCity"]) history.push(`/user/table?tab=registered&city=${city.id}`);
+                  if (userAccesses["EditCity"])
+                    history.push(`/user/table?tab=registered&city=${city.id}`);
                   else history.push(`/cities/followers/${city.id}`);
                 }}
               >

@@ -109,7 +109,7 @@ const RegionBoardEditFormPage = () => {
       "success",
       successfulEditAction("Дані Крайового проводу")
     );
-    history.push(`/regionsBoard`);
+    history.push(`/regionalBoard`);
   };
 
   return (

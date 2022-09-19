@@ -31,6 +31,7 @@ interface Props {
   participants: EventParticipant[];
   eventName: string;
   setRender: (render: boolean) => void;
+  loading: boolean;
 }
 
 const participantStatuses = {
@@ -45,6 +46,7 @@ const ParticipantsTable = ({
   participants,
   eventName,
   setRender,
+  loading
 }: Props) => {
   const { id } = useParams();
   const [Participants, setParticipant] = useState<EventParticipant[]>(
@@ -212,34 +214,25 @@ const ParticipantsTable = ({
         title: "Змінити статус",
         dataIndex: "changeStatus",
         key: "changeStatus",
-        render: (record) => (
+        render: (wasPresent: boolean, record: EventParticipant) => (
           <Space size="small">
-            {record.status != participantStatuses.Approved ? (
               <Button
-                className="approveButton"
+                className={record.status != participantStatuses.Approved ? "approveButton" : "disabledButton"}
                 shape="round"
                 icon={<UserAddOutlined className="iconParticipant" />}
                 size="small"
+                disabled={record.status == participantStatuses.Approved}
                 onClick={() => {
                   changeStatusToApproved(record.participantId, record.userId);
                 }}
               />
-            ) : (
-              <Button
-                className="disabledButton"
-                shape="round"
-                icon={<UserAddOutlined className="iconParticipant" />}
-                size="small"
-                disabled={true}
-              />
-            )}
             <Divider type="vertical" />
-            {record.status != participantStatuses.Undetermined ? (
               <Button
-                className="underReviewButton"
+                className={record.status != participantStatuses.Undetermined ? "underReviewButton" : "disabledButton"}
                 shape="round"
                 icon={<QuestionOutlined className="iconParticipant" />}
                 size="small"
+                disabled={record.status == participantStatuses.Undetermined}
                 onClick={() => {
                   changeStatusToUnderReviewed(
                     record.participantId,
@@ -247,43 +240,24 @@ const ParticipantsTable = ({
                   );
                 }}
               />
-            ) : (
-              <Button
-                className="disabledButton"
-                shape="round"
-                icon={<QuestionOutlined className="iconParticipant" />}
-                size="small"
-                disabled={true}
-              />
-            )}
-            <Divider type="vertical" />
-            {record.status != participantStatuses.Rejected ? (
-              <Button
-                className="banButton"
+            <Divider type="vertical" /><Button
+                className={record.status != participantStatuses.Rejected ? "banButton" : "disabledButton"}
                 shape="round"
                 icon={<UserDeleteOutlined className="iconParticipant" />}
                 size="small"
+                disabled={record.status == participantStatuses.Rejected}
                 onClick={() => {
                   showRejectModal(record.participantId, record.userId);
                   setRender(true);
                 }}
               />
-            ) : (
-              <Button
-                className="disabledButton"
-                shape="round"
-                icon={<UserDeleteOutlined className="iconParticipant" />}
-                size="small"
-                disabled={true}
-              />
-            )}
           </Space>
         ),
       });
     }
   }
 
-  return <Table columns={columns} dataSource={Participants} />;
+  return <Table columns={columns} dataSource={Participants} loading={loading}/>;
 };
 
 export default ParticipantsTable;

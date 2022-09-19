@@ -33,6 +33,7 @@ import { Roles } from "../../../models/Roles/Roles";
 import "./AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import Spinner from "../../Spinner/Spinner";
+import GoverningBodyAdminTypes from "../GoverningBodyAdminTypes";
 
 const { confirm } = Modal;
 
@@ -54,18 +55,24 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
-    await addAdministrator(admin.governingBodyId, admin);
+    const { data: newAdministrator } = await addAdministrator(admin.governingBodyId, admin);
     if (admin.adminType.adminTypeName == Roles.GoverningBodyHead) {
       setGoverningBodyHead(admin);
     }
-    setUsers(users.filter((x) => x.id !== admin.userId));
-    notificationLogic("success", "Користувач успішно доданий в провід");
+
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+      setAdmins((old: GoverningBodyAdmin[]) => [...old, newAdministrator]);
+    } else {
+      notificationLogic("info", "Колишні діловодства краю були змінені");
+    }
+
     form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}`,
+      `/regionalBoard/governingBodies/${props.governingBodyId}`,
       `цьому керівному органі`
     );
   };
@@ -78,7 +85,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       [admin.userId],
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/governingBodies/${props.governingBodyId}`,
+      `/regionalBoard/governingBodies/${props.governingBodyId}`,
       `цьому керівному органі`
     );
   };
@@ -98,14 +105,14 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-            existingAdmin.endDate === undefined
+              existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (newAdmin.id === 0) {
           addGoverningBodyAdmin(newAdmin);
@@ -152,7 +159,6 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           showConfirm(newAdmin, existingAdmin);
         } else {
           addGoverningBodyAdmin(newAdmin);
-          setAdmins((old: GoverningBodyAdmin[]) => [...old, newAdmin]);
         }
       } finally {
         onAdd();
@@ -251,12 +257,11 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       >
         <AutoComplete
           options={[
-            { value: Roles.GoverningBodyHead },
-            { value: "Голова КПР" },
-            { value: "Секретар КПР" },
-            { value: "Член КПР з питань організаційного розвитку" },
-            { value: "Член КПР з соціального напрямку" },
-            { value: "Член КПР відповідальний за зовнішні зв'язки" },
+            { value: GoverningBodyAdminTypes.Head },
+            { value: GoverningBodyAdminTypes.Secretar },
+            { value: GoverningBodyAdminTypes.Progress },
+            { value: GoverningBodyAdminTypes.Social },
+            { value: GoverningBodyAdminTypes.Сommunication },
           ]}
           placeholder="Тип адміністрування"
         />
@@ -312,8 +317,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-            ? undefined
-            : moment.utc(props.admin.endDate).local()
+              ? undefined
+              : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker

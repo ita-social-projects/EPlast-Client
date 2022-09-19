@@ -96,8 +96,8 @@ export interface IPersonalDataContext {
   userProfileAccess: { [key: string]: boolean };
   loading: boolean;
   imageBase64: string;
-  ChangeUserProfile?: (user: Data) => void;
-  UpdateData?: () => void;
+  changeUserProfile?: (user: Data) => void;
+  updateData?: () => void;
 }
 
 export interface Data {
@@ -136,4 +136,10 @@ export interface ApproversData {
   isUserHeadOfRegion: boolean;
   isUserHeadOfCity: boolean;
   currentUserId: string;
+}
+
+export enum ApproveType {
+  PlastMember,
+  Club,
+  City
 }

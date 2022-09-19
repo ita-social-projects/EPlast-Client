@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { Menu } from "antd";
 import {
   FileSearchOutlined,
@@ -12,7 +12,6 @@ import classes from "./UserTable.module.css";
 import userDeleteCofirm from "./UserDeleteConfirm";
 import ChangeUserRoleModal from "./ChangeUserRoleModal";
 import ChangeUserCityModal from "./ChangeUserCityModal";
-import adminApi from "../../api/adminApi";
 import ModalAddPlastDegree from "../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import ChangeUserRegionModal from "./ChangeUserRegionModal";
 import ChangeUserClubModal from "./ChangeUserClubModal";
@@ -42,6 +41,8 @@ interface Props {
   selectedUserRoles: Array<string>;
   currentUser: any;
   canView: boolean;
+  offsetTop: number;
+  offsetLeft: number;
 }
 
 const DropDown = (props: Props) => {
@@ -57,11 +58,15 @@ const DropDown = (props: Props) => {
     selectedUserRoles,
     currentUser,
     canView,
+    offsetTop,
+    offsetLeft,
   } = props;
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleAddDegree, setVisibleAddDegree] = useState<boolean>(false);
-  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(false);
+  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(
+    false
+  );
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
@@ -75,7 +80,9 @@ const DropDown = (props: Props) => {
   const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
     false
   );
-  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(false);
+  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(
+    false
+  );
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [, setGoverningBodyHead] = useState<boolean>(true);
@@ -112,41 +119,47 @@ const DropDown = (props: Props) => {
     IDropdownItem
   >();
 
-  //Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
-  //I have no idea what's going on here
+  const selfRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState<[number, number]>([pageX, pageY]);
+
+  // footer HTML info for position calculation
+  var footer = document.getElementsByClassName("ant-layout-footer").item(0);
+
+  // Some megamind function, taken from StackOverflow to convert enum string value to appropriate key
+  // I have no idea what's going on here
   function getEnumKeyByEnumValue<T extends { [index: string]: string }>(
     myEnum: T,
     enumValue: string
   ): keyof T | null {
-    let keys = Object.keys(myEnum).filter((x) => myEnum[x] == enumValue);
+    const keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
     return keys.length > 0 ? keys[0] : null;
   }
 
-  //Takes only those roles, which can access User Table and
-  //writes them in array in descending order (as in AdminRole enum)
+  // Takes only those roles, which can access User Table and
+  // writes them in array in descending order (as in AdminRole enum)
   const setUserAdminRoles = (allUserRoles: Array<string>): Array<AdminRole> => {
-    //All possible AdminRole keys are converted to string array
+    // All possible AdminRole keys are converted to string array
     const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
     for (var key in AdminRole) {
       allAdminRolesAsEnumKeys.push(AdminRole[key]);
     }
 
-    //Current user roles as strings (values) are converted to corresponding
-    //Roles enum keys, which are also saved as array of string
+    // Current user roles as strings (values) are converted to corresponding
+    // Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
     allUserRoles?.forEach((role) => {
-      let result = getEnumKeyByEnumValue(Roles, role);
+      const result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
       }
     });
 
-    //Intersection of possible Admin roles and current admin roles
+    // Intersection of possible Admin roles and current admin roles
     const userAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(
       (role) => userRolesAsEnumKeys.includes(role)
     );
 
-    //Roles are converted  to AdminRole enum
+    // Roles are converted  to AdminRole enum
     const currentUserAdminRoles = new Array<AdminRole>();
     userAdminRolesAsEnumKeys.forEach((role) => {
       currentUserAdminRoles.push(AdminRole[role as keyof typeof AdminRole]);
@@ -155,32 +168,32 @@ const DropDown = (props: Props) => {
     return currentUserAdminRoles;
   };
 
-  //Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
+  // Takes user Plast roles, writes them in array in descending order (as in NonAdminRole enum)
   const setUserNonAdminRoles = (
     allUserRoles: Array<string>
   ): Array<NonAdminRole> => {
-    //All possible NonAdminRole keys are converted to string array
+    // All possible NonAdminRole keys are converted to string array
     const allAdminRolesAsEnumKeys: Array<string> = new Array<string>();
     for (var key in NonAdminRole) {
       allAdminRolesAsEnumKeys.push(NonAdminRole[key]);
     }
 
-    //Current user roles as strings (values) are converted to corresponding
-    //Roles enum keys, which are also saved as array of string
+    // Current user roles as strings (values) are converted to corresponding
+    // Roles enum keys, which are also saved as array of string
     const userRolesAsEnumKeys: Array<string> = new Array<string>();
     allUserRoles?.forEach((role) => {
-      let result = getEnumKeyByEnumValue(Roles, role);
+      const result = getEnumKeyByEnumValue(Roles, role);
       if (result !== null) {
         userRolesAsEnumKeys.push(result);
       }
     });
 
-    //Intersection of possible NonAdmin roles and current admin roles
+    // Intersection of possible NonAdmin roles and current admin roles
     const userNonAdminRolesAsEnumKeys: Array<string> = allAdminRolesAsEnumKeys.filter(
       (role) => userRolesAsEnumKeys.includes(role)
     );
 
-    //Roles are converted to NonAdminRole enum
+    // Roles are converted to NonAdminRole enum
     const userNonAdminRoles = new Array<NonAdminRole>();
     userNonAdminRolesAsEnumKeys.forEach((role) => {
       userNonAdminRoles.push(NonAdminRole[role as keyof typeof NonAdminRole]);
@@ -217,7 +230,7 @@ const DropDown = (props: Props) => {
       | undefined
       | null = await lookThroughChain();
 
-    //To make changes in user access for context menu look in DropdownItem.tsx
+    // To make changes in user access for context menu look in DropdownItem.tsx
 
     setCanViewProfile(result?.get(DropdownFunc.CheckProfile) ?? false);
 
@@ -250,9 +263,23 @@ const DropDown = (props: Props) => {
     );
   };
 
-  useEffect(() => {
-    fetchUser();
-  }, [selectedUser]);
+  useLayoutEffect(() => {
+    fetchUser().then(() => {
+      calculatePosition(selfRef.current?.clientWidth as number, selfRef.current?.clientHeight as number);
+    });
+  }, [selectedUser, pageX]);
+
+  const calculatePosition = (width: number, height: number) => {
+    let y = pageY + height + offsetTop >= document.body.scrollHeight - (footer?.clientHeight as number)
+      ? document.body.scrollHeight - offsetTop - (footer?.clientHeight as number) - height - 10
+      : pageY;
+
+    let x = pageX + width + offsetLeft >= document.body.clientWidth
+    ? document.body.clientWidth - width - offsetLeft - 10
+    : pageX;
+
+    setPosition([x, y]);
+  }
 
   const handleItemClick = async (item: any) => {
     switch (item.key) {
@@ -261,7 +288,7 @@ const DropDown = (props: Props) => {
         break;
       case "2":
         await userDeleteCofirm(record, onDelete);
-        onChange("", "")
+        onChange("", "");
         break;
       case "3":
         await setShowRegionModal(true);
@@ -296,28 +323,19 @@ const DropDown = (props: Props) => {
       default:
         break;
     }
-    item.key = "0";
   };
 
   return (
-    <>
+    <div
+      ref={selfRef}
+      className={classes.menu}
+      style={{
+        top: position[1],
+        left: position[0],
+        display: showDropdown ? "block" : "none",
+      }}>
       {canView ? (
-        <Menu
-          theme="dark"
-          className={classes.menu}
-          onClick={handleItemClick}
-          style={{
-            top: 
-              window.innerHeight - (pageY + 340) < 0
-                ? window.innerHeight - 350
-                : pageY,
-            left:
-              window.innerWidth - (pageX + 223) < 0
-                ? window.innerWidth - 266
-                : pageX,
-            display: showDropdown ? "block" : "none",
-          }}
-        >
+        <Menu theme="dark" onClick={handleItemClick}>
           {canViewProfile ? (
             <Menu.Item key="1">
               <FileSearchOutlined />
@@ -366,7 +384,7 @@ const DropDown = (props: Props) => {
           ) : (
             <> </>
           )}
-          {!canAddDegree && canChangeDegree ? (
+          {canChangeDegree ? (
             <Menu.Item key="7">
               <PlusCircleOutlined />
               Змінити ступінь
@@ -375,7 +393,7 @@ const DropDown = (props: Props) => {
             <> </>
           )}
 
-          {!canChangeDegree && canAddDegree ? (
+          {canAddDegree ? (
             <Menu.Item key="8">
               <PlusCircleOutlined />
               Додати до уладу
@@ -483,7 +501,7 @@ const DropDown = (props: Props) => {
           />
         </Menu>
       ) : null}
-    </>
+    </div>
   );
 };
 
