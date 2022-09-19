@@ -22,6 +22,7 @@ import moment from "moment";
 import { emptyInput } from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import GoverningBodyAdminTypes from "../GoverningBodyAdminTypes";
 
 const confirm = Modal.confirm;
 
@@ -70,14 +71,14 @@ const EditAdministratorModal = (props: Props) => {
           є Головою Керівного Органу, час правління закінчується{" "}
           <b>
             {moment.utc(head?.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (admin.id === 0) {
           addGoverningBodyAdmin(admin);
@@ -178,12 +179,11 @@ const EditAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: Roles.GoverningBodyHead },
-              { value: "Голова КПР" },
-              { value: "Секретар КПР" },
-              { value: "Член КПР з питань організаційного розвитку" },
-              { value: "Член КПР з соціального напрямку" },
-              { value: "Член КПР відповідальний за зовнішні зв'язки" },
+              { value: GoverningBodyAdminTypes.Head },
+              { value: GoverningBodyAdminTypes.Secretar },
+              { value: GoverningBodyAdminTypes.Progress },
+              { value: GoverningBodyAdminTypes.Social },
+              { value: GoverningBodyAdminTypes.Сommunication },
             ]}
             placeholder={"Тип адміністрування"}
           />
