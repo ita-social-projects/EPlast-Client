@@ -11,7 +11,6 @@ import jwt from "jwt-decode";
 import Title from "antd/lib/typography/Title";
 import moment from "moment";
 import {
-  editAdminStatus,
   getRegionAdministration,
   getRegionById,
   getUserRegionAccess,
@@ -123,7 +122,6 @@ const RegionAdministration = () => {
 
   const removeAdministrator = async (admin: CityAdmin) => {
     try {
-      await editAdminStatus(admin.id);
       await removeAdmin(admin.id);
       await createNotification(
         admin.userId,
