@@ -16,16 +16,18 @@ spec:
   - host: ___SiteDnsName___
     http:
       paths:        
-      - path: /
-        pathType: Prefix
-        backend:
+      - backend:
           service:
             name: eplastweb
-            port: 
+            port:
               number: 80
-      # - path: /grafana
-      #   backend:
-      #     service:
-      #       name: prometheus-grafana
-      #       port: 
-      #         number: 80          
+        path: /        
+        pathType: Prefix
+     # - backend:
+     #     service:
+     #       name: prometheus-grafana
+     #       port:
+     #         number: 80
+     #   path: /grafana
+     #   pathType: ImplementationSpecific
+
