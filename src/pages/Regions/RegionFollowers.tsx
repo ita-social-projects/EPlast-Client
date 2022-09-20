@@ -11,6 +11,7 @@ import {
   getRegionAdministration,
   getRegionById,
   removeFollower,
+  getUserRegionAccess,
 } from "../../api/regionsApi";
 import CityDefaultLogo from "../../assets/images/default_city_image.jpg";
 import userApi from "../../api/UserApi";
@@ -24,8 +25,9 @@ import notificationLogic from "../../components/Notifications/Notification";
 import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../components/Tooltip";
+import jwt from "jwt-decode";
+import AuthLocalStorage from "../../AuthLocalStorage";
 
-const AdminAndOkruga = ["Admin", "Крайовий Адмін", "Голова Округи"];
 const RegionFollowers = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -33,32 +35,20 @@ const RegionFollowers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [followers, setFollowers] = useState<RegionFollower[]>([]);
-  const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<
-    boolean
-  >(false);
+
+  const [userAccess, setUserAccess] = useState<{ [key: string]: boolean }>({});
 
   const getFollowers = async () => {
     setLoading(true);
-    const regionResponse = await getRegionById(id);
+    let user: any = jwt(AuthLocalStorage.getToken() as string);
     const regionFollowersResp = await getRegionFollowers(id);
-    const regionAdministrationResp = await getRegionAdministration(id);
+    const userAccessResponse = await getUserRegionAccess(id, user.nameid);
 
+    setUserAccess(userAccessResponse.data);
     setFollowers(regionFollowersResp.data);
-    setActiveUserRoles(userApi.getActiveUserRoles);
-    setIsRegionAdmin(regionAdministrationResp.data, userApi.getActiveUserId());
     setPhotosLoading(true);
     setPhotos(regionFollowersResp.data);
     setLoading(false);
-  };
-
-  const setIsRegionAdmin = (admins: any[], userId: string) => {
-    for (let i = 0; i < admins.length; i++) {
-      if (admins[i].userId == userId) {
-        setIsActiveUserRegionAdmin(true);
-        return;
-      }
-    }
   };
 
   const setPhotos = (followers: RegionFollower[]) => {
@@ -110,7 +100,7 @@ const RegionFollowers = () => {
                 key={follower.id}
                 className="detailsCard"
                 actions={
-                  AdminAndOkruga.some((role) => activeUserRoles.includes(role))
+                  userAccess["EditRegion"]
                     ? [
                         <CloseOutlined
                           onClick={() => seeDeleteFollowerModal(follower)}
@@ -121,16 +111,10 @@ const RegionFollowers = () => {
               >
                 <div
                   className={
-                    AdminAndOkruga.some((role) =>
-                      activeUserRoles.includes(role)
-                    )
-                      ? "cityMember"
-                      : undefined
+                    userAccess["EditRegion"] ? "cityMember" : undefined
                   }
                   onClick={() =>
-                    AdminAndOkruga.some((role) =>
-                      activeUserRoles.includes(role)
-                    )
+                    userAccess["EditRegion"]
                       ? history.push(`/regions/follower/edit/${follower.id}`)
                       : undefined
                   }
