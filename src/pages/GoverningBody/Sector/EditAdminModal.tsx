@@ -22,6 +22,7 @@ import { emptyInput } from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
+import SectorAdminTypes from "./SectorAdminTypes";
 
 const confirm = Modal.confirm;
 
@@ -71,14 +72,14 @@ const EditAdministratorModal = (props: Props) => {
           є Головою Напряму Керівного Органу, час правління закінчується{" "}
           <b>
             {moment.utc(head?.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (admin.id === 0) {
           addSectorAdmin(admin);
@@ -177,12 +178,11 @@ const EditAdministratorModal = (props: Props) => {
           <AutoComplete
             className="adminTypeSelect"
             options={[
-              { value: Roles.GoverningBodySectorHead },
-              { value: "Голова КПР" },
-              { value: "Секретар КПР" },
-              { value: "Член КПР з питань організаційного розвитку" },
-              { value: "Член КПР з соціального напрямку" },
-              { value: "Член КПР відповідальний за зовнішні зв'язки" },
+              { value: SectorAdminTypes.Head },
+              { value: SectorAdminTypes.Secretar },
+              { value: SectorAdminTypes.Progress },
+              { value: SectorAdminTypes.Social },
+              { value: SectorAdminTypes.Сommunication },
             ]}
             placeholder={"Тип адміністрування"}
           />

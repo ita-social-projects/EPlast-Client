@@ -151,8 +151,15 @@ const RegionAdministration = () => {
   };
 
   const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
-    const index = administration.findIndex((a) => a.id === admin.id);
-    administration[index] = newAdmin;
+    const previousAdmin = administration.find(a => a.id === admin.id)!; 
+    const adminIdx = administration.findIndex(a => a.id === admin.id);
+    administration[adminIdx] = newAdmin;
+    if (previousAdmin.adminType.adminTypeName !== newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`
+      );
+    }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
@@ -179,6 +186,27 @@ const RegionAdministration = () => {
     );
   };
 
+  const getCardActions = (member: RegionAdmin) => {
+    if (!userAccesses["EditRegion"]) {
+      return undefined;
+    }
+
+    const actions = [];
+    if (member.adminType.adminTypeName !== Roles.OkrugaHead) {
+      actions.push(<SettingOutlined onClick={() => showModal(member)} />);
+      actions.push(<CloseOutlined onClick={() => seeDeleteModal(member)} />);
+      return actions;
+    }
+
+    if (userAccesses["EditRegionHead"]) {
+      actions.push(<SettingOutlined onClick={() => showModal(member)} />);
+    }
+    if (userAccesses["RemoveRegionHead"]) {
+      actions.push(<CloseOutlined onClick={() => seeDeleteModal(member)} />);
+    }
+    return actions;
+  };
+
   useEffect(() => {
     getAdministration();
   }, [reload]);
@@ -191,7 +219,7 @@ const RegionAdministration = () => {
       ) : (
         <div className="cityMoreItems">
           {administration.length > 0 ? (
-            administration.map((member: any) => (
+            administration.map((member: RegionAdmin) => (
               <Card
                 key={member.id}
                 className="detailsCard"
@@ -200,16 +228,7 @@ const RegionAdministration = () => {
                   `${member.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={
-                  userAccesses["EditRegion"]
-                    ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(member)}
-                        />,
-                      ]
-                    : undefined
-                }
+                actions={getCardActions(member)}
               >
                 <div
                   onClick={() =>
