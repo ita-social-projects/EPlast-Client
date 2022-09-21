@@ -191,16 +191,32 @@ const RegionAdministration = () => {
 
     const actions = [];
     if (member.adminType.adminTypeName !== Roles.OkrugaHead) {
-      actions.push(<SettingOutlined onClick={() => showModal(member)} />);
-      actions.push(<CloseOutlined onClick={() => seeDeleteModal(member)} />);
+      actions.push(
+        <Tooltip title="Редагувати">
+          <EditOutlined onClick={() => showModal(member)} />
+        </Tooltip>,
+      );
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
       return actions;
     }
 
     if (userAccesses["EditRegionHead"]) {
-      actions.push(<SettingOutlined onClick={() => showModal(member)} />);
+      actions.push(
+        <Tooltip title="Редагувати">
+          <EditOutlined onClick={() => showModal(member)} />
+        </Tooltip>
+      );
     }
     if (userAccesses["RemoveRegionHead"]) {
-      actions.push(<CloseOutlined onClick={() => seeDeleteModal(member)} />);
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
     }
     return actions;
   };
