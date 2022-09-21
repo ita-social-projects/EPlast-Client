@@ -186,6 +186,27 @@ const RegionAdministration = () => {
     );
   };
 
+  const getCardActions = (member: RegionAdmin) => {
+    if (!userAccesses["EditRegion"]) {
+      return undefined;
+    }
+
+    const actions = [];
+    if (member.adminType.adminTypeName !== Roles.OkrugaHead) {
+      actions.push(<SettingOutlined onClick={() => showModal(member)} />);
+      actions.push(<CloseOutlined onClick={() => seeDeleteModal(member)} />);
+      return actions;
+    }
+
+    if (userAccesses["EditRegionHead"]) {
+      actions.push(<SettingOutlined onClick={() => showModal(member)} />);
+    }
+    if (userAccesses["RemoveRegionHead"]) {
+      actions.push(<CloseOutlined onClick={() => seeDeleteModal(member)} />);
+    }
+    return actions;
+  };
+
   useEffect(() => {
     getAdministration();
   }, [reload]);
@@ -198,7 +219,7 @@ const RegionAdministration = () => {
       ) : (
         <div className="cityMoreItems">
           {administration.length > 0 ? (
-            administration.map((member: any) => (
+            administration.map((member: RegionAdmin) => (
               <Card
                 key={member.id}
                 className="detailsCard"
@@ -207,16 +228,7 @@ const RegionAdministration = () => {
                   `${member.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={
-                  userAccesses["EditRegion"]
-                    ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(member)}
-                        />,
-                      ]
-                    : undefined
-                }
+                actions={getCardActions(member)}
               >
                 <div
                   onClick={() =>

@@ -7,7 +7,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import { List, Modal, Popconfirm } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getAchievementFile,
   openAchievemetFile,
@@ -19,18 +19,16 @@ import classes from "./ListOfAchievements.module.css";
 import notificationLogic from "../../../../components/Notifications/Notification";
 import InfiniteScroll from "react-infinite-scroller";
 import { useParams } from "react-router-dom";
-import { successfulDeleteAction } from "../../../../components/Notifications/Messages";
+import { failDeleteAction, successfulDeleteAction } from "../../../../components/Notifications/Messages";
 import extendedTitleTooltip from "../../../../components/Tooltip";
 const fileNameMaxLength = 47;
 
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  achievementDoc: BlankDocument[];
   hasAccess?: boolean;
   hasAccessToSeeAndDownload?: boolean;
   hasAccessToDelete?: boolean;
-  setAchievementDoc: (document: BlankDocument[]) => void;
   userToken: any;
   courseId?: number; 
 }
@@ -42,7 +40,7 @@ const ListOfAchievementsModal = (props: Props) => {
     hasMore: true,
   });
   const [achievements, setAchievements] = useState<BlankDocument[]>([]);
-  let [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
   const [pageSize] = useState(7);
   const [isEmpty, setIsEmpty] = useState(false);
   
@@ -55,12 +53,14 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const deleteFIle = async (documentId: number,  userId: string, fileName: string) => {
-    await removeAchievementDocument(documentId ,userId);
-    notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
-    setAchievements(achievements.filter((d) => d.id !== documentId));
-    props.setAchievementDoc(
-      props.achievementDoc.filter((d) => d.id !== documentId)
-    );
+    try {
+      await removeAchievementDocument(documentId, userId);
+      notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
+      const achievementsWithoutDeleted = achievements.filter((d) => d.id !== documentId);
+      setAchievements(achievementsWithoutDeleted);
+    } catch (error) {
+      notificationLogic("error", failDeleteAction(`Файл ${fileName}`));
+    }
   };
 
   const downloadFile = async (fileBlob: string, fileName: string) => {
@@ -88,7 +88,7 @@ const ListOfAchievementsModal = (props: Props) => {
       return;
     }
     getAchievements();
-    setPageNumber(++pageNumber);
+    setPageNumber(prev => prev + 1);
   };
 
   const getActions = (blackDocumentItem: BlankDocument, isNotDocx = true) => {
@@ -131,6 +131,10 @@ const ListOfAchievementsModal = (props: Props) => {
     }
     return actions;
   }
+
+  useEffect(() => {
+    if (achievements.length === 0) props.setVisibleModal(false);
+  }, [achievements]);
 
   return (
     <Modal
