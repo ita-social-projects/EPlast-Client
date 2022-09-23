@@ -14,7 +14,7 @@ export default function () {
   const validationSchema = {
     CurrentPassword: [
       { required: true, message: emptyInput() },
-      { min: 8, message: minLength(8) },
+      { validator: checkPassword },
     ],
     NewPassword: [
       { required: true, message: emptyInput() },
