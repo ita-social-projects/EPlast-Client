@@ -39,7 +39,6 @@ export const Courses: React.FC = () => {
 
   const addCertificate = async (courseId: number) => {
     setCourseId(courseId);
-    console.log(courseId, 42, "Courses.tsx");
     setVisibleAchievementModal(true);
   };
 
