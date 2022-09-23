@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Blanks } from "../Blanks/Blanks";
-import { Courses } from "./Courses";
-import Menu from "../Menu/Menu";
-import Spinner from "../../Spinner/Spinner";
-import UserFields from "./UserFields";
-import EditUserPage from "../EditUserPage/EditUserPage";
-import Approvers from "../Approvers/Approvers";
-import ActiveMembership from "../ActiveMembership/ActiveMembership";
-import EventUser from "../../Actions/ActionEvent/EventUser/EventUser";
-import Secretaries from "../Secretaries/SecretariesPage";
 import UserApi from "../../../api/UserApi";
 import notificationLogic from "../../../components/Notifications/Notification";
 import ScrollToTop from "../../../components/ScrollToTop/ScrollToTop";
+import EventUser from "../../Actions/ActionEvent/EventUser/EventUser";
+import Spinner from "../../Spinner/Spinner";
+import ActiveMembership from "../ActiveMembership/ActiveMembership";
+import Approvers from "../Approvers/Approvers";
+import { Blanks } from "../Blanks/Blanks";
+import EditUserPage from "../EditUserPage/EditUserPage";
 import { Data, IPersonalDataContext, User } from "../Interface/Interface";
+import Menu from "../Menu/Menu";
+import Secretaries from "../Secretaries/SecretariesPage";
+import { Courses } from "./Courses";
 import "./PersonalData.less";
+import UserFields from "./UserFields";
 
 const DefaultState: IPersonalDataContext = {
   userProfile: undefined,
   fullUserProfile: undefined,
   activeUserRoles: [],
   activeUserId: "",
-  loading: false,
+  loading: true,
   imageBase64: "",
   activeUserProfile: undefined,
   userProfileAccess: {},
@@ -41,7 +41,7 @@ export default function ({
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserId, setActiveUserId] = useState<string>("");
   const [activeUserProfile, setActiveUserProfile] = useState<User>();
-  const [dataLoaded, setLoading] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [imageBase64, setImageBase64] = useState<string>("");
   const [fullUserProfile, setFullUserProfile] = useState<Data>();
   const [userProfileAccess, setUserProfileAccess] = useState<{
@@ -58,51 +58,54 @@ export default function ({
   };
 
   const fetchData = async () => {
+    setDataLoaded(false);
+
     let userRoles = UserApi.getActiveUserRoles();
     setActiveUserRoles(userRoles);
+
     let currentUserId = UserApi.getActiveUserId();
-    let userProfileAccess = await UserApi.getUserProfileAccess(currentUserId, userId);
+    let userProfileAccess = await UserApi.getUserProfileAccess(
+      currentUserId,
+      userId
+    );
     setUserProfileAccess(userProfileAccess.data);
     setActiveUserId(currentUserId);
+
     let userProfile = await UserApi.getActiveUserProfile();
     setActiveUserProfile(userProfile);
-    await UserApi.getById(userId)
-      .then(async (response) => {
-        setFullUserProfile(response.data);
-      })
-      .catch((error) => {
-        notificationLogic("error", error.message);
-      });
 
-    await UserApi.getUserProfileById(userId)
-      .then((response) => {
-        setUserProfile(response.data);
-        if (response.data?.user !== null) {
-          UserApi.getImage(response.data?.user.imagePath).then(
-            (response: { data: any }) => {
-              setImageBase64(response.data);
-            }
-          );
-        }
-        if (response.data?.shortUser !== null) {
-          UserApi.getImage(response.data?.shortUser.imagePath).then(
-            (response: { data: any }) => {
-              setImageBase64(response.data);
-            }
-          );
-        }
-      })
-      .catch((error) => {
-        notificationLogic("error", error.message);
-      });
-    setLoading(true);
+    try {
+      let user = await UserApi.getById(userId);
+      setFullUserProfile(user.data);
+    } catch (e) {
+      notificationLogic("error", e.message);
+    }
+
+    try {
+      let focusUserProfile = await UserApi.getUserProfileById(userId);
+      setUserProfile(focusUserProfile.data);
+      if (focusUserProfile.data?.user !== null) {
+        let userImage = await UserApi.getImage(
+          focusUserProfile.data?.user.imagePath
+        );
+        setImageBase64(userImage.data);
+      }
+      if (focusUserProfile.data?.shortUser !== null) {
+        let userImage = await UserApi.getImage(
+          focusUserProfile.data?.shortUser.imagePath
+        );
+        setImageBase64(userImage.data);
+      }
+    } catch (e) {
+      notificationLogic("error", e.message);
+    }
+
+    setDataLoaded(true);
   };
 
   useEffect(() => {
-    if (!dataLoaded) {
-      fetchData();
-    }
-  }, [dataLoaded]);
+    fetchData();
+  }, [userId]);
 
   return (
     <PersonalDataContext.Provider

@@ -8,6 +8,7 @@ import AnnualReportApi from "../../../api/AnnualReportApi";
 import AnnualReport from "../Interfaces/AnnualReport";
 import Spinner from "../../Spinner/Spinner";
 import { CloseCircleOutlined } from "@ant-design/icons";
+import openNotificationWithIcon from '../../../components/Notifications/Notification';
 
 const AnnualReportEdit = () => {
   const { id } = useParams();
@@ -106,22 +107,13 @@ const AnnualReportEdit = () => {
   };
 
   const showSuccess = (message: string) => {
-    Modal.success({
-      content: message,
-      onOk: () => {
-        history.goBack();
-      },
-    });
+    openNotificationWithIcon("success", message);
+    history.goBack();
   };
 
   const showError = (message: string) => {
-    Modal.error({
-      title: "Помилка!",
-      content: message,
-      onOk: () => {
-        history.goBack();
-      },
-    });
+    openNotificationWithIcon("error", message);
+    history.goBack(); 
   };
 
   return (
