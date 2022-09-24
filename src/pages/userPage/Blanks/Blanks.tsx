@@ -143,10 +143,10 @@ export const Blanks = () => {
     getExtractFromUPU();
     setLoadingBlanks(true);
   }, [
-    userId,
     visibleModal,
     visibleAchievementModal,
     visibleExtractFromUPUModal,
+    visibleListAchievementModal
   ]);
 
   return (loading && loadingBlanks) === false ? (
