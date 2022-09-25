@@ -1,236 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { Table, Button, Layout, Space, Col, Row } from "antd";
+import { Button, Col, Layout, Row, Table } from "antd";
 import Search from "antd/lib/input/Search";
-import columns from "./columns";
-import notificationLogic from "../../../components/Notifications/Notification";
-import DropDownDistinctionTable from "./DropDownDistinctionTable";
-import distinctionApi from "../../../api/distinctionApi";
-import AddDistinctionModal from "../DistinctionTable/AddDistinctionModal";
-import UserDistinctionTableInfo from "../Interfaces/UserDistinctionTableInfo";
+import React, { useEffect, useState } from "react";
 import ClickAwayListener from "react-click-away-listener";
-import Distinction from "../Interfaces/Distinction";
-import DistionctionTableSettings from "../../../models/Distinction/DistinctionTableSettings";
-import AuthLocalStorage from "../../../AuthLocalStorage";
-import jwt from "jwt-decode";
-import NotificationBoxApi from "../../../api/NotificationBoxApi";
-import {
-  successfulCreateAction,
-  successfulDeleteAction,
-  successfulUpdateAction,
-} from "../../../components/Notifications/Messages";
-import { Roles } from "../../../models/Roles/Roles";
+import { batch } from "react-sweet-state";
+import { useDistinctions } from "../../../stores/DistinctionsStore";
+import AddUserDistinctionModal from "./AddDistinctionModal";
+import columns from "./columns";
+import DropDownDistinctionTable from "./DropDownDistinctionTable";
 const { Content } = Layout;
+
 const DistinctionTable = () => {
   const classes = require("./Table.module.css");
-  let user: any;
-  let curToken = AuthLocalStorage.getToken() as string;
-  let roles: string[] = [""];
-  user = curToken !== null ? (jwt(curToken) as string) : "";
-  roles =
-    curToken !== null
-      ? (user[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] as string[])
-      : [""];
-  const [recordObj, setRecordObj] = useState<any>(0);
-  const [userId, setUserId] = useState<any>(0);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [visibleModal, setVisibleModal] = useState(false);
+  const [isDropdownShown, setIsDropdownShown] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [searchedData, setSearchedData] = useState<string>("");
-  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
-    {}
-  );
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState<number>(0);
-  const [sortByOrder, setSortByOrder] = useState<any[]>(["number", "ascend"]);
-  const [distinctions, setDistinctions] = useState<UserDistinctionTableInfo[]>([
-    {
-      count: 0,
-      total: 0,
-      id: 0,
-      number: 0,
-      distinctionName: "",
-      userId: "",
-      userName: "",
-      reporter: "",
-      reason: "",
-      date: new Date(),
-    },
-  ]);
   const [selectedRow, setSelectedRow] = useState<number>(-1);
 
-  const getUserAccessesForDistinctions = async () => {
-    let user: any = jwt(AuthLocalStorage.getToken() as string);
-    await distinctionApi
-      .getUserDistinctionAccess(user.nameid)
-      .then((response) => {
-        setUserAccesses(response.data);
-      });
-  };
-
-  const fetchData = async () => {
-    const NewTableSettings: DistionctionTableSettings = {
-      sortByOrder: sortByOrder,
-      searchedData: searchedData,
-      page: page,
-      pageSize: pageSize,
-    };
-
-    setLoading(true);
-    const res: UserDistinctionTableInfo[] = await distinctionApi.getAllUsersDistinctions(
-      NewTableSettings
-    );
-    setTotal(res[0]?.total);
-    setDistinctions(res);
-    setLoading(false);
-    getUserAccessesForDistinctions();
-  };
+  const [state, actions] = useDistinctions();
 
   useEffect(() => {
-    fetchData();
-  }, [sortByOrder, searchedData, page, pageSize]);
-
-  const handleSearch = (event: any) => {
-    setPage(1);
-    setSearchedData(event);
-  };
+    batch(() => {
+      actions.setLoadingUserDistinctionsTable(true);
+      actions.getUserDistinctionsAccess();
+      actions.fetchUserDistinctions();
+    });
+  }, [state.distinctionTableSettings]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.toLowerCase() === "") setSearchedData("");
-  };
-
-  const showModal = () => {
-    setVisibleModal(true);
-  };
-
-  const handleAdd = async () => {
-    setVisibleModal(false);
-    fetchData();
-    notificationLogic("success", successfulCreateAction("Відзначення"));
+    if (event.target.value.toLowerCase() === "") actions.setSearch("");
   };
 
   const handleClickAway = () => {
-    setShowDropdown(false);
+    setIsDropdownShown(false);
     setSelectedRow(-1);
-  };
-
-  const CreateDeleteNotification = (id: number) => {
-    const userDistinction = distinctions.find(
-      (d: { id: number }) => d.id === id
-    );
-    if (userDistinction) {
-      NotificationBoxApi.createNotifications(
-        [userDistinction.userId],
-        `Ваше відзначення: '${userDistinction.distinctionName}' було видалено.`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
-      );
-      NotificationBoxApi.getCitiesForUserAdmins(userDistinction.userId).then(
-        (res) => {
-          res.cityRegionAdmins.length !== 0 &&
-            res.cityRegionAdmins.forEach(async (cra) => {
-              await NotificationBoxApi.createNotifications(
-                [cra.cityAdminId, cra.regionAdminId],
-                `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' був позбавлений відзначення: '${userDistinction.distinctionName}'. `,
-                NotificationBoxApi.NotificationTypes.UserNotifications
-              );
-            });
-        }
-      );
-    }
-  };
-
-  const CreateEditNotification = (userId: string, name: string) => {
-    if (userId !== "" && name !== "") {
-      NotificationBoxApi.createNotifications(
-        [userId],
-        `Ваше відзначення: '${name}' було змінено. `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/distinctions`,
-        `Переглянути`
-      );
-      NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
-        res.cityRegionAdmins.length !== 0 &&
-          res.cityRegionAdmins.forEach(async (cra) => {
-            await NotificationBoxApi.createNotifications(
-              [cra.cityAdminId, cra.regionAdminId],
-              `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінене відзначення: '${name}'. `,
-              NotificationBoxApi.NotificationTypes.UserNotifications,
-              `/distinctions`,
-              `Переглянути`
-            );
-          });
-      });
-    }
-  };
-
-  const handleDelete = (id: number) => {
-    const filteredData = distinctions.filter(
-      (d: { id: number }) => d.id !== id
-    );
-    setDistinctions([...filteredData]);
-
-    if (page != 1 && distinctions.length == 1) setPage(page - 1);
-
-    setTotal(total - 1);
-    notificationLogic("success", successfulDeleteAction("Відзначення"));
-    CreateDeleteNotification(id);
-  };
-
-  const handleEdit = (
-    id: number,
-    distinction: Distinction,
-    date: Date,
-    reason: string,
-    reporter: string,
-    number: number,
-    user: any,
-    userId: string
-  ) => {
-    /* eslint no-param-reassign: "error" */
-    const editedData = distinctions.filter((d) => {
-      if (d.id === id) {
-        d.distinctionName = distinction.name;
-        d.date = date;
-        d.reason = reason;
-        d.reporter = reporter;
-        d.number = number;
-        d.userId = userId;
-        d.userName = user.firstName + " " + user.lastName;
-      }
-      return d;
-    });
-    setDistinctions([...editedData]);
-    notificationLogic("success", successfulUpdateAction("Відзначення"));
-    CreateEditNotification(userId, distinction.name);
-  };
-
-  const tableSettings = (res: any) => {
-    setPage(res[0].current);
-    setPageSize(res[0].pageSize);
-
-    res[2].order === undefined
-      ? setSortByOrder([res[2].field, null])
-      : setSortByOrder([res[2].field, res[2].order]);
   };
 
   return (
     <Layout>
       <Content
         onClick={() => {
-          setShowDropdown(false);
+          setIsDropdownShown(false);
         }}
       >
         <h1 className={classes.titleTable}>Відзначення</h1>
         <>
           <Row gutter={[6, 12]} className={classes.buttonsSearchField}>
-            {userAccesses["EditTypeDistinction"] ? (
+            {state.userDistinctionsAccess["EditTypeDistinction"] ? (
               <>
                 <Col>
-                  <Button type="primary" onClick={showModal}>
+                  <Button
+                    type="primary"
+                    onClick={actions.openUserDistinctionAddModal}
+                  >
                     Додати відзначення
                   </Button>
                 </Col>
@@ -243,27 +64,29 @@ const DistinctionTable = () => {
                 placeholder="Пошук"
                 allowClear
                 onChange={handleSearchChange}
-                onSearch={handleSearch}
+                onSearch={actions.setSearch}
               />
             </Col>
           </Row>
           <div>
             <Table
-              rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : null}
+              loading={state.isLoadingUserDistinctionsTable}
+              rowClassName={(record, index) =>
+                index === selectedRow ? classes.selectedRow : null
+              }
               className={classes.table}
-              dataSource={distinctions}
+              dataSource={state.userDistinctions}
               columns={columns}
               scroll={{ x: 1300 }}
               onRow={(record, index) => {
                 return {
                   onClick: () => {
-                    setShowDropdown(false);
+                    setIsDropdownShown(false);
                   },
                   onContextMenu: (event) => {
                     event.preventDefault();
-                    setShowDropdown(true);
-                    setRecordObj(record.id);
-                    setUserId(record.userId);
+                    setIsDropdownShown(true);
+                    actions.setCurrentUserDistinction(record);
                     setX(event.pageX);
                     setY(event.pageY);
                     setSelectedRow(index as number);
@@ -271,37 +94,27 @@ const DistinctionTable = () => {
                 };
               }}
               pagination={{
-                current: page,
-                pageSize: pageSize,
-                total: total,
+                current: state.distinctionTableSettings.page,
+                pageSize: state.distinctionTableSettings.pageSize,
+                total: state.userDistinctions[0]?.total,
                 showLessItems: true,
                 responsive: true,
                 showSizeChanger: true,
               }}
-              onChange={(...args) => tableSettings(args)}
+              onChange={(...args) => actions.setTableSettings(args)}
               bordered
               rowKey="id"
             />
           </div>
           <ClickAwayListener onClickAway={handleClickAway}>
             <DropDownDistinctionTable
-              showDropdown={showDropdown}
-              record={recordObj}
-              userId={userId}
+              isDropdownShown={isDropdownShown}
               pageX={x}
               pageY={y}
-              canEdit={userAccesses["EditTypeDistinction"]}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
             />
           </ClickAwayListener>
 
-          <AddDistinctionModal
-            setVisibleModal={setVisibleModal}
-            visibleModal={visibleModal}
-            onAdd={handleAdd}
-            onDelete={fetchData}
-          />
+          <AddUserDistinctionModal />
         </>
       </Content>
     </Layout>

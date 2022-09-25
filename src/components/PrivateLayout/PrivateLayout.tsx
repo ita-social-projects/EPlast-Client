@@ -274,21 +274,6 @@ const PrivateLayout = ({ children }: any) => {
                   </Menu.Item>
                 ) : null}
 
-                {userAccesses.renewals ? (
-                  <Menu.Item key="renewals">
-                    <a
-                      href="/renewals"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCollapsed(true);
-                        history.push("/renewals");
-                      }}
-                    >
-                      Відновлення статусу
-                    </a>
-                  </Menu.Item>
-                ) : null}
-
                 {userAccesses.legislation ? (
                   <Menu.Item key="legislation">
                     <a
@@ -306,7 +291,7 @@ const PrivateLayout = ({ children }: any) => {
               </SubMenu>
             ) : null}
 
-            {userAnnualReportAccess?.CanViewReportsPage &&
+          {userAnnualReportAccess?.CanViewReportsPage &&
             userAnnualReportAccess?.CanCityStatisticsFormReport ? (
               <SubMenu
                 key="sub2"
@@ -326,12 +311,13 @@ const PrivateLayout = ({ children }: any) => {
                         history.push("/annualreport/table/region");
                       }}
                     >
-                      Річні звіти округ
+                      Річні звіти
                     </a>
                   </Menu.Item>
                 ) : null}
 
-                {userAnnualReportAccess?.CanViewCityReportsTable ? (
+              {userAnnualReportAccess?.CanViewCityReportsTable 
+              && userAnnualReportAccess?.CanViewRegionReportsTable == false ? (
                   <Menu.Item icon={<FileTextOutlined />} key="annualreportcity">
                     <a
                       href="/annualreport/table/city"
@@ -341,10 +327,10 @@ const PrivateLayout = ({ children }: any) => {
                         history.push("/annualreport/table/city");
                       }}
                     >
-                      Річні звіти станиць
+                      Річні звіти
                     </a>
                   </Menu.Item>
-                ) : null}
+                    ) : null} 
 
                 <SubMenu
                   key="sub2.1"
@@ -381,7 +367,8 @@ const PrivateLayout = ({ children }: any) => {
                   </Menu.Item>
                 </SubMenu>
               </SubMenu>
-            ) : userAnnualReportAccess?.CanViewClubReportsTable ? (
+            ) 
+            : userAnnualReportAccess?.CanViewClubReportsTable ? (
               <Menu.Item icon={<FileTextOutlined />} key="annualreporthovel">
                 <a
                   href="/annualreport/table/hovel"
@@ -389,12 +376,11 @@ const PrivateLayout = ({ children }: any) => {
                     e.preventDefault();
                     setCollapsed(true);
                     history.push("/annualreport/table/hovel");
-                  }}
-                >
-                  Річні звіти куренів
+                  }}>
+                  Річні звіти
                 </a>
               </Menu.Item>
-            ) : null}
+            ) : null} 
 
             {userAccesses?.aboutBase ? (
               <Menu.Item key="aboutBase">

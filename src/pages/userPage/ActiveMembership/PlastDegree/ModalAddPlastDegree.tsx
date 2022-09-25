@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import moment from "moment";
 import activeMembershipApi, {
   PlastDegree,
   UserPlastDegree,
 } from "../../../../api/activeMembershipApi";
 import FormAddPlastDegree from "./FormAddPlastDegree";
-import { LoadingOutlined } from "@ant-design/icons";
 import userApi from "../../../../api/UserApi";
 
 type ModalAddPlastDegreeProps = {
@@ -32,16 +33,12 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
     setCancel(true);
   };
 
-  async function getAge() {
+  function getAge() {
     const userBirthday = userAllData.current.user.birthday;
     if (userBirthday === "0001-01-01T00:00:00" || undefined) {
       return "?";
     } else {
-      const birthday = new Date(userBirthday);
-      const today = new Date();
-      const distance = today.getTime() - birthday.getTime();
-      const daysOld = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const yearsOld = Number((daysOld / 365).toFixed(0));
+      const yearsOld = moment().diff(moment(userBirthday), 'years');
       return yearsOld;
     }
   };
@@ -52,7 +49,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
     const userData = (await userApi.getById(props.userId)).data;
     userAllData.current = userData;
     setFullName(userData.user.firstName + " " + userData.user.lastName);
-    setAge(await getAge());
+    setAge(getAge());
     setIsUserDataLoaded(true);
   };
 

@@ -32,6 +32,7 @@ import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import SectorAdminTypes from "./SectorAdminTypes";
 
 const { confirm } = Modal;
 
@@ -52,12 +53,18 @@ const AddSectorAdminForm = (props: any) => {
   };
 
   const addSectorAdmin = async (admin: SectorAdmin) => {
-    await addAdministrator(admin.sectorId, admin);
+    const { data: newAdministrator } = await addAdministrator(admin.sectorId, admin);
     if (admin.adminType.adminTypeName == Roles.GoverningBodySectorHead) {
       setSectorHead(admin);
     }
-    setUsers(users.filter((x) => x.id !== admin.userId));
-    notificationLogic("success", "Користувач успішно доданий в провід");
+
+    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
+      notificationLogic("success", "Користувач успішно доданий в провід");
+      setUsers(users.filter((x) => x.id !== admin.userId));
+      setAdmins((old: SectorAdmin[]) => [...old, newAdministrator]);
+    } else {
+      notificationLogic("info", "Колишні діловодства напряму були змінені");
+    }
     form.resetFields();
     await NotificationBoxApi.createNotifications(
       [admin.userId],
@@ -93,14 +100,14 @@ const AddSectorAdminForm = (props: any) => {
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-            existingAdmin.endDate === undefined
+              existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (newAdmin.id === 0) {
           addSectorAdmin(newAdmin);
@@ -145,7 +152,6 @@ const AddSectorAdminForm = (props: any) => {
           showConfirm(newAdmin, existingAdmin);
         } else {
           addSectorAdmin(newAdmin);
-          setAdmins((old: SectorAdmin[]) => [...old, newAdmin]);
         }
       } finally {
         onAdd();
@@ -242,12 +248,11 @@ const AddSectorAdminForm = (props: any) => {
       >
         <AutoComplete
           options={[
-            { value: Roles.GoverningBodySectorHead },
-            { value: "Голова КПР" },
-            { value: "Секретар КПР" },
-            { value: "Член КПР з питань організаційного розвитку" },
-            { value: "Член КПР з соціального напрямку" },
-            { value: "Член КПР відповідальний за зовнішні зв'язки" },
+            { value: SectorAdminTypes.Head },
+            { value: SectorAdminTypes.Secretar },
+            { value: SectorAdminTypes.Progress },
+            { value: SectorAdminTypes.Social },
+            { value: SectorAdminTypes.Сommunication },
           ]}
           placeholder={"Тип адміністрування"}
         />
@@ -305,8 +310,8 @@ const AddSectorAdminForm = (props: any) => {
           props.admin === undefined
             ? undefined
             : props.admin.endDate === null
-            ? undefined
-            : moment.utc(props.admin.endDate).local()
+              ? undefined
+              : moment.utc(props.admin.endDate).local()
         }
       >
         <DatePicker

@@ -147,10 +147,6 @@ const GoverningBodyAdministration = () => {
 
   useEffect(() => {
     getAdministration();
-  }, []);
-
-  useEffect(() => {
-    getAdministration();
   }, [updated]);
 
   return (

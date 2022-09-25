@@ -129,8 +129,15 @@ const CityAdministration = () => {
   };
 
   const onAdd = async (newAdmin: CityAdmin = new CityAdmin()) => {
-    const index = administration.findIndex((a) => a.id === admin.id);
-    administration[index] = newAdmin;
+    const previousAdmin = administration.find(a => a.id === admin.id)!; 
+    const adminIdx = administration.findIndex(a => a.id === admin.id);
+    administration[adminIdx] = newAdmin;
+    if (previousAdmin.adminType.adminTypeName !== newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`
+      );
+    }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`
@@ -142,6 +149,10 @@ const CityAdministration = () => {
   useEffect(() => {
     fetchData();
   }, [reload]);
+
+  const canSeeProfiles =
+    activeUserRoles.includes(Roles.Supporter) ||
+    activeUserRoles.includes(Roles.PlastMember);
 
   return (
     <Layout.Content>
@@ -213,17 +224,17 @@ const CityAdministration = () => {
           Назад
         </Button>
       </div>
-      {userCityAccesses["EditCity"] ? (
-        <AddAdministratorModal
-          admin={admin}
-          setAdmin={setAdmin}
-          visibleModal={visibleModal}
-          setVisibleModal={setVisibleModal}
-          cityId={+id}
-          cityName={cityName}
-          onAdd={onAdd}
-        ></AddAdministratorModal>
-      ) : null}
+      
+      <AddAdministratorModal
+        admin={admin}
+        setAdmin={setAdmin}
+        visibleModal={visibleModal}
+        setVisibleModal={setVisibleModal}
+        cityId={+id}
+        cityName={cityName}
+        onAdd={onAdd}
+      ></AddAdministratorModal>
+
     </Layout.Content>
   );
 };

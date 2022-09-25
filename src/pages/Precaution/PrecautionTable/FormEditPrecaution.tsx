@@ -1,20 +1,20 @@
-import React, { useEffect } from "react";
-import { Form, Input, Button, Select, DatePicker, Row, Col } from "antd";
-import precautionApi from "../../../api/precautionApi";
-import formclasses from "./Form.module.css";
-import {
-  emptyInput,
-  maxNumber,
-} from "../../../components/Notifications/Messages";
+import { Button, Col, DatePicker, Form, Input, Row, Select } from "antd";
 import moment from "moment";
 import "moment/locale/uk";
+import React, { useEffect } from "react";
+import { createHook } from "react-sweet-state";
+import precautionApi from "../../../api/precautionApi";
+import {
+  emptyInput,
+  maxNumber
+} from "../../../components/Notifications/Messages";
 import {
   descriptionValidation,
-  getOnlyNums,
+  getOnlyNums
 } from "../../../models/GllobalValidations/DescriptionValidation";
-import { createHook } from "react-sweet-state";
 import PrecautionStore from "../../../stores/StorePrecaution";
 import { userPrecautionStatuses } from "../Interfaces/UserPrecautionStatus";
+import formclasses from "./Form.module.css";
 moment.locale("uk-ua");
 
 const FormEditPrecaution = () => {
@@ -44,12 +44,30 @@ const FormEditPrecaution = () => {
     return current && current > moment();
   };
 
+  const existingNumberValidator = async (_: object, value: number) => {
+    if (value > 0) {
+      if (
+        value == state.userPrecaution.number ||
+        (await precautionApi
+          .checkNumberExisting(value)
+          .then((response) => response.data === false))
+      ) {
+        Promise.resolve();
+      } else {
+        Promise.reject("Цей номер уже зайнятий");
+      }
+    }
+    Promise.reject();
+  };
+
   return (
     <div>
       {!state.editModalLoading && (
         <Form
           name="basic"
-          onFinish={(editUserPrecaution) => actions.editModalHandleFinish(editUserPrecaution, form)}
+          onFinish={(editUserPrecaution) =>
+            actions.editModalHandleFinish(editUserPrecaution, form)
+          }
           form={form}
           id="editArea"
           style={{ position: "relative" }}
@@ -74,15 +92,7 @@ const FormEditPrecaution = () => {
                         : Promise.resolve(),
                   },
                   {
-                    validator: async (_: object, value: number) =>
-                      value && !isNaN(value) && value > 0
-                        ? value == state.userPrecaution.number ||
-                          (await precautionApi
-                            .checkNumberExisting(value)
-                            .then((response) => response.data === false))
-                          ? Promise.resolve()
-                          : Promise.reject("Цей номер уже зайнятий")
-                        : Promise.reject(),
+                    validator: existingNumberValidator,
                   },
                   {
                     validator: async (_: object, value: number) =>
@@ -166,7 +176,12 @@ const FormEditPrecaution = () => {
                       style={backgroundColor(user)}
                       disabled={!user.isAvailable}
                     >
-                      {user.firstName + " " + user.lastName + " (" + user.email + ")"}
+                      {user.firstName +
+                        " " +
+                        user.lastName +
+                        " (" +
+                        user.email +
+                        ")"}
                     </Select.Option>
                   ))}
                 </Select>
@@ -259,13 +274,11 @@ const FormEditPrecaution = () => {
                   className={formclasses.selectField}
                   getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
-                  {
-                    userPrecautionStatuses.map(([id, text]) => (
-                      <Select.Option key={id} value={id}>
-                        {text}
-                      </Select.Option>
-                    ))
-                  }
+                  {userPrecautionStatuses.map(([id, text]) => (
+                    <Select.Option key={id} value={id}>
+                      {text}
+                    </Select.Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>

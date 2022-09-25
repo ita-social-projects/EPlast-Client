@@ -1,9 +1,8 @@
-import api from "./api";
-import UserPrecaution from "../pages/Precaution/Interfaces/UserPrecaution";
-import Precaution from "../pages/Precaution/Interfaces/Precaution";
 import PrecautionTableSettings from "../models/Precaution/PrecautionTableSettings";
-import UserPrecautionEdit from "../pages/Precaution/Interfaces/UserPrecautionEdit";
+import Precaution from "../pages/Precaution/Interfaces/Precaution";
 import UserPrecautionAdd from "../pages/Precaution/Interfaces/UserPrecautionAdd";
+import UserPrecautionEdit from "../pages/Precaution/Interfaces/UserPrecautionEdit";
+import api from "./api";
 
 const getUserPrecautionById = async (id: number) => {
   return await api.get(`Precaution/UserPrecaution/${id}`, id);
@@ -56,10 +55,7 @@ const deleteUserPrecaution = async (id: number) => {
   return await api.remove(`Precaution/UserPrecaution/Delete/${id}`, id);
 };
 const addUserPrecaution = async (data: UserPrecautionAdd) => {
-  return await api.post(
-    `Precaution/UserPrecaution/Create`,
-    data
-  );
+  return await api.post(`Precaution/UserPrecaution/Create`, data);
 };
 const addPrecaution = async (data: Precaution) => {
   return await api.post(`Precaution/Create`, data);
@@ -75,7 +71,7 @@ const checkNumberExisting = async (number: number) => {
 };
 
 const getUsersWithoutPrecautions = async () => {
-  return (await api.get(`Precaution/usersWithoutPrecautions`)).data;
+  return await api.get(`Precaution/usersWithoutPrecautions`);
 };
 const checkUserPrecautionsType = async (userId: string, type: string) => {
   return await api.get(`Precaution/checkUserPrecautionsType/${userId}`, {

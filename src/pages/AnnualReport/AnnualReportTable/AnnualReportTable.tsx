@@ -377,6 +377,16 @@ const AnnualReportTable = () => {
     <Layout.Content className="annualreport-table">
       <Title level={2}>Річні звіти</Title>
       <Row gutter={[6, 12]} className="AnnualReportTableButtonsSearchField">
+        <Col>
+          {userAnnualReportAccess?.CanSubmitRegionReport ? (
+            <Button
+              type="primary"
+              onClick={() => setShowRegionAnnualReports(true)}
+            >
+              Подати річний звіт округи
+            </Button>
+          ) : null}
+        </Col>
         <Col className="AnnualReportTableButtons">
           {userAnnualReportAccess?.CanSubmitCityReport ? (
             <Button type="primary" onClick={() => setShowCitySelectModal(true)}>
@@ -388,16 +398,6 @@ const AnnualReportTable = () => {
           {userAnnualReportAccess?.CanSubmitClubReport ? (
             <Button type="primary" onClick={() => setShowClubSelectModal(true)}>
               Подати річний звіт куреня
-            </Button>
-          ) : null}
-        </Col>
-        <Col>
-          {userAnnualReportAccess?.CanSubmitRegionReport ? (
-            <Button
-              type="primary"
-              onClick={() => setShowRegionAnnualReports(true)}
-            >
-              Подати річний звіт округи
             </Button>
           ) : null}
         </Col>

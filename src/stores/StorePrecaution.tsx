@@ -1,18 +1,18 @@
-import { createStore, Action } from 'react-sweet-state';
-import notificationLogic from "../components/Notifications/Notification";
-import NotificationBoxApi from "../api/NotificationBoxApi";
-import { dataCantBeFetched, failCreateAction, successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../components/Notifications/Messages';
-import PrecautionTableSettings from '../models/Precaution/PrecautionTableSettings';
-import precautionApi from "../api/precautionApi";
-import UserPrecaution from '../../src/pages/Precaution/Interfaces/UserPrecaution';
-import SuggestedUser from '../../src/pages/Precaution/Interfaces/SuggestedUser';
-import UserPrecautionsTableInfo from '../../src/pages/Precaution/Interfaces/UserPrecauctionsTableInfo'
 import jwt from "jwt-decode";
-import UserPrecautionTableItem from '../../src/pages/Precaution/Interfaces/UserPrecautionTableItem'
-import AuthLocalStorage from '../AuthLocalStorage';
-import deleteConfirm from "../../src/pages/Precaution/PrecautionTable/DeleteConfirm";
+import { Action, createStore } from 'react-sweet-state';
 import User from "../../src/models/UserTable/User";
 import Precaution from '../../src/pages/Precaution/Interfaces/Precaution';
+import SuggestedUser from '../../src/pages/Precaution/Interfaces/SuggestedUser';
+import UserPrecautionsTableInfo from '../../src/pages/Precaution/Interfaces/UserPrecauctionsTableInfo';
+import UserPrecaution from '../../src/pages/Precaution/Interfaces/UserPrecaution';
+import UserPrecautionTableItem from '../../src/pages/Precaution/Interfaces/UserPrecautionTableItem';
+import deleteConfirm from "../../src/pages/Precaution/PrecautionTable/DeleteConfirm";
+import NotificationBoxApi from "../api/NotificationBoxApi";
+import precautionApi from "../api/precautionApi";
+import AuthLocalStorage from '../AuthLocalStorage';
+import { failCreateAction, failGetAction, successfulCreateAction, successfulDeleteAction, successfulUpdateAction } from '../components/Notifications/Messages';
+import notificationLogic from "../components/Notifications/Notification";
+import PrecautionTableSettings from '../models/Precaution/PrecautionTableSettings';
 import UserPrecautionEdit from '../pages/Precaution/Interfaces/UserPrecautionEdit';
 import UserPrecautionStatus from '../pages/Precaution/Interfaces/UserPrecautionStatus';
 
@@ -458,7 +458,7 @@ const actions = {
           .catch(() => {
             notificationLogic(
               "error",
-              dataCantBeFetched("пересторог. Спробуйте пізніше")
+              failGetAction("перестороги. Спробуйте пізніше")
             );
           });
 
@@ -476,7 +476,7 @@ const actions = {
           .catch(() => {
             notificationLogic(
               "error",
-              dataCantBeFetched("користувачів. Спробуйте пізніше")
+              failGetAction("користувачів. Спробуйте пізніше")
             );
           });
       },
@@ -629,7 +629,7 @@ const actions = {
           .catch(() => {
             notificationLogic(
               "error",
-              dataCantBeFetched("пересторог. Спробуйте пізніше")
+              failGetAction("перестороги. Спробуйте пізніше")
             );
           });
 
@@ -647,7 +647,7 @@ const actions = {
           .catch(() => {
             notificationLogic(
               "error",
-              dataCantBeFetched("користувачів. Спробуйте пізніше")
+              failGetAction("користувачів. Спробуйте пізніше")
             );
           });
       },

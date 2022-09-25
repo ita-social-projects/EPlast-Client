@@ -1,5 +1,5 @@
 import { Button, Col, Form, Modal, Row, Upload } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import notificationLogic from "../../../../components/Notifications/Notification";
 import { addAchievementDocuments } from "../../../../api/blankApi";
@@ -13,16 +13,14 @@ import {
   fileIsTooBig,
   successfulDeleteAction,
 } from "../../../../components/Notifications/Messages";
-import { ChangeStatusCourseByUserId } from "../../../../api/courseApi";
 
 const { Dragger } = Upload;
 
 interface Props {
   visibleModal: boolean;
-  showModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  setshowModal: (showModal: boolean) => void;
   userId: string;
+  courseId:number | null;
 }
 const AddAchievementsModal = (props: Props) => {
   const [form] = Form.useForm();
@@ -40,6 +38,7 @@ const AddAchievementsModal = (props: Props) => {
             blobName: base64,
             fileName: info.file.name,
             userId: props.userId,
+            courseId: props.courseId
           };
           files.push(newDocument);
           setFiles([...files]);
@@ -54,7 +53,7 @@ const AddAchievementsModal = (props: Props) => {
   };
 
   const checkFile = (fileName: string, fileSize: number): boolean => {
-    const extension = fileName.split(".").reverse()[0].toLowerCase();
+    const extension = fileName.split(".").pop()!;
     const isCorrectExtension =
       extension.indexOf("pdf") !== -1 ||
       extension.indexOf("jpg") !== -1 ||
@@ -80,16 +79,13 @@ const AddAchievementsModal = (props: Props) => {
   const handleSubmit = async () => {
     setButtonLoading(true);
     setLoading(true);
-    await addAchievementDocuments(props.userId, files);
+    await addAchievementDocuments(files);
     props.setVisibleModal(false);
-    props.setshowModal(true);
-    await ChangeStatusCourseByUserId(props.userId);
     form.resetFields();
     removeFile();
     setDisabled(true);
     setLoading(false);
     setButtonLoading(false);
-
   };
 
   const removeFile = () => {

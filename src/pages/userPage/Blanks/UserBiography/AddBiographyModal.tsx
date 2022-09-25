@@ -87,6 +87,7 @@ const AddBiographyModal = (props: Props) => {
       blobName: props.document.blobName,
       fileName: fileName,
       userId: props.userId,
+      courseId: 0
     };
 
     await addDocument(props.userId, newDocument);

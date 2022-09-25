@@ -23,7 +23,7 @@ export const incorrectSlogan =
 
 export const incorrectAppeal =
   wrongFormat +
-  ". Заява не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
+  ". Заява не повинна починатись, закінчуватись пробілом або спецсимволом чи містити більше одного пробілу або спецсимволу поспіль! Доступні спецсимволи: . , ' : - ";
 
 export const incorrectName =
   wrongFormat +
@@ -73,6 +73,10 @@ export const minNumber = (minLen: number) => {
 
 export const inputOnlyWhiteSpaces = () => {
   return `Поле не може містити лише порожні символи`;
+};
+
+export const inputWhiteSpacesAtTheBeginning = (name: string) => {
+  return `${name} не може починатися з порожнього символу`;
 };
 
 export const tryAgain = "Щось пішло не так. Спробуйте ще раз.";
@@ -158,6 +162,10 @@ export const failArchiveAction = (name: string) => {
   return `Не вдалось архівувати ${name} `;
 };
 
+export const failGetAction = (name: string) => {
+  return `Не вдалося завантажити ${name}`;
+};
+
 export const failApproveAction = () => {
   return `Будь ласка, зачекайте`;
 };
@@ -220,6 +228,6 @@ export const fileIsTooBig = (maxSize: number) => {
   return `Розмір файлу перевищує ${maxSize} Мб`;
 };
 
-export const dataCantBeFetched = (name: string) => {
-  return `Виникла помилка під час завантаження ${name}`;
+export const failToSendNotification = (name: string) => {
+  return `Сталася помилка при відправці повідомлення ${name}, спробуйте пізніше`;
 };

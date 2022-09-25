@@ -91,7 +91,7 @@ const GoverningBody = () => {
   const [adminsPhotosLoading, setAdminsPhotosLoading] = useState<boolean>(
     false
   );
-  const [visible, setVisible] = useState<boolean>(false);
+  const [visibleCreate, setCreateVisible] = useState<boolean>(false);
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -321,7 +321,7 @@ const GoverningBody = () => {
   };
 
   const handleAdminAdd = () => {
-    setVisible(false);
+    setCreateVisible(false);
   };
 
   useEffect(() => {
@@ -518,7 +518,7 @@ const GoverningBody = () => {
                 }
               >
                 {announcementsCount !== 0 &&
-                userAccesses["ViewAnnouncements"] ? (
+                  userAccesses["ViewAnnouncements"] ? (
                   <Badge
                     count={announcementsCount}
                     style={{ backgroundColor: "#3c5438" }}
@@ -658,7 +658,7 @@ const GoverningBody = () => {
                 <PlusSquareFilled
                   type="primary"
                   className="addReportIcon"
-                  onClick={() => setVisible(true)}
+                  onClick={() => setCreateVisible(true)}
                 />
               ) : null}
               <Button
@@ -765,8 +765,8 @@ const GoverningBody = () => {
                 onClick={() =>
                   userAccesses["ViewDocument"]
                     ? history.push(
-                        `/governingBodies/documents/${governingBody.id}`
-                      )
+                      `/governingBodies/documents/${governingBody.id}`
+                    )
                     : undefined
                 }
               >
@@ -839,13 +839,14 @@ const GoverningBody = () => {
         onAdd={onAnnouncementAdd}
       />
       <Modal
+        width="750px"
         title="Додати діловода"
-        visible={visible}
-        onCancel={() => setVisible(false)}
+        visible={visibleCreate}
+        onCancel={() => setCreateVisible(false)}
         footer={null}
       >
         <AddGoverningBodiesSecretaryForm
-          visibleModal={visible}
+          visibleModal={visibleCreate}
           onAdd={handleAdminAdd}
           admins={admins}
           setAdmins={setAdmins}

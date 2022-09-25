@@ -96,14 +96,14 @@ const AddAdministratorModal = (props: Props) => {
           є Головою Станиці, час правління закінчується{" "}
           <b>
             {moment.utc(head?.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(head?.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -118,27 +118,24 @@ const AddAdministratorModal = (props: Props) => {
           має роль "{existingAdmin.adminType.adminTypeName}", час правління
           {" "}
           <b>
-          {moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+            {moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY") ===
+              "Invalid date"
               ? "ще не скоро"
-              : `${moment.utc(existingAdmin?.startDate).local().format("DD.MM.YYYY") }  -  ${ 
-              moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY")}`
-              }
+              : `${moment.utc(existingAdmin?.startDate).local().format("DD.MM.YYYY")}  -  ${moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY")}`
+            }
           </b>.<br />
           {" "}
           {
             moment.utc(existingAdmin?.endDate).local().format("DD.MM.YYYY") !==
-            moment.utc(newAdmin.endDate).local().format("DD.MM.YYYY") || 
-            moment.utc(existingAdmin?.startDate).local().format("DD.MM.YYYY") !==
-            moment.utc(newAdmin.startDate).local().format("DD.MM.YYYY") 
-              ? `Чи дійсно ви хочете змінити дату правління на  ${ moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")}`
+              moment.utc(newAdmin.endDate).local().format("DD.MM.YYYY") ||
+              moment.utc(existingAdmin?.startDate).local().format("DD.MM.YYYY") !==
+              moment.utc(newAdmin.startDate).local().format("DD.MM.YYYY")
+              ? `Чи дійсно ви хочете змінити дату правління на  ${moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")}`
               : ""
           }
-          
-          
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         if (newAdmin.id === 0) {
           addCityAdmin(newAdmin);
@@ -160,14 +157,14 @@ const AddAdministratorModal = (props: Props) => {
           вже має таку роль, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-            "Invalid date"
+              "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -182,7 +179,7 @@ const AddAdministratorModal = (props: Props) => {
           не є членом Пласту.
         </div>
       ),
-      onOk() {},
+      onOk() { },
     });
   };
 
@@ -210,7 +207,7 @@ const AddAdministratorModal = (props: Props) => {
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
-    let admin: CityAdmin = {
+    const admin: CityAdmin = {
       id: props.admin.id,
       adminType: {
         ...new AdminType(),
@@ -234,10 +231,10 @@ const AddAdministratorModal = (props: Props) => {
       const existingAdmin = (admins as CityAdmin[]).find(
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
-      if (head?.userId === admin.userId) {
+      if (head?.userId === admin.user.id) {
         showDisableModal(head);
       } else if (
-        existingAdmin?.userId === admin.userId &&
+        existingAdmin?.userId === admin.user.id &&
         existingAdmin?.endDate === admin.endDate
       ) {
         showDisable(admin);
@@ -247,7 +244,7 @@ const AddAdministratorModal = (props: Props) => {
         admin.adminType.adminTypeName === Roles.CityHead ||
         admin.adminType.adminTypeName === Roles.CityHeadDeputy
       ) {
-        const check = await getCheckPlastMember(admin.userId);
+        const check = await getCheckPlastMember(admin.user.id);
         if (check.data) {
           await checkAdminId(admin);
         } else {

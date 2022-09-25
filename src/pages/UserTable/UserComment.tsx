@@ -1,7 +1,7 @@
 import { CheckOutlined, CheckSquareFilled, DeleteFilled, EditFilled, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Input, Modal, Tooltip } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserApi from "../../api/UserApi";
 import "./UserComment.less";
 interface CommentProperties {
@@ -15,6 +15,10 @@ const UserComment = (props: CommentProperties) => {
     const [isLoading, setLoading] = useState(false);
     const [isEditing, setEditing] = useState(false);
 
+    useEffect(() => {
+        setText(props.text);
+    }, [props.text]);
+    
     const showError = (message: string) => {
         Modal.error({
           title: "Помилка!",

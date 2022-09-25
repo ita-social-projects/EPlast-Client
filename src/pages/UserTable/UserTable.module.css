@@ -25,6 +25,7 @@
 
 .card {
   width: 100%;
+  position: relative;
 }
 
 @media (max-width: 765px){
@@ -69,6 +70,10 @@
   max-width: 100%;  
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+#yellowTag {
+  color: rgb(135, 164, 17);
 }
 
 .referalTag {

@@ -1,7 +1,8 @@
-import api from "./api";
-import UserDistinction from "../pages/Distinction/Interfaces/UserDistinction";
-import Distinction from "../pages/Distinction/Interfaces/Distinction";
+import Distinction from "../models/Distinction/Distinction";
 import DistinctionTableSettings from "../models/Distinction/DistinctionTableSettings";
+import UserDistinction from "../models/Distinction/UserDistinction";
+import UserDistinctionEdit from "../pages/Distinction/Interfaces/UserDistinctionEdit";
+import api from "./api";
 
 const getUserDistinctionAccess = async (userId: string) => {
   return await api
@@ -67,7 +68,7 @@ const addUserDistinction = async (data: UserDistinction) => {
 const addDistinction = async (data: Distinction) => {
   return await api.post(`Distinction/Create`, data);
 };
-const editUserDistinction = async (data: UserDistinction) => {
+const editUserDistinction = async (data: UserDistinctionEdit) => {
   return await api.put(`Distinction/UserDistinction/Edit/${data.id}`, data);
 };
 const editDistinction = async (data: Distinction) => {
