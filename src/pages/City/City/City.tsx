@@ -137,21 +137,7 @@ const City = () => {
 
   const addMember = async () => {
     const follower = await addFollower(+id);
-
-    if (city.head !== null) {
-      await createNotification(
-        city.head.userId,
-        `Новий прихильник ${follower.data.user.firstName} ${follower.data.user.lastName} приєднався до вашої станиці`,
-        true
-      );
-    }
-    if (city.headDeputy !== null) {
-      await createNotification(
-        city.headDeputy.userId,
-        `Новий прихильник ${follower.data.user.firstName} ${follower.data.user.lastName} приєднався до вашої станиці`,
-        true
-      );
-    }
+    
     follower.data.user.imagePath = (
       await userApi.getImage(follower.data.user.imagePath)
     ).data;

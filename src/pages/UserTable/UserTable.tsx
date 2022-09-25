@@ -202,6 +202,7 @@ const UsersTable = () => {
       tab: (queryParamsArray.tab as string) ?? undefined,
       city: parseInt(queryParamsArray.city as string) ?? undefined,
       club: parseInt(queryParamsArray.club as string) ?? undefined,
+      search: (queryParamsArray.search as string) ?? undefined,
     };
 
     // doing this to avoid exception on getClubFromQuery
@@ -211,6 +212,9 @@ const UsersTable = () => {
 
     queryParams.current = params;
     getTabFromQuery();
+    if (queryParams.current.search) {
+      handleSearch(queryParams.current.search);
+    }
   };
 
   const getTabFromQuery = () => {
@@ -367,6 +371,8 @@ const UsersTable = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.toLowerCase() === "") {
       setSearchData("");
+    } else {
+      setSearchData(e.target.value);
     }
   };
 
@@ -608,6 +614,7 @@ const UsersTable = () => {
           <Search
             placeholder="Пошук"
             allowClear
+            value={searchData}
             enterButton
             maxLength={searchFieldMaxLength}
             onChange={handleSearchChange}
