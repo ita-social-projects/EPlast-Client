@@ -139,11 +139,6 @@ const CityAdministration = () => {
     setReload(!reload);
   };
 
-  const canSeeProfiles = 
-    userCityAccesses["EditCity"] ||
-    activeUserRoles.includes(Roles.Supporter) ||
-    activeUserRoles.includes(Roles.PlastMember);
-
   useEffect(() => {
     fetchData();
   }, [reload]);
