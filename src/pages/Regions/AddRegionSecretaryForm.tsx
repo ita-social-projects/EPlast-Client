@@ -94,9 +94,11 @@ const AddNewSecretaryForm = (props: any) => {
     <Form
       className={classes.form}
       name="basic"
-      onFinish={(values) => {
-        handleSubmit(values);
+      onFinish={async (values) => {
         setLoading(true);
+        await handleSubmit(values);
+        form.resetFields();
+        setLoading(false);
       }}
       form={form}
       labelCol={{ span: 8 }}

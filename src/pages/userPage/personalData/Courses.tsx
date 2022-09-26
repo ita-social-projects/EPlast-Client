@@ -63,7 +63,7 @@ export const Courses: React.FC = () => {
       </div>
     )
     : isDataLoaded ? (
-      <div className={classes.wrapper2}>
+      <div className={classes.wrapper6} style={{margin: 0}}>
         {
           courses.map(sectItem =>
             (sectItem.isFinishedByUser === false && 

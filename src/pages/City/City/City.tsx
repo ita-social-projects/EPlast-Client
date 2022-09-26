@@ -73,7 +73,6 @@ import "moment/locale/uk";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import ModalAddPlastDegree from "../../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
-import { boolean } from "yup";
 
 const City = () => {
   const history = useHistory();
@@ -99,22 +98,18 @@ const City = () => {
   const [followersCount, setFollowersCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [cityLogoLoading, setCityLogoLoading] = useState<boolean>(false);
-  const [visibleAddModal, setvisibleAddModal] = useState<boolean>(false);
+  const [visibleAddModal, setVisibleAddModal] = useState<boolean>(false);
   const [document, setDocument] = useState<CityDocument>(new CityDocument());
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
   const [activeUserCity, setActiveUserCity] = useState<string>();
-  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(
-    false
-  );
-  const [visible, setvisible] = useState<boolean>(false);
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [activeUserID, setActiveUserID] = useState<string>();
   const [selectedFollowerUID, setSelectedFollowerUID] = useState<string>();
-  const [visibleAddModalDegree, setVisibleAddModalDegree] = useState<boolean>(
-    false
-  );
+  const [visibleAddModalDegree, setVisibleAddModalDegree] = useState<boolean>(false);
+
   const documentsToShow = 6;
   const adminsToShow = 6;
   const membersToShow = 9;
@@ -388,7 +383,7 @@ const City = () => {
       notificationLogic("success", "Користувач успішно доданий в провід");
       updateAdmins();
     } else {
-      notificationLogic("info", "Колишні діловодства станиці були змінені")
+      notificationLogic("info", "Колишні діловодства станиці були змінені");
     }
     return newAdministrator;
   };
@@ -541,7 +536,7 @@ const City = () => {
     });
   };
 
-  const handleOk = async (admin: CityAdmin) => {  
+  const handleOk = async (admin: CityAdmin) => {
     if (admin.id === 0) {
       const head = (admins as CityAdmin[]).find(
         (x) => x.adminType.adminTypeName === Roles.CityHead
@@ -598,8 +593,11 @@ const City = () => {
         } else {
           await addCityAdmin(admin);
         }
-      } finally {
-        setvisible(false);
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       if (
@@ -627,7 +625,7 @@ const City = () => {
   };
 
   const handleClose = async () => {
-    setvisibleAddModal(false);
+    setVisibleAddModal(false);
   };
 
   const handleConfirm = async () => {
@@ -1027,7 +1025,7 @@ const City = () => {
                   <PlusSquareFilled
                     type="primary"
                     className="addReportIcon"
-                    onClick={() => setvisibleAddModal(true)}
+                    onClick={() => setVisibleAddModal(true)}
                   />
                 ) : null
               ) : null}

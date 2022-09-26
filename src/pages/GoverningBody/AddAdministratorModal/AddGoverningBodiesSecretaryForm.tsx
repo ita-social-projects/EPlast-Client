@@ -160,8 +160,11 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         } else {
           addGoverningBodyAdmin(newAdmin);
         }
-      } finally {
-        onAdd();
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       editGoverningBodyAdmin(newAdmin);
