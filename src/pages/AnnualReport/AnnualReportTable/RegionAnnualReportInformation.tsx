@@ -17,13 +17,14 @@ import AuthLocalStorage from "../../../AuthLocalStorage";
 import jwt from "jwt-decode";
 import StatusStamp from "../AnnualReportStatus";
 import { Roles } from "../../../models/Roles/Roles";
+import { RegionAnnualReport } from "../../../models/AnnualReport/RegionAnnualReport";
 
 const { Title, Text } = Typography;
 
 const RegionAnnualReportInformation = () => {
   const { annualreportId, year } = useParams();
   const history = useHistory();
-  const [regionAnnualReport, setRegionAnnualReport] = useState(Object);
+  const [regionAnnualReport, setRegionAnnualReport] = useState(new RegionAnnualReport());
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<number>();
   const [isAdmin, setIsAdmin] = useState<boolean>();
@@ -38,7 +39,7 @@ const RegionAnnualReportInformation = () => {
   const fetchRegionReports = async (annualreportId: number, year: number) => {
     setIsLoading(true);
     try {
-      let response = await regionsApi.getReportById(annualreportId, year);
+      const response = await regionsApi.getReportById(annualreportId, year);
       setRegionAnnualReport(response.data);
       setStatus(response.data.status);
     } catch (error) {
@@ -242,10 +243,10 @@ const RegionAnnualReportInformation = () => {
                 </Col>
               </Row>
 
-              <RegionMembersTable
+            <RegionMembersTable
                 regionId={regionAnnualReport.regionId}
                 year={year}
-              />
+              />      
               <Card.Grid className="container">
                 <Title level={4}>Додаткові дані</Title>
                 <Space direction="vertical">
