@@ -1075,7 +1075,9 @@ const City = () => {
                     key={document.id}
                   >
                     <div>
-                      <FileTextOutlined className="documentIcon" />
+                      <Tooltip title={<div style={{textAlign: 'center'}}>{document.cityDocumentType.name}</div>}>
+                        <FileTextOutlined className="documentIcon" />
+                      </Tooltip>
                       <p className="documentText">
                         {document.cityDocumentType.name}
                       </p>
