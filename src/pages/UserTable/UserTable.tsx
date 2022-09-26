@@ -57,7 +57,6 @@ const UsersTable = () => {
   const [regions, setRegions] = useState<any>();
   const [clubs, setClubs] = useState<any>();
   const [degrees, setDegrees] = useState<any>();
-  const [searchData, setSearchData] = useState<string>("");
   const [sortKey, setSortKey] = useState<number>(1);
   const [filter, setFilter] = useState<any[]>([]);
   const [form] = Form.useForm();
@@ -105,13 +104,13 @@ const UsersTable = () => {
     page,
     pageSize,
     updatedUser,
-    searchData,
     sortKey,
     filter,
     userArhive,
     currentTabName,
     clearFilter,
     isQueryLoaded,
+    state.searchVal
   ]);
 
   const searchFieldMaxLength: number = 150;
@@ -201,6 +200,7 @@ const UsersTable = () => {
       tab: (queryParamsArray.tab as string) ?? undefined,
       city: parseInt(queryParamsArray.city as string) ?? undefined,
       club: parseInt(queryParamsArray.club as string) ?? undefined,
+      search: (queryParamsArray.search as string) ?? undefined,
     };
 
     // doing this to avoid exception on getClubFromQuery
@@ -209,6 +209,9 @@ const UsersTable = () => {
     });
 
     queryParams.current = params;
+    if(queryParams.current.search !== undefined){
+      actions.setSearchVal(queryParams.current.search);
+    }
     getTabFromQuery();
   };
 
@@ -342,7 +345,7 @@ const UsersTable = () => {
         Tab: currentTabName,
         SortKey: sortKey,
         FilterRoles: filter,
-        SearchData: searchData,
+        SearchData: state.searchVal,
       });
 
       setUsers(response.data.users);
@@ -356,12 +359,12 @@ const UsersTable = () => {
 
   const handleSearch = (e: any) => {
     setPage(1);
-    setSearchData(e);
+    actions.setSearchVal(e);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.toLowerCase() === "") {
-      setSearchData("");
+      actions.setSearchVal("");
     }
   };
 
@@ -383,7 +386,6 @@ const UsersTable = () => {
     } else if (e.id.startsWith("club")) {
       actions.addDynamicClubs(parseInt(e.value.split(" ")[1]));
     }
-    console.log(state.dynamicCities);
   };
 
   const ondeSelect = (selectedKeys: any, e: any) => {
@@ -607,7 +609,7 @@ const UsersTable = () => {
           }}
         >
           <UserRenewalTable
-            searchQuery={searchData}
+            searchQuery={state.searchVal}
             hidden={currentTabName !== "renewals"}
             setTotal={setTotal}
             relativePosition={[

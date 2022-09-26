@@ -4,7 +4,8 @@ type UserTableStoreState = {
     dynamicCities: number[],
     dynamicClubs: number[],
     dynamicDegrees: number[],
-    dynamicRegions: number[]
+    dynamicRegions: number[],
+    searchVal: string
 };
 
 type UserTableStoreActions = typeof actions;
@@ -13,7 +14,8 @@ const initialState: UserTableStoreState = {
     dynamicCities: [],
     dynamicClubs: [],
     dynamicDegrees: [],
-    dynamicRegions: []
+    dynamicRegions: [],
+    searchVal: ""
 }
 
 const actions = {
@@ -85,12 +87,18 @@ const actions = {
             dynamicRegions: regions
         })
     },
+    setSearchVal: (searchValue : string):Action<UserTableStoreState> => ({setState, getState}) =>{
+        setState({
+            searchVal: searchValue
+        })
+    },
     clearState: (): Action<UserTableStoreState> => async ({setState, getState}) =>{
         setState({
             dynamicCities: [],
             dynamicClubs: [],
             dynamicDegrees: [],
-            dynamicRegions: []
+            dynamicRegions: [],
+            searchVal: ""
         })
     }
 }
