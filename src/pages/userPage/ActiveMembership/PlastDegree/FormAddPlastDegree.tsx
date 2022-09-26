@@ -107,7 +107,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
       await NotificationBoxApi.createNotifications(
         [props.userId],
-        `Вам було надано ступінь "${degreeName}" в `,
+        `Вам було надано ступінь: '${degreeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${props.userId}`,
         `Дійсному членстві`
