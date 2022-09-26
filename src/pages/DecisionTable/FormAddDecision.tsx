@@ -100,6 +100,10 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props) => {
     notificationLogic("success", fileIsUpload());
   }
 
+  const disabledDate = (current: any) => {
+    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+  };
+
   useEffect(() => {
     decisionsApi.getOnCreate()
       .then(response => setData(response));
@@ -214,6 +218,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props) => {
         ]}
       >
         <DatePicker
+          disabledDate={disabledDate}
           format="DD.MM.YYYY"
         />
       </Form.Item>

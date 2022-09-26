@@ -41,7 +41,7 @@ const FormEditPrecaution = () => {
   };
 
   const isDisabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
   };
 
   const existingNumberValidator = async (_: object, value: number) => {

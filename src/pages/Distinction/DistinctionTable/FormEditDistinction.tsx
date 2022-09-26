@@ -57,7 +57,7 @@ const FormEditDistinction = () => {
   };
 
   function disabledDate(currentDate: any) {
-    return currentDate && currentDate < moment("01-01-1900", "DD-MM-YYYY");
+    return currentDate && !(currentDate.isAfter("01.01.1900", "DD-MM-YYYY") && currentDate.isSameOrBefore(moment.utc()));;
   }
 
   const handleFinish = async (values: any) => {

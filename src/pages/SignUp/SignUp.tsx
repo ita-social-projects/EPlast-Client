@@ -221,7 +221,9 @@ const SignUp: React.FC = () => {
     }
   };
 
-
+  const disabledDate = (current: any) => {
+    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+  };
 
   return (
     <div className={styles.mainContainerSignUp} >
@@ -258,9 +260,7 @@ const SignUp: React.FC = () => {
             placeholder="Оберіть дату народження"
             className={styles.MyDatePicker}
             format="DD.MM.YYYY"
-            disabledDate={current => {
-              return current && current > moment();
-            }}
+            disabledDate={disabledDate}
           />
         </Form.Item>
 

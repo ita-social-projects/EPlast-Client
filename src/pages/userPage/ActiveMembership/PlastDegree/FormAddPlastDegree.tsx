@@ -152,7 +152,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     if (!props.currentUserDegree) return current > moment();
 
     let previousDegreeStart = moment(props.currentUserDegree.dateStart);
-    return current && current > moment() || (current.isBefore(previousDegreeStart) || undefined);
+    return current &&  (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY")) || 
+      (current.isBefore(previousDegreeStart) || undefined);
   };
 
   const fetchData = async () => {

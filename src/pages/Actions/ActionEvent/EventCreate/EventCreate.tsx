@@ -200,7 +200,7 @@ export default function ({
   }
 
   function disabledDate(current: any) {
-    return current && current < moment().startOf("day");
+    return current && (current < moment().startOf("day") || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
   }
 
   function disabledEndDate(current: any) {

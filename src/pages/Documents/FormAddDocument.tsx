@@ -61,6 +61,10 @@ const checkFile = (fileSize: number, fileName: string): boolean => {
   return isCorrectExtension && isEmptyFile;
 };
 
+const disabledDate = (current: any) => {
+  return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+};
+
 interface FormAddDocumentsProps {
   setVisibleModal: (visibleModal: boolean) => void
   onAdd: () => void
@@ -238,6 +242,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = ({ setVisibleModal, onA
             ]}
           >
             <DatePicker
+              disabledDate={disabledDate}
               format="DD.MM.YYYY"
               className={formclasses.selectField}
               getPopupContainer={() =>

@@ -47,6 +47,10 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
     notificationLogic("success", successfulEditAction("Відзнаку"));
   };
 
+  const disabledDate = (current: any) => {
+    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+  };
+
   useEffect(() => {
     form.resetFields();
   }, [record]);
@@ -74,7 +78,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 },
               ]}
             >
-              <DatePicker className={classes.selectField} format={dateFormat} />
+              <DatePicker disabledDate={disabledDate} className={classes.selectField} format={dateFormat} />
             </Form.Item>
           </Col>
         </Row>

@@ -138,6 +138,10 @@ const AddDocumentModal = (props: Props) => {
     setDisabled(true);
   };
 
+  const disabledDate = (current: any) => {
+    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+  };
+
   const onSearch = (val: any) => {};
 
   useEffect(() => {
@@ -177,7 +181,7 @@ const AddDocumentModal = (props: Props) => {
           </Form.Item>
 
           <Form.Item name="datepicker" label="Дата документу">
-            <DatePicker format="DD.MM.YYYY" className="formSelect" />
+            <DatePicker disabledDate={disabledDate} format="DD.MM.YYYY" className="formSelect" />
           </Form.Item>
         </div>
 

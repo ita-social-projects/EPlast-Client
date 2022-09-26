@@ -57,7 +57,7 @@ const AddNewAdministratorForm = ({
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
   };
 
   const getAdministration = async () => {

@@ -73,6 +73,10 @@ const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any) => {
     });
   };
 
+  const disabledDate = (current: any) => {
+    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+  };
+
   const onUserSelect = async (userId: any) => {
     types.map(async (kt) => {
       await KadraVykhovnykivApi.doesUserHaveStaff(
@@ -263,6 +267,7 @@ const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any) => {
               ]}
             >
               <DatePicker
+                disabledDate={disabledDate}
                 format={dateFormat}
                 className={classes.selectField}
                 getPopupContainer={() =>
