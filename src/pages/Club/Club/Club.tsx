@@ -1109,7 +1109,9 @@ const Club = () => {
                     key={document.id}
                   >
                     <div>
-                      <FileTextOutlined className="documentIcon" />
+                      <Tooltip title={<div style={{textAlign: 'center'}}>{document.clubDocumentType.name}</div>}>
+                        <FileTextOutlined className="documentIcon" />
+                      </Tooltip>
                       <p className="documentText">
                         {document.clubDocumentType.name}
                       </p>
