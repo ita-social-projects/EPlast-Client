@@ -925,8 +925,7 @@ const City = () => {
               {members.length !== 0 ? (
                 members.slice(0, membersToShow).map((member) => (
                   <Col
-                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
-                      }`}
+                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"}`}
                     key={member.id}
                     xs={12}
                     sm={8}
