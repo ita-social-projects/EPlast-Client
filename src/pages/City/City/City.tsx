@@ -994,8 +994,7 @@ const City = () => {
               {admins.length !== 0 ? (
                 admins.slice(0, adminsToShow).map((admin) => (
                   <Col
-                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
-                      }`}
+                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"}`}
                     key={admin.id}
                     xs={12}
                     sm={8}
@@ -1134,8 +1133,7 @@ const City = () => {
               {isActiveCity ? (
                 canJoin ? (
                   <Col
-                    className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
-                      }`}
+                    className="cityMemberItem"
                     xs={12}
                     sm={8}
                     onClick={() => showJoinModal()}
@@ -1158,8 +1156,7 @@ const City = () => {
                   .slice(0, canJoin ? followersToShow : followersToShowOnAdd)
                   .map((followers) => (
                     <Col
-                      className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"
-                        }`}
+                      className={`cityMemberItem ${canSeeOtherProfiles || "notAccess"}`}
                       xs={12}
                       sm={8}
                       key={followers.id}
