@@ -23,6 +23,7 @@ import { Roles } from "../../../models/Roles/Roles";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import SectorAdminTypes from "./SectorAdminTypes";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 const confirm = Modal.confirm;
 
@@ -58,7 +59,7 @@ const EditAdministratorModal = (props: Props) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const showConfirm = (admin: SectorAdmin) => {

@@ -14,6 +14,7 @@ import {
 } from "../../components/Notifications/Messages";
 import KadraVykhovnykivApi from "../../api/KadraVykhovnykivApi";
 import moment, { Moment } from "moment";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 type FormAddKadraProps = {
   showModal: (visibleModal: boolean) => void;
@@ -74,7 +75,7 @@ const AddNewKadraForm: React.FC<FormAddKadraProps> = (props: any) => {
   };
 
   const disabledDate = (current: any) => {
-    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+    return current && !current.isAfter(minAvailableDate);
   };
 
   const onUserSelect = async (userId: any) => {

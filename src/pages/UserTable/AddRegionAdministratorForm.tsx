@@ -8,6 +8,7 @@ import moment from "moment";
 import userApi from "../../api/UserApi";
 import { emptyInput } from "../../components/Notifications/Messages";
 import { Roles } from "../../models/Roles/Roles";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 interface Props {
   userId: string;
@@ -57,7 +58,7 @@ const AddNewAdministratorForm = ({
   };
 
   const disabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const getAdministration = async () => {

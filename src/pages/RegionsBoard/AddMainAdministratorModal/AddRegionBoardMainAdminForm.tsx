@@ -11,6 +11,7 @@ import {
   inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages";
 import notificationLogic from "../../../components/Notifications/Notification";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 
 type Props = {
@@ -31,7 +32,7 @@ const AddRegionBoardMainAdminForm = ({
   const [loadingUsersStatus, setLoadingUsersStatus] = useState(true);
 
   const disabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const disabledEndDate = (current: any) => {

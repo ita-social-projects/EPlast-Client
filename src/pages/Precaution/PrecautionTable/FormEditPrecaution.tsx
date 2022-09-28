@@ -8,6 +8,7 @@ import {
   emptyInput,
   maxNumber
 } from "../../../components/Notifications/Messages";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 import {
   descriptionValidation,
   getOnlyNums
@@ -41,7 +42,7 @@ const FormEditPrecaution = () => {
   };
 
   const isDisabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const existingNumberValidator = async (_: object, value: number) => {

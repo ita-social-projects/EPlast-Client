@@ -19,6 +19,7 @@ import {
   inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
@@ -68,7 +69,7 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   function showEditConfirmModal(admin: CityAdmin) {

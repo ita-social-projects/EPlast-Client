@@ -8,6 +8,7 @@ import {
   emptyInput,
   maxNumber,
 } from "../../../components/Notifications/Messages";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 import {
   descriptionValidation,
   getOnlyNums,
@@ -57,7 +58,7 @@ const FormEditDistinction = () => {
   };
 
   function disabledDate(currentDate: any) {
-    return currentDate && !(currentDate.isAfter("01.01.1900", "DD-MM-YYYY") && currentDate.isSameOrBefore(moment.utc()));;
+    return currentDate && !(currentDate.isAfter(minAvailableDate) && currentDate.isSameOrBefore(moment.utc()));;
   }
 
   const handleFinish = async (values: any) => {

@@ -25,6 +25,7 @@ import {
   fileIsEmpty,
 } from "../../components/Notifications/Messages";
 import "moment/locale/uk";
+import { minAvailableDate } from "../../constants/TimeConstants";
 moment.locale("uk-ua");
 
 interface Props {
@@ -117,7 +118,7 @@ const AddDocumentModal = (props: Props) => {
   };
 
   const disabledDate = (current: any) => {
-    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+    return current && !current.isAfter(minAvailableDate);
   };
 
   const handleCancel = () => {

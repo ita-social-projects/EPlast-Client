@@ -14,6 +14,7 @@ import {
 } from "../../../models/GllobalValidations/DescriptionValidation";
 import PrecautionStore from "../../../stores/StorePrecaution";
 import { userPrecautionStatuses } from "../Interfaces/UserPrecautionStatus";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 const FormAddPrecaution = () => {
   const useStore = createHook(PrecautionStore);
@@ -22,7 +23,7 @@ const FormAddPrecaution = () => {
   const dateFormat = "DD.MM.YYYY";
 
   const disabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   useEffect(() => {

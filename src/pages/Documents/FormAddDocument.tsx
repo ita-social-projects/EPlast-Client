@@ -30,6 +30,7 @@ import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 import moment from "moment";
 import { DocumentsStore } from "../../stores/DocumentsStore";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 const checkFile = (fileSize: number, fileName: string): boolean => {
   const extension = fileName.split(".").reverse()[0].toLowerCase();
@@ -62,7 +63,7 @@ const checkFile = (fileSize: number, fileName: string): boolean => {
 };
 
 const disabledDate = (current: any) => {
-  return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+  return current && !current.isAfter(minAvailableDate);
 };
 
 interface FormAddDocumentsProps {

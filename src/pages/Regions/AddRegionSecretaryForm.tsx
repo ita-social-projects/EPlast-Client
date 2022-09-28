@@ -10,6 +10,7 @@ import RegionUser from "../../models/Region/RegionUser";
 import "./AddRegionSecretaryForm.less";
 import { Roles } from "../../models/Roles/Roles";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 type AddNewSecretaryForm = {
   visibleModal: boolean;
@@ -44,7 +45,7 @@ const AddNewSecretaryForm = (props: any) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const SetAdmin = async (property: any, value: any) => {

@@ -26,6 +26,7 @@ import CheckboxsItem from "./CheckboxsItem";
 import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
 import RegionForAdministration from "../../models/Region/RegionForAdministration";
 import openNotificationWithIcon from "../../components/Notifications/Notification";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 let authService = new AuthorizeApi();
 
@@ -222,7 +223,7 @@ const SignUp: React.FC = () => {
   };
 
   const disabledDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   return (

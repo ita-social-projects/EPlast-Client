@@ -9,6 +9,7 @@ import { inputOnlyWhiteSpaces } from "../../components/Notifications/Messages";
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import notificationLogic from "../../components/Notifications/Notification";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 interface Props {
   visibleModal: boolean;
@@ -29,7 +30,7 @@ const EditAdministratorModal = ({
   };
 
   const disabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const handleCancel = () => {

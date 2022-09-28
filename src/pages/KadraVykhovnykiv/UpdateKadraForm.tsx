@@ -12,6 +12,7 @@ import {
   minNumber,
   successfulEditAction,
 } from "../../components/Notifications/Messages";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 type FormUpdateKadraProps = {
   showModal: (visibleModal: boolean) => void;
@@ -48,7 +49,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
   };
 
   const disabledDate = (current: any) => {
-    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+    return current && !current.isAfter(minAvailableDate);
   };
 
   useEffect(() => {

@@ -28,6 +28,7 @@ import {
   successfulDeleteAction,
   fileIsEmpty,
 } from "../../../components/Notifications/Messages";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 moment.locale("uk-ua");
 
 interface Props {
@@ -139,7 +140,7 @@ const AddDocumentModal = (props: Props) => {
   };
 
   const disabledDate = (current: any) => {
-    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+    return current && !current.isAfter(minAvailableDate);
   };
 
   const onSearch = (val: any) => {};

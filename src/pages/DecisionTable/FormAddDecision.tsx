@@ -13,6 +13,7 @@ import AuthLocalStorage from "../../AuthLocalStorage";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import { getBase64 } from "../userPage/EditUserPage/Services";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 
 interface FormAddDecisionProps {
@@ -101,7 +102,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props) => {
   }
 
   const disabledDate = (current: any) => {
-    return current && !current.isAfter("01.01.1900", "DD-MM-YYYY");
+    return current && !current.isAfter(minAvailableDate);
   };
 
   useEffect(() => {

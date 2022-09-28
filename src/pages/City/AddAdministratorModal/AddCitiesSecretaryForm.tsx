@@ -13,6 +13,7 @@ import { Roles } from "../../../models/Roles/Roles";
 import CityUser from "../../../models/City/CityUser";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import AuthLocalStorage from "../../../AuthLocalStorage";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 type AddCitiesNewSecretaryForm = {
   setVisibleModal: (visibleModal: boolean) => void;
@@ -47,7 +48,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && (current > moment() || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const SetAdmin = async (property: any, value: any) => {
