@@ -27,10 +27,14 @@ const UnconfirmedDropdown = (props: Props) => {
   const handleClick = (item: any) => {
     switch (item.key) {
       case "1":
-        onView(record.id);
+        if (userAnnualReportAccess?.CanViewReportDetails) {
+          onView(record.id);
+        }
         break;
       case "2":
-        onViewPDF(record.id);
+        if (userAnnualReportAccess?.CanViewReportDetails) {
+          onViewPDF(record.id);
+        }
         break;
       case "3":
         if (userAnnualReportAccess?.CanEditReport) {

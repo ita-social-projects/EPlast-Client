@@ -518,7 +518,7 @@ const GoverningBody = () => {
                 }
               >
                 {announcementsCount !== 0 &&
-                userAccesses["ViewAnnouncements"] ? (
+                  userAccesses["ViewAnnouncements"] ? (
                   <Badge
                     count={announcementsCount}
                     style={{ backgroundColor: "#3c5438" }}
@@ -765,8 +765,8 @@ const GoverningBody = () => {
                 onClick={() =>
                   userAccesses["ViewDocument"]
                     ? history.push(
-                        `/governingBodies/documents/${governingBody.id}`
-                      )
+                      `/governingBodies/documents/${governingBody.id}`
+                    )
                     : undefined
                 }
               >
@@ -839,6 +839,7 @@ const GoverningBody = () => {
         onAdd={onAnnouncementAdd}
       />
       <Modal
+        width="750px"
         title="Додати діловода"
         visible={visibleCreate}
         onCancel={() => setCreateVisible(false)}
