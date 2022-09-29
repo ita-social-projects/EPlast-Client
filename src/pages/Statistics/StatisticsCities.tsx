@@ -626,7 +626,12 @@ const StatisticsCities = () => {
                   </AntTooltip>
                 </Col>
                 <Col>
-                  <label id="label">Як сформувати діаграму?</label>
+                  <AntTooltip
+                    title="Для того, щоб сформувати діаграму даних станиці, клацніть один раз на рядок в таблиці тієї станиці. 
+                                    Діаграму неможливо сформувати, якщо немає даних!"
+                  >
+                    <label id="label">Як сформувати діаграму?</label>
+                  </AntTooltip>
                 </Col>
               </Row>
             </Form.Item>
