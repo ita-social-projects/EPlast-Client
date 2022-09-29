@@ -111,12 +111,13 @@ const SignUp: React.FC = () => {
 
   const handler = {
     submit: async (values: any) => {
+      values.birthday = moment(values.birthday).format("YYYY-MM-DD");
       actions.setFormData(values);
       setVisible(true);
     },
     terms: {
       confirm: async () => {
-        setVisible(false);
+        setVisible(false); 
         setAvailabe(false);
         const { facebookLink, twitterLink, instagramLink, fatherName }
           = state.formData

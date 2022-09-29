@@ -1,40 +1,32 @@
-import {
-  CheckCircleTwoTone,
-  CheckSquareOutlined,
-  DeleteTwoTone,
-  EditTwoTone,
-  IdcardOutlined,
-  LoadingOutlined,
-  QuestionCircleTwoTone,
-  StopOutlined,
-  UserAddOutlined,
-  UserDeleteOutlined,
-} from "@ant-design/icons";
-import {
-  Avatar,
-  Card,
-  Col,
-  List,
-  Modal,
-  notification,
-  Rate,
-  Row,
-  Tooltip,
-} from "antd";
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import userApi from "../../../../api/UserApi";
-import { EventAdmin } from "../../../../models/Events/EventAdmin";
-import { EventDetails } from "../../../../models/Events/EventDetails";
+import { Row, Col, Tooltip, Modal, Card, List, Rate } from "antd";
 import {
-  showApproveConfirm,
-  showDeleteConfirmForSingleEvent,
+  IdcardOutlined,
+  EditTwoTone,
+  DeleteTwoTone,
+  StopOutlined,
+  SettingTwoTone,
+  CheckCircleTwoTone,
+  QuestionCircleTwoTone,
+  UserDeleteOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
+import { EventDetails, EventAdmin } from "./EventInfo";
+import {
   showSubscribeConfirm,
   showUnsubscribeConfirm,
+  showDeleteConfirmForSingleEvent,
+  showApproveConfirm,
 } from "../../EventsModals";
-import EventEditDrawer from "../EventEdit/EventEditDrawer";
-import EventFeedbackModal from "./EventFeedbackModal";
+import EventAdminLogo from "../../../../assets/images/EventAdmin.png";
 import "./EventInfo.less";
+import eventsApi from "../../../../api/eventsApi";
+import { useHistory, useParams } from "react-router-dom";
+import EventEditDrawer from "../EventEdit/EventEditDrawer";
+import eventUserApi from "../../../../api/eventUserApi";
+import CreatedEvents from "../../../../models/EventUser/CreatedEvents";
+import EventsUser from "../../../../models/EventUser/EventUser";
+import userApi from "../../../../api/UserApi";
 
 interface Props {
   userAccesses: { [key: string]: boolean };
@@ -46,7 +38,7 @@ interface Props {
   setVisibleDrawer: (visible: boolean) => void;
   subscribeOnEvent: () => void;
   unSubscribeOnEvent: () => void;
-  setRender: React.Dispatch<React.SetStateAction<boolean>>;
+  setRender: (visible: boolean) => void;
 }
 
 const RenderEventIcons = (
@@ -70,7 +62,7 @@ const RenderEventIcons = (
 
   const SubscribeToEvent = () => {
     eventIcons.push(
-      <Tooltip title="Зголоситися на подію" key="subscribe">
+      <Tooltip title="Зголоситись на подію" key="subscribe">
         <UserAddOutlined
           onClick={() =>
             showSubscribeConfirm({
@@ -167,9 +159,13 @@ const RenderEventIcons = (
 
   if (userAccesses["ApproveEvent"] && event.eventStatus === "Не затверджено") {
     eventIcons.push(
-      <Tooltip placement="bottom" title="Затвердити подію" key="setting">
-        <CheckSquareOutlined
-          style={{ color: "#3c5438" }}
+      <Tooltip
+        placement="bottom"
+        title="Ви можете затвердити подію!"
+        key="setting"
+      >
+        <SettingTwoTone
+          twoToneColor="#3c5438"
           onClick={() =>
             showApproveConfirm({
               eventId: event?.eventId,
@@ -221,7 +217,7 @@ const RenderEventIcons = (
   }
 
   eventIcons.push(
-    <Tooltip placement="bottom" title="Адміністратори події" key="admins">
+    <Tooltip placement="bottom" title="Адміністратор(-и) події" key="admins">
       <IdcardOutlined
         style={{ color: "#3c5438", fontSize: "30px" }}
         className="icon"
@@ -233,17 +229,32 @@ const RenderEventIcons = (
   return eventIcons;
 };
 
-const GetReviewString = (amount: number) => {
-  let numberInText = String(amount);
-  let lastDigit = numberInText.charAt(numberInText.length - 1);
-
-  let single = ["1"];
-  let pair = ["2", "3", "4"];
-
-  if (single.includes(lastDigit) && amount != 11) return `${amount} відгук`;
-  else if (pair.includes(lastDigit) && (amount < 10 || amount > 20))
-    return `${amount} відгуки`;
-  else return `${amount} відгуків`;
+const RenderRatingSystem = ({
+  event,
+  canEstimate,
+  isEventFinished,
+  participantAssessment,
+}: EventDetails): React.ReactNode => {
+  if (isEventFinished && canEstimate) {
+    return (
+      <Rate
+        allowHalf
+        defaultValue={participantAssessment}
+        onChange={async (value) =>
+          await eventsApi.estimateEvent(event.eventId, value)
+        }
+      />
+    );
+  } else {
+    return (
+      <Rate
+        allowHalf
+        disabled
+        defaultValue={event.rating}
+        onChange={(value) => console.log(value)}
+      />
+    );
+  }
 };
 
 const RenderAdminCards = (
@@ -265,56 +276,24 @@ const RenderAdminCards = (
         xxl: 2,
       }}
       dataSource={eventAdmins}
-      renderItem={(item) => GetAdminInfo(item, canViewAdminProfiles)}
+      renderItem={(item) => (
+        <List.Item>
+          <Card
+            hoverable={canViewAdminProfiles}
+            title={item.adminType}
+            cover={<img alt="example" src={EventAdminLogo} />}
+            onClick={() =>
+              canViewAdminProfiles
+                ? history.push(`/userpage/main/${item.userId}`)
+                : null
+            }
+            className={canViewAdminProfiles ? "" : "hovering-cardbody"}
+          >
+            <div>{item.fullName}</div>
+          </Card>
+        </List.Item>
+      )}
     />
-  );
-};
-
-const GetAdminInfo = (admin: EventAdmin, canViewAdminProfiles: boolean) => {
-  const history = useHistory();
-  const [imageUrl, setImageUrl] = useState<string>("default_user_image.png");
-  const [isLoading, setLoading] = useState<boolean>(true);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      let avatar = await userApi.getImage(admin.avatarUrl);
-      setImageUrl(avatar.data);
-    } catch (e) {
-      notification.error(e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return (
-    <List.Item>
-      <Card
-        hoverable={canViewAdminProfiles}
-        title={admin.adminType}
-        cover={
-          isLoading ? (
-            <Avatar shape="square" icon={<LoadingOutlined />} />
-          ) : (
-            <Avatar shape="square" alt="admin avatar" src={imageUrl} />
-          )
-        }
-        onClick={() =>
-          canViewAdminProfiles
-            ? history.push(`/userpage/main/${admin.userId}`)
-            : null
-        }
-        className={`admin-card${
-          canViewAdminProfiles ? " admin-card-hoverable" : ""
-        }`}
-      >
-        <div>{admin.fullName}</div>
-      </Card>
-    </List.Item>
   );
 };
 
@@ -332,13 +311,40 @@ const SortedEventInfo = ({
 }: Props) => {
   const [adminsVisible, setAdminsVisibility] = useState(false);
   const { id } = useParams();
-  const [isFeedbackModalVisible, setFeedbackModalVisible] = useState<boolean>(
-    false
-  );
+  const { userId } = useParams();
+  const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
+    new CreatedEvents(),
+  ]);
+  const [allEvents, setAllEvents] = useState<EventsUser>(new EventsUser());
+  const [imageBase64, setImageBase64] = useState<string>();
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    await eventUserApi.getEventsUser(userId).then(async (response) => {
+      setCreatedEvents(response.data);
+      setAllEvents(response.data);
+      await userApi
+        .getImage(response.data.user.imagePath)
+        .then((response: { data: any }) => {
+          setImageBase64(response.data);
+        });
+
+      setLoading(true);
+    });
+  };
+
+  useEffect(() => {
+    setRender(true);
+  }, [event]);
 
   return (
     <Row>
       <Col className="eventActions">
+        <img
+          className="imgEvent"
+          alt="example"
+          src="https://www.kindpng.com/picc/m/150-1504140_shaking-hands-png-download-transparent-background-hand-shake.png"
+        />
         <div className="iconsFlex">
           {RenderEventIcons(
             userAccesses,
@@ -350,30 +356,11 @@ const SortedEventInfo = ({
             setAdminsVisibility
           )}
         </div>
-        <div className="rateFlex">
-          <Rate allowHalf disabled defaultValue={event.event.rating} />
-          <div
-            className={"feedbackInfo"}
-            onClick={() => {
-              setFeedbackModalVisible(true);
-            }}
-          >
-            ({GetReviewString(event.event.eventFeedbacks.length)})
-          </div>
-        </div>
-
-        <EventFeedbackModal
-          eventId={event.event.eventId}
-          feedbacks={event.event.eventFeedbacks}
-          visible={isFeedbackModalVisible}
-          setVisible={setFeedbackModalVisible}
-          canLeaveFeedback={event.canEstimate}
-          setRender={setRender}
-        />
+        <div className="rateFlex">{RenderRatingSystem(event)}</div>
       </Col>
       <Modal
         visible={adminsVisible}
-        title="Адміністратори події"
+        title="Адміністрація події"
         footer={null}
         onCancel={() => {
           setAdminsVisibility(false);
@@ -390,7 +377,7 @@ const SortedEventInfo = ({
         statusId={eventStatusId}
         visibleEventEditDrawer={visibleDrawer}
         setShowEventEditDrawer={setVisibleDrawer}
-        onEdit={() => null}
+        onEdit={fetchData}
       />
     </Row>
   );

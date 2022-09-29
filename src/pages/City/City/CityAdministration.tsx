@@ -129,8 +129,15 @@ const CityAdministration = () => {
   };
 
   const onAdd = async (newAdmin: CityAdmin = new CityAdmin()) => {
-    const index = administration.findIndex((a) => a.id === admin.id);
-    administration[index] = newAdmin;
+    const previousAdmin = administration.find(a => a.id === admin.id)!; 
+    const adminIdx = administration.findIndex(a => a.id === admin.id);
+    administration[adminIdx] = newAdmin;
+    if (previousAdmin.adminType.adminTypeName !== newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`
+      );
+    }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`
@@ -179,9 +186,10 @@ const CityAdministration = () => {
               >
                 <div
                   onClick={() =>
+                    canSeeProfiles && 
                     history.push(`/userpage/main/${member.user.id}`)
                   }
-                  className={`cityMember`}
+                  className={`cityMember ${!canSeeProfiles && "notAccess"}`}
                 >
                   <div>
                     {photosLoading ? (

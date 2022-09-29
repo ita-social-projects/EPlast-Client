@@ -7,7 +7,7 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import { List, Modal, Popconfirm } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getAchievementFile,
   openAchievemetFile,
@@ -19,19 +19,18 @@ import classes from "./ListOfAchievements.module.css";
 import notificationLogic from "../../../../components/Notifications/Notification";
 import InfiniteScroll from "react-infinite-scroller";
 import { useParams } from "react-router-dom";
-import { successfulDeleteAction } from "../../../../components/Notifications/Messages";
+import { failDeleteAction, successfulDeleteAction } from "../../../../components/Notifications/Messages";
 import extendedTitleTooltip from "../../../../components/Tooltip";
 const fileNameMaxLength = 47;
 
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  achievementDoc: BlankDocument[];
   hasAccess?: boolean;
   hasAccessToSeeAndDownload?: boolean;
   hasAccessToDelete?: boolean;
-  setAchievementDoc: (document: BlankDocument[]) => void;
   userToken: any;
+  courseId?: number; 
 }
 
 const ListOfAchievementsModal = (props: Props) => {
@@ -41,10 +40,10 @@ const ListOfAchievementsModal = (props: Props) => {
     hasMore: true,
   });
   const [achievements, setAchievements] = useState<BlankDocument[]>([]);
-  let [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
   const [pageSize] = useState(7);
   const [isEmpty, setIsEmpty] = useState(false);
-
+  
   const handleCancel = () => {
     setLoadingMore({ loading: false, hasMore: true });
     setIsEmpty(false);
@@ -54,13 +53,14 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const deleteFIle = async (documentId: number,  userId: string, fileName: string) => {
-   console.log("delete");
-    await removeAchievementDocument(documentId ,userId);
-    notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
-    setAchievements(achievements.filter((d) => d.id !== documentId));
-    props.setAchievementDoc(
-      props.achievementDoc.filter((d) => d.id !== documentId)
-    );
+    try {
+      await removeAchievementDocument(documentId, userId);
+      notificationLogic("success", successfulDeleteAction(`Файл ${fileName}`));
+      const achievementsWithoutDeleted = achievements.filter((d) => d.id !== documentId);
+      setAchievements(achievementsWithoutDeleted);
+    } catch (error) {
+      notificationLogic("error", failDeleteAction(`Файл ${fileName}`));
+    }
   };
 
   const downloadFile = async (fileBlob: string, fileName: string) => {
@@ -72,7 +72,7 @@ const ListOfAchievementsModal = (props: Props) => {
   };
 
   const getAchievements = async () => {
-    const response = await getAchievementsByPage(pageNumber, pageSize, userId);
+    const response = await getAchievementsByPage(pageNumber, pageSize, userId, props.courseId);
     if (response.data.length === 0) {
       setIsEmpty(true);
     }
@@ -88,19 +88,23 @@ const ListOfAchievementsModal = (props: Props) => {
       return;
     }
     getAchievements();
-    setPageNumber(++pageNumber);
+    setPageNumber(prev => prev + 1);
   };
 
-  const getListActions = (blackDocumentItem: BlankDocument) => {
+  const getActions = (blackDocumentItem: BlankDocument, isNotDocx = true) => {
     const actions: JSX.Element[] = [];
     if (props.hasAccessToSeeAndDownload) {
+      if (isNotDocx) {
+        actions.push(
+          <EyeOutlined
+            className={classes.reviewIcon}
+            onClick={() =>
+              reviewFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
+            }
+          />
+        );
+      }
       actions.push(
-        <EyeOutlined
-          className={classes.reviewIcon}
-          onClick={() =>
-            reviewFile(blackDocumentItem.blobName, blackDocumentItem.fileName)
-          }
-        />,
         <DownloadOutlined
           className={classes.downloadIcon}
           onClick={() =>
@@ -128,6 +132,10 @@ const ListOfAchievementsModal = (props: Props) => {
     return actions;
   }
 
+  useEffect(() => {
+    if (achievements.length === 0) props.setVisibleModal(false);
+  }, [achievements]);
+
   return (
     <Modal
       title="Список досягнень"
@@ -150,8 +158,8 @@ const ListOfAchievementsModal = (props: Props) => {
                 actions={
                   item.fileName.split(".").pop()! !== "doc" &&
                   item.fileName.split(".").pop()! !== "docx"
-                    ? getListActions(item)
-                    : getListActions(item).splice(0, 1)
+                    ? getActions(item)
+                    : getActions(item, false)
                 }
               >
                 {item.blobName.split(".").pop()! === "pdf" ? (
