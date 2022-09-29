@@ -1,10 +1,10 @@
-import { Pagination } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import eventsApi from "../../api/eventsApi";
 import ActionCard from "../ActionCard/ActionCard";
-import Spinner from "../Spinner/Spinner";
+import eventsApi from "../../api/eventsApi";
+import { Pagination } from "antd";
 import classes from "./Actions.module.css";
+import Spinner from "../Spinner/Spinner";
 
 const Actions = () => {
   const [loading, setLoading] = useState<boolean>(false);

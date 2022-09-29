@@ -1,9 +1,8 @@
 .userTableTitle {
-  color: #3c5438;
+    color: #3c5438;
 }
 
-.searchArea {
-  margin-bottom: 10px;
-  max-width: 500px;
-  align-self: center;
+.inputSearch {
+    width: 400px;
+    margin: 0 0 10px 0;
 }

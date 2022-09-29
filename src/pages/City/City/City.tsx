@@ -107,6 +107,7 @@ const City = () => {
   const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(
     false
   );
+  const [visible, setvisible] = useState<boolean>(false);
   const [isActiveCity, setIsActiveCity] = useState<boolean>(true);
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
@@ -444,6 +445,45 @@ const City = () => {
     });
   };
 
+  
+  const showConfirmAddNewHead = (
+    newAdmin: CityAdmin,
+    existingAdmin?: CityAdmin
+  ) => {
+    Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      onCancel() { },
+      async onOk() {
+        await addCityAdmin(newAdmin);
+        admins.push(newAdmin);
+        setAdmins(admins);
+      },
+    });
+  };
+
+  const showAddNewHeadExpired = (
+    newAdmin: CityAdmin,
+    existingAdmin?: CityAdmin
+  ) => {
+    Modal.confirm({
+      title: "Призначити даного користувача на цю посаду?",
+      content: (
+        <div className={classes.Style}>
+          <b>
+            Дані будуть внесені у колишні діловодства станиці, оскільки час
+            правління вже закінчився.
+          </b> 
+        </div>
+      ),
+      onCancel() { },
+      async onOk() {
+        await addCityAdmin(newAdmin);
+        admins.push(newAdmin);
+        setAdmins(admins);
+      },
+    });
+  };
+
   const showDisableModal = async (admin: CityAdmin) => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
@@ -503,7 +543,7 @@ const City = () => {
     });
   };
 
-  const handleOk = async (admin: CityAdmin) => {
+  const handleOk = async (admin: CityAdmin) => {  
     if (admin.id === 0) {
       const head = (admins as CityAdmin[]).find(
         (x) => x.adminType.adminTypeName === Roles.CityHead
@@ -517,38 +557,58 @@ const City = () => {
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
       try {
+        const existEndDate = moment.utc(existingAdmin?.endDate).local();
+        const existStartDate = moment.utc(existingAdmin?.startDate).local();
+        const newAdminStartDate = moment.utc(admin.startDate).local();
+        const newAdminEndDate = moment.utc(admin.endDate).local();
+        const currentDate = moment.utc(new Date()).local();
+
         if (head?.userId === admin.userId) {
           showDisableModal(head);
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
         } else if (
+          existingAdmin !== undefined &&
+          admin.endDate !== undefined &&
+          ((existStartDate > newAdminStartDate &&
+            existEndDate < newAdminEndDate) ||
+            (existEndDate > newAdminEndDate &&
+              existStartDate < newAdminStartDate) ||
+            (existEndDate > newAdminEndDate &&
+              newAdminEndDate > existStartDate))
+        ) {
+          showDisable(existingAdmin);
+        }
+        else if (
           admin.adminType.adminTypeName === "Голова СПР" ||
-          admin.adminType.adminTypeName === "Член СПР"
+          admin.adminType.adminTypeName === "Член СПР" ||
+          admin.adminType.adminTypeName === Roles.CityHead ||
+          admin.adminType.adminTypeName === Roles.CityHeadDeputy
         ) {
           const check = await getCheckPlastMember(admin.userId);
           if (check.data) {
-            await addCityAdmin(admin);
-            admins.push(admin);
-            setAdmins(admins);
-          } else {
+            if (newAdminEndDate < currentDate){
+              showAddNewHeadExpired(admin, existingAdmin)
+            } 
+            else { showConfirmAddNewHead(admin, existingAdmin) };
+          } 
+          else {
             showPlastMemberDisable(admin);
           }
         } else if (existingAdmin !== undefined) {
           showConfirm(admin, existingAdmin);
         } else {
-          const newAdmin = await addCityAdmin(admin);
-          if (newAdmin.status) {
-            admins.push(admin);
-            setAdmins(admins);
-          }
+          await addCityAdmin(admin);
         }
       } finally {
-        setvisibleAddModal(false);
+        setvisible(false);
       }
     } else {
       if (
         admin.adminType.adminTypeName === "Голова СПР" ||
-        admin.adminType.adminTypeName === "Член СПР"
+        admin.adminType.adminTypeName === "Член СПР" ||
+        admin.adminType.adminTypeName === Roles.CityHead ||
+        admin.adminType.adminTypeName === Roles.CityHeadDeputy
       ) {
         if (await getCheckPlastMember(admin.userId)) {
           await editCityAdmin(admin);
@@ -1020,7 +1080,9 @@ const City = () => {
                     key={document.id}
                   >
                     <div>
-                      <FileTextOutlined className="documentIcon" />
+                      <Tooltip title={<div style={{textAlign: 'center'}}>{document.cityDocumentType.name}</div>}>
+                        <FileTextOutlined className="documentIcon" />
+                      </Tooltip>
                       <p className="documentText">
                         {document.cityDocumentType.name}
                       </p>

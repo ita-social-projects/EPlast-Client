@@ -1,9 +1,10 @@
-import { Descriptions, Tooltip, Typography } from "antd";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode } from "react";
+import { Typography, Descriptions, Tooltip } from "antd";
+import "./EventDetails.less";
+import { EventInformation, EventParticipant } from "./EventInfo";
 import extendedTitleTooltip from "../../../../components/Tooltip";
-import { EventInformation } from "../../../../models/Events/EventInformation";
-import { EventParticipant } from "../../../../models/Events/EventParticipant";
 import "./EventDetailsHeader.less";
+import moment from "moment";
 
 const { Text } = Typography;
 
@@ -17,12 +18,7 @@ export function extendedLocationTooltip(number: number, text: string) {
     <>
       <Tooltip title={text}>
         <span>
-          <a
-            style={{ display: "inline-block" }}
-            href={convertToURL(text)}
-            target="_blank"
-            className="url"
-          >
+          <a href={convertToURL(text)} target="_blank" className="url">
             {text}
           </a>
         </span>
@@ -76,94 +72,50 @@ const EventDetailsHeader = ({
     numberOfPartisipants,
   },
 }: Props) => {
-  const [useOneColumn, setUseOneColumn] = useState<boolean>(false);
-
-  useEffect(() => {
-    setUseOneColumn(window.innerWidth < 750);
-    window.addEventListener("resize", handleResize);
-  }, []);
-
-  const handleResize = () => {
-    setUseOneColumn(window.innerWidth < 750);
-  };
-
   return (
     <Descriptions
+      column={{ xs: 1, sm: 2, md: 2, lg: 2, xxl: 3 }}
       layout="horizontal"
       className="descriptions"
-      column={useOneColumn ? 1 : 2}
-      bordered
-      size="small"
     >
-      <Descriptions.Item
-        label={renderLabel("Форма проведення")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Назва")} span={3}>
+        {renderContentMaxlength(eventName)}
+      </Descriptions.Item>
+      <Descriptions.Item label={renderLabel("Форма проведення")}>
         {renderContent(formOfHolding)}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Тип")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Тип")}>
         {renderContent(eventType)}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Статус")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Статус")}>
         {renderContent(eventStatus)}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Категорія")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Категорія")}>
         {renderContent(eventCategory)}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Заплановано учасників")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Заплановано учасників")}>
         {renderContent(numberOfPartisipants.toString())}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Дата і час початку")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Дата і час початку")}>
         {renderContent(eventDateStart)}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Кількість учасників")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Кількість учасників")}>
         {renderContent(
           eventParticipants
             .filter((p: EventParticipant) => p.status == "Учасник")
             .length.toString()
         )}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Дата і час завершення")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Дата і час завершення")}>
         {renderContent(eventDateEnd)}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Локація")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Локація")}>
         {renderLocationContent(eventLocation)}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Призначена для")}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Призначена для")} span={3}>
         {renderContent(forWhom)}
       </Descriptions.Item>
-      <Descriptions.Item
-        label={renderLabel("Опис")}
-        span={useOneColumn ? undefined : 2}
-        className="descriptions-item"
-      >
+      <Descriptions.Item label={renderLabel("Опис")}>
         {renderContentMaxlength(description)}
       </Descriptions.Item>
     </Descriptions>
