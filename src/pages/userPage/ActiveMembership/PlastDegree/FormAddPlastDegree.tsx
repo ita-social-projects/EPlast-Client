@@ -25,6 +25,7 @@ import { PersonalDataContext } from "../../personalData/PersonalData";
 import UserApi from "../../../../api/UserApi";
 import moment from "moment";
 import { LoadingOutlined } from "@ant-design/icons";
+import { minAvailableDate } from "../../../../constants/TimeConstants";
 
 type FormAddPlastDegreeProps = {
   plastDegrees: Array<PlastDegree>;
@@ -156,7 +157,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     if (!props.currentUserDegree) return current > moment();
 
     let previousDegreeStart = moment(props.currentUserDegree.dateStart);
-    return current && current > moment() || (current.isBefore(previousDegreeStart) || undefined);
+    return current &&  (current > moment() || !current.isAfter(minAvailableDate)) || 
+      (current.isBefore(previousDegreeStart) || undefined);
   };
 
   const fetchData = async () => {
