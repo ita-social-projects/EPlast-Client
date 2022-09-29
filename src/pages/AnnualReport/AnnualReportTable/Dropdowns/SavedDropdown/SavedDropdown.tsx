@@ -18,10 +18,14 @@ const ConfirmedDropdown = (props: Props) => {
   const handleClick = (item: any) => {
     switch (item.key) {
       case "1":
+      if (userAnnualReportAccess?.CanViewReportDetails) {
         onView(record.id);
-        break;
+      } 
+      break;
       case "2":
+      if (userAnnualReportAccess?.CanViewReportDetails) {  
         onViewPDF(record.id);
+      }
         break;
       default:
         break;
