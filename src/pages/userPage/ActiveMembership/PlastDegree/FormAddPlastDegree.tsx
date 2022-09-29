@@ -129,6 +129,12 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
   const handleOnChange = async (value: any) => {
     form.setFieldsValue({plastDegree : undefined});
+    setPlastDegree(value);
+
+    setDateSelectionActive(true);
+  };
+  
+  const setPlastDegree = (value : any) => {
     if (value === "Пластприят") {
       setDegreeSelectVisible(false);
       setFiltredDegrees(
@@ -145,9 +151,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         props.plastDegrees.filter((item) => item.name.includes("сеніор"))
       );
     }
-
-    setDateSelectionActive(true);
-  };
+  }
 
   const disabledDate = (current: any) => {
     if (!props.currentUserDegree) return current > moment();
@@ -178,6 +182,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       })
       setDegreeSelectVisible(true);
     }
+    setPlastDegree(form.getFieldValue("plastUlad"));
     setFormReady(true);
     if (props.currentUserDegree) setDateSelectionActive(false);
   };
