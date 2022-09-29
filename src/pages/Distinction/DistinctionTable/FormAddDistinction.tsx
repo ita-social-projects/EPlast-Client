@@ -34,11 +34,11 @@ const FormAddUserDistinction: React.FC = () => {
 
   const [state, actions] = useDistinctions();
   useEffect(() => {
-    if (state.addUserDistinctionModalIsVisible) {
+    if (state.isAddUserDistinctionModalVisible) {
       actions.fetchDistinctions();
       actions.getUsersWithoutPrecautions();
     }
-  }, [state.addUserDistinctionModalIsVisible]);
+  }, [state.isAddUserDistinctionModalVisible]);
 
   const handleCancel = () => {
     form.resetFields();
