@@ -20,10 +20,12 @@ const FormEditDistinctionType = () => {
   };
 
   useEffect(() => {
-    form.setFieldsValue({
-      distinctionName: state.editedDistinction.name,
-    });
-  }, []);
+    if (state.isEditDistinctionVisible) {
+      form.setFieldsValue({
+        distinctionName: state.editedDistinction.name,
+      });
+    }
+  }, [state.editedDistinction]);
 
   return (
     <Form form={form} onFinish={editHandler} layout="inline" size="large">
