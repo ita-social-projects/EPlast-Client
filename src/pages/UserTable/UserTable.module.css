@@ -72,6 +72,10 @@
   overflow: hidden;
 }
 
+#yellowTag {
+  color: rgb(135, 164, 17);
+}
+
 .referalTag {
   max-width: 100%;  
   text-overflow: ellipsis;

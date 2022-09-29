@@ -113,8 +113,15 @@ const ClubAdministration = () => {
   };
 
   const onAdd = async (newAdmin: ClubAdmin = new ClubAdmin()) => {
-    const index = administration.findIndex((a) => a.id === admin.id);
-    administration[index] = newAdmin;
+    const previousAdmin = administration.find(a => a.id === admin.id)!;
+    const adminIdx = administration.findIndex(a => a.id === admin.id);
+    administration[adminIdx] = newAdmin;
+    if (previousAdmin.adminType.adminTypeName !== newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`
+      );
+    }
     if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
       await createNotification(
         newAdmin.userId,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Spin } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Spin, Tooltip } from "antd";
 import {
   FileTextOutlined,
   CloseOutlined,
@@ -150,13 +150,15 @@ const CityDocuments = () => {
                     : undefined
                 }
               >
-                <Avatar size={86} icon={<FileTextOutlined />} />
+                <Avatar size={86} icon={
+                  <Tooltip placement="bottom" 
+                    title={<div style={{textAlign: 'center'}}>{document.cityDocumentType.name}</div>}>
+                    <FileTextOutlined />
+                  </Tooltip>
+                } />
                 <Card.Meta
-                  className="detailsMeta"
-                  title={extendedTitleTooltip(
-                    parameterMaxLength,
-                    document.cityDocumentType.name
-                  )}
+                  className="detailsMeta" 
+                  title={document.cityDocumentType.name}
                 />
               </Card>
             ))
