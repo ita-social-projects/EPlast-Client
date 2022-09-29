@@ -1,5 +1,8 @@
 import { checkEmail } from "../SignUp/verification";
-import { emptyInput } from "../../components/Notifications/Messages";
+import {
+  emptyInput,
+  failToSendNotification,
+} from "../../components/Notifications/Messages";
 import { Form, Steps, Button, Input, Select } from "antd";
 import { getCities } from "../../api/citiesApi";
 import { NotificationType } from "../../api/NotificationBoxApi";
@@ -14,6 +17,7 @@ import Spinner from "../Spinner/Spinner";
 import styles from "../UserRenewal/UserRenewal.module.css";
 import UserRenewal from "./Types/UserRenewal";
 import userRenewalsApi from "../../api/userRenewalsApi";
+import { getSuperAdmins } from "../../api/adminApi";
 
 const { Step } = Steps;
 
@@ -129,7 +133,7 @@ export default function () {
   };
 
   const getAdminsIds = async (id: number) => {
-    await Api.get(`Cities/AdminsIds/${id}`)
+    Api.get(`Cities/AdminsIds/${id}`)
       .then((response) => {
         if (response.data !== "No Id,No Id") {
           let admins: string[] = response.data.split(",");
@@ -140,9 +144,17 @@ export default function () {
         }
       })
       .catch((error) => {
+        notificationLogic("error", failToSendNotification("проводу станиці"));
+      });
+
+    getSuperAdmins()
+      .then((response) => {
+        response.data.map((user: any) => setAdminsIds([...adminsIds, user.id]));
+      })
+      .catch((error) => {
         notificationLogic(
-          "info",
-          "Сталася помилка при зверненні до адміністрації міста"
+          "error",
+          failToSendNotification("адміністрації Пласту")
         );
       });
   };

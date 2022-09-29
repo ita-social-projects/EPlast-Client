@@ -251,9 +251,7 @@ const AddAdministratorModal = (props: Props) => {
       }
       else if (existingAdmin !== undefined && admin.endDate !== undefined &&
         (existStartDate > newAdminStartDate && existEndDate < newAdminEndDate
-          || existEndDate > newAdminEndDate && existStartDate < newAdminStartDate
-          || existEndDate > newAdminEndDate && newAdminEndDate > existStartDate)) {
-
+          || existEndDate > newAdminEndDate && existStartDate < newAdminStartDate)) {
         showImpossibleAddManager(existingAdmin);
       }
       else if (

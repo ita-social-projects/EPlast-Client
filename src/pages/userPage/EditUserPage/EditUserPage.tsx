@@ -75,7 +75,7 @@ export default function () {
   );
   const [upuDegree, setUpuDegree] = useState<UpuDegree>();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const { UpdateData } = useContext(PersonalDataContext);
+  const { updateData } = useContext(PersonalDataContext);
 
   const fetchData = async () => {
     const token = AuthLocalStorage.getToken() as string;
@@ -271,7 +271,7 @@ export default function () {
         getBase64(info.file, async (imageUrl: any) => {
           setUserAvatar(imageUrl);
           await userApi.updateProfileImage(userId, imageUrl);
-          if (UpdateData) UpdateData();
+          if (updateData) updateData();
         });
         setPhotoName(null);
         notificationLogic("success", fileIsUpload("Фото"));
@@ -423,12 +423,8 @@ export default function () {
     setPhoneNumber(event.target.value);
   };
 
-  const handleOnChangeBirthday = (event: any, value: any) => {
-    if (value === "") {
-      setBirthday(undefined);
-    } else {
-      setBirthday(moment.utc(event?._d).local());
-    }
+  const handleOnChangeBirthday = (event: any) => {
+    setBirthday(event);
   };
 
   const handleOnChangeUpuDegree = (value: any) => {
@@ -446,7 +442,7 @@ export default function () {
         notificationLogic("error", fileIsNotUpload("фото"));
       });
     setPhotoName(defaultPhotoName);
-    if (UpdateData) UpdateData();
+    if (updateData) updateData();
   };
 
   const handleSubmit = async (values: any) => {
@@ -459,7 +455,7 @@ export default function () {
         lastName: values.lastName?.trim(),
         fatherName: values?.fatherName?.trim(),
         phoneNumber: phoneNumber?.trim(),
-        birthday: form?.getFieldValue("birthday"),
+        birthday: moment(values.birthday).format("YYYY-MM-DD"),
         imagePath: photoName,
         pseudo: values.pseudo?.trim(),
         publicPoliticalActivity: values.publicPoliticalActivity?.trim(),
@@ -510,7 +506,7 @@ export default function () {
       .catch(() => {
         notificationLogic("error", tryAgain);
       });
-    if (UpdateData) UpdateData();
+    if (updateData) updateData();
     fetchData();
   };
 
