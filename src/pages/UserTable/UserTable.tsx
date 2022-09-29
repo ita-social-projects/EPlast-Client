@@ -1,43 +1,44 @@
-import React, { useEffect, useRef, useState } from "react";
 import {
-  Table,
+  Button,
+  Card,
+  Col,
+  Form,
   Input,
   Layout,
-  Row,
-  Col,
-  Button,
-  TreeSelect,
   Modal,
-  Form,
-  Card,
+  Row,
+  Table,
+  TreeSelect,
 } from "antd";
-import "./Filter.less";
-import { getUsersForTableByPage } from "../../api/adminApi";
-import clubsApi from "../../api/clubsApi";
-import DropDownUserTable from "./DropDownUserTable";
-import Title from "antd/lib/typography/Title";
-import ColumnsForUserTable from "./ColumnsForUserTable";
-import UserTable from "../../models/UserTable/UserTable";
-import ClickAwayListener from "react-click-away-listener";
 import { TreeNode } from "antd/lib/tree-select";
-import City from "../Statistics/Interfaces/City";
+import Title from "antd/lib/typography/Title";
+import jwt_decode from "jwt-decode";
+import queryString from "querystring";
+import React, { useEffect, useRef, useState } from "react";
+import ClickAwayListener from "react-click-away-listener";
+import { useLocation } from "react-router-dom";
 import activeMembershipApi, {
   PlastDegree,
 } from "../../api/activeMembershipApi";
-import regionsApi from "../../api/regionsApi";
-import Region from "../Statistics/Interfaces/Region";
-import Club from "../AnnualReport/Interfaces/Club";
-import { shouldContain } from "../../components/Notifications/Messages";
-import classes from "./UserTable.module.css";
+import { getUsersForTableByPage } from "../../api/adminApi";
 import citiesApi from "../../api/citiesApi";
+import clubsApi from "../../api/clubsApi";
+import regionsApi from "../../api/regionsApi";
 import userApi from "../../api/UserApi";
-import User from "../../models/UserTable/User";
 import AuthLocalStorage from "../../AuthLocalStorage";
-import jwt_decode from "jwt-decode";
+import { shouldContain } from "../../components/Notifications/Messages";
 import { Roles } from "../../models/Roles/Roles";
-import { useLocation } from "react-router-dom";
-import queryString from "querystring";
+import User from "../../models/UserTable/User";
+import UserTable from "../../models/UserTable/UserTable";
+import Club from "../AnnualReport/Interfaces/Club";
+import City from "../Statistics/Interfaces/City";
+import Region from "../Statistics/Interfaces/Region";
 import UserRenewalTable from "../UserRenewal/UserRenewalTable/UserRenewalTable";
+import { useUserTableStore } from "../../stores/UserTableStore";
+import ColumnsForUserTable from "./ColumnsForUserTable";
+import DropDownUserTable from "./DropDownUserTable";
+import "./Filter.less";
+import classes from "./UserTable.module.css";
 
 const UsersTable = () => {
   const [recordObj, setRecordObj] = useState<any>(0);
@@ -59,10 +60,6 @@ const UsersTable = () => {
   const [searchData, setSearchData] = useState<string>("");
   const [sortKey, setSortKey] = useState<number>(1);
   const [filter, setFilter] = useState<any[]>([]);
-  const [dynamicCities, setDynamicCities] = useState<any[]>([]);
-  const [dynamicRegions, setDynamicRegions] = useState<any[]>([]);
-  const [dynamicClubs, setDynamicClubs] = useState<any[]>([]);
-  const [dynamicDegrees, setDynamicDegrees] = useState<any[]>([]);
   const [form] = Form.useForm();
   const [canView, setCanView] = useState<boolean>(false);
   const [tabList, setTabList] = useState<any[]>([]);
@@ -73,7 +70,11 @@ const UsersTable = () => {
 
   const cityList = useRef<Array<City>>([]);
   const clubList = useRef<Array<Club>>([]);
-  const [isQueryLoaded, setQueryLoaded] = useState(false);
+  // isQueryLoaded [<true if cities are loaded>, <true if clubs are loaded>]
+  const [isQueryLoaded, setQueryLoaded] = useState<[boolean, boolean]>([
+    false,
+    false,
+  ]);
 
   const [userArhive, setArhive] = useState();
   const [currentUser, setCurrentUser] = useState<User>();
@@ -83,8 +84,9 @@ const UsersTable = () => {
   const { Search } = Input;
   const location = useLocation();
   const queryParams = useRef<any>({});
-  const [selectedRow, setSelectedRow] = useState<number>(-1)
+  const [selectedRow, setSelectedRow] = useState<number>(-1);
   const tableBody = useRef<HTMLDivElement>(null);
+  const [state, actions] = useUserTableStore();
 
   useEffect(() => {
     initializePage();
@@ -94,6 +96,7 @@ const UsersTable = () => {
     fetchRegions();
     fetchDegrees();
     forceUpdate({});
+    return () => {actions.clearState();} 
   }, []);
 
   useEffect(() => {
@@ -221,39 +224,35 @@ const UsersTable = () => {
   };
 
   const getCityFromQuery = () => {
-    let city = queryParams.current.city;
-    if (city) {
+    if (state.dynamicCities) {
+      let city = state.dynamicCities[0];
       let cityExists = cityList.current.some((item) => item.id === city);
 
       if (cityExists) {
-        let cityFilter = `value1 ${city}`;
+        let cityFilter = `city ${city}`;
 
         form.setFieldsValue({
           locationFilter: [cityFilter],
         });
-
-        setDynamicCities([...dynamicCities, city]);
       }
     }
+    setQueryLoaded((prev) => [true, prev[1]]);
   };
 
   const getClubFromQuery = () => {
-    let club = queryParams.current.club;
-    if (club) {
+    if (state.dynamicClubs) {
+      let club = state.dynamicClubs[0];
       let clubExists = clubList.current.some((item) => item.id === club);
 
       if (clubExists) {
-        let clubFilter = `value4 ${club}`;
+        let clubFilter = `club ${club}`;
 
         form.setFieldsValue({
           locationFilter: [...form.getFieldValue("locationFilter"), clubFilter],
         });
-
-        setDynamicClubs([...dynamicClubs, club]);
       }
     }
-
-    setQueryLoaded(true);
+    setQueryLoaded((prev) => [prev[0], true]);
   };
 
   const showError = (message: string) => {
@@ -329,17 +328,17 @@ const UsersTable = () => {
   };
 
   const fetchData = async () => {
-    if (!(currentTabName && isQueryLoaded)) return;
+    if (!(currentTabName && isQueryLoaded[0] && isQueryLoaded[1])) return;
     if (currentTabName === "renewals") return;
 
     try {
       const response = await getUsersForTableByPage({
         Page: page,
         PageSize: pageSize,
-        Cities: dynamicCities,
-        Regions: dynamicRegions,
-        Clubs: dynamicClubs,
-        Degrees: dynamicDegrees,
+        Cities: state.dynamicCities,
+        Regions: state.dynamicRegions,
+        Clubs: state.dynamicClubs,
+        Degrees: state.dynamicDegrees,
         Tab: currentTabName,
         SortKey: sortKey,
         FilterRoles: filter,
@@ -368,57 +367,53 @@ const UsersTable = () => {
 
   const onSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
-      setDynamicRegions([-10]);
+      actions.setRegions([-10]);
     } else if (e.value == 1) {
-      setDynamicCities([-1]);
+      actions.setCities([-1]);
     } else if (e.value == 2) {
-      setDynamicClubs([-2]);
+      actions.setClubs([-2]);
     } else if (e.value == 3) {
-      setDynamicDegrees([-3]);
-    } else if (e.value.startsWith("value1")) {
-      setDynamicCities([...dynamicCities, e.value.split(" ")[1] as number]);
-    } else if (e.value.startsWith("value2")) {
-      setDynamicRegions([...dynamicRegions, e.value.split(" ")[1] as number]);
-    } else if (e.value.startsWith("value3")) {
-      setDynamicDegrees([...dynamicDegrees, e.value.split(" ")[1] as number]);
-    } else if (e.value.startsWith("value4")) {
-      setDynamicClubs([...dynamicClubs, e.value.split(" ")[1] as number]);
+      actions.setRegions([-3]);
+    } else if (e.id.startsWith("city")) {
+      actions.addDynamicCities(parseInt(e.value.split(" ")[1]));
+    } else if (e.id.startsWith("region")) {
+      actions.addDynamicRegions(parseInt(e.value.split(" ")[1]));
+    } else if (e.id.startsWith("degree")) {
+      actions.addDynamicDegrees(parseInt(e.value.split(" ")[1]));
+    } else if (e.id.startsWith("club")) {
+      actions.addDynamicClubs(parseInt(e.value.split(" ")[1]));
     }
+    console.log(state.dynamicCities);
   };
 
   const ondeSelect = (selectedKeys: any, e: any) => {
     if (e.value == 0) {
-      setDynamicRegions((prev) => prev.filter((item) => item !== -10));
+      actions.removeDynamicRegions(-10);
     } else if (e.value == 1) {
-      setDynamicCities((prev) => prev.filter((item) => item !== -1));
+      actions.removeDynamicCities(-1);
     } else if (e.value == 2) {
-      setDynamicClubs((prev) => prev.filter((item) => item !== -2));
+      actions.removeDynamicClubs(-2);
     } else if (e.value == 3) {
-      setDynamicDegrees((prev) => prev.filter((item) => item !== -3));
-    } else if (e.value.includes("value1")) {
-      setDynamicCities((prev) =>
-        prev.filter((item) => item !== (e.value.split(" ")[1] as number))
-      );
-    } else if (e.value.includes("value2")) {
-      setDynamicRegions((prev) =>
-        prev.filter((item) => item !== (e.value.split(" ")[1] as number))
-      );
-    } else if (e.value.includes("value3")) {
-      setDynamicDegrees((prev) =>
-        prev.filter((item) => item !== (e.value.split(" ")[1] as number))
-      );
-    } else if (e.value.includes("value4")) {
-      setDynamicClubs((prev) =>
-        prev.filter((item) => item !== (e.value.split(" ")[1] as number))
-      );
+      actions.removeDynamicDegrees(-3);
+    } else if (e.id.startsWith("city")) {
+      actions.removeDynamicCities(parseInt(e.value.split(" ")[1]));
+    } else if (e.id.startsWith("region")) {
+      actions.removeDynamicRegions(parseInt(e.value.split(" ")[1]));
+    } else if (e.id.startsWith("degree")) {
+      actions.removeDynamicDegrees(parseInt(e.value.split(" ")[1]));
+    } else if (e.id.startsWith("club")) {
+      actions.removeDynamicClubs(parseInt(e.value.split(" ")[1]));
     }
   };
-
+  //change value
   const getDynamicCities = () => {
     var results = [];
     for (let x = 0; x < cities?.length; x++) {
       results.push(
-        <TreeNode value={"value1 " + cities[x].value} title={cities[x].label} />
+        <TreeNode 
+          id={'city_' + cities[x].value}
+          value={"city " + cities[x].value}
+          title={cities[x].label} />
       );
     }
     return results;
@@ -430,7 +425,8 @@ const UsersTable = () => {
     for (let x = 0; x < regions?.length; x++) {
       results.push(
         <TreeNode
-          value={"value2 " + regions[x].value}
+          id={'region_' + regions[x].value}
+          value={"region " + regions[x].value}
           title={regions[x].label}
         />
       );
@@ -443,7 +439,8 @@ const UsersTable = () => {
     for (let x = 0; x < degrees?.length; x++) {
       results.push(
         <TreeNode
-          value={"value3 " + degrees[x].value}
+          id={'degree_' + degrees[x].value}
+          value={"degree " + degrees[x].value}
           title={degrees[x].label}
         />
       );
@@ -456,7 +453,11 @@ const UsersTable = () => {
 
     for (let x = 0; x < clubs?.length; x++) {
       results.push(
-        <TreeNode value={"value4 " + clubs[x].value} title={clubs[x].label} />
+        <TreeNode
+          id={'club_' + clubs[x].value} 
+          value={"club " + clubs[x].value} 
+          title={clubs[x].label} 
+        />
       );
     }
     return results;
@@ -520,13 +521,13 @@ const UsersTable = () => {
       }}
     >
       <Title level={2}>Таблиця користувачів</Title>
-        <Title
-          level={4}
-          style={{ textAlign: "left", margin: 10 }}
-          underline={true}
-        >
-          Загальна кількість користувачів: {total}
-        </Title>
+      <Title
+        level={4}
+        style={{ textAlign: "left", margin: 10 }}
+        underline={true}
+      >
+        Загальна кількість користувачів: {total}
+      </Title>
       <div className={classes.searchContainer}>
         {loading ? (
           <div className={classes.filterContainer}>
@@ -535,13 +536,6 @@ const UsersTable = () => {
                 <Col className={classes.colForTreeSelect}>
                   <Form.Item
                     name="locationFilter"
-                    rules={[
-                      {
-                        required: true,
-                        message: shouldContain("хоча б одну опцію"),
-                        type: "array",
-                      },
-                    ]}
                   >
                     <TreeSelect
                       placeholder="Фільтр"
@@ -558,15 +552,6 @@ const UsersTable = () => {
                           .indexOf(input.toLowerCase()) >= 0
                       }
                       allowClear
-                      onChange={(event: any) => {
-                        if (event.length == 0) {
-                          setDynamicRegions([]);
-                          setDynamicCities([]);
-                          setDynamicClubs([]);
-                          setDynamicDegrees([]);
-                          setClearFilter(!clearFilter);
-                        }
-                      }}
                     >
                       <TreeNode value={0} title="Всі округи">
                         {getDynamicRegions()}
@@ -625,11 +610,17 @@ const UsersTable = () => {
             searchQuery={searchData}
             hidden={currentTabName !== "renewals"}
             setTotal={setTotal}
-            relativePosition={[tableBody.current?.offsetLeft as number, tableBody.current?.offsetTop as number]}
-            currentUser={currentUser}/>
+            relativePosition={[
+              tableBody.current?.offsetLeft as number,
+              tableBody.current?.offsetTop as number,
+            ]}
+            currentUser={currentUser}
+          />
           <Table
-            style={currentTabName === "renewals" ? {display: "none"} : {}}
-            rowClassName={(record, index) => index === selectedRow ? classes.selectedRow : ""}
+            style={currentTabName === "renewals" ? { display: "none" } : {}}
+            rowClassName={(record, index) =>
+              index === selectedRow ? classes.selectedRow : ""
+            }
             loading={!loading}
             className={classes.table}
             bordered
@@ -660,8 +651,12 @@ const UsersTable = () => {
                     setRecordRoles(parseUserRolesString(record.userRoles));
                     setCurrentUserRoles(record.userRoles);
                     setUser(users.find((x) => x.id == record.id));
-                    setX(event.pageX - (tableBody.current?.offsetLeft as number));
-                    setY(event.pageY - (tableBody.current?.offsetTop as number));
+                    setX(
+                      event.pageX - (tableBody.current?.offsetLeft as number)
+                    );
+                    setY(
+                      event.pageY - (tableBody.current?.offsetTop as number)
+                    );
                     setShowDropdown(true);
                     setSelectedRow(index as number);
                   }
@@ -689,22 +684,22 @@ const UsersTable = () => {
             }}
           />
           <ClickAwayListener onClickAway={handleClickAway}>
-          <DropDownUserTable
-            offsetTop={tableBody.current?.offsetTop as number}
-            offsetLeft={tableBody.current?.offsetLeft as number}
-            showDropdown={showDropdown}
-            record={recordObj}
-            pageX={x}
-            pageY={y}
-            inActiveTab={currentTabName === "confirmed"}
-            onDelete={handleDelete}
-            onChange={handleChange}
-            selectedUser={user}
-            selectedUserRoles={recordRoles}
-            currentUser={currentUser}
-            canView={canView}
-          />
-        </ClickAwayListener>
+            <DropDownUserTable
+              offsetTop={tableBody.current?.offsetTop as number}
+              offsetLeft={tableBody.current?.offsetLeft as number}
+              showDropdown={showDropdown}
+              record={recordObj}
+              pageX={x}
+              pageY={y}
+              inActiveTab={currentTabName === "confirmed"}
+              onDelete={handleDelete}
+              onChange={handleChange}
+              selectedUser={user}
+              selectedUserRoles={recordRoles}
+              currentUser={currentUser}
+              canView={canView}
+            />
+          </ClickAwayListener>
         </Card>
       </div>
     </Layout.Content>

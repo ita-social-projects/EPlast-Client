@@ -25,6 +25,7 @@ import { PersonalDataContext } from "../../personalData/PersonalData";
 import UserApi from "../../../../api/UserApi";
 import moment from "moment";
 import { LoadingOutlined } from "@ant-design/icons";
+import { minAvailableDate } from "../../../../constants/TimeConstants";
 
 type FormAddPlastDegreeProps = {
   plastDegrees: Array<PlastDegree>;
@@ -52,7 +53,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   const [loading, setLoading] = useState(false);
 
   const [isFormReady, setFormReady] = useState(false);
-  const { UpdateData } = useContext(PersonalDataContext);
+  const { updateData } = useContext(PersonalDataContext);
 
   const handleFinish = async (info: any) => {
     setLoading(true);
@@ -118,9 +119,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     form.resetFields();
     props.resetAvailablePlastDegree();
     setLoading(false);
-    if (UpdateData) {
-      await UpdateData();
-    }
+    if (updateData) updateData();
     
     props.setVisibleModal(false);
 
@@ -130,6 +129,12 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
   const handleOnChange = async (value: any) => {
     form.setFieldsValue({plastDegree : undefined});
+    setPlastDegree(value);
+
+    setDateSelectionActive(true);
+  };
+  
+  const setPlastDegree = (value : any) => {
     if (value === "Пластприят") {
       setDegreeSelectVisible(false);
       setFiltredDegrees(
@@ -146,15 +151,14 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         props.plastDegrees.filter((item) => item.name.includes("сеніор"))
       );
     }
-
-    setDateSelectionActive(true);
-  };
+  }
 
   const disabledDate = (current: any) => {
     if (!props.currentUserDegree) return current > moment();
 
     let previousDegreeStart = moment(props.currentUserDegree.dateStart);
-    return current && current > moment() || (current.isBefore(previousDegreeStart) || undefined);
+    return current &&  (current > moment() || !current.isAfter(minAvailableDate)) || 
+      (current.isBefore(previousDegreeStart) || undefined);
   };
 
   const fetchData = async () => {
@@ -178,6 +182,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       })
       setDegreeSelectVisible(true);
     }
+    setPlastDegree(form.getFieldValue("plastUlad"));
     setFormReady(true);
     if (props.currentUserDegree) setDateSelectionActive(false);
   };

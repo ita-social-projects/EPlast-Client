@@ -129,8 +129,6 @@ const Region = () => {
     false
   );
   const [isActiveRegion, setIsActiveRegion] = useState<boolean>(true);
-
-  const AdminAndOkruga = ["Admin", "Голова Округи"];
   const [head, setHead] = useState<any>({
     user: {
       firstName: "",
@@ -358,7 +356,10 @@ const Region = () => {
       true
     );
 
-    if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
+    if (
+      Date.now() < new Date(newAdministrator.endDate).getTime() ||
+      newAdministrator.endDate === null
+    ) {
       notificationLogic("success", "Користувач успішно доданий в провід");
     } else {
       notificationLogic("info", "Колишні діловодства округи були змінені");
@@ -388,14 +389,14 @@ const Region = () => {
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-              existingAdmin.endDate === undefined
+            existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() { },
+      onCancel() {},
       onOk() {
         if (newAdmin.id === 0) {
           addRegionAdmin(newAdmin);
@@ -411,6 +412,44 @@ const Region = () => {
     });
   };
 
+    const showConfirmAddNewHead = (
+      newAdmin: RegionAdmin,
+      existingAdmin?: RegionAdmin
+    ) => {
+      Modal.confirm({
+        title: "Призначити даного користувача на цю посаду?",
+        onCancel() { },
+        async onOk() {
+          await addRegionAdmin(newAdmin);
+          admins.push(newAdmin);
+          setAdmins(admins);
+        },
+      });
+    };
+
+    const showAddNewHeadExpired = (
+      newAdmin: RegionAdmin,
+      existingAdmin?: RegionAdmin
+    ) => {
+      Modal.confirm({
+        title: "Призначити даного користувача на цю посаду?",
+        content: (
+          <div className={classes.Style}>
+            <b>
+              Дані будуть внесені у колишні діловодства округи, оскільки час
+              правління вже закінчився.
+            </b> 
+          </div>
+        ),
+        onCancel() { },
+        async onOk() {
+          await addRegionAdmin(newAdmin);
+          admins.push(newAdmin);
+          setAdmins(admins);
+        },
+      });
+    };
+
   const showDisableModal = async (admin: RegionAdmin) => {
     return Modal.warning({
       title: "Ви не можете додати роль цьому користувачу",
@@ -422,14 +461,14 @@ const Region = () => {
           є Головою Округи, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-              "Invalid date"
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   };
 
@@ -444,14 +483,14 @@ const Region = () => {
           вже має таку роль, час правління закінчується{" "}
           <b>
             {moment.utc(admin.endDate).local().format("DD.MM.YYYY") ===
-              "Invalid date"
+            "Invalid date"
               ? "ще не скоро"
               : moment.utc(admin.endDate).local().format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   };
 
@@ -466,13 +505,14 @@ const Region = () => {
           не є членом Пласту.
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   };
 
   const handleConfirm = async () => {
     setActiveMemberVisibility(false);
   };
+
 
   const handleOk = async (admin: RegionAdmin) => {
     if (admin.id === 0) {
@@ -488,10 +528,27 @@ const Region = () => {
         (x) => x.adminType.adminTypeName === admin.adminType.adminTypeName
       );
       try {
+        const existEndDate = moment.utc(existingAdmin?.endDate).local();
+        const existStartDate = moment.utc(existingAdmin?.startDate).local();
+        const newAdminStartDate = moment.utc(admin.startDate).local();
+        const newAdminEndDate = moment.utc(admin.endDate).local();
+        const currentDate = moment.utc(new Date()).local();
+
         if (head?.userId === admin.userId) {
           showDisableModal(head);
         } else if (existingAdmin?.userId === admin.userId) {
           showDisable(admin);
+        } else if (
+          existingAdmin !== undefined &&
+          admin.endDate !== undefined &&
+          ((existStartDate > newAdminStartDate &&
+            existEndDate < newAdminEndDate) ||
+            (existEndDate > newAdminEndDate &&
+              existStartDate < newAdminStartDate) ||
+            (existEndDate > newAdminEndDate &&
+              newAdminEndDate > existStartDate))
+        ) {
+          showDisable(existingAdmin);
         } else if (
           admin.adminType.adminTypeName === "Голова ОПР" ||
           admin.adminType.adminTypeName === "Член ОПР" ||
@@ -500,10 +557,10 @@ const Region = () => {
         ) {
           const check = await getCheckPlastMember(admin.userId);
           if (check.data) {
-            await addRegionAdmin(admin).then(() => {
-              admins.push(admin);
-              setAdmins(admins);
-            });
+            if (newAdminEndDate < currentDate){
+              showAddNewHeadExpired(admin, existingAdmin)
+            } 
+            else { showConfirmAddNewHead(admin, existingAdmin) };
           } else {
             showPlastMemberDisable(admin);
           }
@@ -800,7 +857,7 @@ const Region = () => {
                     style={{
                       display:
                         userAccesses["DeleteRegion"] ||
-                          userAccesses["EditRegion"]
+                        userAccesses["EditRegion"]
                           ? "block"
                           : "none",
                     }}
@@ -837,7 +894,7 @@ const Region = () => {
                         </Tooltip>
                       </Col>
                       {activeUserRoles.includes(Roles.Admin) ||
-                        activeUserRoles.includes(Roles.GoverningBodyAdmin) ? (
+                      activeUserRoles.includes(Roles.GoverningBodyAdmin) ? (
                         isActiveRegion ? (
                           <Col offset={1}>
                             <Tooltip title="Заархівувати округу">
@@ -1002,7 +1059,7 @@ const Region = () => {
               <a
                 onClick={() =>
                   userAccesses["IsAdmin"] ||
-                    (userAccesses["DownloadDocument"] && isActiveUserFromRegion)
+                  (userAccesses["DownloadDocument"] && isActiveUserFromRegion)
                     ? history.push(`/regions/documents/${region.id}`)
                     : undefined
                 }
@@ -1025,7 +1082,9 @@ const Region = () => {
                     key={document.id}
                   >
                     <div>
-                      <FileTextOutlined className="documentIcon" />
+                      <Tooltip title={<div style={{textAlign: 'center'}}>{document.fileName}</div>}>
+                        <FileTextOutlined className="documentIcon" />
+                      </Tooltip>
                       <p className="documentText">{document.fileName}</p>
                     </div>
                   </Col>
@@ -1036,7 +1095,7 @@ const Region = () => {
             </Row>
             <div className="cityMoreButton">
               {userAccesses["IsAdmin"] ||
-                (userAccesses["DownloadDocument"] && isActiveUserFromRegion) ? (
+              (userAccesses["DownloadDocument"] && isActiveUserFromRegion) ? (
                 <Button
                   type="primary"
                   className="cityInfoButton"
@@ -1084,11 +1143,7 @@ const Region = () => {
                 followers.slice(0, 6).map((follower) => (
                   <Col
                     className={
-                      AdminAndOkruga.some((role) =>
-                        activeUserRoles.includes(role)
-                      )
-                        ? "cityMemberItem"
-                        : undefined
+                      userAccesses["EditRegion"] ? "cityMemberItem" : undefined
                     }
                     xs={12}
                     sm={8}
@@ -1097,12 +1152,10 @@ const Region = () => {
                     <div>
                       <div
                         onClick={() =>
-                          AdminAndOkruga.some((role) =>
-                            activeUserRoles.includes(role)
-                          )
+                          userAccesses["EditRegion"]
                             ? history.push(
-                              `/regions/follower/edit/${follower.id}`
-                            )
+                                `/regions/follower/edit/${follower.id}`
+                              )
                             : undefined
                         }
                       >
