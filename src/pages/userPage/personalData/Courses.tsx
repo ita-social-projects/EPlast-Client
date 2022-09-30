@@ -73,19 +73,18 @@ export const Courses: React.FC = () => {
                 <p>
                   <strong>{userProfile?.user.firstName}</strong>, пройдіть курс для продовження співпраці з нами
                 </p>
-                <div className="rowBlock">
+                <div className="courseParticipationBlock">
                   <a href={sectItem.link} >
                     <img src={PlastLogo} alt="PlastLogo" />
                   </a>
+                  <Button
+                    type="primary"
+                    className="buttonAddCertificate"
+                    onClick={() => addCertificate(sectItem.id)}
+                  >
+                    Додати сертифікат
+                  </Button>
                 </div>
-              
-                <Button
-                  type="primary"
-                  className="buttonaddcertificate"
-                  onClick={() => addCertificate(sectItem.id)}
-                >
-                  Додати сертифікат
-                </Button>
               </Col>
             ) : (
               <Col style={{ marginTop: "64px" }}>
@@ -131,6 +130,7 @@ export const Courses: React.FC = () => {
         </Modal>
     
         <ListOfAchievementsModal
+          courseId={courseId}
           userToken={userToken}
           visibleModal={visibleListModal}
           setVisibleModal={setVisibleListModal}
