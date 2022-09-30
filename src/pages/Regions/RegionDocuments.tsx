@@ -140,19 +140,23 @@ const RegionDocuments = () => {
                     activeUserRoles.includes(Roles.OkrugaHeadDeputy)) &&
                     isActiveUserFromRegion)
                     ? [
-                        <DownloadOutlined
-                          key="download"
-                          onClick={() =>
-                            downloadDocument(
-                              document.blobName,
-                              document.fileName
-                            )
-                          }
-                        />,
-                        <CloseOutlined
-                          key="close"
-                          onClick={() => seeDeleteModal(document.id)}
-                        />,
+                        <Tooltip title="Завантажити">
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />
+                        </Tooltip>,
+                        <Tooltip title="Видалити">
+                          <CloseOutlined
+                            key="close"
+                            onClick={() => seeDeleteModal(document.id)}
+                          />
+                        </Tooltip>
                       ]
                     : canEdit ||
                       activeUserRoles.includes(Roles.OkrugaHeadDeputy) ||
