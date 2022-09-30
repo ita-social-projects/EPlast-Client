@@ -143,10 +143,10 @@ export const Blanks = () => {
     getExtractFromUPU();
     setLoadingBlanks(true);
   }, [
-    userId,
     visibleModal,
     visibleAchievementModal,
     visibleExtractFromUPUModal,
+    visibleListAchievementModal
   ]);
 
   return (loading && loadingBlanks) === false ? (
@@ -515,7 +515,6 @@ export const Blanks = () => {
       />
 
       <AddAchievementsModal
-        courseId={null}
         userId={fullUserProfile?.user.id}
         visibleModal={visibleAchievementModal}
         setVisibleModal={setvisibleAchievementModal}

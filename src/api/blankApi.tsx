@@ -36,7 +36,7 @@ export const getAchievementsByPage = async (
   pageNumber: number,
   pageSize: number,
   userId: string,
-  courseId = 0
+  courseId?: number
 ) => {
   const response = await api.get(`Blanks/InfinityScroll`, {
     pageNumber,

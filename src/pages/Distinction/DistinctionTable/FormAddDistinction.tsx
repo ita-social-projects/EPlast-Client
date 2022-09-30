@@ -27,6 +27,7 @@ import {
   getOnlyNums,
 } from "../../../models/GllobalValidations/DescriptionValidation";
 import { useDistinctions } from "../../../stores/DistinctionsStore";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 const FormAddUserDistinction: React.FC = () => {
   const [form] = Form.useForm();
@@ -34,11 +35,11 @@ const FormAddUserDistinction: React.FC = () => {
 
   const [state, actions] = useDistinctions();
   useEffect(() => {
-    if (state.addUserDistinctionModalIsVisible) {
+    if (state.isAddUserDistinctionModalVisible) {
       actions.fetchDistinctions();
       actions.getUsersWithoutPrecautions();
     }
-  }, [state.addUserDistinctionModalIsVisible]);
+  }, [state.isAddUserDistinctionModalVisible]);
 
   const handleCancel = () => {
     form.resetFields();
@@ -71,7 +72,7 @@ const FormAddUserDistinction: React.FC = () => {
   };
 
   function disabledDate(currentDate: any) {
-    return currentDate && currentDate < moment("01-01-1900", "DD-MM-YYYY");
+    return currentDate && !(currentDate.isAfter(minAvailableDate) && currentDate.isSameOrBefore(moment.utc()));
   }
 
   return (

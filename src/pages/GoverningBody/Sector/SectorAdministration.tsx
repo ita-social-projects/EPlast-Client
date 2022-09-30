@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip } from "antd";
 import {
-  SettingOutlined,
+  EditOutlined,
   RollbackOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
@@ -161,11 +161,15 @@ const SectorAdministration = () => {
                 actions={
                   userAccesses["AddSecretary"]
                     ? [
-                        <SettingOutlined
-                          className={classes.governingBodyAdminSettingsIcon}
-                          onClick={() => showModal(member)}
-                        />,
-                        <CloseOutlined onClick={() => showConfirm(member)} />,
+                        <Tooltip title="Редагувати">
+                          <EditOutlined
+                            className={classes.governingBodyAdminSettingsIcon}
+                            onClick={() => showModal(member)}
+                          />
+                        </Tooltip>,
+                        <Tooltip title="Видалити">
+                          <CloseOutlined onClick={() => showConfirm(member)} />
+                        </Tooltip>
                       ]
                     : undefined
                 }
