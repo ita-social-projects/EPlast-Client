@@ -19,6 +19,7 @@ import moment from "moment";
 import userApi from "../../../api/UserApi";
 import "moment/locale/uk";
 import { Roles } from "../../../models/Roles/Roles";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
@@ -51,7 +52,7 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const showConfirm = (newAdmin: ClubAdmin, existingAdmin: ClubAdmin) => {
@@ -251,9 +252,7 @@ const AddAdministratorModal = (props: Props) => {
       }
       else if (existingAdmin !== undefined && admin.endDate !== undefined &&
         (existStartDate > newAdminStartDate && existEndDate < newAdminEndDate
-          || existEndDate > newAdminEndDate && existStartDate < newAdminStartDate
-          || existEndDate > newAdminEndDate && newAdminEndDate > existStartDate)) {
-
+          || existEndDate > newAdminEndDate && existStartDate < newAdminStartDate)) {
         showImpossibleAddManager(existingAdmin);
       }
       else if (

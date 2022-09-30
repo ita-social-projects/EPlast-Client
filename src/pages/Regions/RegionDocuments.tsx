@@ -178,13 +178,12 @@ const RegionDocuments = () => {
                     : undefined
                 }
               >
-                <Avatar size={86} icon={<FileTextOutlined />} />
+                <Tooltip placement="bottom" title={<div style={{textAlign: 'center'}}>{document.fileName}</div>}>
+                  <Avatar size={86} icon={<FileTextOutlined />} />
+                </Tooltip>
                 <Card.Meta
                   className="detailsMeta"
-                  title={extendedTitleTooltip(
-                    parameterMaxLength,
-                    document.fileName
-                  )}
+                  title={document.fileName}
                 />
               </Card>
             ))

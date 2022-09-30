@@ -48,7 +48,6 @@ const ListOfAchievementsModal = (props: Props) => {
     setLoadingMore({ loading: false, hasMore: true });
     setIsEmpty(false);
     setPageNumber(0);
-    props.setVisibleModal(false);
     setAchievements([]);
   };
 
@@ -133,7 +132,12 @@ const ListOfAchievementsModal = (props: Props) => {
   }
 
   useEffect(() => {
-    if (achievements.length === 0) props.setVisibleModal(false);
+    if (achievements.length === 0) {
+      props.setVisibleModal(false);
+      setLoadingMore({ loading: false, hasMore: true });
+      setIsEmpty(false);
+      setPageNumber(0);
+    };
   }, [achievements]);
 
   return (

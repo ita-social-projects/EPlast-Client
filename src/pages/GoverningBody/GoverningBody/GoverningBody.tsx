@@ -509,7 +509,7 @@ const GoverningBody = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
             <Title level={4}>
-              Оголошення
+              Оголошення{" "}
               <a
                 onClick={() =>
                   history.push(

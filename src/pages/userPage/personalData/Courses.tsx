@@ -63,7 +63,7 @@ export const Courses: React.FC = () => {
       </div>
     )
     : isDataLoaded ? (
-      <div className={classes.wrapper2}>
+      <div className={classes.wrapper6} style={{margin: 0}}>
         {
           courses.map(sectItem =>
             (sectItem.isFinishedByUser === false && 
@@ -73,28 +73,26 @@ export const Courses: React.FC = () => {
                 <p>
                   <strong>{userProfile?.user.firstName}</strong>, пройдіть курс для продовження співпраці з нами
                 </p>
-                <div className="rowBlock">
+                <div className="courseParticipationBlock">
                   <a href={sectItem.link} >
                     <img src={PlastLogo} alt="PlastLogo" />
                   </a>
+                  <Button
+                    type="primary"
+                    className="buttonAddCertificate"
+                    onClick={() => addCertificate(sectItem.id)}
+                  >
+                    Додати сертифікат
+                  </Button>
                 </div>
-              
-                <Button
-                  type="primary"
-                  className="buttonaddcertificate"
-                  onClick={() => addCertificate(sectItem.id)}
-                >
-                  Додати сертифікат
-                </Button>
               </Col>
             ) : (
               <Col style={{ marginTop: "64px" }}>
                 <Title level={2}> {sectItem.name}</Title>
                 <p>
                   Курс {sectItem.name} пройдено, сертифікат можна переглянути в
-                  <Button 
+                  <Button style={{padding: "0 0 0 4px"}}
                     type="link" 
-                    className="Link" 
                     onClick={() => {
                       setVisibleListModal(true);
                       setCourseId(sectItem.id)
@@ -132,6 +130,7 @@ export const Courses: React.FC = () => {
         </Modal>
     
         <ListOfAchievementsModal
+          courseId={courseId}
           userToken={userToken}
           visibleModal={visibleListModal}
           setVisibleModal={setVisibleListModal}

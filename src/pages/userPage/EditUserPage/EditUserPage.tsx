@@ -46,6 +46,7 @@ import { UpuDegree } from "../Interface/Interface";
 import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "../personalData/PersonalData";
 import { profileValidator } from "../../SignUp/SignUp";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 export default function () {
   const { userId } = useParams<{ userId: string }>();
@@ -55,7 +56,6 @@ export default function () {
   const wrongOnlyLettersMessage = shouldContain("тільки літери");
   const wrongAllVariantsMessage = shouldContain("літери, символи та цифри");
   const [form] = Form.useForm();
-  const MIN_AVAILABLE_DATE = "01.01.1900";
 
   const [nationality, setNationality] = useState<Nationality>();
   const [religion, setReligion] = useState<Religion>();
@@ -165,7 +165,7 @@ export default function () {
 
   function disabledDate(current: moment.Moment) {
     let date = moment().endOf("day");
-    return (current && current > date) || current.isBefore(MIN_AVAILABLE_DATE);
+    return (current && current > date) || current.isBefore(minAvailableDate);
   }
 
   const validationSchema = {
@@ -423,12 +423,8 @@ export default function () {
     setPhoneNumber(event.target.value);
   };
 
-  const handleOnChangeBirthday = (event: any, value: any) => {
-    if (value === "") {
-      setBirthday(undefined);
-    } else {
-      setBirthday(moment.utc(event?._d).local());
-    }
+  const handleOnChangeBirthday = (event: any) => {
+    setBirthday(event);
   };
 
   const handleOnChangeUpuDegree = (value: any) => {
@@ -459,7 +455,7 @@ export default function () {
         lastName: values.lastName?.trim(),
         fatherName: values?.fatherName?.trim(),
         phoneNumber: phoneNumber?.trim(),
-        birthday: form?.getFieldValue("birthday"),
+        birthday: moment(values.birthday).format("YYYY-MM-DD"),
         imagePath: photoName,
         pseudo: values.pseudo?.trim(),
         publicPoliticalActivity: values.publicPoliticalActivity?.trim(),

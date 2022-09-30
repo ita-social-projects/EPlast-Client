@@ -268,9 +268,7 @@ const RegionBoard = () => {
         "Помилка при відправленні повідомлення користувачу"
       );
     });
-
     getGoverningBodiesAdmins();
-    setVisibleAddMainAdminModal(false);
   };
 
   const getGoverningBodiesAdmins = async () => {
