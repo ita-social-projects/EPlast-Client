@@ -40,6 +40,7 @@ import notificationLogic from "../../components/Notifications/Notification";
 import SectorAdmin from "../../models/GoverningBody/Sector/SectorAdmin";
 import GoverningBodyAdminTypes from "../GoverningBody/GoverningBodyAdminTypes";
 import SectorAdminTypes from "../GoverningBody/Sector/SectorAdminTypes";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 interface Props {
   onChange: (id: string, userRoles: string) => void;
@@ -326,7 +327,7 @@ const ChangeUserRoleForm = ({
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const onAdminTypeSelect = (adminType: string) => {
