@@ -33,6 +33,7 @@ import { Roles } from "../../../models/Roles/Roles";
 import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import SectorAdminTypes from "./SectorAdminTypes";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 const { confirm } = Modal;
 
@@ -49,7 +50,7 @@ const AddSectorAdminForm = (props: any) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const addSectorAdmin = async (admin: SectorAdmin) => {

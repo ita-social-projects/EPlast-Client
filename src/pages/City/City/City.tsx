@@ -73,6 +73,7 @@ import "moment/locale/uk";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import ModalAddPlastDegree from "../../userPage/ActiveMembership/PlastDegree/ModalAddPlastDegree";
 import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
+import { useUserTableStore } from "../../../stores/UserTableStore";
 
 const City = () => {
   const history = useHistory();
@@ -83,9 +84,7 @@ const City = () => {
   const [cityLogo64, setCityLogo64] = useState<string>("");
   const [visibleModal, setVisibleModal] = useState(false);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
-  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({});
   const [admins, setAdmins] = useState<CityAdmin[]>([]);
   const [adminsAll, setAdminsAll] = useState<CityAdmin[]>([]);
   const [members, setMembers] = useState<CityMember[]>([]);
@@ -109,7 +108,8 @@ const City = () => {
   const [activeUserID, setActiveUserID] = useState<string>();
   const [selectedFollowerUID, setSelectedFollowerUID] = useState<string>();
   const [visibleAddModalDegree, setVisibleAddModalDegree] = useState<boolean>(false);
-
+  const [state, actions] = useUserTableStore();
+      
   const documentsToShow = 6;
   const adminsToShow = 6;
   const membersToShow = 9;
@@ -956,7 +956,10 @@ const City = () => {
                 className="cityInfoButton"
                 onClick={() => {
                   if (userAccesses["EditCity"])
-                    history.push(`/user/table?city=${city.id}`);
+                  {
+                    actions.setCities([city.id]);
+                    history.push(`/user/table`);
+                  }
                   else history.push(`/cities/members/${city.id}`);
                 }}
               >
@@ -1223,8 +1226,10 @@ const City = () => {
                 type="primary"
                 className="cityInfoButton"
                 onClick={() => {
-                  if (userAccesses["EditCity"])
-                    history.push(`/user/table?tab=registered&city=${city.id}`);
+                  if (userAccesses["EditCity"]){
+                    actions.setCities([city.id]);
+                    history.push(`/user/table?tab=registered`);
+                  }
                   else history.push(`/cities/followers/${city.id}`);
                 }}
               >

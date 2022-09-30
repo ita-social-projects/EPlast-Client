@@ -33,14 +33,14 @@ type State = {
   userDistinctions: UserDistinctionTableInfo[];
   distinctionTableSettings: DistinctionTableSettings;
   distinctionTypes: Distinction[];
-  editUserDistinctionFormIsVisible: boolean;
+  isEditUserDistinctionFormVisible: boolean;
   editedUserDistinction: UserDistinction;
-  editDistinctionIsVisible: boolean;
-  addUserDistinctionModalIsVisible: boolean;
+  isEditDistinctionVisible: boolean;
+  isAddUserDistinctionModalVisible: boolean;
   editedDistinction: Distinction;
   modalSelectedDistinction: Distinction;
-  editDistinctionTypesModalIsVisible: boolean;
-  deleteModalIsVisible: boolean;
+  isEditDistinctionTypesModalVisible: boolean;
+  isDeleteModalVisible: boolean;
   deleteDitinctionId: number;
   isLoadingUserDistinctionsTable: boolean;
   isLoadingUsersWithoutPrecautions: boolean;
@@ -65,9 +65,9 @@ const emptyUserDistinctionTableInfo: UserDistinctionTableInfo = {
 const initialState: State = {
   userDistinctions: [],
   distinctionTypes: [],
-  editDistinctionIsVisible: false,
+  isEditDistinctionVisible: false,
   editedDistinction: new Distinction(),
-  deleteModalIsVisible: false,
+  isDeleteModalVisible: false,
   deleteDitinctionId: 0,
   distinctionTableSettings: {
     sortByOrder: ["number", "ascend"],
@@ -75,17 +75,17 @@ const initialState: State = {
     page: 1,
     pageSize: 10,
   },
-  editUserDistinctionFormIsVisible: false,
-  addUserDistinctionModalIsVisible: false,
+  isEditUserDistinctionFormVisible: false,
+  isAddUserDistinctionModalVisible: false,
   editedUserDistinction: new UserDistinction(),
   userDistinctionsAccess: {},
-  editDistinctionTypesModalIsVisible: false,
+  isEditDistinctionTypesModalVisible: false,
   currentUserDistinction: emptyUserDistinctionTableInfo,
   isLoadingUsersWithoutPrecautions: false,
   usersWithoutPrecautions: [],
   isLoadingDistinctionTypes: false,
   modalSelectedDistinction: new Distinction(),
-  isLoadingUserDistinctionsTable: false
+  isLoadingUserDistinctionsTable: false,
 };
 
 const CreateDeleteNotification = (id: number): Action<State> => async ({
@@ -208,9 +208,9 @@ const actions = {
     });
   },
 
-  setLoadingUserDistinctionsTable: (isTableLoading: boolean): Action<State> => ({
-    setState,
-  }) => {
+  setLoadingUserDistinctionsTable: (
+    isTableLoading: boolean
+  ): Action<State> => ({ setState }) => {
     setState({
       isLoadingUserDistinctionsTable: isTableLoading,
     });
@@ -256,7 +256,11 @@ const actions = {
       );
   },
 
-  fetchUserDistinctions: (): Action<State> => ({ setState, getState,dispatch }) => {
+  fetchUserDistinctions: (): Action<State> => ({
+    setState,
+    getState,
+    dispatch,
+  }) => {
     distinctionApi
       .getAllUsersDistinctions(getState().distinctionTableSettings)
       .then((response) => {
@@ -387,7 +391,7 @@ const actions = {
     dispatch,
   }) => {
     setState({
-      addUserDistinctionModalIsVisible: true,
+      isAddUserDistinctionModalVisible: true,
     });
     dispatch(actions.setLoadingDistinctionTypes(true));
     dispatch(actions.setLoadingUsersWithoutPrecautions(true));
@@ -395,7 +399,7 @@ const actions = {
 
   closeUserDistinctionAddModal: (): Action<State> => ({ setState }) => {
     setState({
-      addUserDistinctionModalIsVisible: false,
+      isAddUserDistinctionModalVisible: false,
     });
   },
 
@@ -408,7 +412,7 @@ const actions = {
       .getUserDistinctionById(getState().currentUserDistinction.id)
       .then((response) => {
         setState({
-          editUserDistinctionFormIsVisible: true,
+          isEditUserDistinctionFormVisible: true,
           editedUserDistinction: response.data,
         });
         dispatch(actions.setLoadingDistinctionTypes(true));
@@ -419,7 +423,7 @@ const actions = {
 
   closeUserDistinctionEditModal: (): Action<State> => ({ setState }) => {
     setState({
-      editUserDistinctionFormIsVisible: false,
+      isEditUserDistinctionFormVisible: false,
     });
   },
 
@@ -427,14 +431,14 @@ const actions = {
     setState,
   }) => {
     setState({
-      editDistinctionIsVisible: true,
+      isEditDistinctionVisible: true,
       editedDistinction: distinction,
     });
   },
 
   closeDistinctionEditForm: (): Action<State> => ({ setState }) => {
     setState({
-      editDistinctionIsVisible: false,
+      isEditDistinctionVisible: false,
       editedDistinction: new Distinction(),
     });
   },
@@ -443,7 +447,7 @@ const actions = {
     setState,
     dispatch,
   }) => {
-    setState({ editDistinctionTypesModalIsVisible: false });
+    setState({ isEditDistinctionTypesModalVisible: false });
     dispatch(actions.closeDistinctionEditForm());
     dispatch(actions.openUserDistinctionAddModal());
   },
@@ -453,7 +457,7 @@ const actions = {
     dispatch,
   }) => {
     dispatch(actions.closeUserDistinctionAddModal());
-    setState({ editDistinctionTypesModalIsVisible: true });
+    setState({ isEditDistinctionTypesModalVisible: true });
   },
 
   addDistinction: (distinction: Distinction): Action<State> => ({

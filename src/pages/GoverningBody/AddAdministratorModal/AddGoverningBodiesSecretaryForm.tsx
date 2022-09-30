@@ -34,6 +34,7 @@ import "./AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import Spinner from "../../Spinner/Spinner";
 import GoverningBodyAdminTypes from "../GoverningBodyAdminTypes";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 const { confirm } = Modal;
 
@@ -51,7 +52,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
