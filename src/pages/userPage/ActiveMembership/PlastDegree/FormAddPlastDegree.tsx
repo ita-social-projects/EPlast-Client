@@ -108,7 +108,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
       await NotificationBoxApi.createNotifications(
         [props.userId],
-        `Вам було надано ступінь "${degreeName}" в `,
+        `Вам було надано ступінь: '${degreeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${props.userId}`,
         `Дійсному членстві`
@@ -310,7 +310,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
           className={classes.selectField}
           disabled={!isDateSelectionActive}
           disabledDate={disabledDate}
-          placeholder="Дата надання ступіню"
+          placeholder="Дата надання ступеню"
         />
       </Form.Item>
       <Form.Item>
@@ -319,7 +319,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
             ? "Змінити ступінь"
             : isDateSelectionActive
               ? "Додати"
-              : "Додати без зміни ступіня"
+              : "Додати без зміни ступеня"
           }
         </Button>
       </Form.Item>

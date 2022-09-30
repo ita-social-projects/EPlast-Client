@@ -76,9 +76,7 @@ const Region = () => {
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
-  const [document, setDocument] = useState<RegionDocument>(
-    new RegionDocument()
-  );
+  const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
   const [documents, setDocuments] = useState<RegionDocument[]>([]);
   const classes = require("./Modal.module.css");
   const [region, setRegion] = useState<any>({
@@ -106,28 +104,20 @@ const Region = () => {
     },
   ]);
   const [nineMembers, setSixMembers] = useState<any[]>([]);
-  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(
-    false
-  );
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [followers, setFollowers] = useState<RegionFollower[]>([]);
   const [followersCount, setFollowersCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
-  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({});
   const [activeCities, setActiveCities] = useState<any[]>([]);
   const [adminsCount, setAdminsCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [visible, setVisible] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<
-    boolean
-  >(false);
-  const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(
-    false
-  );
+  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
+  const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
   const [isActiveRegion, setIsActiveRegion] = useState<boolean>(true);
   const [head, setHead] = useState<any>({
     user: {
@@ -571,8 +561,11 @@ const Region = () => {
           admins.push(admin);
           setAdmins(admins);
         }
-      } finally {
-        setVisible(false);
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       if (
