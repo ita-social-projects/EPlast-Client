@@ -30,6 +30,7 @@ import { DocumentWrapper } from "../../models/Documents/DocumentWraper";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 import moment from "moment";
 import { DocumentsStore } from "../../stores/DocumentsStore";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 const checkFile = (fileSize: number, fileName: string): boolean => {
   const extension = fileName.split(".").reverse()[0].toLowerCase();
@@ -59,6 +60,10 @@ const checkFile = (fileSize: number, fileName: string): boolean => {
   if (!isEmptyFile) notificationLogic("error", fileIsEmpty());
 
   return isCorrectExtension && isEmptyFile;
+};
+
+const disabledDate = (current: any) => {
+  return current && !current.isAfter(minAvailableDate);
 };
 
 interface FormAddDocumentsProps {
@@ -238,6 +243,7 @@ const FormAddDocument: React.FC<FormAddDocumentsProps> = ({ setVisibleModal, onA
             ]}
           >
             <DatePicker
+              disabledDate={disabledDate}
               format="DD.MM.YYYY"
               className={formclasses.selectField}
               getPopupContainer={() =>

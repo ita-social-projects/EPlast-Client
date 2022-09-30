@@ -92,9 +92,8 @@ export const Courses: React.FC = () => {
                 <Title level={2}> {sectItem.name}</Title>
                 <p>
                   Курс {sectItem.name} пройдено, сертифікат можна переглянути в
-                  <Button 
+                  <Button style={{padding: "0 0 0 4px"}}
                     type="link" 
-                    className="Link" 
                     onClick={() => {
                       setVisibleListModal(true);
                       setCourseId(sectItem.id)

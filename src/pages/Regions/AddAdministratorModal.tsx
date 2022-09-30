@@ -21,6 +21,7 @@ import "moment/locale/uk";
 import notificationLogic from "../../components/Notifications/Notification";
 import { Roles } from "../../models/Roles/Roles";
 import RegionAdmin from "../../models/Region/RegionAdmin";
+import { minAvailableDate } from "../../constants/TimeConstants";
 moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
@@ -53,7 +54,7 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const getRegionAdmins = async () => {
