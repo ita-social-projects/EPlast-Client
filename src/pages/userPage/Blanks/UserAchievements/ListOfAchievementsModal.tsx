@@ -26,10 +26,10 @@ const fileNameMaxLength = 47;
 interface Props {
   visibleModal: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
-  hasAccess?: boolean;
-  hasAccessToSeeAndDownload?: boolean;
+  hasAccessToSee?: boolean;
+  hasAccessToDownload?: boolean;
   hasAccessToDelete?: boolean;
-  userToken: any;
+  userToken: {nameid: string};
   courseId?: number; 
 }
 
@@ -45,6 +45,7 @@ const ListOfAchievementsModal = (props: Props) => {
   const [isEmpty, setIsEmpty] = useState(false);
   
   const handleCancel = () => {
+    props.setVisibleModal(false);
     setLoadingMore({ loading: false, hasMore: true });
     setIsEmpty(false);
     setPageNumber(0);
@@ -92,8 +93,7 @@ const ListOfAchievementsModal = (props: Props) => {
 
   const getActions = (blackDocumentItem: BlankDocument, isNotDocx = true) => {
     const actions: JSX.Element[] = [];
-    if (props.hasAccessToSeeAndDownload) {
-      if (isNotDocx) {
+    if (props.hasAccessToDownload && isNotDocx) {
         actions.push(
           <EyeOutlined
             className={classes.reviewIcon}
@@ -102,7 +102,8 @@ const ListOfAchievementsModal = (props: Props) => {
             }
           />
         );
-      }
+    }
+    if (props.hasAccessToSee) {
       actions.push(
         <DownloadOutlined
           className={classes.downloadIcon}
@@ -132,7 +133,7 @@ const ListOfAchievementsModal = (props: Props) => {
   }
 
   useEffect(() => {
-    if (achievements.length === 0) {
+    if (achievements.length === 0 && userId === props.userToken.nameid) {
       props.setVisibleModal(false);
       setLoadingMore({ loading: false, hasMore: true });
       setIsEmpty(false);
