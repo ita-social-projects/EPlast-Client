@@ -19,6 +19,7 @@ import moment from "moment";
 import userApi from "../../../api/UserApi";
 import "moment/locale/uk";
 import { Roles } from "../../../models/Roles/Roles";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
@@ -51,7 +52,7 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const showConfirm = (newAdmin: ClubAdmin, existingAdmin: ClubAdmin) => {

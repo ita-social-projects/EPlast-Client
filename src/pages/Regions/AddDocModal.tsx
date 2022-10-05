@@ -25,6 +25,7 @@ import {
   fileIsEmpty,
 } from "../../components/Notifications/Messages";
 import "moment/locale/uk";
+import { minAvailableDate } from "../../constants/TimeConstants";
 moment.locale("uk-ua");
 
 interface Props {
@@ -116,6 +117,10 @@ const AddDocumentModal = (props: Props) => {
     setDisabled(true);
   };
 
+  const disabledDate = (current: any) => {
+    return current && !current.isAfter(minAvailableDate);
+  };
+
   const handleCancel = () => {
     props.setVisibleModal(false);
     form.resetFields();
@@ -134,7 +139,7 @@ const AddDocumentModal = (props: Props) => {
       <Form name="basic" onFinish={handleSubmit} form={form}>
         <div className="formFields">
           <Form.Item name="datepicker" label="Дата документу">
-            <DatePicker format="DD.MM.YYYY" className="formSelect" />
+            <DatePicker disabledDate={disabledDate} format="DD.MM.YYYY" className="formSelect" />
           </Form.Item>
         </div>
 
