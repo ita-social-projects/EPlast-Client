@@ -32,15 +32,14 @@ const ChangeUserRegionModal = ({
   };
 
   const handleChange = (id: string, userRole: string) => {
-    onChange(id, userRole);
-    user.clubName &&
-      NotificationBoxApi.createNotifications(
-        [id],
-        `Вам була присвоєна нова роль: '${userRole}' в окрузі: `,
-        NotificationBoxApi.NotificationTypes.UserNotifications,
-        `/regions/${regionId}`,
-        user.regionName
-      );
+    onChange(id, userRole);    
+    NotificationBoxApi.createNotifications(
+      [id],
+      `Вам була присвоєна нова роль: '${userRole}' в окрузі: `,
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      `/regions/${regionId}`,
+      user.regionName
+    );
   };
 
   const handleClick = async () => {
