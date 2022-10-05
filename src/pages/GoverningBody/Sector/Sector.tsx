@@ -447,7 +447,7 @@ const Sector = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
             <Title level={4}>
-              Оголошення
+              Оголошення{" "}
               <a
                 onClick={() =>
                   history.push(
@@ -542,7 +542,7 @@ const Sector = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>
-              Провід напряму керівного органу
+              Провід напряму керівного органу{" "}
               <a
                 onClick={() =>
                   history.push(

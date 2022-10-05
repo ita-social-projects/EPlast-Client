@@ -105,7 +105,7 @@ const RegionBoardDocuments = () => {
                 actions={
                   userAccesses["ManipulateDocument"]
                     ? [
-                      <Tooltip title="Завантажити документ">
+                      <Tooltip title="Завантажити">
                         <DownloadOutlined
                           key="download"
                           onClick={() =>
@@ -116,13 +116,12 @@ const RegionBoardDocuments = () => {
                           }
                         />
                         </Tooltip>,
-
-                        <Tooltip title="Видалити документ">
+                        <Tooltip title="Видалити">
                           <CloseOutlined
                             key="close"
                             onClick={() => onClickRemoveDocument(document)}
                           />
-                        </Tooltip>,
+                        </Tooltip>
                       ]
                     : [
                         <DownloadOutlined

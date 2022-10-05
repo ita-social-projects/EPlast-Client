@@ -25,6 +25,7 @@ import { PersonalDataContext } from "../../personalData/PersonalData";
 import UserApi from "../../../../api/UserApi";
 import moment from "moment";
 import { LoadingOutlined } from "@ant-design/icons";
+import { minAvailableDate } from "../../../../constants/TimeConstants";
 
 type FormAddPlastDegreeProps = {
   plastDegrees: Array<PlastDegree>;
@@ -107,7 +108,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
       await NotificationBoxApi.createNotifications(
         [props.userId],
-        `Вам було надано ступінь "${degreeName}" в `,
+        `Вам було надано ступінь: '${degreeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${props.userId}`,
         `Дійсному членстві`
@@ -128,6 +129,12 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
   const handleOnChange = async (value: any) => {
     form.setFieldsValue({plastDegree : undefined});
+    setPlastDegree(value);
+
+    setDateSelectionActive(true);
+  };
+  
+  const setPlastDegree = (value : any) => {
     if (value === "Пластприят") {
       setDegreeSelectVisible(false);
       setFiltredDegrees(
@@ -144,15 +151,14 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         props.plastDegrees.filter((item) => item.name.includes("сеніор"))
       );
     }
-
-    setDateSelectionActive(true);
-  };
+  }
 
   const disabledDate = (current: any) => {
     if (!props.currentUserDegree) return current > moment();
 
     let previousDegreeStart = moment(props.currentUserDegree.dateStart);
-    return current && current > moment() || (current.isBefore(previousDegreeStart) || undefined);
+    return current &&  (current > moment() || !current.isAfter(minAvailableDate)) || 
+      (current.isBefore(previousDegreeStart) || undefined);
   };
 
   const fetchData = async () => {
@@ -176,6 +182,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
       })
       setDegreeSelectVisible(true);
     }
+    setPlastDegree(form.getFieldValue("plastUlad"));
     setFormReady(true);
     if (props.currentUserDegree) setDateSelectionActive(false);
   };
@@ -303,7 +310,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
           className={classes.selectField}
           disabled={!isDateSelectionActive}
           disabledDate={disabledDate}
-          placeholder="Дата надання ступіню"
+          placeholder="Дата надання ступеню"
         />
       </Form.Item>
       <Form.Item>
@@ -312,7 +319,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
             ? "Змінити ступінь"
             : isDateSelectionActive
               ? "Додати"
-              : "Додати без зміни ступіня"
+              : "Додати без зміни ступеня"
           }
         </Button>
       </Form.Item>

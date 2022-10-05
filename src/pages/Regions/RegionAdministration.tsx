@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip } from "antd";
 import {
-  SettingOutlined,
+  EditOutlined,
   CloseOutlined,
   RollbackOutlined,
   ExclamationCircleOutlined,
@@ -11,7 +11,6 @@ import jwt from "jwt-decode";
 import Title from "antd/lib/typography/Title";
 import moment from "moment";
 import {
-  editAdminStatus,
   getRegionAdministration,
   getRegionById,
   getUserRegionAccess,
@@ -63,7 +62,6 @@ const RegionAdministration = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
-  const [regionName, setRegionName] = useState<string>("");
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -94,7 +92,6 @@ const RegionAdministration = () => {
     const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
     setRegion(regionResponse.data);
-    setRegionName(regionResponse.data.name);
     setPhotos([...administrationResponse.data].filter((a) => a != null));
     setAdministration(
       [...administrationResponse.data].filter((a) => a != null)
@@ -123,7 +120,6 @@ const RegionAdministration = () => {
 
   const removeAdministrator = async (admin: CityAdmin) => {
     try {
-      await editAdminStatus(admin.id);
       await removeAdmin(admin.id);
       await createNotification(
         admin.userId,
@@ -153,10 +149,28 @@ const RegionAdministration = () => {
   const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
     const index = administration.findIndex((a) => a.id === admin.id);
     administration[index] = newAdmin;
-    await createNotification(
-      newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
-    );
+    const previousAdmin = administration.find(a => a.id === admin.id)!; 
+    const adminIdx = administration.findIndex(a => a.id === admin.id);
+    administration[adminIdx] = newAdmin;
+    if (previousAdmin.adminType.adminTypeName !== newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`
+      );
+    }
+    if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
+      await createNotification( 
+        newAdmin.userId,
+        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
+      );
+    } else if (newAdmin.startDate !== admin.startDate || newAdmin.endDate !== admin.endDate) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам було змінено час правління на 
+        ${moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - 
+        ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")} в окрузі`
+      );
+    }
     setAdministration(administration);
     setReload(!reload);
   };
@@ -175,8 +189,45 @@ const RegionAdministration = () => {
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${id}`,
-      regionName
+      region.regionName
     );
+  };
+
+  const getCardActions = (member: RegionAdmin) => {
+    if (!userAccesses["EditRegion"]) {
+      return undefined;
+    }
+
+    const actions = [];
+    if (member.adminType.adminTypeName !== Roles.OkrugaHead) {
+      actions.push(
+        <Tooltip title="Редагувати">
+          <EditOutlined onClick={() => showModal(member)} />
+        </Tooltip>,
+      );
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
+      return actions;
+    }
+
+    if (userAccesses["EditRegionHead"]) {
+      actions.push(
+        <Tooltip title="Редагувати">
+          <EditOutlined onClick={() => showModal(member)} />
+        </Tooltip>
+      );
+    }
+    if (userAccesses["RemoveRegionHead"]) {
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
+    }
+    return actions;
   };
 
   useEffect(() => {
@@ -191,7 +242,7 @@ const RegionAdministration = () => {
       ) : (
         <div className="cityMoreItems">
           {administration.length > 0 ? (
-            administration.map((member: any) => (
+            administration.map((member: RegionAdmin) => (
               <Card
                 key={member.id}
                 className="detailsCard"
@@ -200,16 +251,7 @@ const RegionAdministration = () => {
                   `${member.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={
-                  userAccesses["EditRegion"]
-                    ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(member)}
-                        />,
-                      ]
-                    : undefined
-                }
+                actions={getCardActions(member)}
               >
                 <div
                   onClick={() =>

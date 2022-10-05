@@ -72,6 +72,7 @@ import PsevdonimCreator from "../../../components/HistoryNavi/historyPseudo";
 import AddClubsNewSecretaryForm from "../AddAdministratorModal/AddClubsSecretaryForm";
 import { Roles } from "../../../models/Roles/Roles";
 import Breadcrumb from "../../../components/Breadcrumb/Breadcrumb";
+import { useUserTableStore } from "../../../stores/UserTableStore";
 
 const sloganMaxLength = 38;
 
@@ -91,9 +92,7 @@ const Club = () => {
   const [members, setMembers] = useState<ClubMember[]>([]);
   const [followers, setFollowers] = useState<ClubMember[]>([]);
   const [documents, setDocuments] = useState<ClubDocument[]>([]);
-  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({});
   const [canJoin, setCanJoin] = useState(false);
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
@@ -104,12 +103,11 @@ const Club = () => {
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
   const [activeUserClub, setActiveUserClub] = useState<string>();
-  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(
-    false
-  );
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [isActiveClub, setIsActiveClub] = useState<boolean>(true);
+  const [state, actions] = useUserTableStore();
   const classes = require("./Modal.module.css");
 
   const changeApproveStatus = async (memberId: number) => {
@@ -650,8 +648,11 @@ const Club = () => {
         } else {
           await addClubAdmin(admin);
         }
-      } finally {
-        setvisible(false);
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else if (
       admin.adminType.adminTypeName === "Голова КПР" ||
@@ -1003,8 +1004,10 @@ const Club = () => {
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => {
-                  if (userAccesses.EditClub)
-                    history.push(`/user/table?club=${club.id}`);
+                  if (userAccesses.EditClub){
+                    actions.setClubs([club.id]);
+                    history.push(`/user/table`);
+                  }
                   else history.push(`/clubs/members/${club.id}`);
                 }}
               >
@@ -1109,7 +1112,9 @@ const Club = () => {
                     key={document.id}
                   >
                     <div>
-                      <FileTextOutlined className="documentIcon" />
+                      <Tooltip title={<div style={{textAlign: 'center'}}>{document.clubDocumentType.name}</div>}>
+                        <FileTextOutlined className="documentIcon" />
+                      </Tooltip>
                       <p className="documentText">
                         {document.clubDocumentType.name}
                       </p>
@@ -1241,8 +1246,10 @@ const Club = () => {
                 type="primary"
                 className="clubInfoButton"
                 onClick={() => {
-                  if (userAccesses.EditClub)
-                    history.push(`/user/table?tab=registered&club=${club.id}`);
+                  if (userAccesses.EditClub){
+                    actions.setClubs([club.id]);
+                    history.push(`/user/table?tab=registered`);
+                  }
                   else history.push(`/clubs/followers/${club.id}`);
                 }}
               >
