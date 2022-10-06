@@ -93,7 +93,7 @@ const RegionAdministration = () => {
     const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
     setRegion(regionResponse.data);
-    setRegionName(regionResponse.data.name);
+    setRegionName(regionResponse.data.regionName);
     setPhotos([...administrationResponse.data].filter((a) => a != null));
     setAdministration(
       [...administrationResponse.data].filter((a) => a != null)
