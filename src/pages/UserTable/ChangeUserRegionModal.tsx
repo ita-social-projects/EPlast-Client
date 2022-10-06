@@ -62,7 +62,7 @@ const ChangeUserRegionModal = ({
       user.regionName
     );
   }
-
+  
   const fetchData = async () => {
     const regionAdministration: RegionAdmin[] = (await getRegionAdministration(regionId)).data;
     setAdministration(regionAdministration);
