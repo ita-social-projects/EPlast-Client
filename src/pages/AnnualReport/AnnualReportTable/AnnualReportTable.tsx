@@ -76,6 +76,7 @@ const AnnualReportTable = () => {
     getUserAccess();
     fetchAnnualReportStatuses();
     setSearchedData(searchedData);
+     console.log(userAnnualReportAccess?.IsAdmin);
   }, [searchedData, sortKey]);
 
   const fetchAnnualReportStatuses = async () => {
