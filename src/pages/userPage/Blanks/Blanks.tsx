@@ -500,11 +500,11 @@ export const Blanks = () => {
         userToken={userToken}
         visibleModal={visibleListAchievementModal}
         setVisibleModal={setVisibleListAchievementModal}
-        hasAccess={
+        hasAccessToSee={
           userProfileAccess["CanSeeUserDistinction"] ||
           userToken.nameid === userId
         }
-        hasAccessToSeeAndDownload={
+        hasAccessToDownload={
           userProfileAccess["CanDownloadUserDistinction"] ||
           userToken.nameid === userId
         }

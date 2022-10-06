@@ -62,7 +62,6 @@ const RegionAdministration = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
-  const [regionName, setRegionName] = useState<string>("");
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -93,7 +92,6 @@ const RegionAdministration = () => {
     const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
     setRegion(regionResponse.data);
-    setRegionName(regionResponse.data.name);
     setPhotos([...administrationResponse.data].filter((a) => a != null));
     setAdministration(
       [...administrationResponse.data].filter((a) => a != null)
@@ -149,6 +147,8 @@ const RegionAdministration = () => {
   };
 
   const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
+    const index = administration.findIndex((a) => a.id === admin.id);
+    administration[index] = newAdmin;
     const previousAdmin = administration.find(a => a.id === admin.id)!; 
     const adminIdx = administration.findIndex(a => a.id === admin.id);
     administration[adminIdx] = newAdmin;
@@ -158,10 +158,19 @@ const RegionAdministration = () => {
         `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`
       );
     }
-    await createNotification(
-      newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
-    );
+    if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
+      await createNotification( 
+        newAdmin.userId,
+        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
+      );
+    } else if (newAdmin.startDate !== admin.startDate || newAdmin.endDate !== admin.endDate) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам було змінено час правління на 
+        ${moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - 
+        ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")} в окрузі`
+      );
+    }
     setAdministration(administration);
     setReload(!reload);
   };
@@ -180,7 +189,7 @@ const RegionAdministration = () => {
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${id}`,
-      regionName
+      region.regionName
     );
   };
 
