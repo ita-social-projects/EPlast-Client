@@ -11,6 +11,7 @@ import Props from "./UnconfirmedDropdownProps";
 import styles from "../Dropdown.module.css";
 
 const UnconfirmedDropdown = (props: Props) => {
+
   const {
     record,
     pageX,
@@ -23,7 +24,10 @@ const UnconfirmedDropdown = (props: Props) => {
     onConfirm,
     onRemove,
   } = props;
+
   const handleClick = (item: any) => {
+
+
     switch (item.key) {
       case "1":
         if (userAnnualReportAccess?.CanViewReportDetails) {
@@ -77,8 +81,7 @@ const UnconfirmedDropdown = (props: Props) => {
             <FilePdfOutlined />
             Переглянути у форматі PDF
           </Menu.Item>
-          {userAnnualReportAccess?.CanEditReport &&
-          userAnnualReportAccess?.CanSubmitCityReport ? (
+          {userAnnualReportAccess?.CanEditReport ? (
             <Menu.Item key="3">
               <FileSyncOutlined />
               Редагувати
