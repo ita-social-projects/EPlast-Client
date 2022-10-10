@@ -301,7 +301,7 @@ const EventFeedbackModal: React.FC<Properties> = (p: Properties) => {
                 тільки в тому випадку, якщо ви її відвідали.
               </p>
             </div>
-            <Divider />
+            <Divider style={{ margin: "6px 0 6px 0" }} />
           </>
         )
       ) : null}
