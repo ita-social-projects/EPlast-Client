@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 // eslint-disable-next-line import/no-cycle
-import EventCard from "./EventCard/EventCard";
 import eventsApi from "../../../api/eventsApi";
-import { EventAdmin, EventParticipant } from "./EventInfo/EventInfo";
+import { EventAdmin } from "../../../models/Events/EventAdmin";
+import { EventParticipant } from "../../../models/Events/EventParticipant";
 import Spinner from "../../Spinner/Spinner";
+import EventCard from "./EventCard/EventCard";
 
 const classes = require("./ActionEvent.module.css");
 
@@ -12,6 +13,7 @@ interface Props {
   eventCategoryId: number;
   typeId: number;
   switcher: boolean;
+  setActionTitle: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface CardProps {
