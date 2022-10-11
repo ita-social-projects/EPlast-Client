@@ -39,7 +39,8 @@ const ChangeUserClubModal = ({
         `Вам була присвоєна нова роль: '${userRole}' в курені: `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/clubs/${clubId}`,
-        user.clubName
+        user.clubName,
+        true
       );
   };
 

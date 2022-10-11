@@ -75,7 +75,8 @@ const GoverningBodyAdministration = () => {
     setAdministration(administration.filter((u) => u.id !== admin.id));
     await createNotification(
       admin.userId,
-      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в керівному органі`
+      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в керівному органі`,
+      true
     );
   };
 
@@ -95,13 +96,14 @@ const GoverningBodyAdministration = () => {
     });
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${id}`,
-      governingBodyName
+      governingBodyName,
+      mustLogOut
     );
   };
 
@@ -126,7 +128,8 @@ const GoverningBodyAdministration = () => {
     administration[index] = newAdmin;
     await createNotification(
       newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в керівному органі`
+      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в керівному органі`,
+      true
     );
     setAdministration(administration);
   };

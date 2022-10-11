@@ -38,7 +38,8 @@ const ChangeUserRegionModal = ({
       `Вам була присвоєна нова роль: '${userRole}' в окрузі: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${regionId}`,
-      user.regionName
+      user.regionName,
+      true
     );
   };
 

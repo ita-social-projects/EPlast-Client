@@ -62,11 +62,14 @@ const RegionBoardMainAdministration = () => {
     }
   };
 
-  const createNotification = async (userId: Array<string>, message: string) => {
+  const createNotification = async (userId: Array<string>, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       userId,
       `${message}: `,
-      NotificationBoxApi.NotificationTypes.UserNotifications
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      undefined,
+      undefined,
+      mustLogOut
     );
   };
 
@@ -80,7 +83,8 @@ const RegionBoardMainAdministration = () => {
         admin.governingBodyAdminRole
           ? admin.governingBodyAdminRole
           : admin.adminType.adminTypeName
-      }' `
+      }' `,
+      true
     );
     fetchData();
   };
