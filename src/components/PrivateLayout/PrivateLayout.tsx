@@ -93,7 +93,6 @@ const PrivateLayout = ({ children }: any) => {
           collapsed={collapsed}
           onCollapse={onCollapse}
           className={classes.sidebar}
-          breakpoint="xxl"
           width="250"
           collapsedWidth="0"
         >
