@@ -64,25 +64,17 @@ const DropDown = (props: Props) => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleAddDegree, setVisibleAddDegree] = useState<boolean>(false);
-  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(
-    false
-  );
+  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(false);
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
-  const [showGoverningBodyModal, setShowGoverningBodyModal] = useState<boolean>(
-    false
-  );
+  const [showGoverningBodyModal, setShowGoverningBodyModal] = useState<boolean>(false);
   const [
     showDeleteGoverningBodyAdminModal,
     setShowDeleteGoverningBodyAdminModal,
   ] = useState<boolean>(false);
-  const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
-    false
-  );
-  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(
-    false
-  );
+  const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(false);
+  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(false);
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [, setGoverningBodyHead] = useState<boolean>(true);

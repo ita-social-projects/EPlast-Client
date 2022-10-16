@@ -111,7 +111,7 @@ const UsersTable = () => {
     userArhive,
     currentTabName,
     clearFilter,
-    isQueryLoaded,
+    isQueryLoaded
   ]);
 
   const searchFieldMaxLength: number = 150;
