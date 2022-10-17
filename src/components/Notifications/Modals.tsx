@@ -13,7 +13,7 @@ export const showRegionNameExistsModal = () => {
 
 export const showLogOutModal = () => {
   return Modal.warning({
-    title: "Вам змінили права доступу! У вас є хвилина поки вас не виб'є",
+    title: "Вам змінили права доступу! Вас буде вилогувано із системи через одну хвилину",
     icon: <WarningOutlined />,
     okText: "Ок",
     maskClosable: false

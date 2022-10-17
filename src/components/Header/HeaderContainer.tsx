@@ -63,7 +63,7 @@ const HeaderContainer = () => {
             const result: UserNotification = JSON.parse(decodeURIComponent(event.data));
             if (result.notificationTypeId == NotificationBoxApi.NotificationTypes.LogOutNotification) {
               showLogOutModal();
-              setTimeout(() => history.push("/signin"), 5000); // 60000
+              setTimeout(() => history.push("/signin"), 60000);
             } else {
               setNotifications((t) => [result].concat(t));
             }
