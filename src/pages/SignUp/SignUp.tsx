@@ -189,6 +189,7 @@ const SignUp: React.FC = () => {
         setAreaSelected(value !== UkraineOblasts.NotSpecified);
         setCityLoading(true);
         setRegionLoading(true);
+        actions.setOblast(Number(value));
 
         form.setFieldsValue({
           regionId: undefined,
