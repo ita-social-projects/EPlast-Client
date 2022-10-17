@@ -385,7 +385,7 @@ const DropDown = (props: Props) => {
             <> </>
           )}
 
-          {canAddDegree ? (
+          {canAddDegree && selectedUserRoles[0] != "" ? (
             <Menu.Item key="8">
               <PlusCircleOutlined />
               Додати до уладу
