@@ -142,11 +142,11 @@ const PrivateLayout = ({ children }: any) => {
             {userAccesses?.regionBoard ? (
               <Menu.Item key="regionsBoard" icon={<BankOutlined />}>
                 <a
-                  href="/regionalBoard"
+                  href="/governingBodies"
                   onClick={(e) => {
                     e.preventDefault();
                     setCollapsed(true);
-                    history.push("/regionalBoard");
+                    history.push("/governingBodies");
                   }}
                 >
                   Крайовий Провід Пласту

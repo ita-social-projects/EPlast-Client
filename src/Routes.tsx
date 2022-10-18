@@ -65,17 +65,13 @@ import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainA
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import RegionFollowers from "./pages/Regions/RegionFollowers";
 import RegionEditFormPage from "./pages/Regions/RegionEdit";
+import GoverningBodies from "./pages/GoverningBody/GoverningBodies";
 
 export default [
   {
     path: "/userpage/:specify/:userId",
     name: "Профіль користувача",
     Component: UserProfile,
-  },
-  {
-    path: "/regionalBoard",
-    name: "Крайовий Провід Пласту",
-    Component: RegionBoard,
   },
   {
     path: "/regionalBoard/new",
@@ -88,9 +84,9 @@ export default [
     Component: RegionBoardEdit,
   },
   {
-    path: "/regionalBoard/governingBodies",
+    path: "/governingBodies",
     name: "Керівні органи",
-    Component: RegionBoardAdministration,
+    Component: GoverningBodies,
   },
   {
     path: "/regionalBoard/administrations",
