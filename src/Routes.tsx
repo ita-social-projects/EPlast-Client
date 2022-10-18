@@ -65,7 +65,6 @@ import RegionBoardMainAdministration from "./pages/RegionsBoard/RegionBoardMainA
 import DecisionTable from "./pages/DecisionTable/DecisionTable";
 import RegionFollowers from "./pages/Regions/RegionFollowers";
 import RegionEditFormPage from "./pages/Regions/RegionEdit";
-import GoverningBodies from "./pages/GoverningBody/GoverningBodies";
 
 export default [
   {
@@ -74,31 +73,15 @@ export default [
     Component: UserProfile,
   },
   {
-    path: "/regionalBoard/new",
+    path: "/governingBodies/new",
     name: "Створити керівний орган",
     Component: CreateGoverningBody,
   },
   {
-    path: "/regionalBoard/edit",
-    name: "Редагувати Провід Пласту",
-    Component: RegionBoardEdit,
-  },
-  {
     path: "/governingBodies",
     name: "Керівні органи",
-    Component: GoverningBodies,
+    Component: RegionBoardAdministration,
   },
-  {
-    path: "/regionalBoard/administrations",
-    name: "Адміністрація Крайового Проводу",
-    Component: RegionBoardMainAdministration,
-  },
-  {
-    path: "/regionalBoard/documents/:id",
-    name: "Документообіг Крайового Проводу",
-    Component: RegionBoardDocuments,
-  },
-
   {
     path: "/governingBodies/documents/:id",
     name: "Документообіг Керівного Органу",
@@ -115,22 +98,22 @@ export default [
     Component: CreateGoverningBody,
   },
   {
-    path: "/regionalBoard/governingBodies/:governingBodyId",
+    path: "/governingBodies/:governingBodyId",
     name: "Керівний орган",
     Component: GoverningBody,
   },
   {
-    path: "/regionalBoard/governingBodies/:governingBodyId/sectors/new",
+    path: "/governingBodies/:governingBodyId/sectors/new",
     name: "Створення напряму Керівного Органу",
     Component: CreateGoverningBodySector,
   },
   {
-    path: "/regionalBoard/governingBodies/:governingBodyId/sectors",
+    path: "/governingBodies/:governingBodyId/sectors",
     name: "Напрями",
     Component: GoverningBodySectors,
   },
   {
-    path: "/regionalBoard/governingBodies/:governingBodyId/sectors/:sectorId",
+    path: "/governingBodies/:governingBodyId/sectors/:sectorId",
     name: "Напрям",
     Component: GoverningBodySector,
   },
