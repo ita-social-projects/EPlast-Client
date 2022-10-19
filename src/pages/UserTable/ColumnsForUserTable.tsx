@@ -40,7 +40,6 @@ const setTagColor = (userRoles: string) => {
 
 const options = [
   { label: Roles.PlastMember, value: Roles.PlastMember },
-  { label: Roles.FormerPlastMember, value: Roles.FormerPlastMember },
   { label: Roles.Supporter, value: Roles.Supporter },
   { label: Roles.OkrugaHead, value: Roles.OkrugaHead },
   { label: Roles.OkrugaSecretary, value: Roles.OkrugaSecretary },
@@ -68,6 +67,8 @@ interface Props {
   setPage: any;
   filterRole: any;
   isZgolosheni: boolean;
+  isFormers: boolean;
+    isUnconfirmed: boolean
   page: number;
   pageSize: number;
 }
@@ -89,6 +90,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
 
   // names of the keys that aren't displayed in "Зголошені" tab
   const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
+
+  const forbiddenKeysForUnaproved = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
 
   const onChangeCheckbox = (e: any, i: number) => {
     let value = filterStatus.value.slice();
@@ -611,6 +614,15 @@ const ColumnsForUserTable = (props: Props): any[] => {
     // filter columns to display in zgolosheni tab
     let filtered = columns.filter(column => !forbiddenKeysForZgolosheni.includes(column.key?.valueOf() as string));
     columns = filtered.concat(columnsForZgolosheni);
+  }
+
+  if (props.isFormers) {
+    // insert phonenumber column right before email
+    columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
+
+    // filter columns to display in zgolosheni tab
+    let filtered = columns.filter(column => !forbiddenKeysForUnaproved.includes(column.key?.valueOf() as string));
+    columns = filtered;
   }
   
   columns.push(commentColumn);

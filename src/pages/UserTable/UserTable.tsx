@@ -213,7 +213,7 @@ const UsersTable = () => {
   };
 
   const getTabFromQuery = () => {
-    let acceptableTabs = ["confirmed", "registered", "unconfirmed"];
+    let acceptableTabs = ["confirmed", "registered", "unconfirmed", "formers"];
 
     let tab = queryParams.current.tab;
     setCurrentTabName(
@@ -321,6 +321,10 @@ const UsersTable = () => {
         {
           key: "renewals",
           tab: "Очікують на відновлення членства",
+        },
+        {
+          key: "formers",
+          tab: "Колишні члени пласту",
         }
       );
     }
@@ -633,6 +637,8 @@ const UsersTable = () => {
               setPage: setPage,
               filterRole: filter,
               isZgolosheni: currentTabName === "registered",
+              isUnconfirmed: currentTabName === "unconfirmed",
+              isFormers: currentTabName === "formers",
               page: page,
               pageSize: pageSize,
             })}
