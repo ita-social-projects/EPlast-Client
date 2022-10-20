@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip } from "antd";
 import {
-  SettingOutlined,
+  EditOutlined,
   CloseOutlined,
   RollbackOutlined,
   ExclamationCircleOutlined,
@@ -129,8 +129,15 @@ const CityAdministration = () => {
   };
 
   const onAdd = async (newAdmin: CityAdmin = new CityAdmin()) => {
-    const index = administration.findIndex((a) => a.id === admin.id);
-    administration[index] = newAdmin;
+    const previousAdmin = administration.find(a => a.id === admin.id)!; 
+    const adminIdx = administration.findIndex(a => a.id === admin.id);
+    administration[adminIdx] = newAdmin;
+    if (previousAdmin.adminType.adminTypeName !== newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`
+      );
+    }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`
@@ -169,19 +176,24 @@ const CityAdministration = () => {
                   (userCityAccesses["AddCityHead"] ||
                     member.adminType.adminTypeName !== Roles.CityHead)
                     ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(member)}
-                        />,
+                        <Tooltip title="Редагувати">
+                          <EditOutlined onClick={() => showModal(member)} />
+                        </Tooltip>,
+                        <Tooltip title="Видалити">
+                          <CloseOutlined
+                            onClick={() => seeDeleteModal(member)}
+                          />
+                        </Tooltip>
                       ]
                     : undefined
                 }
               >
                 <div
                   onClick={() =>
+                    canSeeProfiles && 
                     history.push(`/userpage/main/${member.user.id}`)
                   }
-                  className={`cityMember`}
+                  className={`cityMember ${!canSeeProfiles && "notAccess"}`}
                 >
                   <div>
                     {photosLoading ? (

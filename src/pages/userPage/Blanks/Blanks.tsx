@@ -135,7 +135,7 @@ export const Blanks = () => {
     await openExtractFromUPUFile(fileBlob, fileName);
   };
   const getFormat = (fileName: string) => {
-    if (fileName != undefined) return fileName.split(".")[1];
+    if (fileName != undefined) return fileName.split(".").pop()!;
   };
   useEffect(() => {
     fetchData();
@@ -144,10 +144,10 @@ export const Blanks = () => {
     getExtractFromUPU();
     setLoadingBlanks(true);
   }, [
-    userId,
     visibleModal,
     visibleAchievementModal,
     visibleExtractFromUPUModal,
+    visibleListAchievementModal
   ]);
 
   return (loading && loadingBlanks) === false ? (
@@ -202,13 +202,13 @@ export const Blanks = () => {
                   key={document.id}
                 >
                   <div>
-                    {document.blobName.split(".")[1] === "pdf" && (
+                    {document.blobName.split(".").pop()! === "pdf" && (
                       <FilePdfOutlined className={classes.documentIcon} />
                     )}
                     {"jpg, jpeg, png".includes(
-                      document.blobName.split(".")[1]
+                      document.blobName.split(".").pop()!
                     ) && <FileImageOutlined className={classes.documentIcon} />}
-                    {"docx, doc".includes(document.blobName.split(".")[1]) && (
+                    {"docx, doc".includes(document.blobName.split(".").pop()!) && (
                       <FileTextOutlined className={classes.documentIcon} />
                     )}
                     {document.fileName?.length > fileNameMaxLength ? (
@@ -306,14 +306,14 @@ export const Blanks = () => {
                   key={document.id}
                 >
                   <div>
-                    {extractUPU.blobName.split(".")[1] === "pdf" && (
+                    {extractUPU.blobName.split(".").pop()! === "pdf" && (
                       <FilePdfOutlined className={classes.documentIcon} />
                     )}
                     {"jpg, jpeg, png".includes(
-                      extractUPU.blobName.split(".")[1]
+                      extractUPU.blobName.split(".").pop()!
                     ) && <FileImageOutlined className={classes.documentIcon} />}
                     {"docx, doc".includes(
-                      extractUPU.blobName.split(".")[1]
+                      extractUPU.blobName.split(".").pop()!
                     ) && <FileTextOutlined className={classes.documentIcon} />}
                     {extractUPU.fileName?.length > fileNameMaxLength ? (
                       <Tooltip
@@ -484,27 +484,24 @@ export const Blanks = () => {
           </div>
         </div>
       </Form>
+
       <ListOfAchievementsModal
         userToken={userToken}
         visibleModal={visibleListAchievementModal}
         setVisibleModal={setVisibleListAchievementModal}
         achievementDoc={achievementDoc}
-        hasAccess={
+        hasAccessToSee={
           userBlankAccess["CanViewListOfAchievements"]
         }
-        hasAccessToSeeAndDownload={
+        hasAccessToDownload={
           userBlankAccess["CanDownloadAchievement"]
         }
         hasAccessToDelete={
           userBlankAccess["CanDeleteAchievement"]
         }
-        setAchievementDoc={setAchievementDoc}
       />
 
       <AddAchievementsModal
-      courseId={null}
-      setshowModal={setvisibleAchievementModal}
-      showModal={visibleAchievementModal}
         userId={fullUserProfile?.user.id}
         visibleModal={visibleAchievementModal}
         setVisibleModal={setvisibleAchievementModal}

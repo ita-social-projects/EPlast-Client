@@ -146,22 +146,33 @@ const CreateCity = () => {
   const getNotificationReceivers = async (regionId: number) => {
     let listOfReceivers: string[] = [];
 
-    getGoverningBodiesAdmins()
-      .then((response) => {
-        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.GoverningBodyAdmin && admin.status === true);
-        if (user) listOfReceivers.push(user.userId);
-      });
+    const governingBodyAdminsPromise = getGoverningBodiesAdmins();
+    const regionAdministrationPromise = getRegionAdministration(regionId);
+    const superAdminsPromise = getSuperAdmins();
 
-    getRegionAdministration(regionId)
-      .then((response) => {
-        let user = response.data.find((admin: any) => admin.adminTypeId === AdminTypes.OkrugaHead && admin.status === true);
-        if (user) listOfReceivers.push(user.userId);
-      });
+    const governingBodyAdminsResult = await governingBodyAdminsPromise;
+    let user = governingBodyAdminsResult.data.find(
+      (admin: any) =>
+        admin.adminTypeId === AdminTypes.GoverningBodyAdmin &&
+        admin.status === true
+    );
+    if (user) {
+      listOfReceivers.push(user.userId);
+    }
 
-    getSuperAdmins()
-      .then((response) => {
-        response.data.map((user: any) => listOfReceivers.push(user.id));
-      });
+    const regionAdministrationResult = await regionAdministrationPromise;
+    regionAdministrationResult.data.map((admin: any) => {
+      if (
+        (admin.adminTypeId === AdminTypes.OkrugaHead ||
+          admin.adminTypeId === AdminTypes.OkrugaHeadDeputy) &&
+        admin.status === true
+      ) {
+        listOfReceivers.push(admin.userId);
+      }
+    });
+
+    const superAdminsResult = await superAdminsPromise;
+    superAdminsResult.data.map((user: any) => listOfReceivers.push(user.id));
 
     return listOfReceivers;
   }
@@ -260,7 +271,7 @@ const CreateCity = () => {
         notificationLogic("success", successfulCreateAction("Заяву"));
         await createNotification(
           newRegionFollower.userId,
-          `Вітаємо, вашу заяву на створення станиці ${newRegionFollower.cityName} успішно створено! Заява очікує розгляду адміністрацією округи.`
+          `Вітаємо, вашу заяву на створення станиці ${newRegionFollower.cityName} успішно надіслано! Заява очікує розгляду адміністрацією округи.`
         );
         await NotificationBoxApi.createNotifications(
           peopleToReceiveNotification,

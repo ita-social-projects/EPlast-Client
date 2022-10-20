@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: eplastweb 
-          image: ___containerRegistry___/eplastweb
+          image: eplast.azurecr.io/eplastweb:___containerRegistry_version_frontend_test___
           resources:
             limits:
               cpu: "100m"
@@ -24,7 +24,7 @@ spec:
           - containerPort: 80
 
 ---
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: eplastweb-autoscaler
@@ -33,14 +33,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: eplastweb
+  targetCPUUtilizationPercentage: 70
   minReplicas: 1
   maxReplicas: 2
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      targetAverageUtilization: 80

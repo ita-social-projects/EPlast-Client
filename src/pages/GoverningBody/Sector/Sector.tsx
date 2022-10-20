@@ -447,7 +447,7 @@ const Sector = () => {
         <Col xl={{ span: 7, offset: 1 }} md={11} sm={24} xs={24}>
           <Card hoverable className="governingBodyCard">
             <Title level={4}>
-              Оголошення
+              Оголошення{" "}
               <a
                 onClick={() =>
                   history.push(
@@ -456,7 +456,7 @@ const Sector = () => {
                 }
               >
                 {announcementsCount !== 0 &&
-                userAccesses["ViewAnnouncements"] ? (
+                  userAccesses["ViewAnnouncements"] ? (
                   <Badge
                     count={announcementsCount}
                     style={{ backgroundColor: "#3c5438" }}
@@ -542,7 +542,7 @@ const Sector = () => {
         >
           <Card hoverable className="governingBodyCard">
             <Title level={4}>
-              Провід напряму керівного органу
+              Провід напряму керівного органу{" "}
               <a
                 onClick={() =>
                   history.push(
@@ -647,8 +647,8 @@ const Sector = () => {
                 onClick={() =>
                   userAccesses["ViewDocument"]
                     ? history.push(
-                        `/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`
-                      )
+                      `/governingBodies/${governingBodyId}/sectors/${sector.id}/documents`
+                    )
                     : undefined
                 }
               >
@@ -722,6 +722,7 @@ const Sector = () => {
         onAdd={onAnnouncementAdd}
       />
       <Modal
+        width="750px"
         title="Додати діловода"
         visible={visible}
         onOk={handleAdminAdd}

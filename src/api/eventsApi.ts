@@ -1,3 +1,4 @@
+import EventFeedback from "../models/EventUser/EventFeedback";
 import Api from "./api";
 
 const getTypes = async () => {
@@ -19,6 +20,11 @@ const getCategoriesByPage = async (
     page,
     pageSize,
   });
+  return response;
+};
+
+const getCategoryById = async (id: number) => {
+  const response = await Api.get(`Events/categories/${id}`);
   return response;
 };
 
@@ -60,6 +66,11 @@ const getPictures = async (eventId: number) => {
   return response;
 };
 
+const getPictureById = async (pictureId: number) => {
+  const response = await Api.get(`Events/pictures/${pictureId}`);
+  return response;
+};
+
 const remove = async (id: number) => {
   const response = await Api.remove(`Events/${id}`);
   return response;
@@ -75,8 +86,13 @@ const createParticipant = async (id: number) => {
   return response;
 };
 
-const estimateEvent = async (id: number, estimate: number) => {
-  const response = await Api.put(`Events/${id}/estimate/${estimate}`);
+const leaveFeedback = async (id: number, feedback: EventFeedback) => {
+  const response = await Api.put(`Events/${id}/feedbacks`, feedback);
+  return response;
+};
+
+const deleteFeedback = async (id: number, feedbackId: number) => {
+  const response = await Api.remove(`Events/${id}/feedbacks/${feedbackId}`);
   return response;
 };
 
@@ -122,13 +138,16 @@ export default {
   getTypes,
   getCategories,
   getCategoriesByPage,
+  getCategoryById,
   getEvents,
   getSections,
   createEventCategory,
   getEventInfo,
   getPictures,
+  getPictureById,
   remove,
-  estimateEvent,
+  leaveFeedback,
+  deleteFeedback,
   createParticipant,
   removeParticipant,
   approveParticipant,

@@ -26,6 +26,7 @@ import CheckboxsItem from "./CheckboxsItem";
 import { OblastsWithoutNotSpecified } from "../../models/Oblast/OblastsRecord";
 import RegionForAdministration from "../../models/Region/RegionForAdministration";
 import openNotificationWithIcon from "../../components/Notifications/Notification";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 let authService = new AuthorizeApi();
 
@@ -111,12 +112,13 @@ const SignUp: React.FC = () => {
 
   const handler = {
     submit: async (values: any) => {
+      values.birthday = moment(values.birthday).format("YYYY-MM-DD");
       actions.setFormData(values);
       setVisible(true);
     },
     terms: {
       confirm: async () => {
-        setVisible(false);
+        setVisible(false); 
         setAvailabe(false);
         const { facebookLink, twitterLink, instagramLink, fatherName }
           = state.formData
@@ -220,7 +222,9 @@ const SignUp: React.FC = () => {
     }
   };
 
-
+  const disabledDate = (current: any) => {
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
+  };
 
   return (
     <div className={styles.mainContainerSignUp} >
@@ -257,9 +261,7 @@ const SignUp: React.FC = () => {
             placeholder="Оберіть дату народження"
             className={styles.MyDatePicker}
             format="DD.MM.YYYY"
-            disabledDate={current => {
-              return current && current > moment();
-            }}
+            disabledDate={disabledDate}
           />
         </Form.Item>
 

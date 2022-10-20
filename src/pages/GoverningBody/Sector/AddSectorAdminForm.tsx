@@ -32,6 +32,8 @@ import AdminType from "../../../models/Admin/AdminType";
 import { Roles } from "../../../models/Roles/Roles";
 import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
+import SectorAdminTypes from "./SectorAdminTypes";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 const { confirm } = Modal;
 
@@ -48,7 +50,7 @@ const AddSectorAdminForm = (props: any) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const addSectorAdmin = async (admin: SectorAdmin) => {
@@ -152,8 +154,11 @@ const AddSectorAdminForm = (props: any) => {
         } else {
           addSectorAdmin(newAdmin);
         }
-      } finally {
-        onAdd();
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       editSectorAdmin(newAdmin);
@@ -247,12 +252,11 @@ const AddSectorAdminForm = (props: any) => {
       >
         <AutoComplete
           options={[
-            { value: Roles.GoverningBodySectorHead },
-            { value: "Голова КПР" },
-            { value: "Секретар КПР" },
-            { value: "Член КПР з питань організаційного розвитку" },
-            { value: "Член КПР з соціального напрямку" },
-            { value: "Член КПР відповідальний за зовнішні зв'язки" },
+            { value: SectorAdminTypes.Head },
+            { value: SectorAdminTypes.Secretar },
+            { value: SectorAdminTypes.Progress },
+            { value: SectorAdminTypes.Social },
+            { value: SectorAdminTypes.Сommunication },
           ]}
           placeholder={"Тип адміністрування"}
         />

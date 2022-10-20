@@ -38,6 +38,9 @@ import AdminType from "../../models/Admin/AdminType";
 import userApi from "../../api/UserApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import SectorAdmin from "../../models/GoverningBody/Sector/SectorAdmin";
+import GoverningBodyAdminTypes from "../GoverningBody/GoverningBodyAdminTypes";
+import SectorAdminTypes from "../GoverningBody/Sector/SectorAdminTypes";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 interface Props {
   onChange: (id: string, userRoles: string) => void;
@@ -66,7 +69,7 @@ const ChangeUserRoleForm = ({
 
   const [hideFields, setHideFields] = useState<boolean>(false);
 
-  const [sectorsLoading, setSectorsLoading] = useState<boolean>(false);
+  const [sectorsLoading, setSectorsLoading] = useState<boolean>(false)
   const [sectors, setSectors] = useState<SectorProfile[]>([]);
 
   const [selectSectorId, setSelectSectorId] = useState<any>();
@@ -106,8 +109,17 @@ const ChangeUserRoleForm = ({
 
   const onSectorSelect = async (value: any) => {
     setSectorsLoading(true);
+    if (value === undefined) {
+      setSelectSectorId(undefined);
+      setSectorsLoading(false);
+      form.resetFields(["AdminType"]);
+      return;
+    }
     try {
       const { id } = JSON.parse(value.toString());
+      if (selectSectorId === undefined) {
+        form.resetFields(["AdminType"]);
+      }
       setSelectSectorId(id);
       sectorChange(id);
     } finally {
@@ -190,14 +202,14 @@ const ChangeUserRoleForm = ({
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-            existingAdmin.endDate === undefined
+              existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         addGoverningBodyAdmin(newAdmin);
         setGoverningBodiesAdmins(
@@ -224,14 +236,14 @@ const ChangeUserRoleForm = ({
           закінчується{" "}
           <b>
             {existingAdmin.endDate === null ||
-            existingAdmin.endDate === undefined
+              existingAdmin.endDate === undefined
               ? "ще не скоро"
               : moment(existingAdmin.endDate).format("DD.MM.YYYY")}
           </b>
           .
         </div>
       ),
-      onCancel() {},
+      onCancel() { },
       onOk() {
         addSectorAdmin(newAdmin);
         setSectorsAdmins(
@@ -315,7 +327,7 @@ const ChangeUserRoleForm = ({
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const onAdminTypeSelect = (adminType: string) => {
@@ -351,6 +363,7 @@ const ChangeUserRoleForm = ({
         <Form.Item
           className={classes.formField}
           label="Тип адміністрування"
+          labelCol={{ span: 24 }}
           name="AdminType"
           rules={[
             {
@@ -363,12 +376,11 @@ const ChangeUserRoleForm = ({
             className={classes.inputField}
             options={[
               { value: Roles.GoverningBodyAdmin },
-              { value: Roles.GoverningBodyHead },
-              { value: "Голова КПР" },
-              { value: "Секретар КПР" },
-              { value: "Член КПР з питань організаційного розвитку" },
-              { value: "Член КПР з соціального напрямку" },
-              { value: "Член КПР відповідальний за зовнішні зв'язки" },
+              { value: selectSectorId === undefined ? GoverningBodyAdminTypes.Head : SectorAdminTypes.Head },
+              { value: selectSectorId === undefined ? GoverningBodyAdminTypes.Secretar : SectorAdminTypes.Secretar },
+              { value: selectSectorId === undefined ? GoverningBodyAdminTypes.Progress : SectorAdminTypes.Progress },
+              { value: selectSectorId === undefined ? GoverningBodyAdminTypes.Social : SectorAdminTypes.Social },
+              { value: selectSectorId === undefined ? GoverningBodyAdminTypes.Сommunication : SectorAdminTypes.Сommunication },
             ]}
             placeholder="Тип адміністрування"
             onChange={(value) => onAdminTypeSelect(value)}

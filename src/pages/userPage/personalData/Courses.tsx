@@ -6,26 +6,20 @@ import Title from "antd/lib/typography/Title";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import { PersonalDataContext } from "./PersonalData"; // TODO: Fix cyclic import 
 import Course from "../../../models/Course/Course";
-import BlankDocument from "../../../models/Blank/BlankDocument";
 import PlastLogo from "../../../assets/images/logo_PLAST.png"
 import AddAchievementsModal from "../Blanks/UserAchievements/AddAchievementsModal";
 import ListOfAchievementsModal from "../Blanks/UserAchievements/ListOfAchievementsModal";
 import { getAllCourseByUserId } from "../../../api/courseApi";
-import { getAllAchievementDocumentsByUserId } from "../../../api/blankApi";
 import classes from "../Blanks/Blanks.module.css";
 
 export const Courses: React.FC = () => {
+  const [userToken, setUserToken] = useState<{nameid: string}>({nameid: ''});
   const [visible, setVisible] = useState(false);
   const [visibleAchievementModal, setVisibleAchievementModal] = useState(false);
   const [visibleListModal, setVisibleListModal] = useState(false);
-  const [showAchievementModal, setshowAchievementModal] = useState(false);
   const [isDataLoaded, setDataLoaded] = useState(false);
-  const [courseId, setcourseId] = useState(0);
-
-  const [allCourses, setallCourses] = useState<Course[]>([]);
-  const [achievementDoc, setAchievementDoc] = useState<BlankDocument[]>([]);
-
-  let userToken: { nameid: string } = { nameid: "" };
+  const [courseId, setCourseId] = useState(0);
+  const [courses, setCourses] = useState<Course[]>([]);
 
   const { userId } = useParams<{ userId: string }>();
   const {
@@ -36,16 +30,14 @@ export const Courses: React.FC = () => {
   } = useContext(PersonalDataContext);
 
   const fetchData = async () => {
-    userToken = jwt(AuthLocalStorage.getToken() ?? "");
-    const courses = await getAllCourseByUserId(activeUserId);
-    const achievements = await getAllAchievementDocumentsByUserId(activeUserId);
-    setAchievementDoc(achievements.data);
-    setallCourses(courses.data);
+    setUserToken(jwt(AuthLocalStorage.getToken() ?? ""));
+    const courses = await getAllCourseByUserId(userProfile?.user.id);
+    setCourses(courses.data);
     setDataLoaded(true);
   };
 
-  const addCertificate = async (courseid: number) => {
-    setcourseId(courseid);
+  const addCertificate = async (courseId: number) => {
+    setCourseId(courseId);
     setVisibleAchievementModal(true);
   };
 
@@ -55,7 +47,8 @@ export const Courses: React.FC = () => {
 
   useEffect(() => {
     if (!isDataLoaded) fetchData();
-  }, []);
+    if (!visibleListModal || !visibleAchievementModal) fetchData();
+  }, [visibleListModal, visibleAchievementModal]);
 
   return (
     !loading ? (
@@ -69,43 +62,50 @@ export const Courses: React.FC = () => {
       </div>
     )
     : isDataLoaded ? (
-      <div className={classes.wrapper2}>
+      <div className={[classes.wrapper6, classes.courseInfoBlock].join(' ')}>
         {
-          allCourses.map(sectitem =>
-            (sectitem.isFinishedByUser === false && 
-            (userProfile?.shortUser?.id === activeUserId || userProfile?.shortUser === null)) ? (
-              <Col key={sectitem.id}>
-                <Title level={2} title={sectitem.name} />
+          courses.map(sectItem =>
+            (sectItem.isFinishedByUser === false && 
+            (userProfile?.user.id === activeUserId)) ? (
+              <Col key={sectItem.id}>
+                <Title level={2}>{sectItem.name}</Title>
                 <p>
                   <strong>{userProfile?.user.firstName}</strong>, пройдіть курс для продовження співпраці з нами
                 </p>
-                <div className="rowBlock">
-                  <a href={sectitem.link} >
+                <div className="courseParticipationBlock">
+                  <a href={sectItem.link} >
                     <img src={PlastLogo} alt="PlastLogo" />
                   </a>
+                  <Button
+                    type="primary"
+                    className="buttonAddCertificate"
+                    onClick={() => addCertificate(sectItem.id)}
+                  >
+                    Додати сертифікат
+                  </Button>
                 </div>
-              
-                <Button
-                  type="primary"
-                  className="buttonaddcertificate"
-                  onClick={() => addCertificate(sectitem.id)}
-                >
-                  Додати сертифікат
-                </Button>
               </Col>
             ) : (
-              <Col style={{ marginTop: "64px" }}>
-                <Title level={2}> {sectitem.name}</Title>
-                <p>
-                  Курс {sectitem.name} пройдено, сертифікат можна переглянути в
-                  <Button 
-                    type="link" 
-                    className="Link" 
-                    onClick={() => setVisibleListModal(true)}
-                  >
-                    <b>Досягненнях</b>
-                  </Button>
-                </p>
+              <Col>
+                <Title level={2}>{sectItem.name}</Title>
+                {
+                  (sectItem.isFinishedByUser) ? (
+                    <p>
+                      Курс пройдено, сертифікат можна переглянути в
+                      <Button style={{padding: "0 0 0 4px"}}
+                        type="link" 
+                        onClick={() => {
+                          setVisibleListModal(true);
+                          setCourseId(sectItem.id)
+                        }}
+                      >
+                        <b>Досягненнях</b>
+                      </Button>
+                    </p>
+                  ) : (
+                    <p>Курс не пройдено</p>
+                  )
+                }
               </Col>
             )
           )
@@ -135,23 +135,22 @@ export const Courses: React.FC = () => {
         </Modal>
     
         <ListOfAchievementsModal
+          courseId={courseId}
           userToken={userToken}
           visibleModal={visibleListModal}
           setVisibleModal={setVisibleListModal}
-          achievementDoc={achievementDoc}
-          hasAccess={
-            userProfileAccess.CanSeeUserDistinction
+          hasAccessToSee={
+            userProfileAccess["CanSeeUserDistinction"]
             || userToken.nameid === userId
           }
-          hasAccessToSeeAndDownload={
-            userProfileAccess.CanDownloadUserDistinction
+          hasAccessToDownload={
+            userProfileAccess["CanDownloadUserDistinction"]
             || userToken.nameid === userId
           }
           hasAccessToDelete={
-            userProfileAccess.CanDeleteUserDistinction
+            userProfileAccess["CanDeleteUserDistinction"]
             || userToken.nameid === userId
           }
-          setAchievementDoc={setAchievementDoc}
         />
 
         <AddAchievementsModal
@@ -159,8 +158,6 @@ export const Courses: React.FC = () => {
           courseId={courseId}
           visibleModal={visibleAchievementModal}
           setVisibleModal={setVisibleAchievementModal}
-          showModal={showAchievementModal}
-          setshowModal={setshowAchievementModal}
         />
       </div>
     ) : null

@@ -8,6 +8,7 @@ import {
   emptyInput,
   maxNumber,
 } from "../../../components/Notifications/Messages";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 import {
   descriptionValidation,
   getOnlyNums,
@@ -25,7 +26,7 @@ const FormEditDistinction = () => {
   const [state, actions] = useDistinctions();
 
   useEffect(() => {
-    if (state.editUserDistinctionFormIsVisible) {
+    if (state.isEditUserDistinctionFormVisible) {
       form.setFieldsValue({
         number: state.editedUserDistinction.number,
         distinction: state.editedUserDistinction.distinction.id,
@@ -43,7 +44,7 @@ const FormEditDistinction = () => {
         actions.getUsersWithoutPrecautions();
       });
     }
-  }, [state.editUserDistinctionFormIsVisible]);
+  }, [state.isEditUserDistinctionFormVisible]);
 
   const backgroundColor = (user: any) => {
     return user.isInLowerRole
@@ -57,7 +58,7 @@ const FormEditDistinction = () => {
   };
 
   function disabledDate(currentDate: any) {
-    return currentDate && currentDate < moment("01-01-1900", "DD-MM-YYYY");
+    return currentDate && !(currentDate.isAfter(minAvailableDate) && currentDate.isSameOrBefore(moment.utc()));;
   }
 
   const handleFinish = async (values: any) => {
