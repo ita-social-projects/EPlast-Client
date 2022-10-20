@@ -6,6 +6,7 @@ export default class UserTable {
   id: string;
   firstName: string;
   lastName: string;
+  userName: string;
   birthday?: Date;
   gender: Gender;
   userProfileId: number;
@@ -49,5 +50,6 @@ export default class UserTable {
     this.comment = "";
     this.isCityFollower = false;
     this.isClubFollower = false;
+    this.userName = "";
   }
 }

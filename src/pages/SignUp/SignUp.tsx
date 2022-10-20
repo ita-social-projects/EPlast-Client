@@ -135,7 +135,7 @@ const SignUp: React.FC = () => {
         authService.register(request)
           .then(res => {
             setAvailabe(true);
-            openNotificationWithIcon("success", "Вам на пошту прийшов лист з підтвердженням");
+            openNotificationWithIcon("success", "Вам на пошту прийшов лист з підтвердженням. Він буде дійсним протягом наступних 12 годин");
             history.push("/signin");
           }).catch(error => {
             const data = error.response.data as RegisterDataResponse409
