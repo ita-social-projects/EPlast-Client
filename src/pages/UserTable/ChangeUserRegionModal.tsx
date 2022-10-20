@@ -1,28 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import RegionAdmin from "../../models/Region/RegionAdmin";
 import AddAdministratorModal from "../Regions/AddAdministratorModal";
-import RegionUser from "../../models/Region/RegionUser";
 import AdminType from "../../models/Admin/AdminType";
-interface Props {
+import { getRegionAdministration } from "../../api/regionsApi";
+
+interface ChangeUserRegionModalProps {
   record: string;
   showModal: boolean;
   setShowModal: (showModal: any) => void;
   onChange: (id: string, userRoles: string) => void;
   user: any;
 }
+
 const ChangeUserRegionModal = ({
   record,
   showModal,
   setShowModal,
   onChange,
   user,
-}: Props) => {
+}: ChangeUserRegionModalProps) => {
   const [admin, setAdmin] = useState<RegionAdmin>(new RegionAdmin());
+  const [administration, setAdministration] = useState<RegionAdmin[]>([]);
 
   let regionId = user?.regionId;
-  let cityId = user?.cityId;
+  
   const newAdmin: any = {
     id: 0,
     userId: record,
@@ -31,23 +34,50 @@ const ChangeUserRegionModal = ({
     regionId: regionId,
   };
 
-  const handleChange = (id: string, userRole: string) => {
-    onChange(id, userRole);    
-    NotificationBoxApi.createNotifications(
-      [id],
-      `Вам була присвоєна нова роль: '${userRole}' в окрузі: `,
+  const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
+    let previousAdmin: RegionAdmin = new RegionAdmin();
+    administration.map(a => {
+      if (a.adminType.adminTypeName === newAdmin.adminType.adminTypeName)
+        previousAdmin = a;
+        return;
+    });
+    if (previousAdmin.adminType.adminTypeName === newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`
+      );
+    }
+    await createNotification(
+      newAdmin.userId,
+      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
+    );
+  }
+
+  const createNotification = async (userId: string, message: string) => {
+    await NotificationBoxApi.createNotifications(
+      [userId],
+      message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${regionId}`,
       user.regionName
     );
-  };
+  }
+  
+  const fetchData = async () => {
+    const regionAdministration: RegionAdmin[] = (await getRegionAdministration(regionId)).data;
+    setAdministration(regionAdministration);
+  }
 
   const handleClick = async () => {
     setShowModal(false);
   };
-  if (!showModal) {
-    return <div></div>;
-  }
+
+  useEffect(() => {
+    if (showModal) fetchData();
+  }, [showModal]);
+
+  if (!showModal) return <div></div>
+
   return (
     <div>
       {regionId !== null ? (
@@ -58,7 +88,7 @@ const ChangeUserRegionModal = ({
           setVisibleModal={setShowModal}
           regionId={regionId}
           regionName={user.regionName}
-          onChange={handleChange}
+          onAdd={onAdd}
         ></AddAdministratorModal>
       ) : (
         <Modal
