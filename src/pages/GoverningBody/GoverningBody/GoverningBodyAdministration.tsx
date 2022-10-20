@@ -26,6 +26,7 @@ import AuthLocalStorage from "../../../AuthLocalStorage";
 import extendedTitleTooltip, {
   parameterMaxLength,
 } from "../../../components/Tooltip";
+import { Roles } from "../../../models/Roles/Roles";
 moment.locale("uk-ua");
 
 const adminTypeNameMaxLength = 23;
@@ -81,11 +82,14 @@ const GoverningBodyAdministration = () => {
 
   const showConfirm = (admin: GoverningBodyAdmin) => {
     confirm({
-      title: "Дійсно видалити користувача з проводу?",
+      title: 'Дійсно видалити користувача з проводу?',
       content: (
         <div>
           {admin.adminType.adminTypeName} {admin.user.firstName}{" "}
           {admin.user.lastName} буде видалений з проводу!
+
+          {admin.adminType.adminTypeName === Roles.GoverningBodyHead ? 
+            (<div><br/>У користувача все одно залишиться роль: <b>{Roles.GoverningBodyAdmin}</b></div>) : null} 
         </div>
       ),
       onCancel() {},
