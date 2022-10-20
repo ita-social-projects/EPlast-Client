@@ -53,17 +53,19 @@ const ChangeUserCityModal = ({
     }
     await createNotification(
       newAdmin.userId,
-      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
+      true
     );
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
-      `/cities/${cityId}`,
-      user.cityName
+      `/cities/${newAdmin.cityId}`,
+      user.cityName,
+      mustLogOut
     );
   };
 

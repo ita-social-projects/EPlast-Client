@@ -45,22 +45,25 @@ const ChangeUserClubModal = ({
     if (previousAdmin.adminType.adminTypeName === newAdmin.adminType.adminTypeName) {
       await createNotification(
         previousAdmin?.userId!,
-        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`,
+        true
       );
     }
     await createNotification(
       newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`
+      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`,
+      true
     );
   }
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/clubs/${clubId}`,
-      user.clubName
+      user.clubName,
+      mustLogOut
     );
   }
 

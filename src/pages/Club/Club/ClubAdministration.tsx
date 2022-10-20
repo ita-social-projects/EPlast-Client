@@ -84,17 +84,19 @@ const ClubAdministration = () => {
     setAdministration(administration.filter((u) => u.id !== admin.id));
     await createNotification(
       admin.userId,
-      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в курені`
+      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в курені`,
+      true
     );
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/clubs/${id}`,
-      clubName
+      clubName,
+      mustLogOut
     );
   };
 
@@ -124,7 +126,8 @@ const ClubAdministration = () => {
     }
     await createNotification(
       newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`
+      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`,
+      true
     );
     setAdministration(administration);
     setReload(!reload);

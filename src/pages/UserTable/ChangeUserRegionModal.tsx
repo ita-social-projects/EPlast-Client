@@ -59,7 +59,8 @@ const ChangeUserRegionModal = ({
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${regionId}`,
-      user.regionName
+      user.regionName,
+      true
     );
   }
   
