@@ -100,18 +100,20 @@ const ClubMembers = () => {
     }
     await createNotification(
       [member.userId],
-      "На жаль, ви були виключені з членів куреня"
+      "На жаль, ви були виключені з членів куреня",
+      true
     );
     setMembers(members.filter((u) => u.id !== member.id));
   };
 
-  const createNotification = async (userId: Array<string>, message: string) => {
+  const createNotification = async (userId: Array<string>, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       userId,
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/clubs/${id}`,
-      clubName
+      clubName,
+      mustLogOut
     );
   };
 
@@ -122,7 +124,8 @@ const ClubMembers = () => {
     if (admin) {
       await createNotification(
         [admin.userId],
-        `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в курені`
+        `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в курені`,
+        true
       );
     }
   };

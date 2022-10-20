@@ -42,7 +42,7 @@ const checkFormer = async (email: string) => {
       formerId = response.data;
     })
     .catch(() => {
-      showUserFormerInfoModal("Ваш статус не підтверджено", "/signin");
+      showUserFormerInfoModal("Користувача з даною email адресою не знайдено");
     });
   return formerId;
 };

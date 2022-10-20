@@ -199,7 +199,8 @@ const ActiveMembership = () => {
         )} в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${userId}`,
-        `Дійсному членстві`
+        `Дійсному членстві`,
+        true
       );
     }
     await fetchData();

@@ -27,6 +27,10 @@ export class RegionAnnualReport {
   numberOfHonoraryMembers: number;
   regionId: number;
   regionName: string;
+  creatorId: string;
+  creatorFirstName: string;
+  creatorLastName: string;
+  creatorFatherName: string;
   stateOfPreparation: string;
   characteristic: string;
   statusOfStrategy: string;
@@ -67,6 +71,10 @@ export class RegionAnnualReport {
     this.numberOfHonoraryMembers = 0;
     this.regionId = 0;
     this.regionName = '';
+    this.creatorId = '';
+    this.creatorFirstName = '';
+    this.creatorLastName = '';
+    this.creatorFatherName = '';
     this.stateOfPreparation = '';
     this.characteristic = ''
     this.statusOfStrategy = '';
