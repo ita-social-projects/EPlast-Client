@@ -489,7 +489,6 @@ export const Blanks = () => {
         userToken={userToken}
         visibleModal={visibleListAchievementModal}
         setVisibleModal={setVisibleListAchievementModal}
-        achievementDoc={achievementDoc}
         hasAccessToSee={
           userBlankAccess["CanViewListOfAchievements"]
         }
