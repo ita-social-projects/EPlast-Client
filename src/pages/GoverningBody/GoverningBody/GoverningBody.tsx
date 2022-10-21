@@ -742,7 +742,7 @@ const GoverningBody = () => {
                 className="governingBodyInfoButton"
                 onClick={() =>
                   history.push(
-                    `/regionalBoard/governingBodies/${governingBody.id}/sectors`
+                    `/governingBodies/${governingBody.id}/sectors`
                   )
                 }
               >
