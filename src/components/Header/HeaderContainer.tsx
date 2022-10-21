@@ -7,7 +7,7 @@ import {
   EditOutlined,
   HistoryOutlined,
 } from "@ant-design/icons";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import LogoImg from "../../assets/images/ePlastLogotype.png";
 import LogoText from "../../assets/images/logo_PLAST.svg";
 import classes from "./Header.module.css";
@@ -23,6 +23,7 @@ import NotificationBoxApi, {
 import WebSocketConnection from "../NotificationBox/WebSocketConnection";
 import HistoryDrawer from "../HistoryNavi/HistoryDrawer";
 import { useLocation } from "react-router-dom";
+import { showLogOutModal } from "../Notifications/Modals";
 
 let authService = new AuthorizeApi();
 
@@ -34,15 +35,12 @@ const HeaderContainer = () => {
   const token = AuthLocalStorage.getToken() as string;
   const signedIn = AuthorizeApi.isSignedIn();
   const userState = useRef(signedIn);
-  const [notificationTypes, setNotificationTypes] = useState<
-    Array<NotificationType>
-  >([]);
-  const [notifications, setNotifications] = useState<Array<UserNotification>>(
-    []
-  );
+  const [notificationTypes, setNotificationTypes] = useState<NotificationType[]>([]);
+  const [notifications, setNotifications] = useState<UserNotification[]>([]);
   const [visibleDrawer, setVisibleDrawer] = useState<boolean>(false);
   const [visibleHistoryDrawer, setVisibleHistoryDrawer] = useState(false);
   const location = useLocation().pathname;
+  const history = useHistory();
 
   const fetchData = async () => {
     if (user) {
@@ -62,8 +60,13 @@ const HeaderContainer = () => {
           );
 
           connection.onmessage = function (event) {
-            const result = JSON.parse(decodeURIComponent(event.data));
-            setNotifications((t) => [result as UserNotification].concat(t));
+            const result: UserNotification = JSON.parse(decodeURIComponent(event.data));
+            if (result.notificationTypeId == NotificationBoxApi.NotificationTypes.LogOutNotification) {
+              showLogOutModal();
+              setTimeout(() => history.push("/signin"), 60000);
+            } else {
+              setNotifications((t) => [result].concat(t));
+            }
           };
         }
         await userApi

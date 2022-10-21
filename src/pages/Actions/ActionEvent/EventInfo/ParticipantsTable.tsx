@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from "react";
 import {
-  Table,
-  Tag,
-  Space,
-  Button,
-  Divider,
-  Typography,
-  Modal,
-  Checkbox,
-} from "antd";
-import { ColumnsType } from "antd/es/table";
-import {
+  ExclamationCircleOutlined,
+  QuestionOutlined,
   UserAddOutlined,
   UserDeleteOutlined,
-  QuestionOutlined,
-  ExclamationCircleOutlined,
 } from "@ant-design/icons/lib";
-import { showError } from "../../EventsModals";
-import { EventParticipant } from "./EventInfo";
-import eventsApi from "../../../../api/eventsApi";
-import "./ParticipantsTable.less";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Modal,
+  Space,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
+import { ColumnsType } from "antd/es/table";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import eventsApi from "../../../../api/eventsApi";
 import NotificationBoxApi from "../../../../api/NotificationBoxApi";
+import { EventParticipant } from "../../../../models/Events/EventParticipant";
+import { showError } from "../../EventsModals";
+import "./ParticipantsTable.less";
 
 const { Text } = Typography;
 
@@ -30,7 +30,7 @@ interface Props {
   isEventFinished: boolean;
   participants: EventParticipant[];
   eventName: string;
-  setRender: (render: boolean) => void;
+  setRender: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }
 
@@ -46,7 +46,7 @@ const ParticipantsTable = ({
   participants,
   eventName,
   setRender,
-  loading
+  loading,
 }: Props) => {
   const { id } = useParams();
   const [Participants, setParticipant] = useState<EventParticipant[]>(
@@ -78,7 +78,7 @@ const ParticipantsTable = ({
         if (participant.participantId === participantId) {
           participant.status = newStatus;
         }
-        setRender(true);
+        setRender((prev) => !prev);
         return participant;
       })
     );
@@ -166,6 +166,7 @@ const ParticipantsTable = ({
       title: "Користувач",
       dataIndex: "fullName",
       key: "user",
+      fixed: "left",
       render: (text: any, record) => (
         <div onClick={() => history.push(`/userpage/main/${record.userId}`)}>
           <Text className="participant-table-fullName" strong>
@@ -187,7 +188,7 @@ const ParticipantsTable = ({
       render: (status: any) => (
         <>
           <Tag color={setTagColor(status)} key={status}>
-            {status.toUpperCase()}
+            {status}
           </Tag>
         </>
       ),
@@ -199,7 +200,6 @@ const ParticipantsTable = ({
       title: "Відвідав подію",
       dataIndex: "wasPresent",
       key: "eventParticipant",
-      align: "center",
       render: (wasPresent: boolean, record: EventParticipant) => (
         <>
           <Checkbox
@@ -216,48 +216,73 @@ const ParticipantsTable = ({
         key: "changeStatus",
         render: (wasPresent: boolean, record: EventParticipant) => (
           <Space size="small">
-              <Button
-                className={record.status != participantStatuses.Approved ? "approveButton" : "disabledButton"}
-                shape="round"
-                icon={<UserAddOutlined className="iconParticipant" />}
-                size="small"
-                disabled={record.status == participantStatuses.Approved}
-                onClick={() => {
-                  changeStatusToApproved(record.participantId, record.userId);
-                }}
-              />
+            <Button
+              className={
+                record.status != participantStatuses.Approved
+                  ? "approveButton"
+                  : "disabledButton"
+              }
+              shape="round"
+              icon={<UserAddOutlined className="iconParticipant" />}
+              size="small"
+              disabled={record.status == participantStatuses.Approved}
+              onClick={() => {
+                changeStatusToApproved(record.participantId, record.userId);
+              }}
+            />
             <Divider type="vertical" />
-              <Button
-                className={record.status != participantStatuses.Undetermined ? "underReviewButton" : "disabledButton"}
-                shape="round"
-                icon={<QuestionOutlined className="iconParticipant" />}
-                size="small"
-                disabled={record.status == participantStatuses.Undetermined}
-                onClick={() => {
-                  changeStatusToUnderReviewed(
-                    record.participantId,
-                    record.userId
-                  );
-                }}
-              />
-            <Divider type="vertical" /><Button
-                className={record.status != participantStatuses.Rejected ? "banButton" : "disabledButton"}
-                shape="round"
-                icon={<UserDeleteOutlined className="iconParticipant" />}
-                size="small"
-                disabled={record.status == participantStatuses.Rejected}
-                onClick={() => {
-                  showRejectModal(record.participantId, record.userId);
-                  setRender(true);
-                }}
-              />
+            <Button
+              className={
+                record.status != participantStatuses.Undetermined
+                  ? "underReviewButton"
+                  : "disabledButton"
+              }
+              shape="round"
+              icon={<QuestionOutlined className="iconParticipant" />}
+              size="small"
+              disabled={record.status == participantStatuses.Undetermined}
+              onClick={() => {
+                changeStatusToUnderReviewed(
+                  record.participantId,
+                  record.userId
+                );
+              }}
+            />
+            <Divider type="vertical" />
+            <Button
+              className={
+                record.status != participantStatuses.Rejected
+                  ? "banButton"
+                  : "disabledButton"
+              }
+              shape="round"
+              icon={<UserDeleteOutlined className="iconParticipant" />}
+              size="small"
+              disabled={record.status == participantStatuses.Rejected}
+              onClick={() => {
+                showRejectModal(record.participantId, record.userId);
+                setRender(true);
+              }}
+            />
           </Space>
         ),
       });
     }
   }
 
-  return <Table columns={columns} dataSource={Participants} loading={loading}/>;
+  return (
+    <Table
+      pagination={{ pageSize: 5 }}
+      columns={columns}
+      dataSource={Participants}
+      loading={loading}
+      onRow={(record) => {
+        return {
+          onContextMenu: (evt) => evt.preventDefault(),
+        };
+      }}
+    />
+  );
 };
 
 export default ParticipantsTable;

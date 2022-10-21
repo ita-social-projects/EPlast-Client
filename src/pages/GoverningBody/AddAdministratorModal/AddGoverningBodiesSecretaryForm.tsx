@@ -74,7 +74,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`
+      `цьому керівному органі`,
+      true
     );
   };
 
@@ -87,7 +88,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`
+      `цьому керівному органі`,
+      true
     );
   };
 
@@ -161,8 +163,11 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         } else {
           addGoverningBodyAdmin(newAdmin);
         }
-      } finally {
-        onAdd();
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       editGoverningBodyAdmin(newAdmin);

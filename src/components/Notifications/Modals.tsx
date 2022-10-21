@@ -1,4 +1,4 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, WarningOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
 import React from "react";
 
@@ -10,3 +10,12 @@ export const showRegionNameExistsModal = () => {
     maskClosable: true,
   });
 };
+
+export const showLogOutModal = () => {
+  return Modal.warning({
+    title: "Вам змінили права доступу! Вас буде вилогувано із системи через одну хвилину",
+    icon: <WarningOutlined />,
+    okText: "Ок",
+    maskClosable: false
+  });
+}

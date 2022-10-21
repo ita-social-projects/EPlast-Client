@@ -72,7 +72,8 @@ const AddSectorAdminForm = (props: any) => {
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
-      `цьому напрямі керівного органу`
+      `цьому напрямі керівного органу`,
+      true
     );
   };
 
@@ -85,7 +86,8 @@ const AddSectorAdminForm = (props: any) => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
-      `цьому напрямі керівного органу`
+      `цьому напрямі керівного органу`,
+      true
     );
   };
 
@@ -154,8 +156,11 @@ const AddSectorAdminForm = (props: any) => {
         } else {
           addSectorAdmin(newAdmin);
         }
-      } finally {
-        onAdd();
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       editSectorAdmin(newAdmin);

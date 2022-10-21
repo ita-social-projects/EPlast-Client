@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Tooltip } from "antd";
 import {
   FileTextOutlined,
   CloseOutlined,
@@ -97,30 +97,36 @@ const SectorDocuments = () => {
                 actions={
                   userAccesses["ManipulateDocument"]
                     ? [
-                        <DownloadOutlined
-                          key="download"
-                          onClick={() =>
-                            downloadDocument(
-                              document.blobName,
-                              document.fileName
-                            )
-                          }
-                        />,
-                        <CloseOutlined
-                          key="close"
-                          onClick={() => deleteDocument(document)}
-                        />,
+                        <Tooltip title="Завантажити">
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />
+                        </Tooltip>,
+                        <Tooltip title="Видалити">
+                          <CloseOutlined
+                            key="close"
+                            onClick={() => deleteDocument(document)}
+                          />
+                        </Tooltip>
                       ]
                     : [
-                        <DownloadOutlined
-                          key="download"
-                          onClick={() =>
-                            downloadDocument(
-                              document.blobName,
-                              document.fileName
-                            )
-                          }
-                        />,
+                        <Tooltip title="Завантажити">
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />
+                        </Tooltip>
                       ]
                 }
               >
