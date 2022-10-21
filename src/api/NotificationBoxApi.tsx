@@ -32,6 +32,7 @@ const NotificationTypes = {
   Default: 0,
   EventNotifications: 0,
   UserNotifications: 0,
+  LogOutNotification: 4
 };
 
 export type UserNotificationPost = {
@@ -104,7 +105,8 @@ const createNotifications = async (
   message: string,
   NotifiType: number,
   senderLink?: string,
-  senderName?: string
+  senderName?: string,
+  mustLogOut?: boolean
 ) => {
   let notifications: UserNotificationPost[] = [];
 
@@ -118,9 +120,17 @@ const createNotifications = async (
         senderLink: senderLink ? senderLink : "",
         senderName: senderName ? senderName : "",
       });
+      if (mustLogOut) {
+        notifications.push({
+          notificationTypeId: NotificationTypes.LogOutNotification,
+          message: "",
+          ownerUserId: userIds[i],
+          senderLink: "",
+          senderName: "",
+        });
+      }
     }
   }
-
   await postUserNotifications(notifications);
 };
 

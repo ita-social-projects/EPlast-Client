@@ -49,6 +49,18 @@ const getUserProfileAccess = async (userid: string, focusUserId: string) => {
   return response;
 };
 
+const getUserBlankAccess = async (userid: string, focusUserId: string) => {
+  const response = await axios
+    .get(
+      `${`${BASE_URL}UserAccess/GetUserBlankAccess/${userid}/${focusUserId}`}`
+    )
+    .catch((error) => {
+      throw error;
+    });
+
+  return response;
+};
+
 const getUserMenuAccess = async (userid: string) => {
   const response = await api
     .get(`UserAccess/GetUserMenuAccess/${userid}`)
@@ -148,6 +160,7 @@ export default {
   getActiveUserProfile,
   updateProfileImage,
   getUserProfileAccess,
+  getUserBlankAccess,
   getUserMenuAccess,
   putComment,
   deleteComment,
