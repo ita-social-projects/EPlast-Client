@@ -13,6 +13,7 @@ import "./AddClubsSecretaryForm.less";
 import { Roles } from "../../../models/Roles/Roles";
 import ClubUser from "../../../models/Club/ClubUser";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 type AddClubsNewSecretaryForm = {
   visibleModal: boolean;
@@ -47,7 +48,7 @@ const AddClubsNewSecretaryForm = (props: any) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const SetAdmin = (property: any, value: any) => {
@@ -92,9 +93,11 @@ const AddClubsNewSecretaryForm = (props: any) => {
   return (
     <Form
       name="basic"
-      onFinish={(values) => {
-        handleSubmit(values);
+      onFinish={async (values) => {
         setLoading(true);
+        await handleSubmit(values);
+        form.resetFields();
+        setLoading(false);
       }}
       form={form}
       labelCol={{ span: 8 }}

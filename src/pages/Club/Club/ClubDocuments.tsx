@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Tooltip } from "antd";
 import {
   FileTextOutlined,
   CloseOutlined,
@@ -124,19 +124,23 @@ const ClubDocuments = () => {
                 actions={
                   userAccesses["EditClub"]
                     ? [
-                        <DownloadOutlined
-                          key="download"
-                          onClick={() =>
-                            downloadDocument(
-                              document.blobName,
-                              document.fileName
-                            )
-                          }
-                        />,
-                        <CloseOutlined
-                          key="close"
-                          onClick={() => seeDeleteModal(document.id)}
-                        />,
+                        <Tooltip title="Завантажити">
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />
+                        </Tooltip>,
+                        <Tooltip title="Видалити">
+                          <CloseOutlined
+                            key="close"
+                            onClick={() => seeDeleteModal(document.id)}
+                          />
+                        </Tooltip>
                       ]
                     : userAccesses["IsAdmin"] ||
                       (userAccesses["DownloadDocument"] &&
@@ -155,13 +159,12 @@ const ClubDocuments = () => {
                     : undefined
                 }
               >
-                <Avatar size={86} icon={<FileTextOutlined />} />
+                <Tooltip placement="bottom" title={<div style={{textAlign: 'center'}}>{document.clubDocumentType.name}</div>}>
+                  <Avatar size={86} icon={<FileTextOutlined />} />
+                </Tooltip>
                 <Card.Meta
                   className="detailsMeta"
-                  title={extendedTitleTooltip(
-                    parameterMaxLength,
-                    document.clubDocumentType.name
-                  )}
+                  title={document.clubDocumentType.name}
                 />
               </Card>
             ))

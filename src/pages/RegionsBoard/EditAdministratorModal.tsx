@@ -9,6 +9,7 @@ import { inputOnlyWhiteSpaces } from "../../components/Notifications/Messages";
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import notificationLogic from "../../components/Notifications/Notification";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 interface Props {
   visibleModal: boolean;
@@ -29,20 +30,21 @@ const EditAdministratorModal = ({
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const handleCancel = () => {
     setVisibleModal(false);
   };
 
-  const createNotification = async (userId: Array<string>, message: string) => {
+  const createNotification = async (userId: Array<string>, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       userId,
       `${message}: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/administrations`,
-      `Переглянути`
+      `Переглянути`,
+      mustLogOut
     );
   };
 
@@ -72,7 +74,8 @@ const EditAdministratorModal = ({
     notificationLogic("success", "Адміністратор успішно відредагований");
     await createNotification(
       [newAdmin.userId],
-      `Вам була присвоєна нова роль: '${newAdmin.governingBodyAdminRole}`
+      `Вам була присвоєна нова роль: '${newAdmin.governingBodyAdminRole}`,
+      true
     );
     setLoading(false);
     setVisibleModal(false);

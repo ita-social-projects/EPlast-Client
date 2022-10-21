@@ -159,6 +159,15 @@ const RegionAnnualReportInformation = () => {
               Перейти на профіль округи {regionAnnualReport.regionName}
             </Link>
             <br />
+            <Link
+              className="LinkText"
+              style={{ fontSize: "14px" }}
+              to={"/userpage/main/" + regionAnnualReport.creatorId}
+              target="blank"
+            >
+              Звіт подав(ла) {regionAnnualReport.creatorFirstName} {regionAnnualReport.creatorLastName}
+            </Link>
+            <br />
             <br />
             <Card>
               <Row gutter={16} align="bottom">
