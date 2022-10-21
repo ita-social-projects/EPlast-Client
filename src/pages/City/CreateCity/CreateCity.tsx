@@ -409,11 +409,14 @@ const CreateCity = () => {
     });
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message,
-      NotificationBoxApi.NotificationTypes.UserNotifications
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      undefined,
+      undefined,
+      mustLogOut
     );
   };
 

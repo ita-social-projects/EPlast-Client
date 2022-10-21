@@ -93,18 +93,20 @@ const CityMembers = () => {
     }
     await createNotification(
       [member.userId],
-      "На жаль, ви були виключені з членів станиці"
+      "На жаль, ви були виключені з членів станиці",
+      true
     );
     setMembers(members.filter((u) => u.id !== member.id));
   };
 
-  const createNotification = async (userId: Array<string>, message: string) => {
+  const createNotification = async (userId: Array<string>, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       userId,
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${id}`,
-      cityName
+      cityName,
+      mustLogOut
     );
   };
 
@@ -115,7 +117,8 @@ const CityMembers = () => {
     if (admin) {
       await createNotification(
         [admin.userId],
-        `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в станиці`
+        `Вам була присвоєна нова роль: '${admin.adminType.adminTypeName}' в станиці`,
+        true
       );
     }
   };

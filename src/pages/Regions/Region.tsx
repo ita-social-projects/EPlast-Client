@@ -169,7 +169,8 @@ const Region = () => {
         await createNotification(
           ad.userId,
           `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`,
-          false
+          false,
+          true
         );
       });
       notificationLogic("success", successfulArchiveAction("Округу"));
@@ -337,12 +338,14 @@ const Region = () => {
       await createNotification(
         previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`,
+        true,
         true
       );
     }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в окрузі`,
+      true,
       true
     );
 
@@ -363,6 +366,7 @@ const Region = () => {
     await createNotification(
       admin.userId,
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`,
+      true,
       true
     );
   };
@@ -660,7 +664,8 @@ const Region = () => {
   const createNotification = async (
     userId: string,
     message: string,
-    regionExist: boolean
+    regionExist: boolean,
+    mustLogOut?: boolean
   ) => {
     if (regionExist) {
       await NotificationBoxApi.createNotifications(
@@ -668,13 +673,17 @@ const Region = () => {
         message + ": ",
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/regions/${id}`,
-        region.regionName
+        region.regionName,
+        mustLogOut
       );
     } else {
       await NotificationBoxApi.createNotifications(
         [userId],
         message,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        mustLogOut
       );
     }
   };

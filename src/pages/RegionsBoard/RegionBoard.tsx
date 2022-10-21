@@ -229,13 +229,14 @@ const RegionBoard = () => {
       });
   };
 
-  const createNotification = async (userId: Array<string>, message: string) => {
+  const createNotification = async (userId: Array<string>, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       userId,
       `${message}: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/administrations`,
-      `Переглянути`
+      `Переглянути`,
+      mustLogOut
     );
   };
 
@@ -261,7 +262,8 @@ const RegionBoard = () => {
 
     await createNotification(
       [newAdmin.userId],
-      `Вам була присвоєна нова роль: '${newAdmin.governingBodyAdminRole}`
+      `Вам була присвоєна нова роль: '${newAdmin.governingBodyAdminRole}`,
+      true
     ).catch(() => {
       notificationLogic(
         "error",
