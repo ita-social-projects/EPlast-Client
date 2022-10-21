@@ -99,7 +99,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         `Вітаємо! Вас було прийнято до станиці `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/cities/${cityDefault}`,
-        info.userCity
+        info.userCity,
+        true
       );
     }
 
@@ -111,7 +112,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         `Вам було надано ступінь: '${degreeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${props.userId}`,
-        `Дійсному членстві`
+        `Дійсному членстві`,
+        true
       );
     }
 
@@ -165,7 +167,6 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     const response = await getCities();
     setCities(response.data);
     const userInfo = await UserApi.getById(props.userId);
-
     if (userInfo.data.user.city) {
       setDisabled(true);
     }
