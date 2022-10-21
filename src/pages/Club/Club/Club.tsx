@@ -122,6 +122,7 @@ const Club = () => {
     await createNotification(
       member.data.userId,
       "Вітаємо, вас зараховано до членів куреня",
+      true,
       true
     );
     member.data.user.imagePath = (
@@ -142,6 +143,7 @@ const Club = () => {
     await createNotification(
       activeUserID as string,
       "На жаль, ви були виключені з прихильників куреня",
+      true,
       true
     );
     const response = await getClubById(+id);
@@ -154,7 +156,8 @@ const Club = () => {
       await createNotification(
         activeUserID as string,
         `На жаль, ви були виключені з членів куреня "${activeUserClub}" та позбавлені наданих в ньому посад`,
-        false
+        false,
+        true
       );
     }
     const follower = await addFollower(+id);
@@ -187,6 +190,14 @@ const Club = () => {
     try {
       await archiveClub(club.id);
       notificationLogic("success", successfulArchiveAction(club.name));
+      admins.map(async (ad) => {
+        await createNotification(
+          ad.userId,
+          `На жаль станицю '${club.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`,
+          false,
+          true
+        );
+      });
       history.push("/clubs/page/1");
     } catch {
       notificationLogic("error", failArchiveAction(club.name));
@@ -403,12 +414,14 @@ const Club = () => {
       await createNotification(
         previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`,
+        true,
         true
       );
     }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в курені`,
+      true,
       true
     );
     if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
@@ -426,6 +439,7 @@ const Club = () => {
     await createNotification(
       admin.userId,
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`,
+      true,
       true
     );
   };
@@ -681,7 +695,8 @@ const Club = () => {
   const createNotification = async (
     userId: string,
     message: string,
-    clubExist: boolean
+    clubExist: boolean,
+    mustLogOut?: boolean
   ) => {
     if (clubExist) {
       await NotificationBoxApi.createNotifications(
@@ -689,13 +704,17 @@ const Club = () => {
         `${message}: `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/clubs/${id}`,
-        club.name
+        club.name,
+        mustLogOut
       );
     } else {
       await NotificationBoxApi.createNotifications(
         [userId],
         message,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        mustLogOut
       );
     }
   };

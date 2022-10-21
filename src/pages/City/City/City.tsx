@@ -122,6 +122,7 @@ const City = () => {
     await createNotification(
       activeUserID as string,
       "На жаль, ви були виключені із прихильників станиці",
+      true,
       true
     );
     const response = await getCityById(+id);
@@ -132,7 +133,6 @@ const City = () => {
 
   const addMember = async () => {
     const follower = await addFollower(+id);
-
     if (city.head !== null) {
       await createNotification(
         city.head.userId,
@@ -161,6 +161,7 @@ const City = () => {
       await createNotification(
         follower.data.userId,
         "Тобі надано нову роль: 'Прихильник' в станиці",
+        true,
         true
       );
     }
@@ -174,7 +175,8 @@ const City = () => {
         await createNotification(
           ad.userId,
           `На жаль станицю '${city.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`,
-          false
+          false,
+          true
         );
       });
       history.push("/cities/page/1");
@@ -371,12 +373,14 @@ const City = () => {
       await createNotification(
         previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`,
+        true,
         true
       );
     }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
+      true,
       true
     );
     if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
@@ -395,6 +399,7 @@ const City = () => {
     await createNotification(
       admin.userId,
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в станиці`,
+      true,
       true
     );
   };
@@ -635,7 +640,8 @@ const City = () => {
   const createNotification = async (
     userId: string,
     message: string,
-    cityExist: boolean
+    cityExist: boolean,
+    mustLogOut?: boolean
   ) => {
     if (cityExist) {
       await NotificationBoxApi.createNotifications(
@@ -643,13 +649,17 @@ const City = () => {
         message + ": ",
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/cities/${id}`,
-        city.name
+        city.name,
+        mustLogOut
       );
     } else {
       await NotificationBoxApi.createNotifications(
         [userId],
         message,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        mustLogOut
       );
     }
   };

@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import {
   getAllAdmins,
+  getCityById,
   getUserCityAccess,
   removeAdministrator,
 } from "../../../api/citiesApi";
@@ -66,6 +67,7 @@ const CityAdministration = () => {
 
   const fetchData = async () => {
     setLoading(true);
+    const responseCity = await getCityById(id);
     const responseAdmins = await getAllAdmins(id);
     await getUserAccessesForCities();
     setIsCityAdmin(
@@ -77,7 +79,7 @@ const CityAdministration = () => {
     setAdministration(
       [...responseAdmins.data.administration].filter((a) => a != null)
     );
-    setCityName(responseAdmins.data.name);
+    setCityName(responseCity.data.name);
     setActiveUserRoles(userApi.getActiveUserRoles());
     setLoading(false);
   };
@@ -100,17 +102,19 @@ const CityAdministration = () => {
     setAdministration(administration.filter((u) => u.id !== admin.id));
     await createNotification(
       admin.userId,
-      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в станиці`
+      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в станиці`,
+      true
     );
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${id}`,
-      cityName
+      cityName,
+      mustLogOut
     );
   };
 
@@ -140,7 +144,8 @@ const CityAdministration = () => {
     }
     await createNotification(
       newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`
+      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
+      true
     );
     setAdministration(administration);
     setReload(!reload);

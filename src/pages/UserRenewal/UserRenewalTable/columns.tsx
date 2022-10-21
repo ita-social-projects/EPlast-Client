@@ -108,9 +108,9 @@ const columns = [
   {
     title: "Коментар",
     dataIndex: "comment",
-    render: (comment: string) => {
+    render: (comment: string, record: any) => {
       return (
-        <UserComment userId={""} canEdit={false} text={comment}/>
+        <UserComment userId={record.userId} canEdit={true} text={comment}/>
       )
     }
   }
