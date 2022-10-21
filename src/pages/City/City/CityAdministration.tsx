@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import {
   getAllAdmins,
+  getCityById,
   getUserCityAccess,
   removeAdministrator,
 } from "../../../api/citiesApi";
@@ -66,6 +67,7 @@ const CityAdministration = () => {
 
   const fetchData = async () => {
     setLoading(true);
+    const responseCity = await getCityById(id);
     const responseAdmins = await getAllAdmins(id);
     await getUserAccessesForCities();
     setIsCityAdmin(
@@ -77,7 +79,7 @@ const CityAdministration = () => {
     setAdministration(
       [...responseAdmins.data.administration].filter((a) => a != null)
     );
-    setCityName(responseAdmins.data.name);
+    setCityName(responseCity.data.name);
     setActiveUserRoles(userApi.getActiveUserRoles());
     setLoading(false);
   };
