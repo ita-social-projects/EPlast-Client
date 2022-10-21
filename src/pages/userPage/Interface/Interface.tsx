@@ -94,6 +94,7 @@ export interface IPersonalDataContext {
   activeUserId: string;
   activeUserProfile: User | undefined;
   userProfileAccess: { [key: string]: boolean };
+  userBlankAccess: { [key: string]: boolean };
   loading: boolean;
   imageBase64: string;
   changeUserProfile?: (user: Data) => void;
