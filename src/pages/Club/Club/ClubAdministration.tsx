@@ -124,11 +124,21 @@ const ClubAdministration = () => {
         `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`
       );
     }
-    await createNotification(
-      newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`,
-      true
-    );
+    if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`,
+        true
+      );
+    }
+    else if (newAdmin.startDate !== admin.startDate || newAdmin.endDate !== admin.endDate) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам було змінено час правління на 
+        ${moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - 
+        ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")} в курені`
+      );
+    }
     setAdministration(administration);
     setReload(!reload);
   };
