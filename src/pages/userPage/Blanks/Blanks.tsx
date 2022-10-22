@@ -46,7 +46,6 @@ export const Blanks = () => {
     fullUserProfile,
     activeUserRoles,
     userProfileAccess,
-    userBlankAccess,
     loading,
   } = useContext(PersonalDataContext);
   const [document, setDocument] = useState<BlankDocument>(new BlankDocument());
@@ -227,7 +226,8 @@ export const Blanks = () => {
                       </Paragraph>
                     )}
                   </div>
-                  {userBlankAccess["CanDownloadBiography"] && (
+                  {(userToken.nameid === userId ||
+                    userProfileAccess["CanViewDownloadUserBiography"]) && (
                     <Tooltip title="Завантажити">
                       <DownloadOutlined
                         className={classes.downloadIcon}
@@ -239,7 +239,8 @@ export const Blanks = () => {
                     </Tooltip>
                   )}
 
-                  {userBlankAccess["CanViewBiography"] &&
+                  {(userToken.nameid === userId ||
+                    userProfileAccess["CanViewDownloadUserBiography"]) &&
                   documentFormat !== "doc" &&
                   documentFormat !== "docx" ? (
                     <Tooltip title="Переглянути">
@@ -252,7 +253,8 @@ export const Blanks = () => {
                       />
                     </Tooltip>
                   ) : null}
-                  {userBlankAccess["CanDeleteBiography"] ? (
+                  {userToken.nameid === userId ||
+                  userProfileAccess["CanEditDeleteUserBiography"] ? (
                     <Tooltip title="Видалити">
                       <Popconfirm
                         title="Видалити цей документ?"
@@ -281,7 +283,8 @@ export const Blanks = () => {
                       {getAppropriateToGenderVerb()} Життєпис
                     </h2>
                   )}
-                  {userBlankAccess["CanAddBiography"] && (
+                  {(userToken.nameid === userId ||
+                    activeUserRoles.includes(Roles.Admin)) && (
                     <div>
                       <Button
                         type="primary"
@@ -334,7 +337,10 @@ export const Blanks = () => {
                   <Tooltip title="Завантажити">
                     <DownloadOutlined
                       hidden={
-                        !(userBlankAccess["CanViewAddDownloadDeleteExtractUPU"])
+                        !(
+                          userToken.nameid === userId ||
+                          userProfileAccess["CanSeeAddDeleteUserExtractUPU"]
+                        )
                       }
                       className={classes.downloadIcon}
                       key="download"
@@ -346,7 +352,8 @@ export const Blanks = () => {
                       }
                     />
                   </Tooltip>
-                  {userBlankAccess["CanViewAddDownloadDeleteExtractUPU"] &&
+                  {(userToken.nameid === userId ||
+                    userProfileAccess["CanSeeAddDeleteUserExtractUPU"]) &&
                   extractUPUFormat !== "doc" &&
                   extractUPUFormat !== "docx" ? (
                     <Tooltip title="Переглянути">
@@ -374,7 +381,8 @@ export const Blanks = () => {
                       <DeleteOutlined
                         hidden={
                           !(
-                            userBlankAccess["CanViewAddDownloadDeleteExtractUPU"]
+                            userToken.nameid === userId ||
+                            userProfileAccess["CanSeeAddDeleteUserExtractUPU"]
                           )
                         }
                         className={classes.deleteIcon}
@@ -399,7 +407,8 @@ export const Blanks = () => {
                       type="primary"
                       hidden={
                         !(
-                          userBlankAccess["CanViewAddDownloadDeleteExtractUPU"]
+                          userToken.nameid === userId ||
+                          userProfileAccess["CanSeeAddDeleteUserExtractUPU"]
                         )
                       }
                       className={classes.addIcon}
@@ -453,7 +462,8 @@ export const Blanks = () => {
                     type="primary"
                     hidden={
                       !(
-                        userBlankAccess["CanAddAchievement"]
+                        userProfileAccess["CanAddUserDistionction"] ||
+                        userToken.nameid === userId
                       )
                     }
                     className={classes.addIcon}
@@ -471,7 +481,8 @@ export const Blanks = () => {
               <Button
                 hidden={
                   !(
-                    userBlankAccess["CanGenerateFile"]
+                    userProfileAccess["CanEditUserProfile"] ||
+                    userToken.nameid === userId
                   )
                 }
                 className={classes.addIcon}
@@ -490,13 +501,16 @@ export const Blanks = () => {
         visibleModal={visibleListAchievementModal}
         setVisibleModal={setVisibleListAchievementModal}
         hasAccessToSee={
-          userBlankAccess["CanViewListOfAchievements"]
+          userProfileAccess["CanSeeUserDistinction"] ||
+          userToken.nameid === userId
         }
         hasAccessToDownload={
-          userBlankAccess["CanDownloadAchievement"]
+          userProfileAccess["CanDownloadUserDistinction"] ||
+          userToken.nameid === userId
         }
         hasAccessToDelete={
-          userBlankAccess["CanDeleteAchievement"]
+          userProfileAccess["CanDeleteUserDistinction"] ||
+          userToken.nameid === userId
         }
       />
 

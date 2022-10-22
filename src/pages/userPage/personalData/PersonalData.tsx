@@ -25,7 +25,6 @@ const DefaultState: IPersonalDataContext = {
   imageBase64: "",
   activeUserProfile: undefined,
   userProfileAccess: {},
-  userBlankAccess: {}
 };
 
 export const PersonalDataContext = React.createContext<IPersonalDataContext>(
@@ -46,9 +45,6 @@ export default function ({
   const [imageBase64, setImageBase64] = useState<string>("");
   const [fullUserProfile, setFullUserProfile] = useState<Data>();
   const [userProfileAccess, setUserProfileAccess] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [userBlankAccess, setUserBlankAccess] = useState<{
     [key: string]: boolean;
   }>({});
 
@@ -73,8 +69,6 @@ export default function ({
       userId
     );
     setUserProfileAccess(userProfileAccess.data);
-    let userBlankAccess = await UserApi.getUserBlankAccess(currentUserId, userId);
-    setUserBlankAccess(userBlankAccess.data);
     setActiveUserId(currentUserId);
 
     let userProfile = await UserApi.getActiveUserProfile();
@@ -122,7 +116,6 @@ export default function ({
         activeUserId,
         activeUserProfile,
         userProfileAccess,
-        userBlankAccess,
         loading: dataLoaded,
         imageBase64,
         changeUserProfile,
