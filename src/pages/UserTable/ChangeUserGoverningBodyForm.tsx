@@ -154,7 +154,10 @@ const ChangeUserRoleForm = ({
       await NotificationBoxApi.createNotifications(
         [admin.userId],
         `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}'`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        true
       );
     } else {
       await addAdministrator(admin.governingBodyId, admin);
@@ -167,7 +170,8 @@ const ChangeUserRoleForm = ({
         `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/regionalBoard/governingBodies/${admin.governingBodyId}`,
-        `цьому керівному органі`
+        `цьому керівному органі`,
+        true
       );
     }
   };
@@ -183,7 +187,8 @@ const ChangeUserRoleForm = ({
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/sectors/${admin.sectorId}`,
-      `цьому керівному органі`
+      `цьому керівному органі`,
+      true
     );
   };
 

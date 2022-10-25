@@ -73,7 +73,10 @@ const ChangeUserRoleForm = ({
       await NotificationBoxApi.createNotifications(
         [userId],
         `Вам надано нову роль: '${value.userRole}'`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        true
       );
     }
   };

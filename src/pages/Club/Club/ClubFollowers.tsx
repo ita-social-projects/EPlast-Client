@@ -87,13 +87,14 @@ const ClubFollowers = () => {
     });
   }
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/clubs/${id}`,
-      clubName
+      clubName,
+      mustLogOut
     );
   };
 
@@ -102,7 +103,8 @@ const ClubFollowers = () => {
     await toggleMemberStatus(follower.id);
     await createNotification(
       follower.userId,
-      "Вітаємо, вас зараховано до членів куреня"
+      "Вітаємо, вас зараховано до членів куреня",
+      true
     );
   };
 
@@ -111,7 +113,8 @@ const ClubFollowers = () => {
     await removeFollower(follower.id);
     await createNotification(
       follower.userId,
-      "На жаль, ви були виключені з прихильників куреня"
+      "На жаль, ви були виключені з прихильників куреня",
+      true
     );
   };
 
