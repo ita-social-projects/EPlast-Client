@@ -194,11 +194,13 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           {region ? (
             <p className="statusText">
               Є зголошеним до округи:{" "}
-              <Link to={"/regions/" + regionId} className={`LinkText ${!canAccessRegionTab && "notAccess"}`}
+              {canAccessRegionTab ?
+              <Link to={"/regions/" + regionId} className="LinkText"
                 onClick={event => !canAccessRegionTab && event.preventDefault()}
               >
                 {region}
-              </Link>
+              </Link> :
+              <span className="LinkText notAccess">{region}</span>}
             </p>
           ) : (
             <p className="statusText">Не є зголошеним до жодної округи</p>
