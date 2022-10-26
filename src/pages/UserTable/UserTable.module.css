@@ -60,6 +60,10 @@
   }
 }
 
+.okButton {
+  border-radius: 0px 2px 2px 0px;
+}
+
 .divWrapper {
   text-overflow: ellipsis;
   white-space: nowrap;
