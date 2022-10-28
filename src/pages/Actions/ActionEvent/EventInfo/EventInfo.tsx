@@ -80,25 +80,33 @@ const EventInfo = () => {
     EventParticipant[]
   >([]);
 
-  const history = useHistory();
+  const history = useHistory(); 
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await eventsApi.getEventInfo(id);
-        await getUserAccessesForEvents(id);
-        setEvent(response.data);
-        setParticipantsInTable(response.data.event.eventParticipants);
-        getEventStatusId(response.data.event.eventStatus);
-        setLoading(true);
-      } catch (error) {
-        // this looks bad but i didn't find another way to accomplish this
-        if ((error.message as string).includes("404")) history.push("/404");
-      }
-    };
-    fetchData();
+    getUserAccesses();
     getUserRoles();
   }, [visibleDrawer, approvedEvent, render]);
+
+  useEffect(() => {   
+    fetchData();
+  }, [userAccesses]);  
+
+  const getUserAccesses = async () => {
+      await getUserAccessesForEvents(id);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await eventsApi.getEventInfo(id);
+      setEvent(response.data);
+      setParticipantsInTable(response.data.event.eventParticipants);
+      getEventStatusId(response.data.event.eventStatus);
+      setLoading(true);
+    } catch (error) {
+      // this looks bad but i didn't find another way to accomplish this
+      if ((error.message as string).includes("404")) history.push("/404");
+    }
+  };
 
   const getEventStatusId = async (eventStatus: string) => {
     await eventsApi.getEventStatusId(eventStatus).then((response) => {
