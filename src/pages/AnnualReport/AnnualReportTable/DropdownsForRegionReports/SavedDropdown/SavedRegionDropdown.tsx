@@ -17,7 +17,9 @@ const SavedRegionDropdown = (props: Props) => {
   const handleClick = (item: any) => {
     switch (item.key) {
       case "1":
-        onView(regionRecord.id, new Date(regionRecord.date).getFullYear());
+        if (userAnnualReportAccess?.CanViewReportDetails) {
+          onView(regionRecord.id, new Date(regionRecord.date).getFullYear());
+        }
         break;
       default:
         break;

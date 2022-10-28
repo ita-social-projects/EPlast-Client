@@ -26,7 +26,6 @@ const UnconfirmedRegionDropdown = (props: Props) => {
     switch (item.key) {
       case "1":
         if (
-          userAnnualReportAccess?.CanViewRegionReportsTable &&
           userAnnualReportAccess?.CanViewReportDetails
         ) {
           onView(regionRecord.id, new Date(regionRecord.date).getFullYear());

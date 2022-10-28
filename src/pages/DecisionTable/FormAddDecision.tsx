@@ -13,6 +13,7 @@ import AuthLocalStorage from "../../AuthLocalStorage";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import notificationLogic from "../../components/Notifications/Notification";
 import { getBase64 } from "../userPage/EditUserPage/Services";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 
 interface FormAddDecisionProps {
@@ -99,6 +100,10 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props) => {
     });
     notificationLogic("success", fileIsUpload());
   }
+
+  const disabledDate = (current: any) => {
+    return current && !current.isAfter(minAvailableDate);
+  };
 
   useEffect(() => {
     decisionsApi.getOnCreate()
@@ -214,6 +219,7 @@ const FormAddDecision: React.FC<FormAddDecisionProps> = (props) => {
         ]}
       >
         <DatePicker
+          disabledDate={disabledDate}
           format="DD.MM.YYYY"
         />
       </Form.Item>

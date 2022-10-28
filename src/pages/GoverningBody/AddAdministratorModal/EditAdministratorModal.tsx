@@ -23,6 +23,7 @@ import { emptyInput } from "../../../components/Notifications/Messages";
 import { Roles } from "../../../models/Roles/Roles";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import GoverningBodyAdminTypes from "../GoverningBodyAdminTypes";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 const confirm = Modal.confirm;
 
@@ -57,7 +58,7 @@ const EditAdministratorModal = (props: Props) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const showConfirm = (admin: GoverningBodyAdmin) => {

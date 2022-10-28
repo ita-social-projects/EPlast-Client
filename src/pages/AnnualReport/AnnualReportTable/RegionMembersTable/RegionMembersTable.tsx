@@ -29,13 +29,13 @@ const RegionMembersTable = (props: Props) => {
   const fetchStatisticsMembers = async (regionId: number, year: number) => {
     setIsLoading(true);
     try {
-      let response = await regionsApi.getRegionMembersInfo(
+      const response = await regionsApi.getRegionMembersInfo(
         regionId,
         year,
         page,
         pageSize
       );
-      let data = []
+      const data = []
         .concat(response.data)
         .map((cityReportInfo: RegionMembersInfo) => {
           return cityReportInfo;

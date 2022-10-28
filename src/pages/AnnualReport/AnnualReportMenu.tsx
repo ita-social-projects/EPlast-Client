@@ -18,7 +18,7 @@ interface Props {
   record: {
     id: number;
     status: number;
-    canManage: boolean;
+    canManage: boolean | undefined;
   };
   isAdmin: boolean;
   ViewPDF: boolean;

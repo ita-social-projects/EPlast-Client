@@ -10,6 +10,7 @@ import RegionUser from "../../models/Region/RegionUser";
 import "./AddRegionSecretaryForm.less";
 import { Roles } from "../../models/Roles/Roles";
 import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 type AddNewSecretaryForm = {
   visibleModal: boolean;
@@ -44,7 +45,7 @@ const AddNewSecretaryForm = (props: any) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const SetAdmin = async (property: any, value: any) => {
@@ -94,9 +95,11 @@ const AddNewSecretaryForm = (props: any) => {
     <Form
       className={classes.form}
       name="basic"
-      onFinish={(values) => {
-        handleSubmit(values);
+      onFinish={async (values) => {
         setLoading(true);
+        await handleSubmit(values);
+        form.resetFields();
+        setLoading(false);
       }}
       form={form}
       labelCol={{ span: 8 }}

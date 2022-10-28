@@ -13,14 +13,13 @@ import { getAllCourseByUserId } from "../../../api/courseApi";
 import classes from "../Blanks/Blanks.module.css";
 
 export const Courses: React.FC = () => {
+  const [userToken, setUserToken] = useState<{nameid: string}>({nameid: ''});
   const [visible, setVisible] = useState(false);
   const [visibleAchievementModal, setVisibleAchievementModal] = useState(false);
   const [visibleListModal, setVisibleListModal] = useState(false);
   const [isDataLoaded, setDataLoaded] = useState(false);
   const [courseId, setCourseId] = useState(0);
   const [courses, setCourses] = useState<Course[]>([]);
-
-  let userToken: { nameid: string } = { nameid: "" };
 
   const { userId } = useParams<{ userId: string }>();
   const {
@@ -31,8 +30,8 @@ export const Courses: React.FC = () => {
   } = useContext(PersonalDataContext);
 
   const fetchData = async () => {
-    userToken = jwt(AuthLocalStorage.getToken() ?? "");
-    const courses = await getAllCourseByUserId(activeUserId);
+    setUserToken(jwt(AuthLocalStorage.getToken() ?? ""));
+    const courses = await getAllCourseByUserId(userProfile?.user.id);
     setCourses(courses.data);
     setDataLoaded(true);
   };
@@ -63,46 +62,50 @@ export const Courses: React.FC = () => {
       </div>
     )
     : isDataLoaded ? (
-      <div className={classes.wrapper2}>
+      <div className={[classes.wrapper6, classes.courseInfoBlock].join(' ')}>
         {
           courses.map(sectItem =>
             (sectItem.isFinishedByUser === false && 
-            (userProfile?.shortUser?.id === activeUserId || userProfile?.shortUser === null)) ? (
+            (userProfile?.user.id === activeUserId)) ? (
               <Col key={sectItem.id}>
-                <Title level={2} title={sectItem.name} />
+                <Title level={2}>{sectItem.name}</Title>
                 <p>
                   <strong>{userProfile?.user.firstName}</strong>, пройдіть курс для продовження співпраці з нами
                 </p>
-                <div className="rowBlock">
+                <div className="courseParticipationBlock">
                   <a href={sectItem.link} >
                     <img src={PlastLogo} alt="PlastLogo" />
                   </a>
+                  <Button
+                    type="primary"
+                    className="buttonAddCertificate"
+                    onClick={() => addCertificate(sectItem.id)}
+                  >
+                    Додати сертифікат
+                  </Button>
                 </div>
-              
-                <Button
-                  type="primary"
-                  className="buttonaddcertificate"
-                  onClick={() => addCertificate(sectItem.id)}
-                >
-                  Додати сертифікат
-                </Button>
               </Col>
             ) : (
-              <Col style={{ marginTop: "64px" }}>
-                <Title level={2}> {sectItem.name}</Title>
-                <p>
-                  Курс {sectItem.name} пройдено, сертифікат можна переглянути в
-                  <Button 
-                    type="link" 
-                    className="Link" 
-                    onClick={() => {
-                      setVisibleListModal(true);
-                      setCourseId(sectItem.id)
-                    }}
-                  >
-                    <b>Досягненнях</b>
-                  </Button>
-                </p>
+              <Col>
+                <Title level={2}>{sectItem.name}</Title>
+                {
+                  (sectItem.isFinishedByUser) ? (
+                    <p>
+                      Курс пройдено, сертифікат можна переглянути в
+                      <Button style={{padding: "0 0 0 4px"}}
+                        type="link" 
+                        onClick={() => {
+                          setVisibleListModal(true);
+                          setCourseId(sectItem.id)
+                        }}
+                      >
+                        <b>Досягненнях</b>
+                      </Button>
+                    </p>
+                  ) : (
+                    <p>Курс не пройдено</p>
+                  )
+                }
               </Col>
             )
           )
@@ -132,19 +135,20 @@ export const Courses: React.FC = () => {
         </Modal>
     
         <ListOfAchievementsModal
+          courseId={courseId}
           userToken={userToken}
           visibleModal={visibleListModal}
           setVisibleModal={setVisibleListModal}
-          hasAccess={
-            userProfileAccess.CanSeeUserDistinction
+          hasAccessToSee={
+            userProfileAccess["CanSeeUserDistinction"]
             || userToken.nameid === userId
           }
-          hasAccessToSeeAndDownload={
-            userProfileAccess.CanDownloadUserDistinction
+          hasAccessToDownload={
+            userProfileAccess["CanDownloadUserDistinction"]
             || userToken.nameid === userId
           }
           hasAccessToDelete={
-            userProfileAccess.CanDeleteUserDistinction
+            userProfileAccess["CanDeleteUserDistinction"]
             || userToken.nameid === userId
           }
         />

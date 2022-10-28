@@ -12,6 +12,7 @@ import {
   minNumber,
   successfulEditAction,
 } from "../../components/Notifications/Messages";
+import { minAvailableDate } from "../../constants/TimeConstants";
 
 type FormUpdateKadraProps = {
   showModal: (visibleModal: boolean) => void;
@@ -47,6 +48,10 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
     notificationLogic("success", successfulEditAction("Відзнаку"));
   };
 
+  const disabledDate = (current: any) => {
+    return current && !current.isAfter(minAvailableDate);
+  };
+
   useEffect(() => {
     form.resetFields();
   }, [record]);
@@ -74,7 +79,7 @@ const UpdateKadraForm: React.FC<FormUpdateKadraProps> = (props: any) => {
                 },
               ]}
             >
-              <DatePicker className={classes.selectField} format={dateFormat} />
+              <DatePicker disabledDate={disabledDate} className={classes.selectField} format={dateFormat} />
             </Form.Item>
           </Col>
         </Row>

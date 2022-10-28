@@ -76,9 +76,7 @@ const Region = () => {
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [photoStatus, setPhotoStatus] = useState(true);
-  const [document, setDocument] = useState<RegionDocument>(
-    new RegionDocument()
-  );
+  const [document, setDocument] = useState<RegionDocument>(new RegionDocument());
   const [documents, setDocuments] = useState<RegionDocument[]>([]);
   const classes = require("./Modal.module.css");
   const [region, setRegion] = useState<any>({
@@ -106,28 +104,20 @@ const Region = () => {
     },
   ]);
   const [nineMembers, setSixMembers] = useState<any[]>([]);
-  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(
-    false
-  );
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [followers, setFollowers] = useState<RegionFollower[]>([]);
   const [followersCount, setFollowersCount] = useState<number>();
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [regionLogoLoading, setRegionLogoLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<number>();
-  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({});
   const [activeCities, setActiveCities] = useState<any[]>([]);
   const [adminsCount, setAdminsCount] = useState<number>();
   const [documentsCount, setDocumentsCount] = useState<number>();
   const [visible, setVisible] = useState<boolean>(false);
   const [activeUserRoles, setActiveUserRoles] = useState<string[]>([]);
-  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<
-    boolean
-  >(false);
-  const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(
-    false
-  );
+  const [isActiveUserRegionAdmin, setIsActiveUserRegionAdmin] = useState<boolean>(false);
+  const [isActiveUserFromRegion, setIsActiveUserFromRegion] = useState<boolean>(false);
   const [isActiveRegion, setIsActiveRegion] = useState<boolean>(true);
   const [head, setHead] = useState<any>({
     user: {
@@ -179,7 +169,8 @@ const Region = () => {
         await createNotification(
           ad.userId,
           `На жаль округу '${region.regionName}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було видалено.`,
-          false
+          false,
+          true
         );
       });
       notificationLogic("success", successfulArchiveAction("Округу"));
@@ -347,12 +338,14 @@ const Region = () => {
       await createNotification(
         previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`,
+        true,
         true
       );
     }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в окрузі`,
+      true,
       true
     );
 
@@ -373,6 +366,7 @@ const Region = () => {
     await createNotification(
       admin.userId,
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в окрузі`,
+      true,
       true
     );
   };
@@ -571,8 +565,11 @@ const Region = () => {
           admins.push(admin);
           setAdmins(admins);
         }
-      } finally {
-        setVisible(false);
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       if (
@@ -667,7 +664,8 @@ const Region = () => {
   const createNotification = async (
     userId: string,
     message: string,
-    regionExist: boolean
+    regionExist: boolean,
+    mustLogOut?: boolean
   ) => {
     if (regionExist) {
       await NotificationBoxApi.createNotifications(
@@ -675,13 +673,17 @@ const Region = () => {
         message + ": ",
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/regions/${id}`,
-        region.regionName
+        region.regionName,
+        mustLogOut
       );
     } else {
       await NotificationBoxApi.createNotifications(
         [userId],
         message,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        mustLogOut
       );
     }
   };
@@ -1082,7 +1084,9 @@ const Region = () => {
                     key={document.id}
                   >
                     <div>
-                      <FileTextOutlined className="documentIcon" />
+                      <Tooltip title={<div style={{textAlign: 'center'}}>{document.fileName}</div>}>
+                        <FileTextOutlined className="documentIcon" />
+                      </Tooltip>
                       <p className="documentText">{document.fileName}</p>
                     </div>
                   </Col>

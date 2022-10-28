@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip } from "antd";
 import {
-  SettingOutlined,
+  EditOutlined,
   CloseOutlined,
   RollbackOutlined,
   ExclamationCircleOutlined,
@@ -84,17 +84,19 @@ const ClubAdministration = () => {
     setAdministration(administration.filter((u) => u.id !== admin.id));
     await createNotification(
       admin.userId,
-      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в курені`
+      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в курені`,
+      true
     );
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/clubs/${id}`,
-      clubName
+      clubName,
+      mustLogOut
     );
   };
 
@@ -122,10 +124,21 @@ const ClubAdministration = () => {
         `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`
       );
     }
-    await createNotification(
-      newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`
-    );
+    if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`,
+        true
+      );
+    }
+    else if (newAdmin.startDate !== admin.startDate || newAdmin.endDate !== admin.endDate) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам було змінено час правління на 
+        ${moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - 
+        ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")} в курені`
+      );
+    }
     setAdministration(administration);
     setReload(!reload);
   };
@@ -156,10 +169,14 @@ const ClubAdministration = () => {
                   (userAccesses["AddClubHead"] ||
                     member.adminType.adminTypeName !== Roles.KurinHead)
                     ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(member)}
-                        />,
+                        <Tooltip title="Редагувати">
+                          <EditOutlined onClick={() => showModal(member)} />
+                        </Tooltip>,
+                        <Tooltip title="Видалити">
+                          <CloseOutlined
+                            onClick={() => seeDeleteModal(member)}
+                          />
+                        </Tooltip>
                       ]
                     : undefined
                 }

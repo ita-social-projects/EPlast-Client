@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: eplastweb 
-          image: eplast.azurecr.io/eplastweb:10290
+          image: eplast.azurecr.io/eplastweb:___containerRegistry_version_frontend_test___
           resources:
             limits:
               cpu: "100m"

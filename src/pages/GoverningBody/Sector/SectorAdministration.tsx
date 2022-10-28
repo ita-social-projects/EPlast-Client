@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip } from "antd";
 import {
-  SettingOutlined,
+  EditOutlined,
   RollbackOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
@@ -70,7 +70,8 @@ const SectorAdministration = () => {
     setAdministration(administration.filter((u) => u.id !== admin.id));
     await createNotification(
       admin.userId,
-      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в керівному органі`
+      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в керівному органі`,
+      true
     );
   };
 
@@ -90,13 +91,14 @@ const SectorAdministration = () => {
     });
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${governingBodyId}/sectors/${sectorId}`,
-      sectorName
+      sectorName,
+      mustLogOut
     );
   };
 
@@ -118,7 +120,8 @@ const SectorAdministration = () => {
     administration[index] = newAdmin;
     await createNotification(
       newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' у напрямі керівного органу`
+      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' у напрямі керівного органу`,
+      true
     );
     setAdministration(administration);
   };
@@ -161,11 +164,15 @@ const SectorAdministration = () => {
                 actions={
                   userAccesses["AddSecretary"]
                     ? [
-                        <SettingOutlined
-                          className={classes.governingBodyAdminSettingsIcon}
-                          onClick={() => showModal(member)}
-                        />,
-                        <CloseOutlined onClick={() => showConfirm(member)} />,
+                        <Tooltip title="Редагувати">
+                          <EditOutlined
+                            className={classes.governingBodyAdminSettingsIcon}
+                            onClick={() => showModal(member)}
+                          />
+                        </Tooltip>,
+                        <Tooltip title="Видалити">
+                          <CloseOutlined onClick={() => showConfirm(member)} />
+                        </Tooltip>
                       ]
                     : undefined
                 }
