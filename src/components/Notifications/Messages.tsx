@@ -45,11 +45,11 @@ export const incorrectStreet =
 
 export const incorrectHouseNumber =
   wrongFormat +
-  ". Номер будинку може містити лише цифри, кириличні літери, дріб, та не повинен починатись з нуля чи містити пробілів!";
+  ". Номер будинку може містити лише цифри, кириличні літери, дріб та не повинен починатись з нуля чи містити пробілів!";
 
 export const incorrectOficeNumber =
   wrongFormat +
-  ". Номер офісу/квартири може містити лише цифри, кириличні літери, дріб, та не повинен починатись з нуля чи містити пробілів!";
+  ". Номер офісу/квартири може містити лише цифри, кириличні літери, дріб та не повинен починатись з нуля чи містити пробілів!";
 
 export const incorrectData = wrongFormat + "  дати";
 
@@ -155,7 +155,7 @@ export const successfulAddUserToCity = (cityName: string) => {
 };
 
 export const successfulDeleteDegree = () => {
-  return `На жаль ступеня було позбавлено`;
+  return `На жаль, ступеня було позбавлено`;
 };
 
 export const failArchiveAction = (name: string) => {

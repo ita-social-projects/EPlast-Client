@@ -123,7 +123,8 @@ const RegionAdministration = () => {
       await removeAdmin(admin.id);
       await createNotification(
         admin.userId,
-        `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`
+        `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`,
+        true
       );
       setAdministration(administration.filter((u) => u.id !== admin.id));
       notificationLogic(
@@ -161,7 +162,8 @@ const RegionAdministration = () => {
     if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
       await createNotification( 
         newAdmin.userId,
-        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
+        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`,
+        true
       );
     } else if (newAdmin.startDate !== admin.startDate || newAdmin.endDate !== admin.endDate) {
       await createNotification(
@@ -183,13 +185,14 @@ const RegionAdministration = () => {
     setPhotosLoading(false);
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${id}`,
-      region.regionName
+      region.regionName,
+      mustLogOut
     );
   };
 

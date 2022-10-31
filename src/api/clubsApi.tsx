@@ -182,6 +182,12 @@ export const getAllAdmins = async (id: number) => {
   });
 };
 
+export const getClubAdministration = async (id: number) => {
+  return api.get(`Club/GetAdministrations/${id}`).catch((error) => {
+    throw new Error(error);
+  });
+}
+
 export const getUserClubAccess = async (clubId: number, userId: string) => {
   return await api
     .get(`UserAccess/GetUserClubAccess/${clubId}/${userId}`)
