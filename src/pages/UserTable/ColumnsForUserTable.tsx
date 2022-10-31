@@ -470,6 +470,30 @@ const ColumnsForUserTable = (props: Props): any[] => {
       key: "entry"
     },
     {
+      title: (
+        <Row className="tableHeader">
+          <Col className="col-title">Дійсне членство</Col>
+          <Col className="col-value">
+            <SortDirection sort={10} />
+          </Col>
+        </Row>
+      ),
+      dataIndex: "membership",
+      width: 120,
+      render: (date: Date) => {
+        console.log(date.toLocaleString());
+        return SortColumnHighlight(
+          11,
+          <>
+            {date.toLocaleString() !== "0001-01-01T00:00:00"
+              ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") :
+              "Немає"}
+          </>
+        );
+      },
+      key: "membership"
+    },
+    {
       title: "Права доступу",
       dataIndex: "userRoles",
       width: 170,
