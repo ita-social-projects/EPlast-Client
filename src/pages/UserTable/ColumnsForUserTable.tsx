@@ -89,10 +89,10 @@ const ColumnsForUserTable = (props: Props): any[] => {
   });
 
   // names of the keys that aren't displayed in "Зголошені" tab
-  const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
-
-  const forbiddenKeysForUnaproved = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
-
+  const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  const forbiddenKeysForUnaproved = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  const forbiddenKeysForFormers = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  
   const onChangeCheckbox = (e: any, i: number) => {
     let value = filterStatus.value.slice();
     value[i] = !value[i];
@@ -481,13 +481,13 @@ const ColumnsForUserTable = (props: Props): any[] => {
       dataIndex: "membership",
       width: 120,
       render: (date: Date) => {
-        console.log(date.toLocaleString());
         return SortColumnHighlight(
           11,
           <>
-            {date.toLocaleString() !== "0001-01-01T00:00:00"
+            {
+               (date !== null && date.toLocaleString() !== "0001-01-01T00:00:00")
               ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") :
-              "Немає"}
+              ""}
           </>
         );
       },
@@ -692,9 +692,19 @@ const ColumnsForUserTable = (props: Props): any[] => {
     columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
 
     // filter columns to display in zgolosheni tab
+    let filtered = columns.filter(column => !forbiddenKeysForFormers.includes(column.key?.valueOf() as string));
+    columns = filtered;
+  }
+
+  if (props.isUnconfirmed) {
+    // insert phonenumber column right before email
+    columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
+
+    // filter columns to display in zgolosheni tab
     let filtered = columns.filter(column => !forbiddenKeysForUnaproved.includes(column.key?.valueOf() as string));
     columns = filtered;
   }
+  
   
   columns.push(commentColumn);
   return columns;
