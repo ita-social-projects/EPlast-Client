@@ -40,6 +40,9 @@ import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse
 
 import { notification, Spin } from "antd";
 import { successfulUpdateAction } from "../../../../components/Notifications/Messages";
+import adminApi from "../../../../api/adminApi";
+import { Roles } from "../../../../models/Roles/Roles";
+import ShortUserInfo from "../../../../models/UserTable/ShortUserInfo";
 
 const classes = require("./EventCreate.module.css");
 
@@ -126,7 +129,7 @@ export default function ({
     };
     await eventUserApi
       .post(newEvent)
-      .then((response) => {
+      .then(async (response) => {
         notificationLogic(
           "success",
           successfulCreateAction("Подію", values.EventName)
@@ -142,7 +145,18 @@ export default function ({
           "Вам надано адміністративну роль в новій ",
           NotificationBoxApi.NotificationTypes.EventNotifications,
           `/events/details/${response.data.event.id}`,
-          "події"
+          "Події"
+        );
+        
+        const userIds = ((await adminApi.getUsersByAnyRole([[Roles.Admin, Roles.GoverningBodyAdmin, Roles.GoverningBodyHead]], true))
+          .data as ShortUserInfo[]).map(user => user.id);
+        
+        NotificationBoxApi.createNotifications(
+          userIds,
+          `Нова подія "${values.EventName}" очікує вашого `,
+          NotificationBoxApi.NotificationTypes.UserNotifications,
+          `/events/details/${response.data.event.id}`,
+          "підтвердження"
         );
       })
       .catch((error) => {
