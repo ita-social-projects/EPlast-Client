@@ -461,9 +461,9 @@ const ColumnsForUserTable = (props: Props): any[] => {
         return SortColumnHighlight(
           10,
           <>
-            {date !== null
-              ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") :
-              ""}
+            {
+              
+            }
           </>
         );
       },
@@ -485,9 +485,8 @@ const ColumnsForUserTable = (props: Props): any[] => {
           11,
           <>
             {
-               (date !== null && date.toLocaleString() !== "0001-01-01T00:00:00")
-              ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") :
-              ""}
+              
+            }
           </>
         );
       },
