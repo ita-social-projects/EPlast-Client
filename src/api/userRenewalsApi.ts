@@ -6,13 +6,15 @@ import UserRenewal from "../pages/UserRenewal/Types/UserRenewal";
 const getUserRenewalsTableData = async (
   searchedData: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  filter: any
 ) => {
   return (
     await api.get("UserRenewal/UserRenewalsForTable", {
       searchedData: searchedData,
       page: page,
       pageSize: pageSize,
+      filter: filter
     })
   ).data;
 };
