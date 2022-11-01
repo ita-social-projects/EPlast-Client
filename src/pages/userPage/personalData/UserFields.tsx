@@ -413,7 +413,7 @@ export default function () {
               userProfile?.user.facebookLink !== "" ? (
               <a
                 href={
-                  "https://www.facebook.com/" + userProfile?.user.facebookLink
+                  userProfile?.user.facebookLink
                 }
               >
                 <img src={Facebook} alt="Facebook" />
@@ -423,7 +423,7 @@ export default function () {
               userProfile?.user.twitterLink !== "" ? (
               <a
                 href={
-                  "https://www.twitter.com/" + userProfile?.user.twitterLink
+                  userProfile?.user.twitterLink
                 }
               >
                 <img src={Twitter} alt="Twitter" />
@@ -433,7 +433,7 @@ export default function () {
               userProfile?.user.instagramLink !== "" ? (
               <a
                 href={
-                  "https://www.instagram.com/" + userProfile?.user.instagramLink
+                  userProfile?.user.instagramLink
                 }
               >
                 <img src={Instagram} alt="Instagram" />
