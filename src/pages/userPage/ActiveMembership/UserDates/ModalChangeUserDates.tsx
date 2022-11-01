@@ -4,6 +4,7 @@ import activeMembershipApi, {
   UserEntryAndOathDates,
 } from "../../../../api/activeMembershipApi";
 import classes from "./ModalChangeUserDates.module.css";
+import { minAvailableDate } from "../../../../constants/TimeConstants";
 import moment from "moment";
 moment.locale("uk-ua");
 
@@ -16,7 +17,6 @@ type props = {
 };
 
 const defaultDate = "0001-01-01T00:00:00";
-const minAvailableDate = "01.01.1900";
 
 const ModalChangeUserDates = ({
   userId,
@@ -47,10 +47,10 @@ const ModalChangeUserDates = ({
   const disabledEntryDate = (current: any) => {
     if (OathDate) {
       return (
-        current < moment(minAvailableDate) || current > moment(OathDate).local()
+        current < minAvailableDate || current > moment(OathDate).local()
       );
     }
-    return current < moment(minAvailableDate) || current > moment();
+    return current < minAvailableDate || current > moment();
   };
 
   const disabledOathDate = (current: any) => {
@@ -64,7 +64,7 @@ const ModalChangeUserDates = ({
           current < moment.utc(dates.dateEntry).local()
         );
       } else {
-        return current > moment() || current < moment.utc(EntryDate).local();
+        return current > moment().utc().endOf('day') || current < moment.utc(EntryDate).local().startOf('day');
       }
     }
   };

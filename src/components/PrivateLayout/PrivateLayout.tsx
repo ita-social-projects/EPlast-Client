@@ -93,7 +93,6 @@ const PrivateLayout = ({ children }: any) => {
           collapsed={collapsed}
           onCollapse={onCollapse}
           className={classes.sidebar}
-          breakpoint="xxl"
           width="250"
           collapsedWidth="0"
         >
@@ -142,11 +141,11 @@ const PrivateLayout = ({ children }: any) => {
             {userAccesses?.regionBoard ? (
               <Menu.Item key="regionsBoard" icon={<BankOutlined />}>
                 <a
-                  href="/regionalBoard"
+                  href="/governingBodies"
                   onClick={(e) => {
                     e.preventDefault();
                     setCollapsed(true);
-                    history.push("/regionalBoard");
+                    history.push("/governingBodies");
                   }}
                 >
                   Крайовий Провід Пласту

@@ -124,14 +124,45 @@ const ClubAdministration = () => {
         `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`
       );
     }
-    await createNotification(
-      newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`,
-      true
-    );
+    if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в курені`,
+        true
+      );
+    }
+    else if (newAdmin.startDate !== admin.startDate || newAdmin.endDate !== admin.endDate) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам було змінено час правління на 
+        ${moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - 
+        ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")} в курені`
+      );
+    }
     setAdministration(administration);
     setReload(!reload);
   };
+
+  const getCardActions = (member: ClubAdmin) => {
+    if (userAccesses["EditClub"] &&
+       (userAccesses["AddClubHead"] || member.adminType.adminTypeName !== Roles.CityHead)) {
+      const actions: JSX.Element[] = [];
+      if (member.adminType.adminTypeName !== Roles.KurinHead) {
+        actions.push(
+          <Tooltip title="Редагувати">
+            <EditOutlined onClick={() => showModal(member)} />
+          </Tooltip>
+        );
+      }
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
+      return actions;
+    }
+    return undefined;
+  }
 
   useEffect(() => {
     getAdministration();
@@ -154,22 +185,7 @@ const ClubAdministration = () => {
                   `${member.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={
-                  userAccesses["EditClub"] &&
-                  (userAccesses["AddClubHead"] ||
-                    member.adminType.adminTypeName !== Roles.KurinHead)
-                    ? [
-                        <Tooltip title="Редагувати">
-                          <EditOutlined onClick={() => showModal(member)} />
-                        </Tooltip>,
-                        <Tooltip title="Видалити">
-                          <CloseOutlined
-                            onClick={() => seeDeleteModal(member)}
-                          />
-                        </Tooltip>
-                      ]
-                    : undefined
-                }
+                actions={getCardActions(member)}
               >
                 <div
                   onClick={() =>
