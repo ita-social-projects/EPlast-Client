@@ -68,7 +68,7 @@ interface Props {
   filterRole: any;
   isZgolosheni: boolean;
   isFormers: boolean;
-    isUnconfirmed: boolean
+  isUnconfirmed: boolean
   page: number;
   pageSize: number;
 }
@@ -89,10 +89,10 @@ const ColumnsForUserTable = (props: Props): any[] => {
   });
 
   // names of the keys that aren't displayed in "Зголошені" tab
-  const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
-
-  const forbiddenKeysForUnaproved = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
-
+  const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  const forbiddenKeysForUnaproved = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  const forbiddenKeysForFormers = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  
   const onChangeCheckbox = (e: any, i: number) => {
     let value = filterStatus.value.slice();
     value[i] = !value[i];
@@ -207,7 +207,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col className="col-title">{"Вік"}</Col>
+          <Col className="col-title">Вік</Col>
           <Col className="col-value">
             <SortDirection sort={4} />
           </Col>
@@ -334,6 +334,31 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
+          <Col className="col-title">Ступінь в УПЮ</Col>
+          <Col className="col-value">
+            <SortDirection sort={9} />
+          </Col>
+        </Row>
+      ),
+      dataIndex: "upuDegree",
+      width: 160,
+      render: (upuDegree: any) => {
+        return SortColumnHighlight(
+          9,
+          <div className={styles.parentDiv}>
+            <Tag color={"blue"} key={upuDegree} className={styles.tagText}>
+              <Tooltip placement="topLeft" title={upuDegree}>
+                {upuDegree}
+              </Tooltip>
+            </Tag>
+          </div>
+        );
+      },
+      key: "upuDegree"
+    },
+    {
+      title: (
+        <Row className="tableHeader">
           <Col className="col-title">Ступінь</Col>
           <Col className="col-value">
             <SortDirection sort={8} />
@@ -424,27 +449,49 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col className="col-title">Ступінь в УПЮ</Col>
+          <Col className="col-title">Вступ</Col>
           <Col className="col-value">
-            <SortDirection sort={9} />
+            <SortDirection sort={10} />
           </Col>
         </Row>
       ),
-      dataIndex: "upuDegree",
-      width: 160,
-      render: (upuDegree: any) => {
+      dataIndex: "entry",
+      width: 110,
+      render: (date: Date) => {
         return SortColumnHighlight(
-          9,
-          <div className={styles.parentDiv}>
-            <Tag color={"blue"} key={upuDegree} className={styles.tagText}>
-              <Tooltip placement="topLeft" title={upuDegree}>
-                {upuDegree}
-              </Tooltip>
-            </Tag>
-          </div>
+          10,
+          <>
+            {date !== null
+              ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") :
+              ""}
+          </>
         );
       },
-      key: "upuDegree"
+      key: "entry"
+    },
+    {
+      title: (
+        <Row className="tableHeader">
+          <Col className="col-title">Дійсне членство</Col>
+          <Col className="col-value">
+            <SortDirection sort={10} />
+          </Col>
+        </Row>
+      ),
+      dataIndex: "membership",
+      width: 120,
+      render: (date: Date) => {
+        return SortColumnHighlight(
+          11,
+          <>
+            {
+               (date !== null && date.toLocaleString() !== "0001-01-01T00:00:00")
+              ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") :
+              ""}
+          </>
+        );
+      },
+      key: "membership"
     },
     {
       title: "Права доступу",
@@ -500,6 +547,30 @@ const ColumnsForUserTable = (props: Props): any[] => {
         );
       },
       key: "userRoles"
+    },
+    {
+      title: "Кадра",
+      dataIndex: "kadra",
+      width: 120,
+      ellipsis: false,
+      onFilterDropdownVisibleChange: () =>
+        setFilterDropdownVisible(!filterDropdownVisible),
+      render: (kadra: any) => {
+        return (
+          kadra == ""? (
+            ""
+          ) : (
+            <div className={styles.parentDiv}>
+              <Tag color={"grey"} key={kadra} className={styles.tagText}>
+                <Tooltip placement="topLeft" title={kadra}>
+                  {kadra}
+                </Tooltip>
+              </Tag>
+            </div>
+          )
+        );
+      },
+      key: "kadra"
     },
   ]
 
@@ -621,9 +692,19 @@ const ColumnsForUserTable = (props: Props): any[] => {
     columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
 
     // filter columns to display in zgolosheni tab
+    let filtered = columns.filter(column => !forbiddenKeysForFormers.includes(column.key?.valueOf() as string));
+    columns = filtered;
+  }
+
+  if (props.isUnconfirmed) {
+    // insert phonenumber column right before email
+    columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
+
+    // filter columns to display in zgolosheni tab
     let filtered = columns.filter(column => !forbiddenKeysForUnaproved.includes(column.key?.valueOf() as string));
     columns = filtered;
   }
+  
   
   columns.push(commentColumn);
   return columns;
