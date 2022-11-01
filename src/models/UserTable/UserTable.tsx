@@ -8,6 +8,9 @@ export default class UserTable {
   lastName: string;
   userName: string;
   birthday?: Date;
+  entry?: Date;
+  membership?: Date;
+  kadra: string;
   gender: Gender;
   userProfileId: number;
   pseudo?: string;
@@ -51,5 +54,8 @@ export default class UserTable {
     this.isCityFollower = false;
     this.isClubFollower = false;
     this.userName = "";
+    this.entry = undefined;
+    this.membership = undefined;
+    this.kadra = "";
   }
 }
