@@ -62,15 +62,8 @@ export default function () {
   const getCity = async () => {
     setLoading(true);
     try {
-      const response = await getCities();
-      let filteredCities = response.data
-        .filter((item: City) => {
-          return item.isActive === true;
-        })
-        .map((data: City) => {
-          return data;
-        });
-      setCities(filteredCities);
+      const activeCities = (await getCities(true)).data;
+      setCities(activeCities);
     } finally {
       setLoading(false);
     }
