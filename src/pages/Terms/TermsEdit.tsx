@@ -66,7 +66,7 @@ function EditTerms() {
   const sendMessage = async () => {
     await createNotification(
       usersId,
-      "Зміненно політику конфіденційності.",
+      "Змінено політику конфіденційності.",
       true
     );
   };

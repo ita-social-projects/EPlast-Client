@@ -24,6 +24,7 @@ interface Properties {
 }
 
 const UserRenewalTable = (props: Properties) => {
+
   const classes = require("./Table.module.css");
   const [currentCityAdmin, setcurrentCityAdmin] = useState<number>(0);
   const [currentRole, setCurrentRole] = useState<string[]>([]);
@@ -58,13 +59,30 @@ const UserRenewalTable = (props: Properties) => {
   const [selectedRow, setSelectedRow] = useState<number>(-1);
   const [localTotal, setLocalTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState<any[]>(["None"]);
 
   const getRenewals = async () => {
+
     setLoading(true);
+    var filterArg = "None";
+
+    if(filter != null){
+      if(filter[0] == "true" && filter[1] == null){
+        filterArg = "True";
+      }
+      else if (filter[0] == "false" && filter[1] == null){
+        filterArg = "False";
+      }
+      else{
+        filterArg = "None";
+      }
+    }
+
     const data: UserRenewalTableData[] = await userRenewalsApi.getUserRenewalsTableData(
       searchQuery,
       page,
-      pageSize
+      pageSize,
+      filterArg
     );
     setSubtotal(data[0]?.subtotal);
     if (!props.hidden) props.setTotal(data[0]?.subtotal ?? 0);
@@ -89,7 +107,7 @@ const UserRenewalTable = (props: Properties) => {
       return;
     }
     getRenewals();
-  }, [searchQuery, page, pageSize, updateTable, props.hidden]);
+  }, [searchQuery, filter, page, pageSize, updateTable, props.hidden]);
 
   useEffect(() => {
     if (searchQuery != props.searchQuery) { 
@@ -114,6 +132,11 @@ const UserRenewalTable = (props: Properties) => {
 
   const handleConfirm = () => {
     setUpdateTable(!updateTable);
+  };
+
+  const handleFilter = async (res: any) => {
+    setLoading(true);
+    setFilter(res[1].approved);
   };
 
   return (
@@ -154,6 +177,7 @@ const UserRenewalTable = (props: Properties) => {
           onChange: (page) => handlePageChange(page),
           onShowSizeChange: (page, size) => handleSizeChange(page, size),
         }}
+        onChange={(...args) => handleFilter(args)}
         bordered
         rowKey="id"
       />
