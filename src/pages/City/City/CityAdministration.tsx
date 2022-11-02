@@ -151,6 +151,27 @@ const CityAdministration = () => {
     setReload(!reload);
   };
 
+  const getCardActions = (member: CityAdmin) => {
+    if (userCityAccesses["EditCity"] &&
+       (userCityAccesses["AddCityHead"] || member.adminType.adminTypeName !== Roles.CityHead)) {
+      const actions: JSX.Element[] = [];
+      if (member.adminType.adminTypeName !== Roles.CityHead) {
+        actions.push(
+          <Tooltip title="Редагувати">
+            <EditOutlined onClick={() => showModal(member)} />
+          </Tooltip>
+        );
+      }
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
+      return actions;
+    }
+    return undefined;
+  }
+
   useEffect(() => {
     fetchData();
   }, [reload]);
@@ -176,22 +197,7 @@ const CityAdministration = () => {
                   `${member.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={
-                  userCityAccesses["EditCity"] &&
-                  (userCityAccesses["AddCityHead"] ||
-                    member.adminType.adminTypeName !== Roles.CityHead)
-                    ? [
-                        <Tooltip title="Редагувати">
-                          <EditOutlined onClick={() => showModal(member)} />
-                        </Tooltip>,
-                        <Tooltip title="Видалити">
-                          <CloseOutlined
-                            onClick={() => seeDeleteModal(member)}
-                          />
-                        </Tooltip>
-                      ]
-                    : undefined
-                }
+                actions={getCardActions(member)}
               >
                 <div
                   onClick={() =>

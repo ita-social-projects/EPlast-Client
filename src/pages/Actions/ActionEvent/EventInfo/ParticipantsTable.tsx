@@ -167,6 +167,7 @@ const ParticipantsTable = ({
       dataIndex: "fullName",
       key: "user",
       fixed: "left",
+      width: 170,
       render: (text: any, record) => (
         <div onClick={() => history.push(`/userpage/main/${record.userId}`)}>
           <Text className="participant-table-fullName" strong>
@@ -179,12 +180,14 @@ const ParticipantsTable = ({
       title: "Email",
       dataIndex: "email",
       key: "email",
+      width: 200,
       render: (text: any) => <Text strong>{text}</Text>,
     },
     {
       title: "Поточний статус",
       dataIndex: "status",
       key: "status",
+      width: 170,
       render: (status: any) => (
         <>
           <Tag color={setTagColor(status)} key={status}>
@@ -200,6 +203,7 @@ const ParticipantsTable = ({
       title: "Відвідав подію",
       dataIndex: "wasPresent",
       key: "eventParticipant",
+      width: 170,
       render: (wasPresent: boolean, record: EventParticipant) => (
         <>
           <Checkbox
@@ -214,6 +218,7 @@ const ParticipantsTable = ({
         title: "Змінити статус",
         dataIndex: "changeStatus",
         key: "changeStatus",
+        width: 170,
         render: (wasPresent: boolean, record: EventParticipant) => (
           <Space size="small">
             <Button
