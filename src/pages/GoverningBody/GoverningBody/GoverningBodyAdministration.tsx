@@ -90,7 +90,7 @@ const GoverningBodyAdministration = () => {
           {admin.user.lastName} буде видалений з проводу!
 
           {admin.adminType.adminTypeName === Roles.GoverningBodyHead ? 
-            (<div><br/>У користувача все одно залишиться роль: <b>{Roles.GoverningBodyAdmin}</b></div>) : null} 
+            (<div><br/>Користувача також буде позбавлено ролі: <b>{Roles.GoverningBodyAdmin}</b></div>) : null} 
         </div>
       ),
       onCancel() {},
