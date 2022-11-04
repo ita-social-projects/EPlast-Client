@@ -73,8 +73,8 @@ const Sectors = () => {
                 <div className="cityMember">
                   <div
                     onClick={() =>
-                      history.push(
-                        `/regionalBoard/governingBodies/${governingBodyId}/sectors/${sector.id}`
+                      history.replace(
+                        `/governingBodies/${governingBodyId}/sectors/${sector.id}`
                       )
                     }
                   >
