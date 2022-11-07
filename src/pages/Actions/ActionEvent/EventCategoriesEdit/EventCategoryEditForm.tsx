@@ -14,21 +14,15 @@ interface EventCategoryEditFormProps {
     setCategories: (categories: EventCategories[]) => void
 }
 
-interface FormResultValues {
-    categoryName: string;
-}
-
 export const EventCategoryEditForm: React.FC<EventCategoryEditFormProps> = ({
     categoryToEdit,
     setCategoryToEdit,
     categories,
     setCategories
 }) => {
-    const [form] = Form.useForm<FormResultValues>();
+    const [form] = Form.useForm();
 
-    const [categoryInputValue, setCategoryInputValue] = useState("");
-
-    const onFinish = (values: FormResultValues) => {
+    const onFinish = (values: any) => {
         const editedCategory: EventCategories = {
             eventCategoryId: categoryToEdit.eventCategoryId,
             eventCategoryName: values.categoryName,
