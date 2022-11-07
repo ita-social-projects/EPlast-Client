@@ -439,14 +439,6 @@ export default function () {
                 <img src={Instagram} alt="Instagram" />
               </a>
             ) : null}
-            {userProfile?.user.facebookLink === null ||
-              (userProfile?.user.facebookLink === "" &&
-                userProfile?.user.twitterLink === null) ||
-              (userProfile?.user.twitterLink === "" &&
-                userProfile?.user.instagramLink === null) ||
-              userProfile?.user.instagramLink === "" ? (
-              <Form.Item className="formItem"></Form.Item>
-            ) : null}
           </div>
           <div className="buttonWrapper">
             <Button
