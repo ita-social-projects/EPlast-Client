@@ -37,7 +37,7 @@ const EventCreateDrawer = ({
     >
       <EventCreate
         onCreate={onCreate}
-        setShowEventCreateDrawer={handleCancel}
+        setIsVisibleEventCreateDrawer={setShowEventCreateDrawer}
         validationStartDate={validationStartDate}
       />
     </Drawer>

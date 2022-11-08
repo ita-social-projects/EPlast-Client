@@ -201,7 +201,7 @@ const RegionAdministration = () => {
       return undefined;
     }
 
-    const actions = [];
+    const actions: JSX.Element[] = [];
     if (member.adminType.adminTypeName !== Roles.OkrugaHead) {
       actions.push(
         <Tooltip title="Редагувати">
@@ -216,13 +216,6 @@ const RegionAdministration = () => {
       return actions;
     }
 
-    if (userAccesses["EditRegionHead"]) {
-      actions.push(
-        <Tooltip title="Редагувати">
-          <EditOutlined onClick={() => showModal(member)} />
-        </Tooltip>
-      );
-    }
     if (userAccesses["RemoveRegionHead"]) {
       actions.push(
         <Tooltip title="Видалити">
