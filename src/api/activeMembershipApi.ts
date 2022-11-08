@@ -29,6 +29,12 @@ export type UserDates = {
   dateEnd: string | null;
   userId: string;
 };
+export type UserFormerDates = {
+  entry: string | null;
+  end: string | null;
+};
+
+
 const getAccessLevelById = async (id: string) => {
   const response = await Api.get(`ActiveMembership/accessLevel/${id}`);
 
@@ -75,6 +81,12 @@ const postUserEntryAndOathDates = async (userDates: UserEntryAndOathDates) => {
   return response.data;
 };
 
+const getUserFormerDates = async (id: string) => {
+  const response = await Api.get(`ActiveMembership/formerdates/${id}`);
+  return response.data;
+};
+
+
 export default {
   getAccessLevelById,
   getAllPlastDegrees,
@@ -82,5 +94,6 @@ export default {
   postUserPlastDegree,
   removeUserPlastDegree,
   getUserDates,
+  getUserFormerDates,
   postUserEntryAndOathDates,
 };

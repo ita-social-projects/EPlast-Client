@@ -164,8 +164,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   };
 
   const fetchData = async () => {
-    const response = await getCities();
-    setCities(response.data);
+    const activeCities = (await getCities(true)).data;
+    setCities(activeCities);
     const userInfo = await UserApi.getById(props.userId);
     if (userInfo.data.user.city) {
       setDisabled(true);
