@@ -59,7 +59,7 @@ export default function () {
         onFinish={handleSubmit}
       >
         <div className={styles.resetPasswordContainer}>
-          <p>Скидання пароля. Введіть електронну пошту</p>
+          <p>Скидання пароля</p>
         </div>
 
         <Form.Item name="Email" rules={validationSchema.Email}>
@@ -99,7 +99,7 @@ export default function () {
           <Input.Password
             visibilityToggle={true}
             className={styles.ResetPasswordInput}
-            placeholder=" Повторіть пароль"
+            placeholder="Повторіть пароль"
           />
         </Form.Item>
 
