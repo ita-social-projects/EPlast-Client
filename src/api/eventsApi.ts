@@ -1,3 +1,4 @@
+import EventCategories from "../models/EventCreate/EventCategories";
 import EventFeedback from "../models/EventUser/EventFeedback";
 import Api from "./api";
 
@@ -55,6 +56,16 @@ const createEventCategory = async (data: any) => {
   const response = await Api.post(`Events/newCategory`, data);
   return response;
 };
+
+const updateEventCategory = async (data: EventCategories) => {
+  const response = await Api.put(`Events/updateCategory`, data);
+  return response
+}
+
+const deleteEventCategory = async (id: number) => {
+  const response = await Api.remove(`Events/deleteCategory/${id}`);
+  return response;
+}
 
 const getEventInfo = async (id: number) => {
   const response = await Api.get(`Events/${id}/details`);
@@ -142,6 +153,8 @@ export default {
   getEvents,
   getSections,
   createEventCategory,
+  updateEventCategory,
+  deleteEventCategory,
   getEventInfo,
   getPictures,
   getPictureById,
