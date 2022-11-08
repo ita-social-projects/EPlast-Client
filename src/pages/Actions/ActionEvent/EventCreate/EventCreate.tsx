@@ -33,11 +33,18 @@ import {
   } from "../../../../components/Notifications/Messages";
 import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Roles } from "../../../../models/Roles/Roles";
 import EventSections from "../../../../models/EventCreate/EventSections";
+import ShortUserInfo from "../../../../models/UserTable/ShortUserInfo";
 import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
+import { successfulUpdateAction } from "../../../../components/Notifications/Messages";
+import { EventCategoriesEditDrawer } from "../EventCategoriesEdit/EventCategoriesEditDrawer";
+
+import adminApi from "../../../../api/adminApi";
+
+import { notification, Spin } from "antd";
 
 import classes from "./EventCreate.module.css";
-import { EventCategoriesEditDrawer } from "../EventCategoriesEdit/EventCategoriesEditDrawer";
 
 interface Props {
   onCreate?: () => void;
@@ -122,7 +129,7 @@ export default function ({
     };
     await eventUserApi
       .post(newEvent)
-      .then((response) => {
+      .then(async (response) => {
         notificationLogic(
           "success",
           successfulCreateAction("Подію", values.EventName)
@@ -138,7 +145,18 @@ export default function ({
           "Вам надано адміністративну роль в новій ",
           NotificationBoxApi.NotificationTypes.EventNotifications,
           `/events/details/${response.data.event.id}`,
-          "події"
+          "Події"
+        );
+        
+        const userIds = ((await adminApi.getUsersByAnyRole([[Roles.Admin, Roles.GoverningBodyAdmin, Roles.GoverningBodyHead]], true))
+          .data as ShortUserInfo[]).map(user => user.id);
+        
+        NotificationBoxApi.createNotifications(
+          userIds,
+          `Нова подія "${values.EventName}" очікує вашого `,
+          NotificationBoxApi.NotificationTypes.UserNotifications,
+          `/events/details/${response.data.event.id}`,
+          "підтвердження"
         );
       })
       .catch((error) => {
