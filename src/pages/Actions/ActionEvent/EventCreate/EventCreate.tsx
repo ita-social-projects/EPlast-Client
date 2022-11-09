@@ -181,7 +181,7 @@ export default function ({
       },
       eventTypeId: eventType,
     };
-    await eventsApi
+    eventsApi
       .createEventCategory(newCategory)
       .then((response) => {
         notificationLogic(
@@ -194,7 +194,10 @@ export default function ({
       })
       .catch((error) => {
         if (error.response?.status === 400) {
-          notificationLogic("error", tryAgain);
+          notificationLogic("error", "Така категорія вже існує");
+        }
+        else {
+          notificationLogic("error", "Щось пішло не так");
         }
       });
   };
