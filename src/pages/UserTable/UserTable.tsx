@@ -60,6 +60,7 @@ const UsersTable = () => {
   const [searchData, setSearchData] = useState<string>("");
   const [sortKey, setSortKey] = useState<number>(1);
   const [filter, setFilter] = useState<any[]>([]);
+  const [kadraFilter, setKadraFilter] = useState<any[]>([]);
   const [form] = Form.useForm();
   const [canView, setCanView] = useState<boolean>(false);
   const [tabList, setTabList] = useState<any[]>([]);
@@ -108,6 +109,7 @@ const UsersTable = () => {
     searchData,
     sortKey,
     filter,
+    kadraFilter,
     userArhive,
     currentTabName,
     clearFilter,
@@ -350,6 +352,7 @@ const UsersTable = () => {
         Tab: currentTabName,
         SortKey: sortKey,
         FilterRoles: filter,
+        FilterKadras: kadraFilter,
         SearchData: searchData,
       });
 
@@ -641,8 +644,10 @@ const UsersTable = () => {
               sortKey: sortKey,
               setSortKey: setSortKey,
               setFilter: setFilter,
+              setKadraFilter: setKadraFilter,
               setPage: setPage,
               filterRole: filter,
+              filterKadra: filter,
               isZgolosheni: currentTabName === "registered",
               isUnconfirmed: currentTabName === "unconfirmed",
               isFormers: currentTabName === "formers",
