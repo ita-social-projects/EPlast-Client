@@ -159,6 +159,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         className={classes.formSelectAlignCenter}
         label="Дата початку"
         name="startDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined
@@ -177,6 +178,7 @@ const AddCitiesNewSecretaryForm = (props: any) => {
         className={classes.formSelectAlignCenter}
         label="Дата кінця"
         name="endDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined

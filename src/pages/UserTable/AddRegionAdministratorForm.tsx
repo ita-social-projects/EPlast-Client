@@ -9,6 +9,7 @@ import userApi from "../../api/UserApi";
 import { emptyInput } from "../../components/Notifications/Messages";
 import { Roles } from "../../models/Roles/Roles";
 import { minAvailableDate } from "../../constants/TimeConstants";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 interface Props {
   userId: string;
@@ -168,6 +169,7 @@ const AddNewAdministratorForm = ({
         className={classes.formField}
         label="Дата початку"
         name="startDate"
+        rules={[descriptionValidation.Required]}
       >
         <DatePicker
           className={classes.inputField}
@@ -181,6 +183,7 @@ const AddNewAdministratorForm = ({
         className={classes.formField}
         label="Дата кінця"
         name="endDate"
+        rules={[descriptionValidation.Required]}
       >
         <DatePicker
           className={classes.inputField}
