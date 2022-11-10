@@ -10,9 +10,8 @@ import {
   Col,
   Divider,
   Modal,
-  message,
-  Popconfirm,
-} from "antd";
+  Tooltip,
+  } from "antd";
 import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
 import eventUserApi from "../../../../api/eventUserApi";
@@ -31,27 +30,31 @@ import {
   minNumber,
   incorrectStartTime,
   incorrectEndTime,
-  inputOnlyWhiteSpaces,
-} from "../../../../components/Notifications/Messages";
+  } from "../../../../components/Notifications/Messages";
 import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
-import { PlusOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Roles } from "../../../../models/Roles/Roles";
 import EventSections from "../../../../models/EventCreate/EventSections";
+import ShortUserInfo from "../../../../models/UserTable/ShortUserInfo";
 import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
+import { successfulUpdateAction } from "../../../../components/Notifications/Messages";
+import { EventCategoriesEditDrawer } from "../EventCategoriesEdit/EventCategoriesEditDrawer";
+
+import adminApi from "../../../../api/adminApi";
 
 import { notification, Spin } from "antd";
-import { successfulUpdateAction } from "../../../../components/Notifications/Messages";
 
-const classes = require("./EventCreate.module.css");
+import classes from "./EventCreate.module.css";
 
 interface Props {
   onCreate?: () => void;
-  setShowEventCreateDrawer: (visibleEventCreateDrawer: boolean) => void;
+  setIsVisibleEventCreateDrawer: (isVisible: boolean) => void;
   validationStartDate: Date;
 }
 
 export default function ({
   onCreate,
-  setShowEventCreateDrawer,
+  setIsVisibleEventCreateDrawer,
   validationStartDate,
 }: Props) {
   const [form] = Form.useForm();
@@ -67,15 +70,15 @@ export default function ({
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
   const [eventSections, setEventSections] = useState<EventSections[]>([]);
   const [administrators, setAdministrators] = useState<Users[]>([]);
-  const [visibleEndDatePicker, setVisibleEndDatePicker] = useState<boolean>(
-    true
-  );
+  const [visibleEndDatePicker, setVisibleEndDatePicker] = useState<boolean>(true);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [isVisibleEventCategoriesEditDrawer, setIsVisibleEventCategoriesEditDrawer] = useState<boolean>(false);
   const [StartDate, setStartDate] = useState<Date>();
 
   const [categoryName, setCategoryName] = useState<string>();
-  const [eventType, setEventType] = useState();
-  const [eventSection, setEventSection] = useState();
+  const [newCategoryName, setNewCategoryName] = useState<string>();
+  const [eventType, setEventType] = useState<string>();
+  const [eventSection, setEventSection] = useState<string>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,7 +129,7 @@ export default function ({
     };
     await eventUserApi
       .post(newEvent)
-      .then((response) => {
+      .then(async (response) => {
         notificationLogic(
           "success",
           successfulCreateAction("Подію", values.EventName)
@@ -142,7 +145,18 @@ export default function ({
           "Вам надано адміністративну роль в новій ",
           NotificationBoxApi.NotificationTypes.EventNotifications,
           `/events/details/${response.data.event.id}`,
-          "події"
+          "Події"
+        );
+        
+        const userIds = ((await adminApi.getUsersByAnyRole([[Roles.Admin, Roles.GoverningBodyAdmin, Roles.GoverningBodyHead]], true))
+          .data as ShortUserInfo[]).map(user => user.id);
+        
+        NotificationBoxApi.createNotifications(
+          userIds,
+          `Нова подія "${values.EventName}" очікує вашого `,
+          NotificationBoxApi.NotificationTypes.UserNotifications,
+          `/events/details/${response.data.event.id}`,
+          "підтвердження"
         );
       })
       .catch((error) => {
@@ -156,23 +170,23 @@ export default function ({
     form.resetFields();
     setSelectedUsers(["", "", "", ""]);
     setLoading(false);
-    setShowEventCreateDrawer(false);
+    setIsVisibleEventCreateDrawer(false);
   };
 
   const addCategory = async () => {
     const newCategory = {
       eventCategory: {
-        eventCategoryName: categoryName,
+        eventCategoryName: newCategoryName,
         eventSectionId: eventSection,
       },
       eventTypeId: eventType,
     };
-    await eventsApi
+    eventsApi
       .createEventCategory(newCategory)
       .then((response) => {
         notificationLogic(
           "success",
-          successfulCreateAction("Категорію", categoryName)
+          successfulCreateAction("Категорію", newCategoryName)
         );
         setVisibleModal(false);
         clearModal();
@@ -180,7 +194,10 @@ export default function ({
       })
       .catch((error) => {
         if (error.response?.status === 400) {
-          notificationLogic("error", tryAgain);
+          notificationLogic("error", "Така категорія вже існує");
+        }
+        else {
+          notificationLogic("error", "Щось пішло не так");
         }
       });
   };
@@ -218,7 +235,7 @@ export default function ({
   }
 
   function getCategoriesByType(eventType: any) {
-    eventsApi.getCategories(eventType).then(async (response) => {
+    eventsApi.getCategories(eventType).then((response) => {
       setCategories(response.data);
       form.setFieldsValue({
         EventCategoryID: "",
@@ -227,20 +244,13 @@ export default function ({
   }
 
   function onChange(e: any) {
+    setCategoryName("");
     setEventType(e.target.value);
     getCategoriesByType(e.target.value);
-    eventsApi.getSections().then(async (response) => {
+    eventsApi.getSections().then((response) => {
       const eventSections = response.data;
       setEventSections(eventSections);
     });
-  }
-
-  function onCategoryNameChange(e: any) {
-    setCategoryName(e.target.value);
-  }
-
-  function onEventSectionChange(e: any) {
-    setEventSection(e);
   }
 
   const handleSelectChange = (dropdownIndex: number, selectedId: string) => {
@@ -265,11 +275,11 @@ export default function ({
 
   const handleCancel = () => {
     form.resetFields();
-    setShowEventCreateDrawer(false);
+    setIsVisibleEventCreateDrawer(false);
   };
 
   const handleClose = () => {
-    setShowEventCreateDrawer(false);
+    setIsVisibleEventCreateDrawer(false);
   };
 
   function warning() {
@@ -302,7 +312,6 @@ export default function ({
               >
                 {eventTypes.map((item: any) => (
                   <Radio.Button key={item.id} value={item.id}>
-                    {" "}
                     {item.eventTypeName}
                   </Radio.Button>
                 ))}
@@ -316,93 +325,114 @@ export default function ({
               name="EventCategoryID"
               className={classes.formItem}
               label="Категорія"
-              rules={[{ required: true, message: emptyInput() }]}
+              labelCol={{ span: 24 }}
+              rules={[
+                { 
+                  required: true, 
+                  message: emptyInput()
+                }
+              ]}
             >
-              <Select
-                notFoundContent="Спочатку оберіть тип події"
-                showSearch
-                optionFilterProp="children"
-                getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                dropdownRender={(menu) => (
-                  <div>
-                    {menu}
-                    <Divider style={{ margin: "4px 0" }} />
+              <div className={classes.eventCategoryFormItem}>
+                <Select
+                  className={classes.selectEventCategory}
+                  notFoundContent="Спочатку оберіть тип події"
+                  showSearch
+                  value={categoryName}
+                  onChange={(name) => setCategoryName(name)}
+                  optionFilterProp="children"
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  dropdownRender={(menu) => (
                     <div>
-                      <a
-                        style={{
-                          flex: "none",
-                          padding: "8px",
-                          display: "block",
-                          cursor: "pointer",
-                        }}
-                        onClick={eventType ? showModal : warning}
-                      >
-                        <PlusOutlined /> Додати нову категорію
-                      </a>
-                      <Modal
-                        visible={visibleModal}
-                        title="Додати нову категорію"
-                        onOk={addCategory}
-                        onCancel={handleCancelModal}
-                        footer={[
-                          <Button key="back" onClick={handleCancelModal}>
-                            Відмінити
-                          </Button>,
-                          <Button
-                            key="submit"
-                            type="primary"
-                            onClick={addCategory}
-                            disabled={!categoryName || !eventSection}
-                          >
-                            Додати
-                          </Button>,
-                        ]}
-                      >
-                        <div
+                      {menu}
+                      <Divider style={{ margin: "4px 0" }} />
+                      <div>
+                        <a
                           style={{
-                            display: "flex",
-                            flexWrap: "nowrap",
-                            padding: 8,
+                            flex: "none",
+                            padding: "8px",
+                            display: "block",
+                            cursor: "pointer",
                           }}
+                          onClick={eventType ? showModal : warning}
                         >
-                          <Input
-                            style={{ flex: "auto" }}
-                            placeholder="Назва категорії"
-                            value={categoryName}
-                            onChange={onCategoryNameChange}
-                          />
-                          <Select
-                            placeholder="Секція"
-                            value={eventSection}
-                            onChange={onEventSectionChange}
-                            style={{ paddingLeft: 9 }}
+                          <PlusOutlined /> Додати нову категорію
+                        </a>
+                        <Modal
+                          visible={visibleModal}
+                          title="Додати нову категорію"
+                          onOk={addCategory}
+                          onCancel={handleCancelModal}
+                          footer={[
+                            <Button key="back" onClick={handleCancelModal}>
+                              Відмінити
+                            </Button>,
+                            <Button
+                              key="submit"
+                              type="primary"
+                              onClick={addCategory}
+                              disabled={!newCategoryName || !eventSection}
+                            >
+                              Додати
+                            </Button>,
+                          ]}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexWrap: "nowrap",
+                              padding: 8,
+                            }}
                           >
-                            {eventSections.map((item: any) => (
-                              <Select.Option
-                                key={item.eventSectionId}
-                                value={item.eventSectionId}
-                              >
-                                {" "}
-                                {item.eventSectionName}{" "}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </div>
-                      </Modal>
+                            <Input
+                              style={{ flex: "auto" }}
+                              placeholder="Назва категорії"
+                              value={newCategoryName}
+                              onChange={(e) => setNewCategoryName(e.target.value)}
+                            />
+                            <Select
+                              placeholder="Секція"
+                              value={eventSection}
+                              onChange={(e) => setEventSection(e)}
+                              style={{ paddingLeft: 9 }}
+                            >
+                              {eventSections.map((item: any) => (
+                                <Select.Option
+                                  key={item.eventSectionId}
+                                  value={item.eventSectionId}
+                                >
+                                  {item.eventSectionName}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </div>
+                        </Modal>
+                      </div>
                     </div>
-                  </div>
-                )}
-              >
-                {categories.map((item: any) => (
-                  <Select.Option
-                    key={item.eventCategoryId}
-                    value={item.EventCategoryId}
-                  >
-                    {" "}
-                    {item.eventCategoryName}{" "}
-                  </Select.Option>
-                ))}
-              </Select>
+                  )}
+                >
+                  {categories.map((item: any) => (
+                    <Select.Option
+                      key={item.eventCategoryId}
+                      value={item.EventCategoryId}
+                    >
+                      {item.eventCategoryName}
+                    </Select.Option>
+                  ))}
+                </Select>
+                <Tooltip
+                  title="Редагувати відзначення"
+                  placement="left"
+                >
+                  <EditOutlined
+                    className={classes.editIcon}
+                    onClick={() => {
+                      setIsVisibleEventCreateDrawer(false);
+                      setIsVisibleEventCategoriesEditDrawer(true);
+                    }}
+                  />
+                </Tooltip>
+              </div>
             </Form.Item>
           </Col>
         </Row>
@@ -441,7 +471,6 @@ export default function ({
                     key={item.id}
                     value={item.id}
                   >
-                    {" "}
                     {item.firstName} {item.lastName} <br /> {item.userName}
                   </Select.Option>
                 ))}
@@ -470,7 +499,6 @@ export default function ({
                     key={item.value}
                     value={item.id}
                   >
-                    {" "}
                     {item.firstName} {item.lastName} <br /> {item.userName}
                   </Select.Option>
                 ))}
@@ -498,7 +526,6 @@ export default function ({
                     key={item.value}
                     value={item.id}
                   >
-                    {" "}
                     {item.firstName} {item.lastName} <br /> {item.userName}
                   </Select.Option>
                 ))}
@@ -526,7 +553,6 @@ export default function ({
                     key={item.value}
                     value={item.id}
                   >
-                    {" "}
                     {item.firstName} {item.lastName} <br /> {item.userName}
                   </Select.Option>
                 ))}
@@ -749,6 +775,13 @@ export default function ({
           </Col>
         </Row>
       </Form>
+      <EventCategoriesEditDrawer 
+        isVisibleEventCategoriesEditDrawer={isVisibleEventCategoriesEditDrawer}
+        setIsVisibleEventCategoriesEditDrawer={setIsVisibleEventCategoriesEditDrawer}
+        setIsVisibleEventCreateDrawer={setIsVisibleEventCreateDrawer}
+        categories={categories}
+        setCategories={setCategories}
+      />
     </>
   );
 }

@@ -37,7 +37,7 @@ const FormListOfDistinctionTypes: React.FC = () => {
                   />
                 </Tooltip>
               ),
-              <Tooltip title="Видалити відзначення">
+              <Tooltip title="Видалити відзначення" placement="left">
                 <DeleteOutlined
                   className={classes.deleteIcon}
                   onClick={() =>
