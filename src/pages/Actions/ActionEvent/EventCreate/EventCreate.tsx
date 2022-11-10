@@ -45,6 +45,7 @@ import adminApi from "../../../../api/adminApi";
 import { notification, Spin } from "antd";
 
 import classes from "./EventCreate.module.css";
+import { EventCategoryCreateModal } from "./EventCategoryCreateModal";
 
 interface Props {
   onCreate?: () => void;
@@ -211,11 +212,6 @@ export default function ({
     setEventSection(undefined);
   }
 
-  function handleCancelModal() {
-    setVisibleModal(false);
-    clearModal();
-  }
-
   function disabledDate(current: any) {
     return current && (current < moment().startOf("day") || !current.isAfter("01.01.1900", "DD-MM-YYYY"));
   }
@@ -282,10 +278,6 @@ export default function ({
     setIsVisibleEventCreateDrawer(false);
   };
 
-  function warning() {
-    notificationLogic("warning", "Спочатку оберіть тип події.");
-  }
-
   return (
     <>
       <ButtonCollapse handleClose={handleClose} />
@@ -319,112 +311,60 @@ export default function ({
             </Form.Item>
           </Col>
         </Row>
-        <Row justify="start" gutter={[12, 0]}>
+        <Row justify="start" gutter={[12, 0]} className={classes.minRowWidth}>
           <Col md={24} xs={24}>
-            <Form.Item
-              name="EventCategoryID"
-              className={classes.formItem}
-              label="Категорія"
-              labelCol={{ span: 24 }}
-              rules={[
-                { 
-                  required: true, 
-                  message: emptyInput()
-                }
-              ]}
-            >
-              <div className={classes.eventCategoryFormItem}>
-                <Select
-                  className={classes.selectEventCategory}
-                  notFoundContent="Спочатку оберіть тип події"
-                  showSearch
-                  value={categoryName}
-                  onChange={(name) => setCategoryName(name)}
-                  optionFilterProp="children"
-                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                  dropdownRender={(menu) => (
-                    <div>
-                      {menu}
-                      <Divider style={{ margin: "4px 0" }} />
-                      <div>
-                        <a
-                          style={{
-                            flex: "none",
-                            padding: "8px",
-                            display: "block",
-                            cursor: "pointer",
-                          }}
-                          onClick={eventType ? showModal : warning}
-                        >
-                          <PlusOutlined /> Додати нову категорію
-                        </a>
-                        <Modal
-                          visible={visibleModal}
-                          title="Додати нову категорію"
-                          onOk={addCategory}
-                          onCancel={handleCancelModal}
-                          footer={[
-                            <Button key="back" onClick={handleCancelModal}>
-                              Відмінити
-                            </Button>,
-                            <Button
-                              key="submit"
-                              type="primary"
-                              onClick={addCategory}
-                              disabled={!newCategoryName || !eventSection}
-                            >
-                              Додати
-                            </Button>,
-                          ]}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              flexWrap: "nowrap",
-                              padding: 8,
-                            }}
-                          >
-                            <Input
-                              style={{ flex: "auto" }}
-                              placeholder="Назва категорії"
-                              value={newCategoryName}
-                              onChange={(e) => setNewCategoryName(e.target.value)}
-                            />
-                            <Select
-                              placeholder="Секція"
-                              value={eventSection}
-                              onChange={(e) => setEventSection(e)}
-                              style={{ paddingLeft: 9 }}
-                            >
-                              {eventSections.map((item: any) => (
-                                <Select.Option
-                                  key={item.eventSectionId}
-                                  value={item.eventSectionId}
-                                >
-                                  {item.eventSectionName}
-                                </Select.Option>
-                              ))}
-                            </Select>
-                          </div>
-                        </Modal>
-                      </div>
-                    </div>
-                  )}
+            <Row>
+              <Col span={22}>
+                <Form.Item
+                  name="EventCategoryID"
+                  className={classes.formItem}
+                  label="Категорія"
+                  labelCol={{ span: 24 }}
+                  rules={[descriptionValidation.Required]}
                 >
-                  {categories.map((item: any) => (
-                    <Select.Option
-                      key={item.eventCategoryId}
-                      value={item.EventCategoryId}
-                    >
-                      {item.eventCategoryName}
-                    </Select.Option>
-                  ))}
-                </Select>
+                  <Select
+                    className={classes.selectEventCategory}
+                    notFoundContent="Спочатку оберіть тип події"
+                    showSearch
+                    optionFilterProp="children"
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                    dropdownRender={(menu) => (
+                      <div>
+                        {menu}
+                        <Divider style={{ margin: "4px 0" }} />
+                        <EventCategoryCreateModal
+                          isVisible={visibleModal}
+                          setIsVisible={setVisibleModal}
+                          newCategoryName={newCategoryName}
+                          setNewCategoryName={setNewCategoryName}
+                          eventSection={eventSection}
+                          setEventSection={setEventSection}
+                          eventSections={eventSections}
+                          eventType={eventType}
+                          addCategory={addCategory}
+                        />
+                      </div>
+                    )}
+                  >
+                    {categories.map((item: any) => (
+                      <Select.Option
+                        key={item.eventCategoryId}
+                        value={item.EventCategoryId}
+                      >
+                        {item.eventCategoryName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={2}>
                 <Tooltip
-                  title="Редагувати відзначення"
+                  title="Редагувати категорії"
                   placement="left"
+                  style={{paddingTop: 10}}
                 >
                   <EditOutlined
+                    style={{paddingTop: 35}}
                     className={classes.editIcon}
                     onClick={() => {
                       setIsVisibleEventCreateDrawer(false);
@@ -432,8 +372,8 @@ export default function ({
                     }}
                   />
                 </Tooltip>
-              </div>
-            </Form.Item>
+              </Col>
+            </Row>
           </Col>
         </Row>
         <Row justify="start" gutter={[12, 0]}>

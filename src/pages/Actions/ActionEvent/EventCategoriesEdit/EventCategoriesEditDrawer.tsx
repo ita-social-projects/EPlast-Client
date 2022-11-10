@@ -4,38 +4,37 @@ import { EventCategoriesEdit } from "./EventCategoriesEdit";
 import EventCategories from "../../../../models/EventCreate/EventCategories";
 
 interface EventCategoriesEditDrawerProps {
-    isVisibleEventCategoriesEditDrawer: boolean;
-    setIsVisibleEventCategoriesEditDrawer: (isVisible: boolean) => void;
-    setIsVisibleEventCreateDrawer: (isVisible: boolean) => void;
-    categories: EventCategories[];
-    setCategories: (categories: EventCategories[]) => void
+  isVisibleEventCategoriesEditDrawer: boolean;
+  setIsVisibleEventCategoriesEditDrawer: (isVisible: boolean) => void;
+  setIsVisibleEventCreateDrawer: (isVisible: boolean) => void;
+  categories: EventCategories[];
+  setCategories: (categories: EventCategories[]) => void;
 }
 
 export const EventCategoriesEditDrawer: React.FC<EventCategoriesEditDrawerProps> = ({
-    isVisibleEventCategoriesEditDrawer,
-    setIsVisibleEventCategoriesEditDrawer,
-    setIsVisibleEventCreateDrawer,
-    categories,
-    setCategories
+  isVisibleEventCategoriesEditDrawer,
+  setIsVisibleEventCategoriesEditDrawer,
+  setIsVisibleEventCreateDrawer,
+  categories,
+  setCategories,
 }) => {
-    
-    return (
-        <Drawer
-            title="Редагування категорій"
-            placement="right"
-            width={420}
-            height={1000}
-            footer={null}
-            visible={isVisibleEventCategoriesEditDrawer}
-            onClose={() => {
-                setIsVisibleEventCategoriesEditDrawer(false);
-                setIsVisibleEventCreateDrawer(true);
-            }}
-        >
-            <EventCategoriesEdit 
-                categories={categories}
-                setCategories={setCategories}
-            />
-        </Drawer>
-    );
-}
+  return (
+    <Drawer
+      title="Редагування категорій"
+      placement="right"
+      width={420}
+      height={1000}
+      footer={null}
+      visible={isVisibleEventCategoriesEditDrawer}
+      onClose={() => {
+        setIsVisibleEventCategoriesEditDrawer(false);
+        setIsVisibleEventCreateDrawer(true);
+      }}
+    >
+      <EventCategoriesEdit
+        categories={categories}
+        setCategories={setCategories}
+      />
+    </Drawer>
+  );
+};
