@@ -38,7 +38,7 @@ export const incorrectCityName =
   
 export const incorrectClubName =
   wrongFormat +
-  ". Назва може містити кириличні літери, цифри та знаки пунктуації. Назва не може містити пробіл на початку чи поспіль.";
+  ". Всі слова з великої літери. Може містити кирилицю, пробіл, тире чи апостроф. Назва не може містити пробіл на початку чи поспіль.";
   
 export const incorrectStreet =
   wrongFormat +
