@@ -425,7 +425,7 @@ const Club = () => {
       true
     );
     if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
-      await updateAdmins();
+      updateAdmins();
       notificationLogic("success", "Користувач успішно доданий в провід");
     } else {
       notificationLogic("info", "Колишні діловодства куреня були змінені")
