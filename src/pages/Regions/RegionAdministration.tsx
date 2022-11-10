@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip } from "antd";
 import {
-  SettingOutlined,
+  EditOutlined,
   CloseOutlined,
   RollbackOutlined,
   ExclamationCircleOutlined,
@@ -62,7 +62,6 @@ const RegionAdministration = () => {
   const [photosLoading, setPhotosLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [reload, setReload] = useState(false);
-  const [regionName, setRegionName] = useState<string>("");
   const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -93,7 +92,6 @@ const RegionAdministration = () => {
     const administrationResponse = await getRegionAdministration(id);
     setPhotosLoading(true);
     setRegion(regionResponse.data);
-    setRegionName(regionResponse.data.name);
     setPhotos([...administrationResponse.data].filter((a) => a != null));
     setAdministration(
       [...administrationResponse.data].filter((a) => a != null)
@@ -125,7 +123,8 @@ const RegionAdministration = () => {
       await removeAdmin(admin.id);
       await createNotification(
         admin.userId,
-        `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`
+        `Вас було позбавлено адміністративної ролі: '${admin.adminType.adminTypeName}' в окрузі`,
+        true
       );
       setAdministration(administration.filter((u) => u.id !== admin.id));
       notificationLogic(
@@ -149,6 +148,8 @@ const RegionAdministration = () => {
   };
 
   const onAdd = async (newAdmin: RegionAdmin = new RegionAdmin()) => {
+    const index = administration.findIndex((a) => a.id === admin.id);
+    administration[index] = newAdmin;
     const previousAdmin = administration.find(a => a.id === admin.id)!; 
     const adminIdx = administration.findIndex(a => a.id === admin.id);
     administration[adminIdx] = newAdmin;
@@ -158,10 +159,20 @@ const RegionAdministration = () => {
         `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в окрузі`
       );
     }
-    await createNotification(
-      newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`
-    );
+    if (newAdmin.adminType.adminTypeName !== admin.adminType.adminTypeName) {
+      await createNotification( 
+        newAdmin.userId,
+        `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в окрузі`,
+        true
+      );
+    } else if (newAdmin.startDate !== admin.startDate || newAdmin.endDate !== admin.endDate) {
+      await createNotification(
+        newAdmin.userId,
+        `Вам було змінено час правління на 
+        ${moment.utc(newAdmin?.startDate).local().format("DD.MM.YYYY")} - 
+        ${moment.utc(newAdmin?.endDate).local().format("DD.MM.YYYY")} в окрузі`
+      );
+    }
     setAdministration(administration);
     setReload(!reload);
   };
@@ -174,13 +185,14 @@ const RegionAdministration = () => {
     setPhotosLoading(false);
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regions/${id}`,
-      regionName
+      region.regionName,
+      mustLogOut
     );
   };
 
@@ -189,18 +201,27 @@ const RegionAdministration = () => {
       return undefined;
     }
 
-    const actions = [];
+    const actions: JSX.Element[] = [];
     if (member.adminType.adminTypeName !== Roles.OkrugaHead) {
-      actions.push(<SettingOutlined onClick={() => showModal(member)} />);
-      actions.push(<CloseOutlined onClick={() => seeDeleteModal(member)} />);
+      actions.push(
+        <Tooltip title="Редагувати">
+          <EditOutlined onClick={() => showModal(member)} />
+        </Tooltip>,
+      );
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
       return actions;
     }
 
-    if (userAccesses["EditRegionHead"]) {
-      actions.push(<SettingOutlined onClick={() => showModal(member)} />);
-    }
     if (userAccesses["RemoveRegionHead"]) {
-      actions.push(<CloseOutlined onClick={() => seeDeleteModal(member)} />);
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
     }
     return actions;
   };

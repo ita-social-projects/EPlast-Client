@@ -271,7 +271,7 @@ const CreateCity = () => {
         notificationLogic("success", successfulCreateAction("Заяву"));
         await createNotification(
           newRegionFollower.userId,
-          `Вітаємо, вашу заяву на створення станиці ${newRegionFollower.cityName} успішно створено! Заява очікує розгляду адміністрацією округи.`
+          `Вітаємо, вашу заяву на створення станиці ${newRegionFollower.cityName} успішно надіслано! Заява очікує розгляду адміністрацією округи.`
         );
         await NotificationBoxApi.createNotifications(
           peopleToReceiveNotification,
@@ -409,11 +409,14 @@ const CreateCity = () => {
     });
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message,
-      NotificationBoxApi.NotificationTypes.UserNotifications
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      undefined,
+      undefined,
+      mustLogOut
     );
   };
 

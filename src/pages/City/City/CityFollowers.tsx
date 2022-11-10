@@ -86,13 +86,14 @@ const CityFollowers = () => {
     });
   }
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${id}`,
-      cityName
+      cityName,
+      mustLogOut
     );
   };
 
@@ -102,7 +103,8 @@ const CityFollowers = () => {
     await removeFollower(follower.id);
     await createNotification(
       follower.userId,
-      "На жаль, ви були виключені з прихильників станиці"
+      "На жаль, ви були виключені з прихильників станиці",
+      true
     );
   };
 

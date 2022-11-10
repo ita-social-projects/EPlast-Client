@@ -22,6 +22,7 @@ import UserApi from "../../../../api/UserApi";
 import { Roles } from "../../../../models/Roles/Roles";
 import CityAnnualReportLayout from "../../../../models/PDF/AnnualReport/CityAnnualReportLayout";
 import pdfMake from "pdfmake/build/pdfmake";
+import { CityAnnualReport } from "../../../../models/AnnualReport/CityAnnualReport";
 
 const { Title, Text } = Typography;
 
@@ -29,7 +30,7 @@ const AnnualReportInformation = () => {
   const { id } = useParams();
   const history = useHistory();
   const [cityLegalStatuses, setCityLegalStatuses] = useState<string[]>(Array());
-  const [cityAnnualReport, setCityAnnualReport] = useState(Object);
+  const [cityAnnualReport, setCityAnnualReport] = useState(new CityAnnualReport());
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const [isCityAdmin, setIsCityAdmin] = useState<boolean>();
   const [userCityId, setUserCityId] = useState<number>();
@@ -193,6 +194,15 @@ const AnnualReportInformation = () => {
               target="blank"
             >
               Перейти на профіль станиці {cityAnnualReport.city?.name}
+            </Link>
+            <br />
+            <Link
+              className="LinkText"
+              style={{ fontSize: "14px" }}
+              to={"/userpage/main/" + cityAnnualReport.creatorId}
+              target="blank"
+            >
+              Звіт подав(ла) {cityAnnualReport.creatorFirstName} {cityAnnualReport.creatorLastName}
             </Link>
             <br />
             <br />

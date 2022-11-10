@@ -117,19 +117,23 @@ const CityDocuments = () => {
                 actions={
                   canEdit
                     ? [
-                        <DownloadOutlined
-                          key="download"
-                          onClick={() =>
-                            downloadDocument(
-                              document.blobName,
-                              document.fileName
-                            )
-                          }
-                        />,
-                        <CloseOutlined
-                          key="close"
-                          onClick={() => seeDeleteModal(document.id)}
-                        />,
+                        <Tooltip title="Завантажити">
+                          <DownloadOutlined
+                            key="download"
+                            onClick={() =>
+                              downloadDocument(
+                                document.blobName,
+                                document.fileName
+                              )
+                            }
+                          />
+                        </Tooltip>,
+                        <Tooltip title="Видалити">
+                          <CloseOutlined
+                            key="close"
+                            onClick={() => seeDeleteModal(document.id)}
+                          />
+                        </Tooltip>
                       ]
                     : activeUserRoles.includes(Roles.CityHead) ||
                       activeUserRoles.includes(Roles.CityHeadDeputy) ||

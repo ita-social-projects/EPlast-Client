@@ -18,6 +18,7 @@ export default function () {
     activeUserRoles,
     activeUserId,
     activeUserProfile,
+    userProfileAccess,
     loading,
   } = useContext(PersonalDataContext);
 
@@ -412,7 +413,7 @@ export default function () {
               userProfile?.user.facebookLink !== "" ? (
               <a
                 href={
-                  "https://www.facebook.com/" + userProfile?.user.facebookLink
+                  userProfile?.user.facebookLink
                 }
               >
                 <img src={Facebook} alt="Facebook" />
@@ -422,7 +423,7 @@ export default function () {
               userProfile?.user.twitterLink !== "" ? (
               <a
                 href={
-                  "https://www.twitter.com/" + userProfile?.user.twitterLink
+                  userProfile?.user.twitterLink
                 }
               >
                 <img src={Twitter} alt="Twitter" />
@@ -432,44 +433,24 @@ export default function () {
               userProfile?.user.instagramLink !== "" ? (
               <a
                 href={
-                  "https://www.instagram.com/" + userProfile?.user.instagramLink
+                  userProfile?.user.instagramLink
                 }
               >
                 <img src={Instagram} alt="Instagram" />
               </a>
             ) : null}
-            {userProfile?.user.facebookLink === null ||
-              (userProfile?.user.facebookLink === "" &&
-                userProfile?.user.twitterLink === null) ||
-              (userProfile?.user.twitterLink === "" &&
-                userProfile?.user.instagramLink === null) ||
-              userProfile?.user.instagramLink === "" ? (
-              <Form.Item className="formItem"></Form.Item>
-            ) : null}
           </div>
           <div className="buttonWrapper">
             <Button
               className="confirmBtn"
-              hidden={
-                !(
-                  activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin) ||
-                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
-                )
-              }
+              hidden={ !userProfileAccess["CanEditUserProfile"] }
               onClick={() => history.push(`/userpage/edit/${userId}`)}
             >
               Редагувати профіль
             </Button>
             <Button
               className="confirmBtn"
-              hidden={
-                !(
-                  activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin) ||
-                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
-                )
-              }
+              hidden={ !userProfileAccess["CanEditUserProfile"] }
               onClick={() => history.push(`/cities/page/1`)}
             >
               Обрати/змінити станицю
@@ -477,11 +458,8 @@ export default function () {
             <Button
               className="confirmBtn"
               hidden={
-                !(
-                  activeUserId === userId ||
-                  activeUserRoles.includes(Roles.Admin) ||
-                  activeUserRoles.includes(Roles.GoverningBodyAdmin)
-                ) || activeUserRoles.includes(Roles.RegisteredUser)
+                !userProfileAccess["CanEditUserProfile"] || 
+                activeUserRoles.includes(Roles.RegisteredUser)
               }
               onClick={() => history.push(`/clubs/page/1`)}
             >

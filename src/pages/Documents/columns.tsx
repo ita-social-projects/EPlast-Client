@@ -40,6 +40,7 @@ const columns = [
   {
     title: "Додатки",
     dataIndex: "fileName",
+    align: 'center' as const,
     render: (fileName: string | null) => {
       if (fileName != null) {
         return (
