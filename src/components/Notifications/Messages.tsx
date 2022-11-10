@@ -80,6 +80,10 @@ export const inputWhiteSpacesAtTheBeginning = (name: string) => {
   return `${name} не може починатися з порожнього символу`;
 };
 
+export const inputWhiteSpacesAtTheBeginningAndTheEnd = (name: string) => {
+  return `${name} не може починатися з порожнього символу та ним закінчуватись`;
+}
+
 export const tryAgain = "Щось пішло не так. Спробуйте ще раз.";
 
 export const ReportAlreadyExists = "Звіт вже існує.";
