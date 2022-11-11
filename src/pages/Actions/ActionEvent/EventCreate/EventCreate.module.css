@@ -73,13 +73,17 @@ input:hover,
   display: block;
 }
 
+.minRowWidth {
+  width: 370px;
+}
+
 .eventCategoryFormItem {
   display: flex;
   align-items: center;
 }
 
 .selectEventCategory {
-  max-width: 330px;
+  max-width: 320px;
 }
 
 .editIcon {
@@ -98,18 +102,16 @@ input:hover,
   color: #910202;
 }
 
-.deleteIcon :hover  {
+.deleteIcon :hover {
   cursor: pointer;
   color: #690606;
 }
 
-/* .eventCategoriesList {
-  display: flex;
+.eventCategoriesList {
   overflow: auto;
   max-height: 400px;
-  max-width: 520px;
   font-size: 16px;
-} */
+}
 
 @media (max-width: 767px) {
   .input {
@@ -126,8 +128,17 @@ input:hover,
     display: flex;
     flex-direction: column;
   }
+  .minRowWidth {
+    width: 360px;
+  }
   .selectTypeEventField {
     max-width: 100%;
     min-width: 100%;
+  }
+  .editIcon {
+    font-size: 18px;
+  }
+  .deleteIcon {
+    font-size: 18px;
   }
 }
