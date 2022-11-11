@@ -89,7 +89,7 @@ const StatisticsCities = () => {
       key: "year",
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.year - b.year },
-      width: 65,
+      width: 75,
     },
     {
       title: "Станиця",
@@ -296,7 +296,7 @@ const StatisticsCities = () => {
           title: indicatorsArray[statisticsItem.indicator as number].label,
           dataIndex: index,
           key: index,
-          width: 130,
+          width: 140,
         };
       }),
       totalColumn,
