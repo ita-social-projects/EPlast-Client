@@ -34,6 +34,7 @@ import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import SectorAdminTypes from "./SectorAdminTypes";
 import { minAvailableDate } from "../../../constants/TimeConstants";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const { confirm } = Modal;
 
@@ -294,6 +295,7 @@ const AddSectorAdminForm = (props: any) => {
         className={classes.formSelectAlignCenter}
         label="Дата початку"
         name="startDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined
@@ -312,6 +314,7 @@ const AddSectorAdminForm = (props: any) => {
         className={classes.formSelectAlignCenter}
         label="Дата кінця"
         name="endDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined

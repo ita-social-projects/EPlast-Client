@@ -91,7 +91,7 @@ export const descriptionValidation = {
   ],
   ClubName: [
     {
-      pattern: /^\S*((?=([^\sA-Za-z]+))\2\s?)+$/,
+      pattern: /^(([А-ЯҐЄІЇ][а-яґєії]*'?[а-яґєії]*){1}(?:[\s\-])?)*$/,
       message: incorrectClubName,
     },
     {
