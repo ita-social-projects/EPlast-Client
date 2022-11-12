@@ -41,6 +41,7 @@ import SectorAdmin from "../../models/GoverningBody/Sector/SectorAdmin";
 import GoverningBodyAdminTypes from "../GoverningBody/GoverningBodyAdminTypes";
 import SectorAdminTypes from "../GoverningBody/Sector/SectorAdminTypes";
 import { minAvailableDate } from "../../constants/TimeConstants";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 interface Props {
   onChange: (id: string, userRoles: string) => void;
@@ -465,6 +466,7 @@ const ChangeUserRoleForm = ({
           className={classes.formField}
           label="Дата початку"
           name="startDate"
+          rules={[descriptionValidation.Required]}
         >
           <DatePicker
             style={{ width: "100%" }}
@@ -479,6 +481,7 @@ const ChangeUserRoleForm = ({
           className={classes.formField}
           label="Дата кінця"
           name="endDate"
+          rules={[descriptionValidation.Required]}
         >
           <DatePicker
             className={classes.inputField}
