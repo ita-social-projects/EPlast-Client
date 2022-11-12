@@ -24,7 +24,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
           Персональні дані
         </Menu.Item>
         {(userProfileAccess["CanSeeUserActiveMembership"]
-          || props.id !== activeUserId) ? (
+          || props.id === activeUserId) ? (
         <Menu.Item
           className="menuItem"
           key="activeMembership"
@@ -35,7 +35,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
             null
         )}
          {(userProfileAccess["CanSeeUserSecretariesPage"]
-          || props.id !== activeUserId) ? (
+          || props.id === activeUserId) ? (
         <Menu.Item
           className="menuItem"
           key="secretaries"
@@ -46,7 +46,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
             null
         )}
          {(userProfileAccess["CanSeeUserEvents"]
-          || props.id !== activeUserId) ? (
+          || props.id === activeUserId) ? (
           <Menu.Item
             className="menuItem"
             key="eventuser"
@@ -57,7 +57,7 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
             null
               )}  
           {(userProfileAccess["CanSeeUserBlankPage"]
-            || props.id !== activeUserId) ? (      
+            || props.id === activeUserId) ? (      
           <Menu.Item
             className="menuItem"
             key="blank"
@@ -66,11 +66,9 @@ const CustomMenu: React.FC<CustomMenuProps> = (props: CustomMenuProps) => {
             Бланки
           </Menu.Item>) : (
             null
-              )}  
-        
-          
+              )}                    
           {(userProfileAccess["CanSeeUserApproversPage"] 
-            || props.id !== activeUserId) ? (      
+            || props.id === activeUserId) ? (      
           <Menu.Item
             className="menuItem"
             key="approvers"

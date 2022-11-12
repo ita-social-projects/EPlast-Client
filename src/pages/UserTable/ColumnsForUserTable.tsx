@@ -60,12 +60,22 @@ const options = [
   },
 ];
 
+
+const kadraOptions = [
+  { label: "КВ1(УПН)", value: "КВ1(УПН)" },
+  { label: "КВ1(УПЮ)", value: "КВ1(УПЮ)" },
+  { label: "КВ2(УПН)", value: "КВ2(УПН)" },
+  { label: "КВ2(УПЮ)", value: "КВ2(УПЮ)" }
+];
+
 interface Props {
   sortKey: number;
   setSortKey: any;
   setFilter: any;
+  setKadraFilter: any;
   setPage: any;
   filterRole: any;
+  filterKadra: any;
   isZgolosheni: boolean;
   isFormers: boolean;
   isUnconfirmed: boolean
@@ -75,18 +85,22 @@ interface Props {
 
 const ColumnsForUserTable = (props: Props): any[] => {
 
-  const { sortKey, setSortKey, setFilter, setPage, filterRole } = props;
+  const { sortKey, setSortKey, setFilter, setKadraFilter, setPage, filterRole } = props;
 
   const numberOfElementsInFilter: number = 10;
+  const numberOfElementsInKadraFilter: number = 4;
   const defaultPage: number = 1;
 
-  const [filterDropdownVisible, setFilterDropdownVisible] = useState<boolean>(
-    false
-  );
+  const [filterDropdownVisible, setFilterDropdownVisible] = useState<boolean>(false);
+  const [kadraFilterDropdownVisible, setKadraFilterDropdownVisible] = useState<boolean>(false);
   const [filterOptions, setFilterOptions] = useState<any>(options);
   const [filterStatus, setFilterStatus] = useState({
     value: Array<boolean>(numberOfElementsInFilter).fill(false),
   });
+  const [kadraFilterStatus, setKadraFilterStatus] = useState({
+    value: Array<boolean>(numberOfElementsInFilter).fill(false),
+  });
+
 
   // names of the keys that aren't displayed in "Зголошені" tab
   const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
@@ -99,16 +113,31 @@ const ColumnsForUserTable = (props: Props): any[] => {
     setFilterStatus({ value });
   };
 
+  const onChangeKadraCheckbox = (e: any, i: number) => {
+    let value = kadraFilterStatus.value.slice();
+    value[i] = !value[i];
+    setKadraFilterStatus({ value });
+  };
+
+
   const onSearchFilter = () => {
     const rolesToStr = new Array<string>();
     filterStatus.value.forEach((element: boolean, index: number) => {
       if (element) {
         rolesToStr.push(filterOptions[index].value.toString());
       }
+    }); 
+    const kadrasToStr = new Array<string>();
+    kadraFilterStatus.value.forEach((element: boolean, index: number) => {
+      if (element) {
+        kadrasToStr.push(kadraOptions[index].value.toString());
+      }
     });
     setFilterDropdownVisible(false);
+    setKadraFilterDropdownVisible(false);
     setPage(defaultPage);
     setFilter(rolesToStr);
+    setKadraFilter(kadrasToStr);
   };
 
   const onClearFilter = () => {
@@ -116,6 +145,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
       value: Array<boolean>(numberOfElementsInFilter).fill(false),
     });
     setFilterDropdownVisible(false);
+    setKadraFilterDropdownVisible(false);
     setPage(defaultPage);
     setFilter([]);
   };
@@ -554,8 +584,39 @@ const ColumnsForUserTable = (props: Props): any[] => {
       dataIndex: "kadra",
       width: 120,
       ellipsis: false,
+      filterDropdownVisible: kadraFilterDropdownVisible,
+      filterDropdown: (
+        <div className={styles.customFilterDropdown}>
+          {kadraOptions.map((item: any, i: number) => (
+            <div>
+              <Checkbox
+                key={i}
+                value={item.value}
+                checked={kadraFilterStatus.value[i]}
+                onChange={(e) => onChangeKadraCheckbox(e, i)}
+                className={styles.filterElement}
+              >
+                {item.label}
+              </Checkbox>
+              <br />
+            </div>
+          ))}
+          <div>
+            <Button className={styles.filterButton} onClick={onClearFilter}>
+              Скинути
+            </Button>
+            <Button
+              className={styles.filterButton}
+              type="primary"
+              onClick={onSearchFilter}
+            >
+              Пошук
+            </Button>
+          </div>
+        </div>
+      ),
       onFilterDropdownVisibleChange: () =>
-        setFilterDropdownVisible(!filterDropdownVisible),
+        setKadraFilterDropdownVisible(!kadraFilterDropdownVisible),
       render: (kadra: any) => {
         return (
           kadra == ""? (
