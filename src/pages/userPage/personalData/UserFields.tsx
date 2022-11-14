@@ -452,7 +452,7 @@ export default function () {
             <Button
               className="confirmBtn"
               hidden={ !userProfileAccess["CanEditUserProfile"] }
-              onClick={() => history.push(`/cities/page/1`)}
+              onClick={() => history.push(`/regions/members/${userProfile?.user.regionId}`)}
             >
               Обрати/змінити станицю
             </Button>

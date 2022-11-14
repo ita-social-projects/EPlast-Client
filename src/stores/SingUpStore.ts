@@ -137,6 +137,29 @@ const actions = {
         setState({
             formData: data
         })
+    },
+    setOblast: (value: UkraineOblasts): Action<State> => async ({ setState, getState }) => {
+        setState({
+            formData: {
+                lastName: getState().formData.lastName,
+                firstName: getState().formData.firstName,
+                fatherName: getState().formData.fatherName,
+                address: getState().formData.address,
+                cityId: getState().formData.cityId,
+                regionId: getState().formData.regionId,
+                email: getState().formData.email,
+                referals: getState().formData.referals,
+                password: getState().formData.password,
+                confirmPassword: getState().formData.confirmPassword,
+                genderId: getState().formData.genderId,
+                phoneNumber: getState().formData.phoneNumber,
+                facebookLink: getState().formData.facebookLink,
+                twitterLink: getState().formData.twitterLink,
+                instagramLink: getState().formData.instagramLink,
+                birthday: getState().formData.birthday,
+                oblast: value,
+            }
+        })
     }
 };
 
