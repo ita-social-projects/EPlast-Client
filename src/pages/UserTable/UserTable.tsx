@@ -387,7 +387,6 @@ const UsersTable = () => {
     } else if (e.id.startsWith("club")) {
       actions.addDynamicClubs(parseInt(e.value.split(" ")[1]));
     }
-    console.log(state.dynamicCities);
   };
 
   const ondeSelect = (selectedKeys: any, e: any) => {
