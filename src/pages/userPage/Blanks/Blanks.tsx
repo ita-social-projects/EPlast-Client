@@ -169,6 +169,7 @@ export const Blanks = () => {
                 firstName={fullUserProfile?.user.firstName}
                 lastName={fullUserProfile?.user.lastName}
                 isUserPlastun={true}
+                isUserAdmin={fullUserProfile?.isUserAdmin}
                 pseudo={fullUserProfile?.user.pseudo}
                 governingBody={fullUserProfile?.user.governingBody}
                 region={fullUserProfile?.user.region}

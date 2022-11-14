@@ -30,6 +30,7 @@ class AvatarAndProgressStaticProps {
   firstName: string | undefined;
   lastName: string | undefined;
   isUserPlastun: boolean | undefined;
+  isUserAdmin: boolean | undefined;
   pseudo: string | undefined;
   governingBody: string | undefined;
   region: string | undefined;
@@ -78,6 +79,7 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
     firstName,
     lastName,
     isUserPlastun,
+    isUserAdmin,
     pseudo,
     region,
     city,
@@ -266,7 +268,8 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           </Link>
         </p>
       )}
-      {(!isUserPlastun && dates?.dateEntry.toLocaleString() !== "") && (
+      {(!isUserAdmin && (!isUserPlastun && dates?.dateEntry.toLocaleString() !== "")) 
+      && (
         <div className="progress">
           {time !== 0 ? (
             <p className="statusText">
