@@ -9,6 +9,7 @@ import {
   Empty,
   Skeleton,
   Form,
+  Card
 } from "antd";
 import "../personalData/PersonalData.less";
 import jwt from "jwt-decode";
@@ -18,6 +19,7 @@ import { StickyContainer } from "react-sticky";
 import activeMembershipApi, {
   UserDates,
   UserPlastDegree,
+  UserFormerDates
 } from "../../../api/activeMembershipApi";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
@@ -30,14 +32,16 @@ import { Roles } from "../../../models/Roles/Roles";
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
 import { PersonalDataContext } from "../personalData/PersonalData";
 import classes from "./ActiveMembership.module.css";
+import { UserFormerMembershipTable } from "./UserDates/UserFormerMembershipTable";
 
 const { Title } = Typography;
 
 const itemMaxLength = 43;
 const ActiveMembership = () => {
-  const { userId } = useParams();
+  const {userId} = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<UserDates>();
+
   const {
     userProfile,
     activeUserRoles,
@@ -247,10 +251,11 @@ const ActiveMembership = () => {
         <div className="avatarWrapperUserFields">
           <StickyContainer className="kadraWrapper">
             <AvatarAndProgressStatic
-              time={fullUserProfile?.timeToJoinPlast}
+              time={userProfile?.timeToJoinPlast}
               firstName={fullUserProfile?.user.firstName}
               lastName={fullUserProfile?.user.lastName}
               isUserPlastun={fullUserProfile?.isUserPlastun}
+              isUserAdmin={fullUserProfile?.isUserAdmin}
               pseudo={fullUserProfile?.user.pseudo}
               governingBody={fullUserProfile?.user.governingBody}
               region={fullUserProfile?.user.region}
@@ -330,7 +335,13 @@ const ActiveMembership = () => {
                 <div></div>
               )}
             </div>
-
+            
+            <Card
+            style={{ width: "100%",
+                     backgroundColor: "#F0F5F0"}}>
+              <UserFormerMembershipTable UserId={userId} />
+            </Card>
+            
             <div className={""}>
               <Title level={4}> Рівні доступу </Title>
               <div className={classes.textBlock}>

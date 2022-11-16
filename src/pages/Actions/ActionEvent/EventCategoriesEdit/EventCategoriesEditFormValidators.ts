@@ -5,21 +5,19 @@ import {
   maxLength,
 } from "../../../../components/Notifications/Messages";
 
-const inputMaxLenght = 200;
+const inputMaxLength = 200;
 
-const DistinctionTypeInputValidator: Rule[] = [
+export const eventCategoryInputValidator: Rule[] = [
   {
     required: true,
     message: emptyInput(),
   },
   {
     pattern: /^\S.*\S$/,
-    message: inputWhiteSpacesAtTheBeginningAndTheEnd("Відзначення"),
+    message: inputWhiteSpacesAtTheBeginningAndTheEnd("Категорія"),
   },
   {
-    max: inputMaxLenght,
-    message: maxLength(inputMaxLenght),
+    max: inputMaxLength,
+    message: maxLength(inputMaxLength),
   },
 ];
-
-export default DistinctionTypeInputValidator;

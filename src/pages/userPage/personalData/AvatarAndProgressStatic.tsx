@@ -18,15 +18,19 @@ import { Roles } from "../../../models/Roles/Roles";
 import { PersonalDataContext } from "./PersonalData";
 import "./PersonalData.less";
 import userApi from "../../../api/UserApi";
+import activeMembershipApi, {
+  UserDates
+} from "../../../api/activeMembershipApi";
 
 const { Title } = Typography;
-const nameMaxLength = 55;
+const defaultDate: string = "0001-01-01T00:00:00";
 
 class AvatarAndProgressStaticProps {
   time: number | undefined;
   firstName: string | undefined;
   lastName: string | undefined;
   isUserPlastun: boolean | undefined;
+  isUserAdmin: boolean | undefined;
   pseudo: string | undefined;
   governingBody: string | undefined;
   region: string | undefined;
@@ -68,12 +72,14 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
   props: AvatarAndProgressStaticProps
 ) => {
   const { userId } = useParams();
+  const [dates, setDates] = useState<UserDates>();
   const [loading, setLoading] = useState(false);
   const {
     time,
     firstName,
     lastName,
     isUserPlastun,
+    isUserAdmin,
     pseudo,
     region,
     city,
@@ -152,6 +158,17 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
         .getDistinctionOfGivenUser(userId)
         .then((response) => {
           setData(response.data);
+        });
+
+        await activeMembershipApi.getUserDates(userId).then((response) => {
+          response.dateEntry =
+            response.dateEntry === defaultDate ? "" : response.dateEntry;
+          response.dateOath =
+            response.dateOath === defaultDate ? "" : response.dateOath;
+          response.dateEnd =
+            response.dateEnd === defaultDate ? "" : response.dateEnd;
+          setDates(response);
+          console.log(response.dateEntry);
         });
 
       if (showPrecautions) {
@@ -251,7 +268,8 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           </Link>
         </p>
       )}
-      {!isUserPlastun && (
+      {(!isUserAdmin && (!isUserPlastun && dates?.dateEntry.toLocaleString() !== "")) 
+      && (
         <div className="progress">
           {time !== 0 ? (
             <p className="statusText">

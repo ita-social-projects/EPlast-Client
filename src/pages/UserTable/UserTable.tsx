@@ -60,6 +60,7 @@ const UsersTable = () => {
   const [searchData, setSearchData] = useState<string>("");
   const [sortKey, setSortKey] = useState<number>(1);
   const [filter, setFilter] = useState<any[]>([]);
+  const [kadraFilter, setKadraFilter] = useState<any[]>([]);
   const [form] = Form.useForm();
   const [canView, setCanView] = useState<boolean>(false);
   const [tabList, setTabList] = useState<any[]>([]);
@@ -108,6 +109,7 @@ const UsersTable = () => {
     searchData,
     sortKey,
     filter,
+    kadraFilter,
     userArhive,
     currentTabName,
     clearFilter,
@@ -201,6 +203,7 @@ const UsersTable = () => {
       tab: (queryParamsArray.tab as string) ?? undefined,
       city: parseInt(queryParamsArray.city as string) ?? undefined,
       club: parseInt(queryParamsArray.club as string) ?? undefined,
+      search: (queryParamsArray.search as string) ?? undefined,
     };
 
     // doing this to avoid exception on getClubFromQuery
@@ -210,6 +213,9 @@ const UsersTable = () => {
 
     queryParams.current = params;
     getTabFromQuery();
+    if (queryParams.current.search) {
+      handleSearch(queryParams.current.search);
+    }
   };
 
   const getTabFromQuery = () => {
@@ -346,6 +352,7 @@ const UsersTable = () => {
         Tab: currentTabName,
         SortKey: sortKey,
         FilterRoles: filter,
+        FilterKadras: kadraFilter,
         SearchData: searchData,
       });
 
@@ -366,6 +373,8 @@ const UsersTable = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.toLowerCase() === "") {
       setSearchData("");
+    } else {
+      setSearchData(e.target.value);
     }
   };
 
@@ -592,6 +601,7 @@ const UsersTable = () => {
           <Search
             placeholder="Пошук"
             allowClear
+            value={searchData}
             enterButton
             maxLength={searchFieldMaxLength}
             onChange={handleSearchChange}
@@ -633,8 +643,10 @@ const UsersTable = () => {
               sortKey: sortKey,
               setSortKey: setSortKey,
               setFilter: setFilter,
+              setKadraFilter: setKadraFilter,
               setPage: setPage,
               filterRole: filter,
+              filterKadra: filter,
               isZgolosheni: currentTabName === "registered",
               isUnconfirmed: currentTabName === "unconfirmed",
               isFormers: currentTabName === "formers",

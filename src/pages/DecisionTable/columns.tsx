@@ -1,17 +1,20 @@
 import { Tooltip } from "antd";
+import { ColumnsType } from "antd/lib/table";
 import moment from "moment";
 import React from "react";
 import decisionsApi, { statusTypeGetParser } from "../../api/decisionsApi";
-const classes = require("./Table.module.css");
+import { DecisionTableInfo } from "./Interfaces/DecisionTableInfo";
+import classes from "./Table.module.css";
 
 const descriptionInTooltipLength = 500;
 const descriptionMainLength = 100;
-const columns = [
+const columns: ColumnsType<DecisionTableInfo> = [
   {
     title: "ID",
     dataIndex: "id",
     fixed: true,
     width: 60,
+    className: classes.idTableField
   },
   {
     title: "Назва",

@@ -26,21 +26,22 @@ margin-right: 8px;
   padding: 35px 0 0 25%;  
 }
 
-@media(max-width: 400px) {
-.formField{ 
-  max-width: 100%;
-  min-width: 100%;
-}
-.selectField {
-  max-width: 100%;
-  min-width: 100%;
-}
-.selectTypeDistField {
-  max-width: 100%;
-  min-width: 100%;
-}
-}
 .buttons{
-margin-right: 0px !important;
-margin-left: 7px;
+  margin-right: 0px !important;
+  margin-left: 7px;
+}
+
+@media(max-width: 400px) {
+  .formField{ 
+    max-width: 100%;
+    min-width: 100%;
+  }
+  .selectField {
+    max-width: 100%;
+    min-width: 100%;
+  }
+  .selectTypeDistField {
+    max-width: 100%;
+    min-width: 100%;
+  }
 }

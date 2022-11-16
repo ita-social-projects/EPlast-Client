@@ -33,9 +33,10 @@ input:hover,
   font-size: 14px;
   width: 100% !important;
 }
+
 .formItem {
   display: block;
-  width: 370px !important;
+  width: 370px;
 }
 
 .select {
@@ -72,6 +73,46 @@ input:hover,
   display: block;
 }
 
+.minRowWidth {
+  width: 370px;
+}
+
+.eventCategoryFormItem {
+  display: flex;
+  align-items: center;
+}
+
+.selectEventCategory {
+  max-width: 320px;
+}
+
+.editIcon {
+  margin-left: 10px;
+  font-size: 24px;
+  color: #3c5438;
+}
+
+.editIcon :hover {
+  color: #536150;
+  cursor: pointer;
+}
+
+.deleteIcon {
+  font-size: 24px;
+  color: #910202;
+}
+
+.deleteIcon :hover {
+  cursor: pointer;
+  color: #690606;
+}
+
+.eventCategoriesList {
+  overflow: auto;
+  max-height: 400px;
+  font-size: 16px;
+}
+
 @media (max-width: 767px) {
   .input {
     width: 100% !important;
@@ -86,5 +127,18 @@ input:hover,
   .ant-radio-group {
     display: flex;
     flex-direction: column;
+  }
+  .minRowWidth {
+    width: 360px;
+  }
+  .selectTypeEventField {
+    max-width: 100%;
+    min-width: 100%;
+  }
+  .editIcon {
+    font-size: 18px;
+  }
+  .deleteIcon {
+    font-size: 18px;
   }
 }

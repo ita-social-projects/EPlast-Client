@@ -38,7 +38,7 @@ export const incorrectCityName =
   
 export const incorrectClubName =
   wrongFormat +
-  ". Назва може містити кириличні літери, цифри та знаки пунктуації. Назва не може містити пробіл на початку чи поспіль.";
+  ". Всі слова з великої літери. Може містити кирилицю, пробіл, тире чи апостроф. Назва не може містити пробіл на початку чи поспіль.";
   
 export const incorrectStreet =
   wrongFormat +
@@ -79,6 +79,10 @@ export const inputOnlyWhiteSpaces = () => {
 export const inputWhiteSpacesAtTheBeginning = (name: string) => {
   return `${name} не може починатися з порожнього символу`;
 };
+
+export const inputWhiteSpacesAtTheBeginningAndTheEnd = (name: string) => {
+  return `${name} не може починатися з порожнього символу та ним закінчуватись`;
+}
 
 export const tryAgain = "Щось пішло не так. Спробуйте ще раз.";
 

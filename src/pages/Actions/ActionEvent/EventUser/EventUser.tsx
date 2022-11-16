@@ -50,7 +50,7 @@ const EventUser = () => {
   const [createdEvents, setCreatedEvents] = useState<CreatedEvents[]>([
     new CreatedEvents(),
   ]);
-  const { fullUserProfile, updateData } = useContext(PersonalDataContext);
+  const { userProfile, fullUserProfile, updateData } = useContext(PersonalDataContext);
   const [showEventCreateDrawer, setShowEventCreateDrawer] = useState(false);
   const [showEventCalendarDrawer, setShowEventCalendarDrawer] = useState(false);
   const [showEventEditDrawer, setShowEventEditDrawer] = useState(false);
@@ -163,10 +163,11 @@ const EventUser = () => {
         <div className="avatarWrapperUserFields">
           <StickyContainer className="kadraWrapper">
             <AvatarAndProgressStatic
-              time={fullUserProfile?.timeToJoinPlast}
+              time={userProfile?.timeToJoinPlast}
               firstName={fullUserProfile?.user.firstName}
               lastName={fullUserProfile?.user.lastName}
               isUserPlastun={fullUserProfile?.isUserPlastun}
+              isUserAdmin={fullUserProfile?.isUserAdmin}
               pseudo={fullUserProfile?.user.pseudo}
               governingBody={fullUserProfile?.user.governingBody}
               region={fullUserProfile?.user.region}

@@ -65,6 +65,7 @@ export default function () {
                 firstName={userProfile?.user.firstName}
                 lastName={userProfile?.user.lastName}
                 isUserPlastun={userProfile?.isUserPlastun}
+                isUserAdmin={userProfile?.isUserAdmin}
                 pseudo={userProfile?.user.pseudo}
                 governingBody={userProfile?.user.governingBody}
                 region={userProfile?.user.region}
@@ -439,14 +440,6 @@ export default function () {
                 <img src={Instagram} alt="Instagram" />
               </a>
             ) : null}
-            {userProfile?.user.facebookLink === null ||
-              (userProfile?.user.facebookLink === "" &&
-                userProfile?.user.twitterLink === null) ||
-              (userProfile?.user.twitterLink === "" &&
-                userProfile?.user.instagramLink === null) ||
-              userProfile?.user.instagramLink === "" ? (
-              <Form.Item className="formItem"></Form.Item>
-            ) : null}
           </div>
           <div className="buttonWrapper">
             <Button
@@ -486,6 +479,7 @@ export default function () {
             firstName={userProfile?.shortUser.firstName}
             lastName={userProfile?.shortUser.lastName}
             isUserPlastun={userProfile?.isUserPlastun}
+            isUserAdmin={userProfile?.isUserAdmin}
             pseudo={userProfile?.shortUser.pseudo}
             governingBody={userProfile?.shortUser.governingBody}
             region={userProfile?.shortUser.region}
