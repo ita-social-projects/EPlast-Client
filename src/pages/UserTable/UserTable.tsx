@@ -90,8 +90,7 @@ const UsersTable = () => {
   const [state, actions] = useUserTableStore();
 
   useEffect(() => {
-    initializePage();
-    fetchParametersFromUrl();
+    initializePage();    
     fetchCities();
     fetchClubs();
     fetchRegions();
@@ -101,6 +100,7 @@ const UsersTable = () => {
   }, []);
 
   useEffect(() => {
+    fetchParametersFromUrl();
     fetchData();
   }, [
     page,
@@ -219,7 +219,7 @@ const UsersTable = () => {
   };
 
   const getTabFromQuery = () => {
-    let acceptableTabs = ["confirmed", "registered", "unconfirmed", "formers"];
+    let acceptableTabs = ["confirmed", "registered", "unconfirmed", "formers", "renewals"];
 
     let tab = queryParams.current.tab;
     setCurrentTabName(
