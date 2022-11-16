@@ -139,7 +139,6 @@ const FeedbackForm: React.FC<LeaveFeedbackProperties> = (
   const fetchData = async () => {
     setLoading(true);
     let userProfile = await UserApi.getActiveUserProfile();
-    console.log(userProfile);
     let userImage = await UserApi.getImage(userProfile.imagePath);
     setAvatar(userImage.data);
     setName(userProfile.firstName + " " + userProfile.lastName);
