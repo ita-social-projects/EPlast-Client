@@ -9,6 +9,7 @@ interface EventCategoriesEditDrawerProps {
   setIsVisibleEventCreateDrawer: (isVisible: boolean) => void;
   categories: EventCategories[];
   setCategories: (categories: EventCategories[]) => void;
+  userAccesses: {[key: string]: boolean}
 }
 
 export const EventCategoriesEditDrawer: React.FC<EventCategoriesEditDrawerProps> = ({
@@ -17,6 +18,7 @@ export const EventCategoriesEditDrawer: React.FC<EventCategoriesEditDrawerProps>
   setIsVisibleEventCreateDrawer,
   categories,
   setCategories,
+  userAccesses
 }) => {
   return (
     <Drawer
@@ -34,6 +36,7 @@ export const EventCategoriesEditDrawer: React.FC<EventCategoriesEditDrawerProps>
       <EventCategoriesEdit
         categories={categories}
         setCategories={setCategories}
+        userAccesses={userAccesses}
       />
     </Drawer>
   );

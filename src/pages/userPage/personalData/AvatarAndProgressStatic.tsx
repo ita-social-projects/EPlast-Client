@@ -168,7 +168,6 @@ const AvatarAndProgressStatic: React.FC<AvatarAndProgressStaticProps> = (
           response.dateEnd =
             response.dateEnd === defaultDate ? "" : response.dateEnd;
           setDates(response);
-          console.log(response.dateEntry);
         });
 
       if (showPrecautions) {

@@ -9,9 +9,8 @@ import {
   Row,
   Col,
   Divider,
-  Modal,
   Tooltip,
-  } from "antd";
+} from "antd";
 import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
 import eventUserApi from "../../../../api/eventUserApi";
@@ -32,17 +31,14 @@ import {
   incorrectEndTime,
   } from "../../../../components/Notifications/Messages";
 import { descriptionValidation } from "../../../../models/GllobalValidations/DescriptionValidation";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import { Roles } from "../../../../models/Roles/Roles";
 import EventSections from "../../../../models/EventCreate/EventSections";
 import ShortUserInfo from "../../../../models/UserTable/ShortUserInfo";
 import ButtonCollapse from "../../../../components/ButtonCollapse/ButtonCollapse";
-import { successfulUpdateAction } from "../../../../components/Notifications/Messages";
 import { EventCategoriesEditDrawer } from "../EventCategoriesEdit/EventCategoriesEditDrawer";
 
 import adminApi from "../../../../api/adminApi";
-
-import { notification, Spin } from "antd";
 
 import classes from "./EventCreate.module.css";
 import { EventCategoryCreateModal } from "./EventCategoryCreateModal";
@@ -51,12 +47,14 @@ interface Props {
   onCreate?: () => void;
   setIsVisibleEventCreateDrawer: (isVisible: boolean) => void;
   validationStartDate: Date;
+  userAccesses: {[key: string]: boolean}
 }
 
 export default function ({
   onCreate,
   setIsVisibleEventCreateDrawer,
   validationStartDate,
+  userAccesses
 }: Props) {
   const [form] = Form.useForm();
   const [selectedUsers, setSelectedUsers] = useState<string[]>([
@@ -329,21 +327,25 @@ export default function ({
                     optionFilterProp="children"
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                     dropdownRender={(menu) => (
-                      <div>
+                      <>
                         {menu}
-                        <Divider style={{ margin: "4px 0" }} />
-                        <EventCategoryCreateModal
-                          isVisible={visibleModal}
-                          setIsVisible={setVisibleModal}
-                          newCategoryName={newCategoryName}
-                          setNewCategoryName={setNewCategoryName}
-                          eventSection={eventSection}
-                          setEventSection={setEventSection}
-                          eventSections={eventSections}
-                          eventType={eventType}
-                          addCategory={addCategory}
-                        />
-                      </div>
+                        {userAccesses["CreateEventCategory"] ? (
+                          <div>
+                            <Divider style={{ margin: "4px 0" }} />
+                            <EventCategoryCreateModal
+                              isVisible={visibleModal}
+                              setIsVisible={setVisibleModal}
+                              newCategoryName={newCategoryName}
+                              setNewCategoryName={setNewCategoryName}
+                              eventSection={eventSection}
+                              setEventSection={setEventSection}
+                              eventSections={eventSections}
+                              eventType={eventType}
+                              addCategory={addCategory}
+                            />
+                          </div>
+                        ) : (null)}
+                      </>
                     )}
                   >
                     {categories.map((item: any) => (
@@ -365,10 +367,15 @@ export default function ({
                 >
                   <EditOutlined
                     style={{paddingTop: 35}}
-                    className={classes.editIcon}
+                    className={
+                      userAccesses["EditEventCategory"] || userAccesses["DeleteEventCategory"] ?
+                      classes.editIcon : classes.disabledEditIcon
+                    }
                     onClick={() => {
-                      setIsVisibleEventCreateDrawer(false);
-                      setIsVisibleEventCategoriesEditDrawer(true);
+                      if (userAccesses["EditEventCategory"] || userAccesses["DeleteEventCategory"]) {
+                        setIsVisibleEventCreateDrawer(false);
+                        setIsVisibleEventCategoriesEditDrawer(true);
+                      }
                     }}
                   />
                 </Tooltip>
@@ -721,6 +728,7 @@ export default function ({
         setIsVisibleEventCreateDrawer={setIsVisibleEventCreateDrawer}
         categories={categories}
         setCategories={setCategories}
+        userAccesses={userAccesses}
       />
     </>
   );

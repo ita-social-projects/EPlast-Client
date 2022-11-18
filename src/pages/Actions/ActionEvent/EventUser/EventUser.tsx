@@ -302,6 +302,7 @@ const EventUser = () => {
             <EventCreateDrawer
               visibleEventCreateDrawer={showEventCreateDrawer}
               setShowEventCreateDrawer={setShowEventCreateDrawer}
+              userAccesses={userAccesses}
               onCreate={fetchData}
             />
 
