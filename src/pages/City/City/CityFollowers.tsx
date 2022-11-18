@@ -97,7 +97,6 @@ const CityFollowers = () => {
     );
   };
 
-
   const removeMember = async (follower: CityMember) => {
     setFollowers(followers.filter((u) => u.id !== follower.id));
     await removeFollower(follower.id);

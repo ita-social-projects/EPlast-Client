@@ -11,7 +11,6 @@ import userApi from "../../../../api/UserApi";
 
 type ModalAddPlastDegreeProps = {
   userId: string;
-  selectedUser?: any;
   visibleModal: boolean;
   isCityAdmin?: boolean;
   setVisibleModal: (visibleModal: boolean) => void;
@@ -73,7 +72,7 @@ const ModalAddPlastDegree = (props: ModalAddPlastDegreeProps) => {
       {isUserDataLoaded ? <FormAddPlastDegree
         handleAddDegree={props.handleAddDegree}
         userId={props.userId}
-        selectedUser={props.selectedUser}
+        selectedUser={userAllData.current.user}
         setVisibleModal={props.setVisibleModal}
         plastDegrees={plastDegrees}
         currentUserDegree={currentUserDegree}

@@ -469,7 +469,6 @@ const DropDown = (props: Props) => {
           <ModalAddPlastDegree
             handleAddDegree={() => onChange("", "")} // forcefully updating the table on exit
             userId={record}
-            selectedUser={selectedUser}
             visibleModal={visibleAddDegree || visibleChangeDegree}
             setVisibleModal={(bool) => {
               setVisibleAddDegree(bool);
