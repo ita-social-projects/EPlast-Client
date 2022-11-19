@@ -13,6 +13,15 @@ spec:
       labels:
         app: eplastweb 
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - aks-agentpool-38126314-vmss00002a    
       containers:
         - name: eplastweb 
           image: eplast.azurecr.io/eplastweb:___containerRegistry_version_frontend_test___
