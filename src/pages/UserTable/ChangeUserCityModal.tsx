@@ -42,9 +42,6 @@ const ChangeUserCityModal = ({
         previousAdmin = a;
         return;
     });
-    console.log('administration: ', administration);
-    console.log('previousAdmin: ', previousAdmin);
-    console.log('newAdmin: ', newAdmin);
     if (previousAdmin.adminType.adminTypeName === newAdmin.adminType.adminTypeName) {
       await createNotification(
         previousAdmin.userId,
@@ -70,7 +67,6 @@ const ChangeUserCityModal = ({
   };
 
   const fetchData = async () => {
-    console.log('cityId: ', cityId);
     const cityAdministration: CityAdmin[] = (await getCityAdministration(cityId)).data;
     setAdministration(cityAdministration);
   }

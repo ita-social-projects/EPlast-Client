@@ -61,7 +61,6 @@ const DropDown = (props: Props) => {
     offsetTop,
     offsetLeft,
   } = props;
-
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleAddDegree, setVisibleAddDegree] = useState<boolean>(false);
   const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(false);
@@ -470,6 +469,7 @@ const DropDown = (props: Props) => {
           <ModalAddPlastDegree
             handleAddDegree={() => onChange("", "")} // forcefully updating the table on exit
             userId={record}
+            selectedUser={selectedUser}
             visibleModal={visibleAddDegree || visibleChangeDegree}
             setVisibleModal={(bool) => {
               setVisibleAddDegree(bool);

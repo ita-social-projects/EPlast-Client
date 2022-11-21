@@ -26,6 +26,7 @@ import UserApi from "../../../../api/UserApi";
 import moment from "moment";
 import { LoadingOutlined } from "@ant-design/icons";
 import { minAvailableDate } from "../../../../constants/TimeConstants";
+import { getRegionById } from "../../../../api/regionsApi";
 
 type FormAddPlastDegreeProps = {
   plastDegrees: Array<PlastDegree>;
@@ -34,6 +35,7 @@ type FormAddPlastDegreeProps = {
   handleAddDegree: () => void;
   resetAvailablePlastDegree: () => Promise<void>;
   userId: string;
+  selectedUser?: any;
   cancel: boolean;
   isModalVisible: boolean;
   isChangingUserDegree: boolean;
@@ -164,7 +166,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   };
 
   const fetchData = async () => {
-    const activeCities = (await getCities(true)).data;
+    const userRegion = (await getRegionById(props.selectedUser.regionId)).data;
+    const activeCities = (await getCities(true, userRegion.oblast)).data;
     setCities(activeCities);
     const userInfo = await UserApi.getById(props.userId);
     if (userInfo.data.user.city) {

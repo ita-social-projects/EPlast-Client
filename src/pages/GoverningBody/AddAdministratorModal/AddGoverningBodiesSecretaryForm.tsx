@@ -35,6 +35,7 @@ import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import Spinner from "../../Spinner/Spinner";
 import GoverningBodyAdminTypes from "../GoverningBodyAdminTypes";
 import { minAvailableDate } from "../../../constants/TimeConstants";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const { confirm } = Modal;
 
@@ -302,6 +303,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       <Form.Item
         label="Дата початку"
         name="startDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined
@@ -319,6 +321,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       <Form.Item
         label="Дата кінця"
         name="endDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined

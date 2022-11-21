@@ -165,10 +165,11 @@ const Assignments = () => {
       <div className="avatarWrapperApprovers">
         <StickyContainer className="kadraWrapper">
           <AvatarAndProgressStatic
-            time={data?.timeToJoinPlast}
+            time={userProfile?.timeToJoinPlast}
             firstName={data?.user.firstName}
             lastName={data?.user.lastName}
             isUserPlastun={data?.isUserPlastun}
+            isUserAdmin={data?.isUserAdmin}
             pseudo={data?.user.pseudo}
             governingBody={data?.user.governingBody}
             region={data?.user.region}
