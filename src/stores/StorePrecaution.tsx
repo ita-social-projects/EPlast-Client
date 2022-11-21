@@ -15,6 +15,7 @@ import notificationLogic from "../components/Notifications/Notification";
 import PrecautionTableSettings from '../models/Precaution/PrecautionTableSettings';
 import UserPrecautionEdit from '../pages/Precaution/Interfaces/UserPrecautionEdit';
 import UserPrecautionStatus from '../pages/Precaution/Interfaces/UserPrecautionStatus';
+import moment from "moment";
 
 let user: any;
 let curToken = AuthLocalStorage.getToken() as string;
@@ -695,7 +696,9 @@ const activePrecautionNofication = async (newPrecaution: UserPrecaution) => {
       notificationLogic(
         "error",
         failCreateAction(
-          "пересторогу! Користувач має активну до " + response.data + "!"
+          "пересторогу! Користувач має активну до " + moment.utc(response.data.toLocaleString())
+            .local()
+            .format("DD.MM.YYYY") + "!"
         )
       );
     });
