@@ -27,6 +27,7 @@ import moment from "moment";
 import { LoadingOutlined } from "@ant-design/icons";
 import { minAvailableDate } from "../../../../constants/TimeConstants";
 import { getRegionById } from "../../../../api/regionsApi";
+import UkraineOblasts from "../../../../models/Oblast/UkraineOblasts";
 
 type FormAddPlastDegreeProps = {
   plastDegrees: Array<PlastDegree>;
@@ -166,8 +167,14 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   };
 
   const fetchData = async () => {
-    const userRegion = (await getRegionById(props.selectedUser.regionId)).data;
-    const activeCities = (await getCities(true, userRegion.oblast)).data;
+    let activeCities;
+    if (props?.selectedUser?.regionId) {
+      const userRegion = (await getRegionById(props.selectedUser.regionId)).data;
+      activeCities = (await getCities(true, userRegion.oblast)).data;
+    }
+    else {
+      activeCities = (await getCities(true, UkraineOblasts.NotSpecified)).data;
+    }
     setCities(activeCities);
     const userInfo = await UserApi.getById(props.userId);
     if (userInfo.data.user.city) {
