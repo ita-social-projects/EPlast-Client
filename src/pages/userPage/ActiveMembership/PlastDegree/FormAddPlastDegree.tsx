@@ -310,7 +310,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
           className={classes.selectField}
           disabled={!isDateSelectionActive}
           disabledDate={disabledDate}
-          placeholder="Дата надання ступеню"
+          placeholder="Дата надання ступеня"
         />
       </Form.Item>
       <Form.Item>
