@@ -28,6 +28,8 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { minAvailableDate } from "../../../../constants/TimeConstants";
 import { getRegionById } from "../../../../api/regionsApi";
 import UkraineOblasts from "../../../../models/Oblast/UkraineOblasts";
+import adminApi from "../../../../api/adminApi";
+import { Roles } from "../../../../models/Roles/Roles";
 
 type FormAddPlastDegreeProps = {
   plastDegrees: Array<PlastDegree>;
@@ -61,9 +63,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   const handleFinish = async (info: any) => {
     setLoading(true);
 
-    info.plastDegree = filtredDegrees.find((item) => item.name === "Пластприят")?.id ?? info.plastDegree;
     const degreeName = filtredDegrees.find((item) => item.id === info.plastDegree)?.name;
-
+    
     const cityDefault = cities.find((x) => x.name == info.userCity)?.id;
 
     let degreeChanged =
@@ -109,6 +110,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
     if (degreeChanged) { 
       await activeMembershipApi.postUserPlastDegree(userPlastDegreePost);
+      await adminApi.putCurrentRole(props.userId, Roles.PlastMember);
 
       await NotificationBoxApi.createNotifications(
         [props.userId],
@@ -140,12 +142,7 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   };
   
   const setPlastDegree = (value : any) => {
-    if (value === "Пластприят") {
-      setDegreeSelectVisible(false);
-      setFiltredDegrees(
-        props.plastDegrees.filter((item) => item.name === "Пластприят")
-      );
-    } else if (value === "Улад Старшого Пластунства") {
+    if (value === "Улад Старшого Пластунства") {
       setDegreeSelectVisible(true);
       setFiltredDegrees(
         props.plastDegrees.filter((item) => item.name.includes("Старш"))
@@ -229,9 +226,6 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
     else if (degree.includes("Старш")) {
       return "Улад Старшого Пластунства";
     }
-    else if (degree === "Пластприят") {
-      return degree;
-    }
     else return;
   }
 
@@ -256,14 +250,6 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
           onChange={(value) => handleOnChange(value)}
           placeholder="Оберіть Улад"
         >
-          {(
-            <Select.Option
-              value="Пластприят"
-              disabled={!isDegreeAvailable("Пластприят")}
-            >
-              Пластприят
-            </Select.Option>
-          )}
           {sortDegrees("Улад Старшого Пластунства") && (
             <Select.Option value="Улад Старшого Пластунства">
               Улад Старшого Пластунства

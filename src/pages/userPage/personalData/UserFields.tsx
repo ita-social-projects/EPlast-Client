@@ -322,87 +322,85 @@ export default function () {
             </Form.Item>
             <Form.Item label="Ступінь в УПЮ" className="formItem">
               {userProfile?.user.upuDegree.id === 1 ? (
-                userProfile?.user.gender.id === 2 ? (
+                <Tooltip title="не був/-ла в юнацтві">
                   <Input
                     readOnly
                     className="dataInput"
-                    value="не була в юнацтві"
+                    value="не був/-ла в юнацтві"
                   />
-                ) : userProfile?.user.gender.id === 1 ? (
-                  <Input
-                    readOnly
-                    className="dataInput"
-                    value="не був в юнацтві"
-                  />
-                ) : (
-                  <Input
-                    readOnly
-                    className="dataInput"
-                    value="не бу-в/ла в юнацтві"
-                  />
-                )
+                </Tooltip>
               ) : userProfile?.user.upuDegree.id === 2 ? (
-                userProfile?.user.gender.id === 2 ? (
+                <Tooltip title="пластун/-ка прихильник/-ця">
                   <Input
                     readOnly
                     className="dataInput"
-                    value="пластунка учасниця"
+                    value="пластун/-ка прихильник/-ця"
                   />
-                ) : userProfile?.user.gender.id === 1 ? (
-                  <Input
-                    readOnly
-                    className="dataInput"
-                    value="пластун учасник"
-                  />
-                ) : (
-                  <Tooltip title="пластун учасник/пластунка учасниця">
-                    <Input
-                      readOnly
-                      className="dataInput"
-                      value="пластун учасник/пластунка учасниця"
-                    />
-                  </Tooltip>
-                )
+                </Tooltip>
               ) : userProfile?.user.upuDegree.id === 3 ? (
-                userProfile?.user.gender.id === 2 ? (
+                <Tooltip title="пластун/-ка учасник/-ця">
                   <Input
                     readOnly
                     className="dataInput"
-                    value="пластунка розвідувачка"
+                    value="пластун/-ка учасник/-ця"
                   />
-                ) : userProfile?.user.gender.id === 1 ? (
-                  <Input
-                    readOnly
-                    className="dataInput"
-                    value="пластун розвідувач"
-                  />
-                ) : (
-                  <Tooltip title="пластун розвідувач/пластунка розвідувачка">
-                    <Input
-                      readOnly
-                      className="dataInput"
-                      value="пластун розвідувач/пластунка розвідувачка"
-                    />
-                  </Tooltip>
-                )
+                </Tooltip>
               ) : userProfile?.user.upuDegree.id === 4 ? (
-                userProfile?.user.gender.id === 2 ? (
+                <Tooltip title="пластун/-ка розвідувач/-ка">
                   <Input
                     readOnly
                     className="dataInput"
-                    value="пластунка вірлиця"
+                    value="пластун/-ка розвідувач/-ка"
                   />
-                ) : userProfile?.user.gender.id === 1 ? (
-                  <Input readOnly className="dataInput" value="пластун скоб" />
-                ) : (
-                  <Tooltip title="пластун скоб/пластунка вірлиця">
-                    <Input
-                      readOnly
-                      className="dataInput"
-                      value="пластун скоб/пластунка вірлиця"
-                    />
-                  </Tooltip>
-                )
+                </Tooltip>
+              ) : userProfile?.user.upuDegree.id === 5 ? (
+                <Tooltip title="пластун скоб / пластунка вірлиця">
+                  <Input
+                    readOnly
+                    className="dataInput"
+                    value="пластун скоб / пластунка вірлиця"
+                  />
+                </Tooltip>
+              ) : userProfile?.user.upuDegree.id === 6 ? (
+                <Tooltip title="пластун скоб-гребець / пластунка вірлиця-гребець">
+                  <Input
+                    readOnly
+                    className="dataInput"
+                    value="пластун скоб-гребець / пластунка вірлиця-гребець"
+                  />
+                </Tooltip>
+              ) : userProfile?.user.upuDegree.id === 7 ? (
+                <Tooltip title="пластун скоб-обсерватор / пластунка вірлиця-обсерватор">
+                  <Input
+                    readOnly
+                    className="dataInput"
+                    value="пластун скоб-обсерватор / пластунка вірлиця-обсерватор"
+                  />
+                </Tooltip>
+              ) : userProfile?.user.upuDegree.id === 8 ? (
+                <Tooltip title="пластун гетьманський скоб / пластун гетьманська вірлиця">
+                  <Input
+                    readOnly
+                    className="dataInput"
+                    value="пластун гетьманський скоб / пластун гетьманська вірлиця"
+                  />
+                </Tooltip>
+              ) : userProfile?.user.upuDegree.id === 9 ? (
+                <Tooltip title="пластун гетьманський скоб-обсерватор / пластун гетьманська вірлиця-обсерватор">
+                  <Input
+                    readOnly
+                    className="dataInput"
+                    value="пластун гетьманський скоб-обсерватор / пластун гетьманська вірлиця-обсерватор"
+                  />
+                </Tooltip>
+              ) : userProfile?.user.upuDegree.id === 10 ? (
+                <Tooltip title="пластун гетьманський скоб-гребець / пластун гетьманська скоб-гребець">
+                  <Input
+                    readOnly
+                    className="dataInput"
+                    value="пластун гетьманський скоб-гребець / пластун гетьманська скоб-гребець"
+                  />
+                </Tooltip>
               ) : (
                 <Input readOnly className="dataInput" value="-" />
               )}

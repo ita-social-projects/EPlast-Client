@@ -95,11 +95,6 @@ const ChangeUserRoleForm = ({
             {roles.includes(Roles.RegisteredUser) ? (
               <Option value={Roles.Supporter}>Прихильник</Option>
             ) : null}
-            {roles.includes(Roles.Supporter) ? (
-              <Option value={Roles.PlastMember}>
-                Дійсний член організації
-              </Option>
-            ) : null}
             {roles.includes(Roles.Supporter) ||
             roles.includes(Roles.PlastMember) ||
             roles.includes(Roles.CitySecretary) ||
