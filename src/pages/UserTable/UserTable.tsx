@@ -90,6 +90,7 @@ const UsersTable = () => {
   const [state, actions] = useUserTableStore();
 
   useEffect(() => {
+    fetchParametersFromUrl();
     initializePage();    
     fetchCities();
     fetchClubs();
@@ -100,7 +101,6 @@ const UsersTable = () => {
   }, []);
 
   useEffect(() => {
-    fetchParametersFromUrl();
     fetchData();
   }, [
     page,
