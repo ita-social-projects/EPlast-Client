@@ -102,6 +102,7 @@ export interface IPersonalDataContext {
 
 export interface Data {
   isUserPlastun: boolean;
+  isUserAdmin: boolean;
   timeToJoinPlast: number;
   user: User;
   shortUser: ShortUser;
@@ -132,6 +133,7 @@ export interface ApproversData {
   clubApprover: ConfirmedUser;
   cityApprover: ConfirmedUser;
   isUserPlastun: boolean;
+  isUserAdmin: boolean;
   isUserHeadOfClub: boolean;
   isUserHeadOfRegion: boolean;
   isUserHeadOfCity: boolean;

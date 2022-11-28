@@ -695,11 +695,15 @@ const activePrecautionNofication = async (newPrecaution: UserPrecaution) => {
       notificationLogic(
         "error",
         failCreateAction(
-          "пересторогу! Користувач має активну до " + response.data + "!"
+          "пересторогу! Користувач має активну до " + convertDateToCorrectFormat(response.data) + "!"
         )
       );
     });
 };
+
+const convertDateToCorrectFormat = (dateString : string) => {
+  return dateString.replace(/\//g, '.');
+}
 
 const createNotifications = async (userPrecaution: UserPrecaution) => {
   await NotificationBoxApi.createNotifications(

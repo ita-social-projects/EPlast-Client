@@ -65,6 +65,7 @@ export default function () {
                 firstName={userProfile?.user.firstName}
                 lastName={userProfile?.user.lastName}
                 isUserPlastun={userProfile?.isUserPlastun}
+                isUserAdmin={userProfile?.isUserAdmin}
                 pseudo={userProfile?.user.pseudo}
                 governingBody={userProfile?.user.governingBody}
                 region={userProfile?.user.region}
@@ -478,6 +479,7 @@ export default function () {
             firstName={userProfile?.shortUser.firstName}
             lastName={userProfile?.shortUser.lastName}
             isUserPlastun={userProfile?.isUserPlastun}
+            isUserAdmin={userProfile?.isUserAdmin}
             pseudo={userProfile?.shortUser.pseudo}
             governingBody={userProfile?.shortUser.governingBody}
             region={userProfile?.shortUser.region}

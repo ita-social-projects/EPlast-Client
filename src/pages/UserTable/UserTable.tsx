@@ -90,8 +90,8 @@ const UsersTable = () => {
   const [state, actions] = useUserTableStore();
 
   useEffect(() => {
-    initializePage();
     fetchParametersFromUrl();
+    initializePage();    
     fetchCities();
     fetchClubs();
     fetchRegions();
@@ -219,7 +219,7 @@ const UsersTable = () => {
   };
 
   const getTabFromQuery = () => {
-    let acceptableTabs = ["confirmed", "registered", "unconfirmed", "formers"];
+    let acceptableTabs = ["confirmed", "registered", "unconfirmed", "formers", "renewals"];
 
     let tab = queryParams.current.tab;
     setCurrentTabName(
@@ -396,7 +396,6 @@ const UsersTable = () => {
     } else if (e.id.startsWith("club")) {
       actions.addDynamicClubs(parseInt(e.value.split(" ")[1]));
     }
-    console.log(state.dynamicCities);
   };
 
   const ondeSelect = (selectedKeys: any, e: any) => {
