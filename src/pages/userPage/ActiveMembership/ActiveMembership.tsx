@@ -386,7 +386,7 @@ const ActiveMembership = () => {
                     )}
                   </div>
                   <div className={classes.textFieldsOthers}>
-                    Дата початку ступеню:{" "}
+                    Дата початку ступеня:{" "}
                     {moment
                       .utc(userPlastDegree?.dateStart)
                       .local()
