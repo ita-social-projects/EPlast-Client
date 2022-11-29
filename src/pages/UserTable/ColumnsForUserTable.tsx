@@ -2,13 +2,10 @@ import React, { useState } from "react";
 import moment from "moment";
 import { Tooltip, Tag, Row, Col, Checkbox, Button } from "antd";
 import {
-  WomanOutlined,
-  ManOutlined,
   CaretUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
 import "./Filter.less";
-import Transgender from "../../assets/images/lgbt.svg";
 import { Roles } from "../../models/Roles/Roles";
 import "../AnnualReport/AnnualReportTable/AnnualReportTable.less";
 import styles from "./UserTable.module.css";
@@ -43,7 +40,6 @@ const setTagColor = (userRoles: string) => {
 
 const options = [
   { label: Roles.PlastMember, value: Roles.PlastMember },
-  { label: Roles.FormerPlastMember, value: Roles.FormerPlastMember },
   { label: Roles.Supporter, value: Roles.Supporter },
   { label: Roles.OkrugaHead, value: Roles.OkrugaHead },
   { label: Roles.OkrugaSecretary, value: Roles.OkrugaSecretary },
@@ -64,40 +60,65 @@ const options = [
   },
 ];
 
+
+const kadraOptions = [
+  { label: "КВ1(УПН)", value: "КВ1(УПН)" },
+  { label: "КВ1(УПЮ)", value: "КВ1(УПЮ)" },
+  { label: "КВ2(УПН)", value: "КВ2(УПН)" },
+  { label: "КВ2(УПЮ)", value: "КВ2(УПЮ)" }
+];
+
 interface Props {
   sortKey: number;
   setSortKey: any;
   setFilter: any;
+  setKadraFilter: any;
   setPage: any;
   filterRole: any;
+  filterKadra: any;
   isZgolosheni: boolean;
+  isFormers: boolean;
+  isUnconfirmed: boolean
   page: number;
   pageSize: number;
 }
 
 const ColumnsForUserTable = (props: Props): any[] => {
 
-  const { sortKey, setSortKey, setFilter, setPage, filterRole } = props;
+  const { sortKey, setSortKey, setFilter, setKadraFilter, setPage, filterRole } = props;
 
   const numberOfElementsInFilter: number = 10;
+  const numberOfElementsInKadraFilter: number = 4;
   const defaultPage: number = 1;
 
-  const [filterDropdownVisible, setFilterDropdownVisible] = useState<boolean>(
-    false
-  );
+  const [filterDropdownVisible, setFilterDropdownVisible] = useState<boolean>(false);
+  const [kadraFilterDropdownVisible, setKadraFilterDropdownVisible] = useState<boolean>(false);
   const [filterOptions, setFilterOptions] = useState<any>(options);
   const [filterStatus, setFilterStatus] = useState({
     value: Array<boolean>(numberOfElementsInFilter).fill(false),
   });
+  const [kadraFilterStatus, setKadraFilterStatus] = useState({
+    value: Array<boolean>(numberOfElementsInFilter).fill(false),
+  });
+
 
   // names of the keys that aren't displayed in "Зголошені" tab
-  const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName"]
-
+  const forbiddenKeysForZgolosheni = ["clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  const forbiddenKeysForUnaproved = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  const forbiddenKeysForFormers = ["regionName","cityName","clubName", "userRoles", "upuDegree", "userPlastDegreeName", "membership", "entry", "kadra"]
+  
   const onChangeCheckbox = (e: any, i: number) => {
     let value = filterStatus.value.slice();
     value[i] = !value[i];
     setFilterStatus({ value });
   };
+
+  const onChangeKadraCheckbox = (e: any, i: number) => {
+    let value = kadraFilterStatus.value.slice();
+    value[i] = !value[i];
+    setKadraFilterStatus({ value });
+  };
+
 
   const onSearchFilter = () => {
     const rolesToStr = new Array<string>();
@@ -105,10 +126,18 @@ const ColumnsForUserTable = (props: Props): any[] => {
       if (element) {
         rolesToStr.push(filterOptions[index].value.toString());
       }
+    }); 
+    const kadrasToStr = new Array<string>();
+    kadraFilterStatus.value.forEach((element: boolean, index: number) => {
+      if (element) {
+        kadrasToStr.push(kadraOptions[index].value.toString());
+      }
     });
     setFilterDropdownVisible(false);
+    setKadraFilterDropdownVisible(false);
     setPage(defaultPage);
     setFilter(rolesToStr);
+    setKadraFilter(kadrasToStr);
   };
 
   const onClearFilter = () => {
@@ -116,6 +145,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
       value: Array<boolean>(numberOfElementsInFilter).fill(false),
     });
     setFilterDropdownVisible(false);
+    setKadraFilterDropdownVisible(false);
     setPage(defaultPage);
     setFilter([]);
   };
@@ -182,106 +212,50 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col className="col-title">Ім'я</Col>
-          <Col className="col-value">
-            <SortDirection sort={2} />
-          </Col>
-        </Row>
-      ),
-      dataIndex: "firstName",
-      width: 130,
-      render: (firstName: any) => {
-        return SortColumnHighlight(
-          2,
-          <div className={styles.divWrapper}>
-            <div className={styles.tagText}>
-              <Tooltip placement="top" title={firstName}>
-                     {firstName}
-              </Tooltip>
-            </div>
-          </div>
-        );
-      },
-      key: "firstName"
-    },
-    {
-      title: (
-        <Row className="tableHeader">
-          <Col className="col-title">Прізвище</Col>
+          <Col className="col-title">Прізвище та Ім'я </Col>
           <Col className="col-value">
             <SortDirection sort={3} />
           </Col>
         </Row>
       ),
-      dataIndex: "lastName",
-      width: 130,
+      dataIndex: "userName",
+      width: 170,
       render: (lastName: any) => {
         return SortColumnHighlight(
           3,
           <div className={styles.divWrapper}>
             <div className={styles.tagText}>
-              <Tooltip placement="top" title={lastName}>
-                {lastName}
-              </Tooltip>
+            <Tooltip placement="top" title={lastName}>
+                  {lastName}
+            </Tooltip>
             </div>
           </div>
         );
       },
-      key: "lastName"
+      key: "userName",
     },
     {
       title: (
         <Row className="tableHeader">
-          <Col className="col-title">{props.isZgolosheni ? "Вік" : "Дата народження"}</Col>
+          <Col className="col-title">Вік</Col>
           <Col className="col-value">
             <SortDirection sort={4} />
           </Col>
         </Row>
       ),
       dataIndex: "birthday",
-      width: props.isZgolosheni ? 120 : 145,
+      width: 60,
       render: (date: Date) => {
         return SortColumnHighlight(
           4,
           <>
             {date !== null
-              ? props.isZgolosheni
-                ? `${moment().diff(moment.utc(date.toLocaleString()), 'years')} (${moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY")})`
-                : moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY")
+              ? `${moment().diff(moment.utc(date.toLocaleString()), 'years')}`
               : ""}
           </>
         );
       },
       key: "birthday"
-    },
-    {
-      title: "Стать",
-      dataIndex: "gender",
-      width: 80,
-      render: (gender: any) => {
-        if (gender === null) {
-          return <h4>Не вказано</h4>;
-        } else if (gender.name === "Жінка") {
-          return (
-            <Tooltip title="Жінка">
-              <WomanOutlined />
-            </Tooltip>
-          );
-        } else if (gender.name === "Чоловік") {
-          return (
-            <Tooltip title="Чоловік">
-              <ManOutlined />
-            </Tooltip>
-          );
-        } else {
-          return (
-            <Tooltip title="Не маю бажання вказувати">
-              <img src={Transgender} alt="Transgender" />
-            </Tooltip>
-          );
-        }
-      },
-      key: "gender"
     },
     {
       title: "Email",
@@ -368,7 +342,7 @@ const ColumnsForUserTable = (props: Props): any[] => {
         </Row>
       ),
       dataIndex: "clubName",
-      width: 150,
+      width: 100,
       render: (clubName: any) => {
         return SortColumnHighlight(
           7,
@@ -386,6 +360,31 @@ const ColumnsForUserTable = (props: Props): any[] => {
         );
       },
       key: "clubName"
+    },
+    {
+      title: (
+        <Row className="tableHeader">
+          <Col className="col-title">Ступінь в УПЮ</Col>
+          <Col className="col-value">
+            <SortDirection sort={9} />
+          </Col>
+        </Row>
+      ),
+      dataIndex: "upuDegree",
+      width: 160,
+      render: (upuDegree: any) => {
+        return SortColumnHighlight(
+          9,
+          <div className={styles.parentDiv}>
+            <Tag color={"blue"} key={upuDegree} className={styles.tagText}>
+              <Tooltip placement="topLeft" title={upuDegree}>
+                {upuDegree}
+              </Tooltip>
+            </Tag>
+          </div>
+        );
+      },
+      key: "upuDegree"
     },
     {
       title: (
@@ -480,27 +479,50 @@ const ColumnsForUserTable = (props: Props): any[] => {
     {
       title: (
         <Row className="tableHeader">
-          <Col className="col-title">Ступінь в УПЮ</Col>
+          <Col className="col-title">Вступ</Col>
           <Col className="col-value">
-            <SortDirection sort={9} />
+            <SortDirection sort={10} />
           </Col>
         </Row>
       ),
-      dataIndex: "upuDegree",
-      width: 210,
-      render: (upuDegree: any) => {
+      dataIndex: "entry",
+      width: 110,
+      render: (date: Date) => {
         return SortColumnHighlight(
-          9,
-          <div className={styles.parentDiv}>
-            <Tag color={"blue"} key={upuDegree} className={styles.tagText}>
-              <Tooltip placement="topLeft" title={upuDegree}>
-                {upuDegree}
-              </Tooltip>
-            </Tag>
-          </div>
+          10,
+          <>
+            {
+               (date !== null && date.toLocaleString() !== "0001-01-01T00:00:00")
+              ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") :
+              ""}
+          </>
         );
       },
-      key: "upuDegree"
+      key: "entry"
+    },
+    {
+      title: (
+        <Row className="tableHeader">
+          <Col className="col-title">Дійсне членство</Col>
+          <Col className="col-value">
+            <SortDirection sort={10} />
+          </Col>
+        </Row>
+      ),
+      dataIndex: "membership",
+      width: 120,
+      render: (date: Date) => {
+        return SortColumnHighlight(
+          11,
+          <>
+            {
+               (date !== null && date.toLocaleString() !== "0001-01-01T00:00:00")
+              ? moment.utc(date.toLocaleString()).local().format("DD.MM.YYYY") :
+              ""}
+          </>
+        );
+      },
+      key: "membership"
     },
     {
       title: "Права доступу",
@@ -556,6 +578,61 @@ const ColumnsForUserTable = (props: Props): any[] => {
         );
       },
       key: "userRoles"
+    },
+    {
+      title: "Кадра",
+      dataIndex: "kadra",
+      width: 120,
+      ellipsis: false,
+      filterDropdownVisible: kadraFilterDropdownVisible,
+      filterDropdown: (
+        <div className={styles.customFilterDropdown}>
+          {kadraOptions.map((item: any, i: number) => (
+            <div>
+              <Checkbox
+                key={i}
+                value={item.value}
+                checked={kadraFilterStatus.value[i]}
+                onChange={(e) => onChangeKadraCheckbox(e, i)}
+                className={styles.filterElement}
+              >
+                {item.label}
+              </Checkbox>
+              <br />
+            </div>
+          ))}
+          <div>
+            <Button className={styles.filterButton} onClick={onClearFilter}>
+              Скинути
+            </Button>
+            <Button
+              className={styles.filterButton}
+              type="primary"
+              onClick={onSearchFilter}
+            >
+              Пошук
+            </Button>
+          </div>
+        </div>
+      ),
+      onFilterDropdownVisibleChange: () =>
+        setKadraFilterDropdownVisible(!kadraFilterDropdownVisible),
+      render: (kadra: any) => {
+        return (
+          kadra == ""? (
+            ""
+          ) : (
+            <div className={styles.parentDiv}>
+              <Tag color={"grey"} key={kadra} className={styles.tagText}>
+                <Tooltip placement="topLeft" title={kadra}>
+                  {kadra}
+                </Tooltip>
+              </Tag>
+            </div>
+          )
+        );
+      },
+      key: "kadra"
     },
   ]
 
@@ -671,6 +748,25 @@ const ColumnsForUserTable = (props: Props): any[] => {
     let filtered = columns.filter(column => !forbiddenKeysForZgolosheni.includes(column.key?.valueOf() as string));
     columns = filtered.concat(columnsForZgolosheni);
   }
+
+  if (props.isFormers) {
+    // insert phonenumber column right before email
+    columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
+
+    // filter columns to display in zgolosheni tab
+    let filtered = columns.filter(column => !forbiddenKeysForFormers.includes(column.key?.valueOf() as string));
+    columns = filtered;
+  }
+
+  if (props.isUnconfirmed) {
+    // insert phonenumber column right before email
+    columns.splice(columns.findIndex(column => column.key?.valueOf() === "email"), 0, phoneNumberColumn);
+
+    // filter columns to display in zgolosheni tab
+    let filtered = columns.filter(column => !forbiddenKeysForUnaproved.includes(column.key?.valueOf() as string));
+    columns = filtered;
+  }
+  
   
   columns.push(commentColumn);
   return columns;

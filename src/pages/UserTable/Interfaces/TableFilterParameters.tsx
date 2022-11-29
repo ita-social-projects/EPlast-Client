@@ -8,6 +8,7 @@ interface TableFilterParameters {
   Tab: string;
   SortKey: number;
   FilterRoles?: Array<string>;
+  FilterKadras?: Array<string>;
   SearchData: string;
 }
 

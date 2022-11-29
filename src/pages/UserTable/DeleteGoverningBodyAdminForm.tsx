@@ -26,7 +26,10 @@ const DeleteGoverningBodyAdminForm = ({
     await NotificationBoxApi.createNotifications(
       [user.id],
       `У Вас більше немає адміністративної ролі: '${Roles.GoverningBodyAdmin}'`,
-      NotificationBoxApi.NotificationTypes.UserNotifications
+      NotificationBoxApi.NotificationTypes.UserNotifications,
+      undefined,
+      undefined,
+      true
     );
   };
 

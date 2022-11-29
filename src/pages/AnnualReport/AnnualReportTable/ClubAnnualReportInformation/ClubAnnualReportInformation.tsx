@@ -34,6 +34,7 @@ import jwt from "jwt-decode";
 import UserApi from "../../../../api/UserApi";
 import { Roles } from "../../../../models/Roles/Roles";
 import ClubAnnualReportLayout from "../../../../models/PDF/AnnualReport/ClubAnnualReportLayout";
+import { ClubAnnualReport } from "../../../../models/AnnualReport/ClubAnnualReport";
 import { fonts } from "../../../../models/PDF/fonts";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfVFS from "../../../../assets/VFS/vfs";
@@ -46,7 +47,7 @@ const { Title, Text } = Typography;
 const ClubAnnualReportInformation = () => {
   const { id } = useParams();
   const history = useHistory();
-  const [clubAnnualReport, setClubAnnualReport] = useState(Object);
+  const [clubAnnualReport, setClubAnnualReport] = useState(new ClubAnnualReport());
   const [isAdmin, setIsAdmin] = useState<boolean>();
   const [isClubAdmin, setIsClubAdmin] = useState<boolean>();
   const [userId, setUserId] = useState<string>();
@@ -204,6 +205,17 @@ const ClubAnnualReportInformation = () => {
                   >
                     Перейти на профіль куреня {clubAnnualReport.clubName}
                   </Link>
+                  <br />
+                <Link
+                  className="LinkText"
+                  style={{ fontSize: "14px" }}
+                  to={"/userpage/main/" + clubAnnualReport.creatorId}
+                  target="blank"
+                >
+                  Звіт подав(ла) {clubAnnualReport.creatorFirstName} {clubAnnualReport.creatorLastName}
+                </Link>
+                <br />
+                <br />
                 </Card>
               </Col>
             </Row>

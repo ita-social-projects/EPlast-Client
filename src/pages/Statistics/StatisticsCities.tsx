@@ -89,7 +89,7 @@ const StatisticsCities = () => {
       key: "year",
       fixed: "left",
       sorter: { compare: (a: any, b: any) => a.year - b.year },
-      width: 65,
+      width: 75,
     },
     {
       title: "Станиця",
@@ -296,7 +296,7 @@ const StatisticsCities = () => {
           title: indicatorsArray[statisticsItem.indicator as number].label,
           dataIndex: index,
           key: index,
-          width: 130,
+          width: 140,
         };
       }),
       totalColumn,
@@ -619,14 +619,19 @@ const StatisticsCities = () => {
               <Row id="rowIcon" gutter={[5, 0]}>
                 <Col>
                   <AntTooltip
-                    title="Для того, щоб сформувати діаграму даних станиці клацніть один раз на рядок в таблиці тієї станиці. 
-                                    Діаграму не можливо сформувати, якщо немає даних!"
+                    title="Для того, щоб сформувати діаграму даних станиці, клацніть один раз на рядок в таблиці тієї станиці. 
+                                    Діаграму неможливо сформувати, якщо немає даних!"
                   >
                     <InfoCircleOutlined />
                   </AntTooltip>
                 </Col>
                 <Col>
-                  <label id="label">Як сформувати діаграму?</label>
+                  <AntTooltip
+                    title="Для того, щоб сформувати діаграму даних станиці, клацніть один раз на рядок в таблиці тієї станиці. 
+                                    Діаграму неможливо сформувати, якщо немає даних!"
+                  >
+                    <label id="label">Як сформувати діаграму?</label>
+                  </AntTooltip>
                 </Col>
               </Row>
             </Form.Item>

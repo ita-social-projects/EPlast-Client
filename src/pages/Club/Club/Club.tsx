@@ -92,9 +92,7 @@ const Club = () => {
   const [members, setMembers] = useState<ClubMember[]>([]);
   const [followers, setFollowers] = useState<ClubMember[]>([]);
   const [documents, setDocuments] = useState<ClubDocument[]>([]);
-  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const [userAccesses, setUserAccesses] = useState<{ [key: string]: boolean }>({});
   const [canJoin, setCanJoin] = useState(false);
   const [membersCount, setMembersCount] = useState<number>();
   const [adminsCount, setAdminsCount] = useState<number>();
@@ -105,9 +103,7 @@ const Club = () => {
   const [clubLogoLoading, setClubLogoLoading] = useState<boolean>(false);
   const [document, setDocument] = useState<ClubDocument>(new ClubDocument());
   const [activeUserClub, setActiveUserClub] = useState<string>();
-  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(
-    false
-  );
+  const [activeMemberVisibility, setActiveMemberVisibility] = useState<boolean>(false);
   const [isLoadingPlus, setIsLoadingPlus] = useState<boolean>(true);
   const [isLoadingMemberId, setIsLoadingMemberId] = useState<number>(0);
   const [isActiveClub, setIsActiveClub] = useState<boolean>(true);
@@ -126,6 +122,7 @@ const Club = () => {
     await createNotification(
       member.data.userId,
       "Вітаємо, вас зараховано до членів куреня",
+      true,
       true
     );
     member.data.user.imagePath = (
@@ -146,6 +143,7 @@ const Club = () => {
     await createNotification(
       activeUserID as string,
       "На жаль, ви були виключені з прихильників куреня",
+      true,
       true
     );
     const response = await getClubById(+id);
@@ -158,7 +156,8 @@ const Club = () => {
       await createNotification(
         activeUserID as string,
         `На жаль, ви були виключені з членів куреня "${activeUserClub}" та позбавлені наданих в ньому посад`,
-        false
+        false,
+        true
       );
     }
     const follower = await addFollower(+id);
@@ -191,6 +190,14 @@ const Club = () => {
     try {
       await archiveClub(club.id);
       notificationLogic("success", successfulArchiveAction(club.name));
+      admins.map(async (ad) => {
+        await createNotification(
+          ad.userId,
+          `На жаль станицю '${club.name}', в якій ви займали роль: '${ad.adminType.adminTypeName}' було заархівовано.`,
+          false,
+          true
+        );
+      });
       history.push("/clubs/page/1");
     } catch {
       notificationLogic("error", failArchiveAction(club.name));
@@ -407,16 +414,18 @@ const Club = () => {
       await createNotification(
         previousAdmin.userId,
         `На жаль, ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в курені`,
+        true,
         true
       );
     }
     await createNotification(
       newAdmin.userId,
       `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в курені`,
+      true,
       true
     );
     if (Date.now() < new Date(newAdministrator.endDate).getTime() || newAdministrator.endDate === null) {
-      await updateAdmins();
+      updateAdmins();
       notificationLogic("success", "Користувач успішно доданий в провід");
     } else {
       notificationLogic("info", "Колишні діловодства куреня були змінені")
@@ -430,6 +439,7 @@ const Club = () => {
     await createNotification(
       admin.userId,
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в курені`,
+      true,
       true
     );
   };
@@ -652,8 +662,11 @@ const Club = () => {
         } else {
           await addClubAdmin(admin);
         }
-      } finally {
-        setvisible(false);
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else if (
       admin.adminType.adminTypeName === "Голова КПР" ||
@@ -682,7 +695,8 @@ const Club = () => {
   const createNotification = async (
     userId: string,
     message: string,
-    clubExist: boolean
+    clubExist: boolean,
+    mustLogOut?: boolean
   ) => {
     if (clubExist) {
       await NotificationBoxApi.createNotifications(
@@ -690,13 +704,17 @@ const Club = () => {
         `${message}: `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/clubs/${id}`,
-        club.name
+        club.name,
+        mustLogOut
       );
     } else {
       await NotificationBoxApi.createNotifications(
         [userId],
         message,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        mustLogOut
       );
     }
   };
@@ -1261,6 +1279,7 @@ const Club = () => {
         </Col>
       </Row>
       <Modal
+        style={{ top: 130 }}
         title="Додати діловода"
         visible={visible}
         onCancel={handleClose}

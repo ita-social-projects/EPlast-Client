@@ -9,6 +9,7 @@ import {
   Empty,
   Skeleton,
   Form,
+  Card
 } from "antd";
 import "../personalData/PersonalData.less";
 import jwt from "jwt-decode";
@@ -18,6 +19,7 @@ import { StickyContainer } from "react-sticky";
 import activeMembershipApi, {
   UserDates,
   UserPlastDegree,
+  UserFormerDates
 } from "../../../api/activeMembershipApi";
 import AuthLocalStorage from "../../../AuthLocalStorage";
 import ModalAddPlastDegree from "./PlastDegree/ModalAddPlastDegree";
@@ -30,14 +32,16 @@ import { Roles } from "../../../models/Roles/Roles";
 import { successfulDeleteDegree } from "../../../components/Notifications/Messages";
 import { PersonalDataContext } from "../personalData/PersonalData";
 import classes from "./ActiveMembership.module.css";
+import { UserFormerMembershipTable } from "./UserDates/UserFormerMembershipTable";
 
 const { Title } = Typography;
 
 const itemMaxLength = 43;
 const ActiveMembership = () => {
-  const { userId } = useParams();
+  const {userId} = useParams();
   const [accessLevels, setAccessLevels] = useState([]);
   const [dates, setDates] = useState<UserDates>();
+
   const {
     userProfile,
     activeUserRoles,
@@ -46,10 +50,8 @@ const ActiveMembership = () => {
     loading,
     updateData,
   } = useContext(PersonalDataContext);
-  const [LoadInfo, setLoadInfo] = useState<boolean>(false);
-  const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>(
-    {} as UserPlastDegree
-  );
+  const [loadInfo, setLoadInfo] = useState<boolean>(false);
+  const [userPlastDegree, setUserPlastDegree] = useState<UserPlastDegree>({} as UserPlastDegree);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const [datesVisibleModal, setDatesVisibleModal] = useState<boolean>(false);
   const [userToken, setUserToken] = useState<any>([{ nameid: "" }]);
@@ -68,7 +70,7 @@ const ActiveMembership = () => {
   ];
   const userGenders = ["Чоловік", "Жінка", "Не маю бажання вказувати"];
 
-  const SetDefaultDates = () => {
+  const setDefaultDates = () => {
     const defaultDates: UserDates = {
       dateEntry: "",
       dateOath: "",
@@ -97,7 +99,7 @@ const ActiveMembership = () => {
     } else return plastDegreeName;
   };
 
-  const InitialFetchData = async () => {
+  const initialFetchData = async () => {
     const token = AuthLocalStorage.getToken() as string;
     setUserToken(jwt(token));
 
@@ -116,17 +118,15 @@ const ActiveMembership = () => {
         setLoadInfo(true);
       })
       .catch(() => {
-        SetDefaultDates();
+        setDefaultDates();
         setLoadInfo(true);
         notificationLogic(
           "error",
           "Не вдалося завантажити дати дійсного членства"
         );
       });
-
-    await activeMembershipApi.getUserPlastDegree(userId).then((response) => {
-      setUserPlastDegree(response);
-    });
+    
+    setUserPlastDegree(await activeMembershipApi.getUserPlastDegree(userId));
   };
 
   const fetchData = async () => {
@@ -152,7 +152,7 @@ const ActiveMembership = () => {
     });
   };
 
-  const IsUserHasAccessToManageDegree = (userRoles: Array<string>): boolean => {
+  const isUserHasAccessToManageDegree = (userRoles: string[]): boolean => {
     return (
       (userRoles?.includes(Roles.CityHead) &&
         activeUserProfile?.cityId == fullUserProfile?.user.cityId) ||
@@ -168,7 +168,7 @@ const ActiveMembership = () => {
     );
   };
 
-  const IsPossibleToChangeDateOfSwear = (access: Array<string>): boolean => {
+  const isPossibleToChangeDateOfSwear = (access: string[]): boolean => {
     var flag = true;
     access.map((x) => {
       if (
@@ -182,7 +182,7 @@ const ActiveMembership = () => {
     return flag;
   };
 
-  const IsUserHasAnyAdminTypeRoles = (userRoles: Array<string>): boolean => {
+  const isUserHasAnyAdminTypeRoles = (userRoles: string[]): boolean => {
     let IsUserHasAnyAdminRole = false;
     if (userRoles === null || userRoles === undefined)
       return IsUserHasAnyAdminRole;
@@ -203,7 +203,8 @@ const ActiveMembership = () => {
         )} в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${userId}`,
-        `Дійсному членстві`
+        `Дійсному членстві`,
+        true
       );
     }
     await fetchData();
@@ -231,15 +232,11 @@ const ActiveMembership = () => {
     await fetchData();
   };
 
-  const AppropriateButtonText = (): string => {
-    if (userPlastDegree) return "Змінити ступінь";
-    else return "Додати ступінь";
-  };
-
   useEffect(() => {
-    InitialFetchData();
+    initialFetchData();
   }, []);
-  return (loading && LoadInfo) === false ? (
+
+  return (loading && loadInfo) === false ? (
     <div className="kadraWrapper">
       <Skeleton.Avatar
         size={220}
@@ -254,10 +251,11 @@ const ActiveMembership = () => {
         <div className="avatarWrapperUserFields">
           <StickyContainer className="kadraWrapper">
             <AvatarAndProgressStatic
-              time={fullUserProfile?.timeToJoinPlast}
+              time={userProfile?.timeToJoinPlast}
               firstName={fullUserProfile?.user.firstName}
               lastName={fullUserProfile?.user.lastName}
               isUserPlastun={fullUserProfile?.isUserPlastun}
+              isUserAdmin={fullUserProfile?.isUserAdmin}
               pseudo={fullUserProfile?.user.pseudo}
               governingBody={fullUserProfile?.user.governingBody}
               region={fullUserProfile?.user.region}
@@ -280,7 +278,7 @@ const ActiveMembership = () => {
           <div className={classes.wrapperGeneralInfo}>
             <Title level={2}> Загальна інформація </Title>
             <div className={classes.textBlock}>
-              {LoadInfo && loading ? (
+              {loadInfo && loading ? (
                 <>
                   <ul className={classes.textList}>
                     <li className={classes.textListItem} key={1}>
@@ -320,8 +318,8 @@ const ActiveMembership = () => {
                     </li>
                   </ul>
 
-                  {IsUserHasAccessToManageDegree(activeUserRoles) &&
-                    IsPossibleToChangeDateOfSwear(accessLevels) && (
+                  {isUserHasAccessToManageDegree(activeUserRoles) &&
+                    isPossibleToChangeDateOfSwear(accessLevels) && (
                       <Button
                         type="primary"
                         className={classes.buttonChange}
@@ -337,7 +335,13 @@ const ActiveMembership = () => {
                 <div></div>
               )}
             </div>
-
+            
+            <Card
+            style={{ width: "100%",
+                     backgroundColor: "#F0F5F0"}}>
+              <UserFormerMembershipTable UserId={userId} />
+            </Card>
+            
             <div className={""}>
               <Title level={4}> Рівні доступу </Title>
               <div className={classes.textBlock}>
@@ -388,7 +392,7 @@ const ActiveMembership = () => {
                       .local()
                       .format("DD.MM.YYYY")}
                   </div>
-                  {IsUserHasAccessToManageDegree(
+                  {isUserHasAccessToManageDegree(
                     activeUserRoles?.map((role: any) => {
                       if (
                         !(
@@ -425,7 +429,7 @@ const ActiveMembership = () => {
                 description="Без ступеня"
               />
             )}
-            {IsUserHasAccessToManageDegree(
+            {isUserHasAccessToManageDegree(
               activeUserRoles?.map((role: any) => {
                 if (
                   !(role === Roles.KurinHead || role === Roles.KurinHeadDeputy)
@@ -439,7 +443,7 @@ const ActiveMembership = () => {
                   className={classes.buttonChange}
                   onClick={() => setVisibleModal(true)}
                 >
-                  {AppropriateButtonText()}
+                  {userPlastDegree ? 'Змінити ступінь' : 'Додати ступінь'}
                 </Button>
               </div>
             )}
@@ -449,7 +453,7 @@ const ActiveMembership = () => {
       <ModalAddPlastDegree
         userId={userId}
         isCityAdmin={
-          !IsUserHasAnyAdminTypeRoles(
+          !isUserHasAnyAdminTypeRoles(
             activeUserRoles?.map((role: any) => {
               if (!(role === Roles.CityHead || role === Roles.CityHeadDeputy))
                 return role;
@@ -459,7 +463,7 @@ const ActiveMembership = () => {
         visibleModal={visibleModal}
         setVisibleModal={setVisibleModal}
         handleAddDegree={handleAddDegree}
-        isChangingUserDegree={true}
+        isChangingUserDegree={Boolean(userPlastDegree)}
       />
       <ModalChangeUserDates
         userId={userId}

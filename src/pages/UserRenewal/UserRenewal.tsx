@@ -62,15 +62,8 @@ export default function () {
   const getCity = async () => {
     setLoading(true);
     try {
-      const response = await getCities();
-      let filteredCities = response.data
-        .filter((item: City) => {
-          return item.isActive === true;
-        })
-        .map((data: City) => {
-          return data;
-        });
-      setCities(filteredCities);
+      const activeCities = (await getCities(true)).data;
+      setCities(activeCities);
     } finally {
       setLoading(false);
     }
@@ -106,8 +99,8 @@ export default function () {
             adminsIds,
             "Користувач надіслав запит на відновлення статусу",
             notificationTypes[0].id,
-            "/renewals",
-            `${email}`
+            `/user/table?search=${email}&tab=renewals`,
+            `Переглянути`
           );
         }
         showUserFormerInfoModal("Запит надіслано!", "/signin");

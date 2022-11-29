@@ -26,6 +26,8 @@ import UserApi from "../../../../api/UserApi";
 import moment from "moment";
 import { LoadingOutlined } from "@ant-design/icons";
 import { minAvailableDate } from "../../../../constants/TimeConstants";
+import { getRegionById } from "../../../../api/regionsApi";
+import UkraineOblasts from "../../../../models/Oblast/UkraineOblasts";
 
 type FormAddPlastDegreeProps = {
   plastDegrees: Array<PlastDegree>;
@@ -34,6 +36,7 @@ type FormAddPlastDegreeProps = {
   handleAddDegree: () => void;
   resetAvailablePlastDegree: () => Promise<void>;
   userId: string;
+  selectedUser?: any;
   cancel: boolean;
   isModalVisible: boolean;
   isChangingUserDegree: boolean;
@@ -99,7 +102,8 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
         `Вітаємо! Вас було прийнято до станиці `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/cities/${cityDefault}`,
-        info.userCity
+        info.userCity,
+        true
       );
     }
 
@@ -108,10 +112,11 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
 
       await NotificationBoxApi.createNotifications(
         [props.userId],
-        `Вам було надано ступінь "${degreeName}" в `,
+        `Вам було надано ступінь: '${degreeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/userpage/activeMembership/${props.userId}`,
-        `Дійсному членстві`
+        `Дійсному членстві`,
+        true
       );
     }
 
@@ -162,10 +167,16 @@ const FormAddPlastDegree = (props: FormAddPlastDegreeProps) => {
   };
 
   const fetchData = async () => {
-    const response = await getCities();
-    setCities(response.data);
+    let activeCities;
+    if (props?.selectedUser?.regionId) {
+      const userRegion = (await getRegionById(props.selectedUser.regionId)).data;
+      activeCities = (await getCities(true, userRegion.oblast)).data;
+    }
+    else {
+      activeCities = (await getCities(true, UkraineOblasts.NotSpecified)).data;
+    }
+    setCities(activeCities);
     const userInfo = await UserApi.getById(props.userId);
-
     if (userInfo.data.user.city) {
       setDisabled(true);
     }

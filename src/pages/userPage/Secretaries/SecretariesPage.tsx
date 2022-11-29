@@ -99,10 +99,11 @@ export const Secretaries = () => {
         <div className="avatarWrapperSecretaries">
           <StickyContainer className="kadraWrapper">
             <AvatarAndProgressStatic
-              time={fullUserProfile?.timeToJoinPlast}
+              time={userProfile?.timeToJoinPlast}
               firstName={fullUserProfile?.user.firstName}
               lastName={fullUserProfile?.user.lastName}
               isUserPlastun={fullUserProfile?.isUserPlastun}
+              isUserAdmin={fullUserProfile?.isUserAdmin}
               pseudo={fullUserProfile?.user.pseudo}
               governingBody={fullUserProfile?.user.governingBody}
               region={fullUserProfile?.user.region}

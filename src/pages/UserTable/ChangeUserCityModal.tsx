@@ -1,26 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
 import CityAdmin from "../../models/City/CityAdmin";
 import AddAdministratorModal from "../City/AddAdministratorModal/AddAdministratorModal";
-import CityUser from "../../models/City/CityUser";
 import AdminType from "../../models/Admin/AdminType";
+import { getCityAdministration } from "../../api/citiesApi";
 
-interface Props {
+interface ChangeUserCityModalProps {
   record: string;
   showModal: boolean;
   setShowModal: (showModal: any) => void;
   onChange: (id: string, userRoles: string) => void;
   user: any;
 }
+
 const ChangeUserCityModal = ({
   record,
   showModal,
   setShowModal,
   onChange,
   user,
-}: Props) => {
+}: ChangeUserCityModalProps) => {
   const [admin, setAdmin] = useState<CityAdmin>(new CityAdmin());
+  const [administration, setAdministration] = useState<CityAdmin[]>([]);
+
   let cityId = user?.cityId;
 
   const newAdmin: CityAdmin = {
@@ -32,28 +35,51 @@ const ChangeUserCityModal = ({
   };
 
   const onAdd = async (newAdmin: CityAdmin = new CityAdmin()) => {
+    let previousAdmin: CityAdmin = new CityAdmin();
+    
+    administration.map(a => {
+      if (a.adminType.adminTypeName === newAdmin.adminType.adminTypeName)
+        previousAdmin = a;
+        return;
+    });
+    if (previousAdmin.adminType.adminTypeName === newAdmin.adminType.adminTypeName) {
+      await createNotification(
+        previousAdmin.userId,
+        `Ви були позбавлені ролі: '${previousAdmin.adminType.adminTypeName}' в станиці`
+      );
+    }
     await createNotification(
       newAdmin.userId,
-      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`
+      `Вам була присвоєна адміністративна роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
+      true
     );
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${newAdmin.cityId}`,
-      user.cityName
+      user.cityName,
+      mustLogOut
     );
   };
+
+  const fetchData = async () => {
+    const cityAdministration: CityAdmin[] = (await getCityAdministration(cityId)).data;
+    setAdministration(cityAdministration);
+  }
 
   const handleClick = async () => {
     setShowModal(false);
   };
-  if (!showModal) {
-    return <div></div>;
-  }
+
+  useEffect(() => {
+    if (showModal) fetchData();
+  }, [showModal]);
+
+  if (!showModal) return <div></div>
 
   return (
     <div>

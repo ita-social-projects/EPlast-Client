@@ -1,60 +1,57 @@
 import React from "react";
 
-const wrongFormat = "Вкажіть, будь ласка, правильний формат";
+const wrongFormat = "Введіть правильний формат";
+
 export const incorrectEmail = wrongFormat + " електронної пошти";
+
+export const incorrectPhone = wrongFormat + " телефонного номера";
 
 export const incorrectUrl = wrongFormat + " URL-посилання";
 
-export const emptyInput = (name?: string) => {
-  return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
-};
-
-export const incorrectStartTime =
-  "Час початку події не може бути раніше поточного часу!";
-
-export const incorrectEndTime =
-  "Час завершення події не може бути раніше часу початку!";
-
-export const eventTypeIsNotChosen = "Оберіть тип події спочатку!";
-
-export const incorrectSlogan =
-  wrongFormat +
-  ". Гасло не повинно починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
-
-export const incorrectAppeal =
-  wrongFormat +
-  ". Заява не повинна починатись, закінчуватись пробілом або спецсимволом чи містити більше одного пробілу або спецсимволу поспіль! Доступні спецсимволи: . , ' : - ";
-
-export const incorrectName =
-  wrongFormat +
-  ". Назва не повинна починатись чи закінчуватись пробілом або містити більше одного пробілу поспіль!";
-
-export const incorrectCityName =
-  wrongFormat +
-  ". Кожне слово назви повинне починатись з великої літери. Назва може містити кириличні літери, пробіл, тире чи апостроф. Назва не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
-
-export const incorrectClubName =
-  wrongFormat +
-  ". Назва повинна містити кириличні літери, цифри та знаки пунктуації. Назва не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
-
-export const incorrectPhone = wrongFormat + "  телефонного номера";
-
-export const incorrectStreet =
-  wrongFormat +
-  ". Назва може містити лише кириличні літери, цифри, крапку апостроф чи тире. Назва не повинна починатись, закінчуватись пробілом чи містити більше одного пробілу поспіль!";
-
-export const incorrectHouseNumber =
-  wrongFormat +
-  ". Номер будинку може містити лише цифри, кириличні літери, дріб, та не повинен починатись з нуля чи містити пробілів!";
-
-export const incorrectOficeNumber =
-  wrongFormat +
-  ". Номер офісу/квартири може містити лише цифри, кириличні літери, дріб, та не повинен починатись з нуля чи містити пробілів!";
-
-export const incorrectData = wrongFormat + "  дати";
+export const incorrectData = wrongFormat + " дати";
 
 export const onlyPositiveNumber = `Поле не може бути від'ємним`;
 
+export const eventTypeIsNotChosen = "Оберіть тип події спочатку!";
+
+export const incorrectStartTime =
+  "Час початку події не може бути раніше поточного часу!";
+  
+export const incorrectEndTime =
+  "Час завершення події не може бути раніше часу початку!";
+
+export const incorrectSlogan =
+  wrongFormat +
+  ". Гасло не може містити пробіл на початку чи поспіль. Максимальна довжина - 1000 символів.";
+
+export const incorrectAppeal =
+  wrongFormat +
+  ". Заява може містити кирилицю, цифри, крапку, кому, апостроф, тире, двокрапку. Заява не може містити пробіл на початку чи поспіль. Максимальна довжина - 1000 символів.";
+
+export const incorrectName =
+  wrongFormat +
+  ". Назва не може містити пробіл на початку чи поспіль.";
+  
+export const incorrectCityName =
+  wrongFormat +
+  ". Всі слова з великої літери. Може містити кирилицю, пробіл, тире чи апостроф. Назва не може містити пробіл на початку чи поспіль.";
+  
+export const incorrectClubName =
+  wrongFormat +
+  ". Всі слова з великої літери. Може містити кирилицю, пробіл, тире чи апостроф. Назва не може містити пробіл на початку чи поспіль.";
+  
+export const incorrectStreet =
+  wrongFormat +
+  ". Назва може містити кирилицю, цифри, крапку кому, апостороф чи тире. Назва може містити пробіл на початку чи поспіль.";
+  
+export const incorrectHouseNumber =
+  wrongFormat +
+  ". Номер будинку може містити кирилицю, цифри, дріб. Номер будинку не може починатися з нуля чи містити пробіл.";
+
+export const incorrectOficeNumber =
+  wrongFormat +
+  ". Номер офісу/квартири може містити кирилицю, цифри, дріб. Номер офісу/квартири не може починатися з нуля чи містити пробіл.";
+  
 export const minLength = (len: number) => {
   return `Мінімальна довжина - ${len} символів`;
 };
@@ -71,6 +68,10 @@ export const minNumber = (minLen: number) => {
   return `Значення має бути більше або дорівнювати ${minLen}`;
 };
 
+export const emptyInput = (name?: string) => {
+  return name ? `Поле ${name} є обов'язковим` : `Поле є обов'язковим`;
+};
+
 export const inputOnlyWhiteSpaces = () => {
   return `Поле не може містити лише порожні символи`;
 };
@@ -79,12 +80,15 @@ export const inputWhiteSpacesAtTheBeginning = (name: string) => {
   return `${name} не може починатися з порожнього символу`;
 };
 
+export const inputWhiteSpacesAtTheBeginningAndTheEnd = (name: string) => {
+  return `${name} не може починатися з порожнього символу та ним закінчуватись`;
+}
+
 export const tryAgain = "Щось пішло не так. Спробуйте ще раз.";
 
 export const ReportAlreadyExists = "Звіт вже існує.";
 
-export const ReportNotFound =
-  "За наданими параметрами не було знайдено жодного звіту.";
+export const ReportNotFound = "За наданими параметрами не було знайдено жодного звіту.";
 
 export const successfulCreateAction = (name: string, itemName?: string) => {
   return (
@@ -155,7 +159,7 @@ export const successfulAddUserToCity = (cityName: string) => {
 };
 
 export const successfulDeleteDegree = () => {
-  return `На жаль ступеня було позбавлено`;
+  return `На жаль, ступеня було позбавлено`;
 };
 
 export const failArchiveAction = (name: string) => {

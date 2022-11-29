@@ -5,6 +5,8 @@ import { Tag, Tooltip } from "antd";
 import moment from "moment";
 import React from "react";
 import UserComment from "../../UserTable/UserComment";
+import { ColumnsType } from "antd/es/table";
+import UserRenewalTableData from "../Types/UserRenewalTableData";
 
 const fetchYears = () => {
   const arrayOfYears = [];
@@ -20,7 +22,7 @@ const approval: { text: string; value: boolean }[] = [
   { text: "Погоджено", value: true },
   { text: "На розгляді", value: false },
 ];
-const columns = [
+const columns : ColumnsType<UserRenewalTableData> = [
   {
     align: "center" as FormLabelAlign,
     title: "№",
@@ -93,6 +95,10 @@ const columns = [
   {
     title: "Статус",
     dataIndex: "approved",
+    filters: [
+      { text: "Погоджено", value: true },
+      { text: "На розгляді", value: false }
+    ],
     render: (approved: boolean) => {
       return (
         <div>
@@ -108,9 +114,9 @@ const columns = [
   {
     title: "Коментар",
     dataIndex: "comment",
-    render: (comment: string) => {
+    render: (comment: string, record: any) => {
       return (
-        <UserComment userId={""} canEdit={false} text={comment}/>
+        <UserComment userId={record.userId} canEdit={true} text={comment}/>
       )
     }
   }

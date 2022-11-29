@@ -34,6 +34,7 @@ import "../AddAdministratorModal/AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import SectorAdminTypes from "./SectorAdminTypes";
 import { minAvailableDate } from "../../../constants/TimeConstants";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const { confirm } = Modal;
 
@@ -72,7 +73,8 @@ const AddSectorAdminForm = (props: any) => {
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
-      `цьому напрямі керівного органу`
+      `цьому напрямі керівного органу`,
+      true
     );
   };
 
@@ -85,7 +87,8 @@ const AddSectorAdminForm = (props: any) => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${props.governingBodyId}/sectors/${props.sectorId}`,
-      `цьому напрямі керівного органу`
+      `цьому напрямі керівного органу`,
+      true
     );
   };
 
@@ -154,8 +157,11 @@ const AddSectorAdminForm = (props: any) => {
         } else {
           addSectorAdmin(newAdmin);
         }
-      } finally {
-        onAdd();
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       editSectorAdmin(newAdmin);
@@ -289,6 +295,7 @@ const AddSectorAdminForm = (props: any) => {
         className={classes.formSelectAlignCenter}
         label="Дата початку"
         name="startDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined
@@ -307,6 +314,7 @@ const AddSectorAdminForm = (props: any) => {
         className={classes.formSelectAlignCenter}
         label="Дата кінця"
         name="endDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined

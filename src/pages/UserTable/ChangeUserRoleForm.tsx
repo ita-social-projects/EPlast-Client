@@ -47,9 +47,6 @@ const ChangeUserRoleForm = ({
     let currentDates = await activeMembershipApi.getUserDates(userId);
     currentDates.dateEnd = isEmpty ? "0001-01-01T00:00:00" : moment().format();
   };
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
-  };
 
   const handleFinish = async (value: any) => {
     if (
@@ -73,7 +70,10 @@ const ChangeUserRoleForm = ({
       await NotificationBoxApi.createNotifications(
         [userId],
         `Вам надано нову роль: '${value.userRole}'`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        true
       );
     }
   };
@@ -91,7 +91,7 @@ const ChangeUserRoleForm = ({
             },
           ]}
         >
-          <Select onChange={handleChange}>
+          <Select>
             {roles.includes(Roles.RegisteredUser) ? (
               <Option value={Roles.Supporter}>Прихильник</Option>
             ) : null}

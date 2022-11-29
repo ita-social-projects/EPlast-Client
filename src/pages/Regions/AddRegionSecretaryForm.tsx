@@ -95,9 +95,11 @@ const AddNewSecretaryForm = (props: any) => {
     <Form
       className={classes.form}
       name="basic"
-      onFinish={(values) => {
-        handleSubmit(values);
+      onFinish={async (values) => {
         setLoading(true);
+        await handleSubmit(values);
+        form.resetFields();
+        setLoading(false);
       }}
       form={form}
       labelCol={{ span: 8 }}
@@ -160,6 +162,7 @@ const AddNewSecretaryForm = (props: any) => {
       <Form.Item
         label="Дата початку"
         name="startDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined
@@ -177,6 +180,7 @@ const AddNewSecretaryForm = (props: any) => {
       <Form.Item
         label="Дата кінця"
         name="endDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined

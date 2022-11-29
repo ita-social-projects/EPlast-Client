@@ -41,6 +41,7 @@ import SectorAdmin from "../../models/GoverningBody/Sector/SectorAdmin";
 import GoverningBodyAdminTypes from "../GoverningBody/GoverningBodyAdminTypes";
 import SectorAdminTypes from "../GoverningBody/Sector/SectorAdminTypes";
 import { minAvailableDate } from "../../constants/TimeConstants";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 interface Props {
   onChange: (id: string, userRoles: string) => void;
@@ -154,7 +155,10 @@ const ChangeUserRoleForm = ({
       await NotificationBoxApi.createNotifications(
         [admin.userId],
         `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}'`,
-        NotificationBoxApi.NotificationTypes.UserNotifications
+        NotificationBoxApi.NotificationTypes.UserNotifications,
+        undefined,
+        undefined,
+        true
       );
     } else {
       await addAdministrator(admin.governingBodyId, admin);
@@ -167,7 +171,8 @@ const ChangeUserRoleForm = ({
         `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
         NotificationBoxApi.NotificationTypes.UserNotifications,
         `/regionalBoard/governingBodies/${admin.governingBodyId}`,
-        `цьому керівному органі`
+        `цьому керівному органі`,
+        true
       );
     }
   };
@@ -183,7 +188,8 @@ const ChangeUserRoleForm = ({
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/sectors/${admin.sectorId}`,
-      `цьому керівному органі`
+      `цьому керівному органі`,
+      true
     );
   };
 
@@ -460,6 +466,7 @@ const ChangeUserRoleForm = ({
           className={classes.formField}
           label="Дата початку"
           name="startDate"
+          rules={[descriptionValidation.Required]}
         >
           <DatePicker
             style={{ width: "100%" }}
@@ -474,6 +481,7 @@ const ChangeUserRoleForm = ({
           className={classes.formField}
           label="Дата кінця"
           name="endDate"
+          rules={[descriptionValidation.Required]}
         >
           <DatePicker
             className={classes.inputField}

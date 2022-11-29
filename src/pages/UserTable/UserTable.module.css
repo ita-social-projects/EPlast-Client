@@ -20,7 +20,7 @@
 }
 
 .colForTreeSelect {
-  width: 88%;
+  width: 100%;
 }
 
 .card {
@@ -34,7 +34,7 @@
   }
 
   .colForButton {
-    width: 12%;
+    width: 46px;
     text-align: center;
   }
 
@@ -58,6 +58,10 @@
     display: flex;  
     justify-content: center;  
   }
+}
+
+.okButton {
+  border-radius: 0px 2px 2px 0px;
 }
 
 .divWrapper {
