@@ -1279,6 +1279,7 @@ const Club = () => {
         </Col>
       </Row>
       <Modal
+        style={{ top: 130 }}
         title="Додати діловода"
         visible={visible}
         onCancel={handleClose}
