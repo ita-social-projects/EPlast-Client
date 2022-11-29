@@ -82,6 +82,7 @@ const EventTypes = () => {
         <EventCreateDrawer
           visibleEventCreateDrawer={showEventCreateDrawer}
           setShowEventCreateDrawer={setShowEventCreateDrawer}
+          userAccesses={userAccesses}
         />
         {plastTypes}
       </div>

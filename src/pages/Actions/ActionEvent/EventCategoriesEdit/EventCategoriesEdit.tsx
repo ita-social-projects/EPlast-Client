@@ -16,16 +16,17 @@ import { failDeleteAction } from "../../../../components/Notifications/Messages"
 interface EventCategoriesEditProps {
   categories: EventCategories[];
   setCategories: (categories: EventCategories[]) => void;
+  userAccesses: {[key: string]: boolean}
 }
 
 export const EventCategoriesEdit: React.FC<EventCategoriesEditProps> = ({
   categories,
   setCategories,
+  userAccesses
 }) => {
   const [categoryToEdit, setCategoryToEdit] = useState(new EventCategories());
 
   const editCategory = (category: EventCategories) => {
-    console.log(category);
     setCategoryToEdit(category);
   };
 
@@ -53,6 +54,31 @@ export const EventCategoriesEdit: React.FC<EventCategoriesEditProps> = ({
     });
   };
 
+  const getActions = (category: EventCategories) => {
+    const actions: React.ReactNode[] = [];
+    if (userAccesses["EditEventCategory"]) {
+      actions.push(
+        <Tooltip title="Редагувати категорію">
+          <EditOutlined
+            className={classes.editIcon}
+            onClick={() => editCategory(category)}
+          />
+        </Tooltip>
+      );
+    }
+    if (userAccesses["DeleteEventCategory"]) {
+      actions.push(
+        <Tooltip title="Видалити категорію" placement="left">
+          <DeleteOutlined
+            className={classes.deleteIcon}
+            onClick={() => deleteCategory(category.eventCategoryId)}
+          />
+        </Tooltip>
+      );
+    }
+    return actions;
+  }
+
   return (
     <>
       <List
@@ -61,20 +87,7 @@ export const EventCategoriesEdit: React.FC<EventCategoriesEditProps> = ({
         bordered
         renderItem={(category) => (
           <List.Item
-            actions={[
-              <Tooltip title="Редагувати категорію">
-                <EditOutlined
-                  className={classes.editIcon}
-                  onClick={() => editCategory(category)}
-                />
-              </Tooltip>,
-              <Tooltip title="Видалити категорію" placement="left">
-                <DeleteOutlined
-                  className={classes.deleteIcon}
-                  onClick={() => deleteCategory(category.eventCategoryId)}
-                />
-              </Tooltip>,
-            ]}
+            actions={getActions(category)}
           >
             <Tooltip title={category.eventCategoryName}>
               <Typography.Text ellipsis>

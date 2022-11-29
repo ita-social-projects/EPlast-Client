@@ -97,6 +97,16 @@ input:hover,
   cursor: pointer;
 }
 
+.disabledEditIcon {
+  margin-left: 10px;
+  font-size: 24px;
+  color: #808080;
+}
+
+.disabledEditIcon :hover {
+  cursor: default;
+}
+
 .deleteIcon {
   font-size: 24px;
   color: #910202;

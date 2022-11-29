@@ -24,11 +24,8 @@ export const UserFormerMembershipTable = ({ UserId }: props) => {
   const fetchFormerDates = async () => {
     setIsLoadingActive(true);
     try {
-      const response = await activeMembershipApi
-      .getUserFormerDates(UserId);
-
+      const response = await activeMembershipApi.getUserFormerDates(UserId);
       setFormerDates(response.dates);
-      console.log(response);
     } catch {
       notificationLogic(
         "error",
