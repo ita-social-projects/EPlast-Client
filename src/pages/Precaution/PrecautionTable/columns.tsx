@@ -34,16 +34,16 @@ const columns: ColumnsType<UserPrecautionTableItem> = [
     dataIndex: "precautionName",
     filters: [
       {
-        text: "Догана",
-        value: "Догана",
+        text: "І пересторога",
+        value: "І пересторога",
       },
       {
-        text: "Сувора догана",
-        value: "Сувора догана",
+        text: "ІІ пересторога",
+        value: "ІІ пересторога",
       },
       {
-        text: "Догана із загрозою виключення з Пласту",
-        value: "Догана із загрозою виключення з Пласту",
+        text: "ІІІ пересторога",
+        value: "ІІІ пересторога",
       },
     ],
     render: (precautionName: Precaution) => {
