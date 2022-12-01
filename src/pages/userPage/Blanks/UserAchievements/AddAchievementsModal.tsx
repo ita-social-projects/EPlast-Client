@@ -68,12 +68,12 @@ const AddAchievementsModal = (props: Props) => {
       );
       return isCorrectExtension;
     }
-    const isSmaller3mb = fileSize < 3145728;
-    if (!isSmaller3mb) {
-      notificationLogic("error", fileIsTooBig(3));
-      return isSmaller3mb;
+    const isSmaller10mb = fileSize < 10485760;
+    if (!isSmaller10mb) {
+      notificationLogic("error", fileIsTooBig(10));
+      return isSmaller10mb;
     }
-    return isCorrectExtension && isSmaller3mb;
+    return isCorrectExtension && isSmaller10mb;
   };
 
   const handleSubmit = async () => {
