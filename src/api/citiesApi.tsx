@@ -247,8 +247,8 @@ export const getUsersAdministrations = async (UserId: string) => {
   return api.get(`Cities/GetUserAdmins/${UserId}`);
 };
 
-export const getCities = async () => {
-  return await api.get(`Cities/Cities`).catch((error) => {
+export const getCities = async (isOnlyActive = false, oblast = UkraineOblasts.NotSpecified) => {
+  return await api.get(`Cities/Cities`, {isOnlyActive, oblast}).catch((error) => {
     throw new Error(error);
   });
 };

@@ -9,6 +9,8 @@ import { inputOnlyWhiteSpaces } from "../../components/Notifications/Messages";
 import GoverningBodyAdmin from "../../models/GoverningBody/GoverningBodyAdmin";
 import notificationLogic from "../../components/Notifications/Notification";
 import NotificationBoxApi from "../../api/NotificationBoxApi";
+import { minAvailableDate } from "../../constants/TimeConstants";
+import { descriptionValidation } from "../../models/GllobalValidations/DescriptionValidation";
 
 interface Props {
   visibleModal: boolean;
@@ -29,20 +31,21 @@ const EditAdministratorModal = ({
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const handleCancel = () => {
     setVisibleModal(false);
   };
 
-  const createNotification = async (userId: Array<string>, message: string) => {
+  const createNotification = async (userId: Array<string>, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       userId,
       `${message}: `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/administrations`,
-      `Переглянути`
+      `Переглянути`,
+      mustLogOut
     );
   };
 
@@ -72,7 +75,8 @@ const EditAdministratorModal = ({
     notificationLogic("success", "Адміністратор успішно відредагований");
     await createNotification(
       [newAdmin.userId],
-      `Вам була присвоєна нова роль: '${newAdmin.governingBodyAdminRole}`
+      `Вам була присвоєна нова роль: '${newAdmin.governingBodyAdminRole}`,
+      true
     );
     setLoading(false);
     setVisibleModal(false);
@@ -109,6 +113,7 @@ const EditAdministratorModal = ({
               name="startDate"
               label="Час початку"
               labelCol={{ span: 24 }}
+              rules={[descriptionValidation.Required]}
               initialValue={
                 admin.startDate
                   ? moment.utc(admin.startDate).local()
@@ -132,6 +137,7 @@ const EditAdministratorModal = ({
               name="endDate"
               label="Час кінця"
               labelCol={{ span: 24 }}
+              rules={[descriptionValidation.Required]}
               initialValue={
                 admin.endDate ? moment.utc(admin.endDate).local() : undefined
               }
@@ -156,7 +162,10 @@ const EditAdministratorModal = ({
               </Button>
             </Col>
             <Col className="publishButton">
-              <Button type="primary" htmlType="submit">
+              <Button
+                type="primary"
+                htmlType="submit"
+              >
                 Опублікувати
               </Button>
             </Col>

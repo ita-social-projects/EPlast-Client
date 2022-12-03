@@ -1,125 +1,84 @@
-import React, { useEffect, useState } from "react";
-import { Carousel, Spin, Avatar, Typography, Alert, Empty } from "antd";
-import { EventGallery } from "./EventInfo";
-import eventsApi from "../../../../api/eventsApi";
-import FormAddPictures from "./FormAddPictures";
-import PicturesWall from "./PicturesWall";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { CheckOutlined, EditFilled } from "@ant-design/icons";
+import { Empty, Tooltip, Typography } from "antd";
+import React, { useState } from "react";
 import "./EventInfo.less";
+import GalleryPicture from "./GalleryPicture";
+import GalleryPictureAdd from "./GalleryPictureAdd";
 
 const { Title } = Typography;
 
 interface Props {
   eventId: number;
   userAccesses: { [key: string]: boolean };
+  pictureList: number[];
 }
 
-const GallerySpinner = () => (
-  <div>
-    <Title level={2} style={{ color: "#3c5438" }}>
-      Галерея
-    </Title>
-    <Carousel autoplay={false} className="homeSlider">
-      <Spin tip="Завантаження...">
-        <Alert
-          message="Зачекайте будь ласка."
-          description="Завантаження фотографій може зайняти певний час."
-          type="info"
-        />
-      </Spin>
-    </Carousel>
-  </div>
-);
-
-const FillGallery = (pictures: EventGallery[]) => {
-  if (pictures.length === 0) {
-    return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description="Галерея події порожня"
-      />
-    );
-  }
-  return (
-    <Carousel
-      autoplay={true}
-      className="homeSlider"
-      arrows
-      prevArrow={<LeftOutlined />}
-      nextArrow={<RightOutlined />}
-    >
-      {pictures.map((picture) => {
-        return (
-          <Avatar
-            shape="square"
-            size={350}
-            src={picture.fileName}
-            key={picture.galleryId}
-          />
-        );
-      })}
-    </Carousel>
-  );
-};
-
-const Gallery = ({ eventId, userAccesses }: Props) => {
-  const [loading, setLoading] = useState(false);
+const Gallery = ({ eventId, userAccesses, pictureList }: Props) => {
+  const [loading, setLoading] = useState(true);
   // @ts-ignore
-  const [pictures, setPictures] = useState<EventGallery[]>([]);
+  const [pictures, setPictures] = useState<number[]>(pictureList);
+  const [isEditing, setEditing] = useState<boolean>(false);
 
-  const addPictures = (uploadedPictures: EventGallery[]) =>
-    setPictures(pictures.concat(uploadedPictures));
-  const removePicture = (pictureId: number) =>
-    setPictures(pictures.filter((picture) => picture.galleryId !== pictureId));
-  const GalleryAdministration = (): React.ReactNode[] => {
-    if (userAccesses["AddPhotos"]) {
-      return [
-        <div>
-          <Title
-            level={3}
-            style={{
-              color: "#3c5438",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            key="spinnerTitle"
-          >
-            Адміністрування галереї
-          </Title>
-          <FormAddPictures
-            eventId={eventId}
-            updateGallery={addPictures}
-            picturesCount={pictures.length}
-            key="addPictures"
-          />
-          <PicturesWall
-            pictures={pictures}
-            removePicture={removePicture}
-            key="removePictures"
-          />
-        </div>,
-      ];
-    } else return [];
+  const MaxPictureCount = 15;
+
+  const addPictures = (uploadedPictureIds: number[]) => {
+    setPictures([...pictures, ...uploadedPictureIds]);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await eventsApi.getPictures(eventId);
-      setPictures(response.data);
-      setLoading(true);
-    };
-    fetchData();
-  }, []);
-  return loading === false ? (
-    GallerySpinner()
-  ) : (
+  const removePicture = (pictureId: number) =>
+    setPictures(pictures.filter((picture) => picture !== pictureId));
+
+  return (
     <div>
-      <Title level={2} style={{ color: "#3c5438" }}>
-        Галерея
-      </Title>
-      {FillGallery(pictures)}
-      {GalleryAdministration()}
+      <div className="gallery-header">
+        <Title level={2} style={{ color: "#3c5438" }}>
+          Галерея
+        </Title>
+        {userAccesses["AddPhotos"] ? (
+          <>
+            <Tooltip title="Редагувати галерею">
+              <EditFilled
+                style={{ display: isEditing ? "none" : "block" }}
+                className="edit-icon"
+                onClick={() => setEditing(true)}
+              />
+            </Tooltip>
+            <Tooltip title="Завершити редагування галереї">
+              <CheckOutlined
+                style={{ display: isEditing ? "block" : "none" }}
+                className="edit-icon"
+                onClick={() => setEditing(false)}
+              />
+            </Tooltip>
+          </>
+        ) : null}
+      </div>
+      {pictures.length !== 0 || isEditing ? (
+        <div className="galleryContainer">
+          {pictures.map((picture) => {
+            return (
+              <GalleryPicture
+                key={picture}
+                pictureId={picture}
+                isEditing={isEditing}
+                removePictureHook={removePicture}
+              />
+            );
+          })}
+          {isEditing && pictures.length < MaxPictureCount ? (
+            <GalleryPictureAdd
+              eventId={eventId}
+              pictureList={pictures}
+              addPicturesHook={addPictures}
+            />
+          ) : null}
+        </div>
+      ) : (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="Галерея події порожня"
+        />
+      )}
     </div>
   );
 };

@@ -19,6 +19,8 @@ import moment from "moment";
 import userApi from "../../../api/UserApi";
 import "moment/locale/uk";
 import { Roles } from "../../../models/Roles/Roles";
+import { minAvailableDate } from "../../../constants/TimeConstants";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 moment.locale("uk-ua");
 
 const confirm = Modal.confirm;
@@ -51,7 +53,7 @@ const AddAdministratorModal = (props: Props) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const showConfirm = (newAdmin: ClubAdmin, existingAdmin: ClubAdmin) => {
@@ -349,6 +351,7 @@ const AddAdministratorModal = (props: Props) => {
               name="startDate"
               label="Час початку"
               labelCol={{ span: 24 }}
+              rules={[descriptionValidation.Required]}
               initialValue={
                 props.admin.startDate
                   ? moment.utc(props.admin.startDate).local()
@@ -373,6 +376,7 @@ const AddAdministratorModal = (props: Props) => {
               name="endDate"
               label="Час кінця"
               labelCol={{ span: 24 }}
+              rules={[descriptionValidation.Required]}
               initialValue={
                 props.admin.endDate
                   ? moment.utc(props.admin.endDate).local()
@@ -408,11 +412,7 @@ const AddAdministratorModal = (props: Props) => {
             >
               <Button
                 type="primary"
-                loading={loadingButton}
-                onClick={() => {
-                  setLoadingButton(true);
-                  handleSubmit(form.getFieldsValue());
-                }}
+                htmlType="submit"
               >
                 Опублікувати
               </Button>

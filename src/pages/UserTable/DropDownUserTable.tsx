@@ -61,28 +61,19 @@ const DropDown = (props: Props) => {
     offsetTop,
     offsetLeft,
   } = props;
-
   const [showEditModal, setShowEditModal] = useState(false);
   const [visibleAddDegree, setVisibleAddDegree] = useState<boolean>(false);
-  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(
-    false
-  );
+  const [visibleChangeDegree, setVisibleChangeDegree] = useState<boolean>(false);
   const [showCityModal, setShowCityModal] = useState<boolean>(false);
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [showClubModal, setShowClubModal] = useState<boolean>(false);
-  const [showGoverningBodyModal, setShowGoverningBodyModal] = useState<boolean>(
-    false
-  );
+  const [showGoverningBodyModal, setShowGoverningBodyModal] = useState<boolean>(false);
   const [
     showDeleteGoverningBodyAdminModal,
     setShowDeleteGoverningBodyAdminModal,
   ] = useState<boolean>(false);
-  const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(
-    false
-  );
-  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(
-    false
-  );
+  const [showAcceptToCityModal, setShowAcceptToCityModal] = useState<boolean>(false);
+  const [showDeleteCityFollower, setShowDeleteCityFollower] = useState<boolean>(false);
 
   const [superAdmin, setSuperAdmin] = useState<boolean>(false);
   const [, setGoverningBodyHead] = useState<boolean>(true);
@@ -393,7 +384,7 @@ const DropDown = (props: Props) => {
             <> </>
           )}
 
-          {canAddDegree ? (
+          {canAddDegree && selectedUserRoles[0] != "" ? (
             <Menu.Item key="8">
               <PlusCircleOutlined />
               Додати до уладу
@@ -478,6 +469,7 @@ const DropDown = (props: Props) => {
           <ModalAddPlastDegree
             handleAddDegree={() => onChange("", "")} // forcefully updating the table on exit
             userId={record}
+            selectedUser={selectedUser}
             visibleModal={visibleAddDegree || visibleChangeDegree}
             setVisibleModal={(bool) => {
               setVisibleAddDegree(bool);

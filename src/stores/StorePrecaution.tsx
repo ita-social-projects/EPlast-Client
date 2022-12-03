@@ -295,6 +295,11 @@ const actions = {
             searchedData: "",
           });
         }
+        else {
+          setState({
+            searchedData: event.target.value,
+          });
+        }
       },
 
   handleDeletePrecautionTable:
@@ -356,7 +361,7 @@ const actions = {
           tableData: editedTablePrecautions
         });
         notificationLogic("success", successfulUpdateAction("Пересторогу"));
-        dispatch(CreateEditNotification(userId, precaution.name));
+        dispatch(CreateEditNotification(userId, precaution.name, user.firstName + " " + user.lastName));
       },
 
   tableSettings:
@@ -690,18 +695,22 @@ const activePrecautionNofication = async (newPrecaution: UserPrecaution) => {
       notificationLogic(
         "error",
         failCreateAction(
-          "пересторогу! Користувач має активну до " + response.data + "!"
+          "пересторогу! Користувач має активну до " + convertDateToCorrectFormat(response.data) + "!"
         )
       );
     });
 };
+
+const convertDateToCorrectFormat = (dateString : string) => {
+  return dateString.replace(/\//g, '.');
+}
 
 const createNotifications = async (userPrecaution: UserPrecaution) => {
   await NotificationBoxApi.createNotifications(
     [userPrecaution.userId],
     `Вам було надано нову пересторогу: '${userPrecaution.precaution.name}' від ${userPrecaution.reporter}. `,
     NotificationBoxApi.NotificationTypes.UserNotifications,
-    `/Precautions`,
+    `/Precautions?name=${userPrecaution.user.firstName} ${userPrecaution.user.lastName}`,
     `Переглянути`
   );
 
@@ -713,7 +722,7 @@ const createNotifications = async (userPrecaution: UserPrecaution) => {
             [cra.cityAdminId, cra.regionAdminId],
             `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав нову пересторогу: '${userPrecaution.precaution.name}' від ${userPrecaution.reporter}. `,
             NotificationBoxApi.NotificationTypes.UserNotifications,
-            `/Precautions`,
+            `/Precautions?name=${userPrecaution.user.firstName} ${userPrecaution.user.lastName}`,
             `Переглянути`
           );
         });
@@ -722,14 +731,14 @@ const createNotifications = async (userPrecaution: UserPrecaution) => {
 };
 
 const CreateEditNotification =
-  (userId: string, name: string): Action<State> =>
+  (userId: string, name: string, userName: string): Action<State> =>
     () => {
       if (userId !== "" && name !== "") {
         NotificationBoxApi.createNotifications(
           [userId],
           `Вашу пересторогу: '${name}' було змінено. `,
           NotificationBoxApi.NotificationTypes.UserNotifications,
-          `/state.tableData`,
+          `/Precautions?name=${userName}`,
           `Переглянути`
         );
         NotificationBoxApi.getCitiesForUserAdmins(userId).then((res) => {
@@ -739,7 +748,7 @@ const CreateEditNotification =
                 [cra.cityAdminId, cra.regionAdminId],
                 `${res.user.firstName} ${res.user.lastName}, який є членом станиці: '${cra.cityName}' отримав змінену пересторогу: '${name}'. `,
                 NotificationBoxApi.NotificationTypes.UserNotifications,
-                `/state.tableData`,
+                `/Precautions?name=${userName}`,
                 `Переглянути`
               );
             });

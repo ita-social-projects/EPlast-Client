@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Avatar, Button, Card, Layout, Modal, Skeleton } from "antd";
+import { Avatar, Button, Card, Layout, Modal, Skeleton, Tooltip } from "antd";
 import {
-  SettingOutlined,
+  EditOutlined,
   CloseOutlined,
   RollbackOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import {
   getAllAdmins,
+  getCityById,
   getUserCityAccess,
   removeAdministrator,
 } from "../../../api/citiesApi";
@@ -66,6 +67,7 @@ const CityAdministration = () => {
 
   const fetchData = async () => {
     setLoading(true);
+    const responseCity = await getCityById(id);
     const responseAdmins = await getAllAdmins(id);
     await getUserAccessesForCities();
     setIsCityAdmin(
@@ -77,7 +79,7 @@ const CityAdministration = () => {
     setAdministration(
       [...responseAdmins.data.administration].filter((a) => a != null)
     );
-    setCityName(responseAdmins.data.name);
+    setCityName(responseCity.data.name);
     setActiveUserRoles(userApi.getActiveUserRoles());
     setLoading(false);
   };
@@ -100,17 +102,19 @@ const CityAdministration = () => {
     setAdministration(administration.filter((u) => u.id !== admin.id));
     await createNotification(
       admin.userId,
-      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в станиці`
+      `На жаль, ви були позбавлені ролі: '${admin.adminType.adminTypeName}' в станиці`,
+      true
     );
   };
 
-  const createNotification = async (userId: string, message: string) => {
+  const createNotification = async (userId: string, message: string, mustLogOut?: boolean) => {
     await NotificationBoxApi.createNotifications(
       [userId],
       message + ": ",
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/cities/${id}`,
-      cityName
+      cityName,
+      mustLogOut
     );
   };
 
@@ -140,11 +144,33 @@ const CityAdministration = () => {
     }
     await createNotification(
       newAdmin.userId,
-      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`
+      `Вам була присвоєна нова роль: '${newAdmin.adminType.adminTypeName}' в станиці`,
+      true
     );
     setAdministration(administration);
     setReload(!reload);
   };
+
+  const getCardActions = (member: CityAdmin) => {
+    if (userCityAccesses["EditCity"] &&
+       (userCityAccesses["AddCityHead"] || member.adminType.adminTypeName !== Roles.CityHead)) {
+      const actions: JSX.Element[] = [];
+      if (member.adminType.adminTypeName !== Roles.CityHead) {
+        actions.push(
+          <Tooltip title="Редагувати">
+            <EditOutlined onClick={() => showModal(member)} />
+          </Tooltip>
+        );
+      }
+      actions.push(
+        <Tooltip title="Видалити">
+          <CloseOutlined onClick={() => seeDeleteModal(member)} />
+        </Tooltip>
+      );
+      return actions;
+    }
+    return undefined;
+  }
 
   useEffect(() => {
     fetchData();
@@ -171,18 +197,7 @@ const CityAdministration = () => {
                   `${member.adminType.adminTypeName}`
                 )}
                 headStyle={{ backgroundColor: "#3c5438", color: "#ffffff" }}
-                actions={
-                  userCityAccesses["EditCity"] &&
-                  (userCityAccesses["AddCityHead"] ||
-                    member.adminType.adminTypeName !== Roles.CityHead)
-                    ? [
-                        <SettingOutlined onClick={() => showModal(member)} />,
-                        <CloseOutlined
-                          onClick={() => seeDeleteModal(member)}
-                        />,
-                      ]
-                    : undefined
-                }
+                actions={getCardActions(member)}
               >
                 <div
                   onClick={() =>

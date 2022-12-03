@@ -23,6 +23,7 @@ import { Roles } from "../../../models/Roles/Roles";
 import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import SectorAdmin from "../../../models/GoverningBody/Sector/SectorAdmin";
 import SectorAdminTypes from "./SectorAdminTypes";
+import { minAvailableDate } from "../../../constants/TimeConstants";
 
 const confirm = Modal.confirm;
 
@@ -58,7 +59,7 @@ const EditAdministratorModal = (props: Props) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const showConfirm = (admin: SectorAdmin) => {
@@ -203,6 +204,7 @@ const EditAdministratorModal = (props: Props) => {
               name="startDate"
               label="Час початку"
               labelCol={{ span: 24 }}
+              rules={[descriptionValidation.Required]}
               initialValue={
                 props.admin.startDate
                   ? moment.utc(props.admin.startDate).local()
@@ -227,6 +229,7 @@ const EditAdministratorModal = (props: Props) => {
               name="endDate"
               label="Час кінця"
               labelCol={{ span: 24 }}
+              rules={[descriptionValidation.Required]}
               initialValue={
                 props.admin.endDate
                   ? moment.utc(props.admin.endDate).local()
@@ -260,7 +263,10 @@ const EditAdministratorModal = (props: Props) => {
               xs={{ span: 11, offset: 2 }}
               sm={{ span: 6, offset: 1 }}
             >
-              <Button type="primary" htmlType="submit">
+              <Button
+                type="primary"
+                htmlType="submit"
+              >
                 Опублікувати
               </Button>
             </Col>

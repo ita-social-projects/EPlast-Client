@@ -11,6 +11,8 @@ import {
   inputOnlyWhiteSpaces,
 } from "../../../components/Notifications/Messages";
 import notificationLogic from "../../../components/Notifications/Notification";
+import { minAvailableDate } from "../../../constants/TimeConstants";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 import GoverningBodyUser from "../../../models/GoverningBody/GoverningBodyUser";
 
 type Props = {
@@ -31,7 +33,7 @@ const AddRegionBoardMainAdminForm = ({
   const [loadingUsersStatus, setLoadingUsersStatus] = useState(true);
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const disabledEndDate = (current: any) => {
@@ -127,6 +129,7 @@ const AddRegionBoardMainAdminForm = ({
             name="startDate"
             label="Час початку"
             labelCol={{ span: 24 }}
+            rules={[descriptionValidation.Required]}
           >
             <DatePicker
               className="formSelect"
@@ -136,7 +139,12 @@ const AddRegionBoardMainAdminForm = ({
           </Form.Item>
         </Col>
         <Col>
-          <Form.Item name="endDate" label="Час кінця" labelCol={{ span: 24 }}>
+          <Form.Item 
+            name="endDate" 
+            label="Час кінця" 
+            labelCol={{ span: 24 }}
+            rules={[descriptionValidation.Required]}
+          >
             <DatePicker
               className="formSelect"
               disabledDate={disabledEndDate}
@@ -154,7 +162,10 @@ const AddRegionBoardMainAdminForm = ({
             </Button>
           </Col>
           <Col className="publishButton">
-            <Button type="primary" htmlType="submit">
+            <Button 
+              type="primary"
+              htmlType="submit"
+            >
               Опублікувати
             </Button>
           </Col>

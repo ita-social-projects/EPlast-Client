@@ -34,6 +34,8 @@ import "./AddAdministrationModal.less";
 import ShortUserInfo from "../../../models/UserTable/ShortUserInfo";
 import Spinner from "../../Spinner/Spinner";
 import GoverningBodyAdminTypes from "../GoverningBodyAdminTypes";
+import { minAvailableDate } from "../../../constants/TimeConstants";
+import { descriptionValidation } from "../../../models/GllobalValidations/DescriptionValidation";
 
 const { confirm } = Modal;
 
@@ -51,7 +53,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
   };
 
   const disabledStartDate = (current: any) => {
-    return current && current > moment();
+    return current && (current > moment() || !current.isAfter(minAvailableDate));
   };
 
   const addGoverningBodyAdmin = async (admin: GoverningBodyAdmin) => {
@@ -73,7 +75,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       `Вам була присвоєна адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`
+      `цьому керівному органі`,
+      true
     );
   };
 
@@ -86,7 +89,8 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       `Вам була відредагована адміністративна роль: '${admin.adminType.adminTypeName}' в `,
       NotificationBoxApi.NotificationTypes.UserNotifications,
       `/regionalBoard/governingBodies/${props.governingBodyId}`,
-      `цьому керівному органі`
+      `цьому керівному органі`,
+      true
     );
   };
 
@@ -160,8 +164,11 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
         } else {
           addGoverningBodyAdmin(newAdmin);
         }
-      } finally {
-        onAdd();
+      } catch (e) {
+        if (typeof e == 'string')
+          throw new Error(e);
+        else if (e instanceof Error)
+          throw new Error(e.message);
       }
     } else {
       editGoverningBodyAdmin(newAdmin);
@@ -296,6 +303,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       <Form.Item
         label="Дата початку"
         name="startDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined
@@ -313,6 +321,7 @@ const AddGoverningBodiesSecretaryForm = (props: any) => {
       <Form.Item
         label="Дата кінця"
         name="endDate"
+        rules={[descriptionValidation.Required]}
         initialValue={
           props.admin === undefined
             ? undefined
